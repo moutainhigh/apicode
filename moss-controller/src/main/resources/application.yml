@@ -1,0 +1,9 @@
+
+spring:
+  application:
+    name: ycandyz-master-controller
+  profiles:
+    active: test
+
+logging:
+  config: classpath:logback-spring.xml
