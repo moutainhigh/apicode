@@ -18,6 +18,9 @@ spring:
 mybatis:
   mapperLocations: classpath:mapper/*.xml
   type-aliases-package: com.atguigu.springcloud.entities    # 所有Entity别名类所在包
+    # spring boot集成mybatis的方式打印sql
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 token:
   authConfigSecret: c1f5d2f3f9f818c1a2c03da10c81e542          #token密钥
