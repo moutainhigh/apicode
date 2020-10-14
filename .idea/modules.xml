@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/moss-business/moss-business.iml" filepath="$PROJECT_DIR$/moss-business/moss-business.iml" />
+      <module fileurl="file://$PROJECT_DIR$/moss-commons/moss-commons.iml" filepath="$PROJECT_DIR$/moss-commons/moss-commons.iml" />
+      <module fileurl="file://$PROJECT_DIR$/moss-controller/moss-controller.iml" filepath="$PROJECT_DIR$/moss-controller/moss-controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/moss-dao/moss-dao.iml" filepath="$PROJECT_DIR$/moss-dao/moss-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ycandyz-master.iml" filepath="$PROJECT_DIR$/ycandyz-master.iml" />
+    </modules>
+  </component>
+</project>

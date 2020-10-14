@@ -9,6 +9,8 @@ import lombok.Getter;
 @Getter
 public enum ResultEnum {
 
+    SUCCESS(200, "操作成功"),
+    FAILED(500, "操作失败"),
     /**
      * 登陆注册返回code
      */
@@ -27,6 +29,7 @@ public enum ResultEnum {
     TOKEN_IS_NULL(10008, "token为空"),
     TOKEN_INVALID(10009, "token无效"),
     TOKEN_ILLEGAL(10010, "token不合法");
+
 
     private int value;
 

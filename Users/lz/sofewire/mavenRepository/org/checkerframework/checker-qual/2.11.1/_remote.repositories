@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Oct 14 11:34:52 CST 2020
+checker-qual-2.11.1.jar>nexus-aliyun=
+checker-qual-2.11.1.pom>nexus-aliyun=
