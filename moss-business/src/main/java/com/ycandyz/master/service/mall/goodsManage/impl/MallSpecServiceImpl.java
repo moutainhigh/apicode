@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.ycandyz.master.commonResult.CommonResult2;
+import com.ycandyz.master.constants.RedisConstants;
 import com.ycandyz.master.dao.mall.goodsManage.MallSpecDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSpecValueDao;
 import com.ycandyz.master.dto.mall.goodsManage.MallSpecDTO;
@@ -14,6 +14,7 @@ import com.ycandyz.master.entities.mall.goodsManage.MallSpec;
 import com.ycandyz.master.entities.mall.goodsManage.MallSpecValue;
 import com.ycandyz.master.service.mall.goodsManage.MallSpecService;
 import com.ycandyz.master.utils.DateUtil;
+import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.SnowFlakeUtil;
 import com.ycandyz.master.vo.MallSpecKeyWordVO;
 import com.ycandyz.master.vo.MallSpecSingleVO;
@@ -35,15 +36,17 @@ public class MallSpecServiceImpl implements MallSpecService {
     @Resource
     private MallSpecValueDao mallSpecValueDao;
 
+    @Resource
+    private RedisUtil redisUtil;
 
     /**
      * @Description: 添加规格模版
     */
     @Override
     @Transactional
-    public MallSpecDTO addMallSpec(MallSpecVO mallSpecVO) {
+    public List<MallSpecSingleVO> addMallSpec(MallSpecVO mallSpecVO) {
         SnowFlakeUtil snowFlake = new SnowFlakeUtil(1, 1);
-        String shopNo = "61763436278748160000";
+        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
         String specNo = String.valueOf(snowFlake.nextId());
         MallSpecValue mallSpecValue = new MallSpecValue();
 
@@ -62,30 +65,27 @@ public class MallSpecServiceImpl implements MallSpecService {
         mallSpec.setSortValue(SortValueEnum.DEFAULT.getCode());
         mallSpec.setStatus(StatusEnum.DEFAULT.getCode());
         mallSpecDao.addMallSpec(mallSpec);
-        return null;
+        List<MallSpecSingleVO> mallSpecSingleVOS = selMallSpecByShopNo(shopNo);
+        return mallSpecSingleVOS;
     }
 
 
     /**
-     * @Description: 删除模版
+     * @Description: 删除规格模版
     */
     @Override
-    public CommonResult2 delMallSpecBySpecNo(String specNo) {
-        String shopNo2 = "61763436278748160000";
-        int r = mallSpecDao.delMallSpecBySpecNo(shopNo2,specNo);
-        int r2 = mallSpecValueDao.delMallSpecValueBySpecNo(specNo);
-        if (r > 0 & r2 >0) {
-            return CommonResult2.success();
-        }
-        return CommonResult2.failed();
+    public int delMallSpecBySpecNo(String specNo) {
+        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
+        int r = mallSpecDao.delMallSpecBySpecNo(shopNo,specNo);
+        return r;
     }
 
     /**
-     * @Description: 根据关键字查询模版
+     * @Description: 根据关键字查询规格模版
      */
     @Override
     public PageInfo<MallSpecKeyWordVO> selMallSpecByKeyWord(Integer page, Integer pageSize, String keyWord) {
-        String shopNo = "61763436278748160000";
+        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
         PageHelper.startPage(page,pageSize);
         List<MallSpec> mallSpecs = mallSpecDao.selMallSpecByKeyWord(shopNo,keyWord);
         log.info("shopNo:{};keyWord:{};规格模版表查询数据库结果:{}",shopNo,keyWord,mallSpecs);
@@ -131,7 +131,7 @@ public class MallSpecServiceImpl implements MallSpecService {
                 mallSpecKeyWordVOvalues.add(mallSpecKeyWordVO);
             }
         }else if (mallSpecs.size() > 0 && mallSpecValues.size() > 0){
-            List<String> specNos = mallSpecDao.selMallSpecByShopNo(shopNo);
+            List<String> specNos = mallSpecDao.selMallSpecNoByShopNo(shopNo);
             mallSpecs.stream().forEach(m->spspecNovalues.add(m.getSpecNo()));
             mallSpecValues.stream().forEach(m->spvspecNovalues.add(m.getSpecNo()));
             List<String> spcollect = spspecNovalues.stream().filter(s -> specNos.contains(s)).collect(Collectors.toList());
@@ -157,11 +157,21 @@ public class MallSpecServiceImpl implements MallSpecService {
         PageInfo<MallSpecKeyWordVO> pageInfo = new PageInfo<>(mallSpecKeyWordVOvalues);
         return pageInfo;
     }
+    public PageInfo<MallSpecKeyWordVO> selMallSpecByKeyWord2(Integer page, Integer pageSize, String keyWord) {
+        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
+        PageHelper.startPage(page,pageSize);
+        List<MallSpec> mallSpecs = mallSpecDao.selMallSpecByKeyWord(shopNo,keyWord);
+        log.info("shopNo:{};keyWord:{};规格模版表查询数据库结果:{}",shopNo,keyWord,mallSpecs);
+        List<MallSpecValue> mallSpecValues = mallSpecValueDao.selMallSpecValueByKeyWord(keyWord);
+        log.info("keyWord:{};规格模版value表查询数据库结果:{}",keyWord,mallSpecValues);
 
+        return null;
+    }
 
-    @Override
+    /**
+     * @Description: 查询规格模版
+    */
     public MallSpecVO selMallSpecBySpecNo(String shopNo,String specNo) {
-        shopNo = "61763436278748160000";
         List<MallSpecValue>  mallSpecValues = mallSpecValueDao.selMallSpecValueBySpecNo(specNo);
         log.info("specNo:{};规格模版值表查询数据库结果:{}",specNo,mallSpecValues);
         MallSpec mallSpec = mallSpecDao.selMallSpecBySpecNo(shopNo,specNo);
@@ -177,17 +187,15 @@ public class MallSpecServiceImpl implements MallSpecService {
             mallSpecVO.setCreatedTime(DateUtil.defaultFormatDate(mallSpec.getCreatedTime()));
             mallSpecVO.setUpdatedTime(DateUtil.defaultFormatDate(mallSpec.getUpdatedTime()));
         }
-
         log.info("specNo:{};规格模版查询数据库结果:{}",specNo,mallSpecVO);
         return mallSpecVO;
     }
 
     /**
-     * @Description: 查询规格模版
+     * @Description: 查询单个规格模版
      */
     @Override
     public MallSpecSingleVO selMallSpecSingleBySpecNo(String shopNo, String specNo) {
-        shopNo = "61763436278748160000";
         List<MallSpecValue>  mallSpecValues = mallSpecValueDao.selMallSpecValueBySpecNo(specNo);
         log.info("specNo:{};规格模版值表查询数据库结果:{}",specNo,mallSpecValues);
         MallSpec mallSpec = mallSpecDao.selMallSpecBySpecNo(shopNo,specNo);
@@ -200,12 +208,23 @@ public class MallSpecServiceImpl implements MallSpecService {
             mallSpecSingleVO.setSpecNo(mallSpec.getSpecNo());
             mallSpecSingleVO.setSpecName(mallSpec.getSpecName());
             mallSpecSingleVO.setSpecValues(values.toArray(valuesarray));
-
         }
-
-        log.info("specNo:{};规格模版查询数据库结果:{}",specNo,mallSpecSingleVO);
+        log.info("specNo:{};单个规格模版查询数据库结果:{}",specNo,mallSpecSingleVO);
         return mallSpecSingleVO;
     }
 
+    /**
+     * @Description: 根据商户号查询所有规格模版
+    */
+    public List<MallSpecSingleVO> selMallSpecByShopNo(String shopNo) {
+        log.info("根据商户号查询所有规格模版入参shopNo:{}",shopNo);
+        List<String> specNos = mallSpecDao.selMallSpecNoByShopNo(shopNo);
+        ArrayList<MallSpecSingleVO> mallSpecSingleVOS = Lists.newArrayList();
+        for (String no:specNos) {
+            MallSpecSingleVO mallSpecSingleVO = selMallSpecSingleBySpecNo(shopNo, no);
+            mallSpecSingleVOS.add(mallSpecSingleVO);
+        }
+        return mallSpecSingleVOS;
+    }
 
 }

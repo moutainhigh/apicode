@@ -1,9 +1,9 @@
 package com.ycandyz.master.controller.goodsManage;
 
 import com.github.pagehelper.PageInfo;
-import com.ycandyz.master.commonResult.CommonResult2;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
+import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
 import com.ycandyz.master.service.mall.goodsManage.MallShippingService;
 import com.ycandyz.master.vo.MallShippingVO;
@@ -25,46 +25,46 @@ public class MallShippingController {
 
     @ApiOperation(value = "添加运费模版",notes = "添加",httpMethod = "POST")
     @PostMapping("/shipping")
-    public List<MallShippingDTO> addMallShipping(@RequestBody MallShippingVO mallShippingVO){
+    public CommonResult<List<MallShippingDTO>> addMallShipping(@RequestBody MallShippingVO mallShippingVO){
         log.info("添加运费模版请求:{}",mallShippingVO);
         List<MallShippingDTO> mallShippingDTOS = mallShippingService.addMallShipping(mallShippingVO);
-        return mallShippingDTOS;
+        return CommonResult.success(mallShippingDTOS);
     }
 
 
 
     @ApiOperation(value = "关键字查询模版",notes = "查询",httpMethod = "GET")
     @GetMapping("/shipping")
-    public PageInfo<MallShipping> selMallShippingByKeyWord(@RequestParam(value = "page",defaultValue = "1") Integer page,
+    public CommonResult<PageInfo<MallShipping>> selMallShippingByKeyWord(@RequestParam(value = "page",defaultValue = "1") Integer page,
                                                          @RequestParam(value = "pageSize",defaultValue = "5") Integer pageSize,@RequestParam(value = "keyWord") String keyWord){
         PageInfo<MallShipping> mallShipping = mallShippingService.selMallShippingByKeyWord(page,pageSize,keyWord);
         log.info("关键字:{}；查询运费模版结果{}",keyWord,mallShipping);
-        return mallShipping;
+        return CommonResult.success(mallShipping);
     }
 
     @ApiOperation(value = "查询配送区域",notes = "查询",httpMethod = "GET")
     @GetMapping("/shipping/region")
-    public List<MallShippingRegionProvinceDTO> selMallShippingRegionProvince(){
+    public CommonResult<List<MallShippingRegionProvinceDTO>> selMallShippingRegionProvince(){
         List<MallShippingRegionProvinceDTO> mallShippingRegionProvince = mallShippingService.selMallShippingRegionProvince();
         log.info("查询配送区域结果:{}",mallShippingRegionProvince);
-        return mallShippingRegionProvince;
+        return CommonResult.success(mallShippingRegionProvince);
     }
 
     @ApiOperation(value = "删除运费模版",notes = "删除",httpMethod = "DELETE")
     @DeleteMapping("/shipping/{shippingNo}")
-    public CommonResult2 delMallShippingByshippingNo(@PathVariable(value = "shippingNo") String shippingNo){
-        boolean count = mallShippingService.delMallShippingByshippingNo(shippingNo);
-        if (count) {
-            return CommonResult2.success();
+    public CommonResult delMallShippingByshippingNo(@PathVariable(value = "shippingNo") String shippingNo){
+        int count = mallShippingService.delMallShippingByshippingNo(shippingNo);
+        if (count > 0) {
+            return CommonResult.success(null);
         }
-        return CommonResult2.failed();
+        return CommonResult.failed(null);
     }
 
     @ApiOperation(value = "查询单个运费模版",notes = "查询",httpMethod = "GET")
     @GetMapping("/shipping/{shippingNo}")
-    public MallShippingDTO selMallShippingByShippingNo(@PathVariable(value = "shippingNo") String shippingNo){
+    public CommonResult<MallShippingDTO> selMallShippingByShippingNo(@PathVariable(value = "shippingNo") String shippingNo){
         MallShippingDTO mallShippingDTO = mallShippingService.selMallShippingByShippingNo(shippingNo);
         log.info("shippingNo:{}；根据shippingNo查询模版结果:{}",shippingNo,mallShippingDTO);
-        return mallShippingDTO;
+        return CommonResult.success(mallShippingDTO);
     }
 }

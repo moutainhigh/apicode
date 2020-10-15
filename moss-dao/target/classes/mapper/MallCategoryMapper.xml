@@ -3,11 +3,17 @@
 
 <mapper namespace="com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao">
     <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallCategory">
-        <id column="categoryNo" property="categoryNo" jdbcType="VARCHAR"/>
-        <id column="parentCategoryNo" property="parentCategoryNo" jdbcType="VARCHAR"/>
-        <id column="categoryName" property="categoryName" jdbcType="VARCHAR"/>
-        <id column="categoryImg" property="categoryImg" jdbcType="VARCHAR"/>
+        <id column="category_no" property="categoryNo" jdbcType="VARCHAR"/>
+        <id column="parent_category_no" property="parentCategoryNo" jdbcType="VARCHAR"/>
+        <id column="category_name" property="categoryName" jdbcType="VARCHAR"/>
+        <id column="category_img" property="categoryImg" jdbcType="VARCHAR"/>
+        <id column="layer" property="layer" jdbcType="INTEGER" />
+    </resultMap>
 
+    <resultMap id="BaseResultMapParent" type="com.ycandyz.master.entities.mall.goodsManage.MallParentCategory">
+        <id column="category_no" property="categoryNo" jdbcType="VARCHAR"/>
+        <id column="category_name" property="categoryName" jdbcType="VARCHAR"/>
+        <id column="category_img" property="categoryImg" jdbcType="VARCHAR"/>
     </resultMap>
 
     <insert id="addMallCategory" parameterType="com.ycandyz.master.entities.mall.goodsManage.MallCategory">
@@ -16,6 +22,28 @@
         updated_time)values (#{id},#{shopNo},#{categoryNo},#{parentCategoryNo},#{categoryName},
         #{categoryImg},#{layer},#{sortValue},#{status},now(),now());
     </insert>
+    <delete id="delCategoryByCategoryNo" parameterType="java.lang.String">
+        delete from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo};
+    </delete>
+    <select id="selCategoryByCategoryNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo} and layer = 1;
+    </select>
+    <select id="selParentCategoryByCategoryNo" resultMap="BaseResultMapParent" parameterType="java.lang.String">
+         select * from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo} and layer = 0;
+    </select>
+    <select id="selParentCategoryNoByShopNo" resultType="java.lang.String" parameterType="java.lang.String">
+          select parent_category_no from mall_category where shop_no = #{shopNo};
+    </select>
+    <select id="selCategoryNoByShopNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from mall_category where shop_no = #{shopNo} and layer = 0;
+    </select>
+    <select id="selParentCategoryByParentCategoryNo"
+            resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from mall_category where shop_no = #{shopNo} and parent_category_no = #{parentCategoryNo};
+    </select>
+    <select id="selCategoryByParentCategoryNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from mall_category where shop_no = #{shopNo} and parent_category_no = #{parentCategoryNo} and layer = 1;
+    </select>
 
 </mapper>
 

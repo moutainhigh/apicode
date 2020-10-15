@@ -8,7 +8,9 @@ import java.util.List;
 
 @Mapper
 public interface MallSpecValueDao {
+
     void addMallSpecValue(MallSpecValue mallSpecValue);
+
     int delMallSpecValueBySpecNo(String specNo);
 
     List<MallSpecValue> selMallSpecValueBySpecNo(@Param("specNo") String specNo);

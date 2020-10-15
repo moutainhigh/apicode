@@ -42,7 +42,7 @@ public class MallCategory {
     @ApiModelProperty(value = "排序值")
     private Integer sortValue;
     @ApiModelProperty(value = "状态：1: 正常，0: 无效  默认1")
-    private boolean status;
+    private Integer status;
     @ApiModelProperty(value = "updateTime")
     private Date createdTime;
     @ApiModelProperty(value = "updatedTime")

@@ -27,17 +27,14 @@
             select * from mall_shipping where shop_no =#{shop_no};
     </select>
 
-    <select id="selMallShippingByShippingNo" resultType="com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO">
-            select mp.shop_no,mp.shipping_name,mpr.first_count,mpr.first_price,mpr.more_count,mpr.more_price ,mprp.province
-            from mall_shipping mp
-            left join mall_shipping_region mpr
-            on mp.shipping_no = mpr.shipping_no
-            LEFT JOIN mall_shipping_region_province mprp
-            on mprp.region_no = mpr.region_no
-            where mp.shipping_no = #{shopping_no};
+    <select id="selMallShippingByShippingNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+            select * from mall_shipping where shop_no = #{shopNo} and shipping_no = #{shippingNo};
     </select>
 
     <delete id="delMallShippingByshippingNo" parameterType="java.lang.String">
-        delete from mall_shipping where shipping_no = #{shippingNo};
+        delete t1,t2,t3 from mall_shipping as t1
+        left join mall_shipping_region as t2 on t1.shipping_no = t2.shipping_no
+        left join mall_shipping_region_province as t3 on t2.region_no = t3.region_no
+        where t1.shop_no = #{shopNo} and t1.shipping_no = #{shippingNo};
     </delete>
 </mapper>

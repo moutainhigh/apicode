@@ -4,6 +4,7 @@ import cn.hutool.core.codec.Base64;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONObject;
+import com.ycandyz.master.entities.user.TokenEntity;
 
 /**
  * @author: WangYang
@@ -17,9 +18,8 @@ public class TokenUtil {
      * @param token
      * @return
      */
-    public static Integer verifyToken(String token,String secret) throws JSONException {
-
-        Integer userId = 0;
+    public static TokenEntity verifyToken(String token,String secret) throws JSONException {
+        TokenEntity tokenEntity = new TokenEntity();
         String decodeStr = Base64.decodeStr(token);
         JSONObject json = new JSONObject(decodeStr,true);
         String jtiStr = json.get("jti").toString();
@@ -31,10 +31,11 @@ public class TokenUtil {
         String jtiResult = SecureUtil.md5(verifyStr);
 
         if(jtiStr.equals(jtiResult)){
-            String userIdJson = json.get("user_id").toString();
-            userId = Integer.parseInt(userIdJson);
+            tokenEntity.setOrganizeId(json.get("organize_id").toString());
+            tokenEntity.setShopNo(json.get("shop_no").toString());
+            tokenEntity.setUserId(json.get("user_id").toString());
         }
-        return userId;
+        return tokenEntity;
     }
 
 }

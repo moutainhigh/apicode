@@ -1,18 +1,21 @@
 package com.ycandyz.master.controller.goodsManage;
 
-import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
+import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
+import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
+import com.ycandyz.master.vo.MallCategoryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Api(value="商品分类",tags={"商品管理-商品分类动态接口"})
-@RestController("/mall")
+//@RestController("/mallCategory")
+@RestController
+@RequestMapping("/mallCategory")
 @Slf4j
 public class MallCategoryController {
     @Resource
@@ -20,13 +23,36 @@ public class MallCategoryController {
 
     @ApiOperation(value = "添加商品分类",notes = "添加",httpMethod = "POST")
     @PostMapping("/category")
-    public void addMallCategory(@RequestBody MallCategory mallCategory){
-        mallCategory.setShopNo("22212");
-        mallCategory.setCategoryNo("2212");
-        mallCategory.setLayer(1);
-        mallCategory.setStatus(true);
-        mallCategory.setSortValue(1);
-        mallCategoryService.addMallCategory(mallCategory);
+    public CommonResult<List<MallCategoryDTO>> addMallCategory(@RequestBody MallCategoryVO mallCategoryVO){
+        List<MallCategoryDTO> mallCategoryDTOS = mallCategoryService.addMallCategory(mallCategoryVO);
+        return CommonResult.success(mallCategoryDTOS);
+    }
+
+    @ApiOperation(value = "查询单个分类(第二级)信息",notes = "查询",httpMethod = "GET")
+    @GetMapping("/category/{categoryNo}")
+    public CommonResult<MallCategoryDTO> selCategoryByCategoryNo(@PathVariable(value = "categoryNo") String categoryNo){
+        MallCategoryDTO mallCategoryDTO = mallCategoryService.selCategoryByCategoryNo(categoryNo);
+        log.info("categoryNo:{}；根据categoryNo查询单个分类信息结果:{}",categoryNo,mallCategoryDTO);
+        return CommonResult.success(mallCategoryDTO);
+    }
+
+    @ApiOperation(value = "查询某个分类的子类列表",notes = "查询",httpMethod = "GET")
+    @GetMapping("/category/children/{parentCategoryNo}")
+    public CommonResult<List<MallCategoryDTO>> selChildCategoryByCategoryNo(@PathVariable(value = "parentCategoryNo") String parentCategoryNo){
+        List<MallCategoryDTO> mallCategoryDTOs = mallCategoryService.selCategoryByParentCategoryNo(parentCategoryNo);
+        log.info("parentCategoryNo:{}；根据categoryNo查询某个分类的子类列表结果:{}",parentCategoryNo,mallCategoryDTOs);
+        return CommonResult.success(mallCategoryDTOs);
+    }
+
+
+    @ApiOperation(value = "删除分类模版",notes = "删除",httpMethod = "DELETE")
+    @DeleteMapping("/category/{categoryNo}")
+    public CommonResult delMallSpecBySpecNo(@PathVariable(value = "categoryNo") String categoryNo){
+        int i = mallCategoryService.delCategoryByCategoryNo(categoryNo);
+        if (i > 0){
+            return CommonResult.success(null);
+        }
+        return CommonResult.failed(null);
     }
 
 }

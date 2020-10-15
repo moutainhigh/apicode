@@ -24,6 +24,6 @@
     </select>
     <select id="selMallSpecValueByKeyWord" resultMap="BaseResultMap" parameterType="java.lang.String">
         select * from mall_spec_value  where spec_value like "%"#{keyWord}"%";
-</select>
+    </select>
 
 </mapper>

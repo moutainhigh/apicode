@@ -13,5 +13,6 @@ public interface MallSpecDao {
     List<MallSpec> selMallSpecByKeyWord(@Param("shopNo") String shopNo, @Param("keyWord") String keyWord);
     MallSpec selMallSpecBySpecNo(@Param("shopNo") String shopNo, @Param("specNo")String specNo);
 
-    List<String> selMallSpecByShopNo(@Param("shopNo") String shopNo);
+    List<String> selMallSpecNoByShopNo(@Param("shopNo") String shopNo);
+
 }

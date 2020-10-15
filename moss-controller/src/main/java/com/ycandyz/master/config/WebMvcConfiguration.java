@@ -41,7 +41,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         // 注册 token 验证拦截器
-         //registry.addInterceptor(tokenInterceptor).addPathPatterns("/**");
-         registry.addInterceptor(logInterceptor).addPathPatterns("/**");
+         registry.addInterceptor(tokenInterceptor).addPathPatterns("/**");
+         //registry.addInterceptor(logInterceptor).addPathPatterns("/**");
     }
 }

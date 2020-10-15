@@ -3,6 +3,7 @@ package com.ycandyz.master.service.mall.goodsManage.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.ycandyz.master.constants.RedisConstants;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingRegionDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingRegionProvinceDao;
@@ -16,6 +17,7 @@ import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegion;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegionProvince;
 import com.ycandyz.master.service.mall.goodsManage.MallShippingService;
+import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.SnowFlakeUtil;
 import com.ycandyz.master.vo.MallShippingRegionVO;
 import com.ycandyz.master.vo.MallShippingVO;
@@ -46,6 +48,9 @@ public class MallShippingServiceImpl implements MallShippingService {
     @Resource
     private MallShippingRegionDao mallShippingRegionDao;
 
+    @Resource
+    private RedisUtil redisUtil;
+
     /**
      * @Description: 添加运费模版
     */
@@ -53,7 +58,7 @@ public class MallShippingServiceImpl implements MallShippingService {
     @Transactional
     public List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO) {
         SnowFlakeUtil snowFlake = new SnowFlakeUtil(1, 1);
-        String shopNo = "61763436278748160000";
+        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
         String shippingNo = String.valueOf(snowFlake.nextId());
 
         MallShipping mallShipping = new MallShipping();
@@ -96,12 +101,37 @@ public class MallShippingServiceImpl implements MallShippingService {
 
     }
     /**
-     * @Description: 根据shippingNo查询模版
+     * @Description: 根据shippingNo查询运费模版
     */
     @Override
     public MallShippingDTO selMallShippingByShippingNo(String shippingNo) {
-        MallShippingDTO mallShippingDTO = mallShippingDao.selMallShippingByShippingNo(shippingNo);
-        log.info("shippingNo:{};根据shippingNo查询数据库结果:{}",shippingNo,mallShippingDTO);
+        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
+        log.info("根据shippingNo查询运费模版入参:shopNo:{},shippingNo:{}",shopNo,shippingNo);
+        MallShippingDTO mallShippingDTO = new MallShippingDTO();
+        MallShipping mallShipping = mallShippingDao.selMallShippingByShippingNo(shopNo,shippingNo);
+        if (mallShipping == null){
+            log.warn("根据shippingNo:{}查询运费模版不存在",shippingNo);
+            return null;
+        }
+        mallShippingDTO.setShippingName(mallShipping.getShippingName());
+        mallShippingDTO.setShippingMethod(mallShipping.getShippingMethod());
+        List<MallShippingRegion> mallShippingRegions = mallShippingRegionDao.selMallShippingRegionByShippingNo(shippingNo);
+        MallShippingRegionDTO mallShippingRegionDTO = null;
+        ArrayList<MallShippingRegionDTO> mallShippingRegionDTOList = Lists.newArrayList();
+        for (MallShippingRegion mr: mallShippingRegions) {
+            mallShippingRegionDTO = new MallShippingRegionDTO();
+            mallShippingRegionDTO.setFirstCount(mr.getFirstCount());
+            mallShippingRegionDTO.setFirstPrice(mr.getFirstPrice());
+            mallShippingRegionDTO.setMoreCount(mr.getMoreCount());
+            mallShippingRegionDTO.setMorePrice(mr.getMorePrice());
+            List<String> provinces = mallShippingRegionProvinceDao.selMallShippingRegionProvinceByRegionNo(mr.getRegionNo());
+            String[] pAr = new String[provinces.size()];
+            mallShippingRegionDTO.setProvinces(provinces.toArray(pAr));
+            mallShippingRegionDTOList.add(mallShippingRegionDTO);
+        }
+        MallShippingRegionDTO[] mallShippingRegionDTOS = new MallShippingRegionDTO[mallShippingRegionDTOList.size()];
+        mallShippingDTO.setRegions(mallShippingRegionDTOList.toArray(mallShippingRegionDTOS));
+        log.info("shippingNo:{};根据shippingNo查询数据库结果:{}",shippingNo,mallShippingRegionDTO);
         return  mallShippingDTO;
     }
 
@@ -122,7 +152,6 @@ public class MallShippingServiceImpl implements MallShippingService {
     */
     @Override
     public List<MallShippingDTO> selMallShippingByShopNo(String shopNo) {
-        shopNo = "61763436278748160000";
         List<MallShippingDTO> mallShippingDTOS = new ArrayList<>();
         MallShippingDTO mallShippingDTO = null;
         List<MallShipping> mallShippings = mallShippingDao.selMallShippingByShopNo(shopNo);
@@ -174,17 +203,9 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description: 根据shippingNo删除运费模版
     */
     @Override
-    @Transactional
-    public boolean delMallShippingByshippingNo(String shippingNo) {
-        int mp = mallShippingDao.delMallShippingByshippingNo(shippingNo);
-        List<MallShippingRegion> mallShippingRegions = mallShippingRegionDao.selMallShippingRegionByShippingNo(shippingNo);
-        for (MallShippingRegion m: mallShippingRegions) {
-            int i = mallShippingRegionProvinceDao.delMallShippingRegionProvinceByshippingNo(m.getRegionNo());
-        }
-        int mpr = mallShippingRegionDao.delMallShippingRegionByshippingNo(shippingNo);
-        if (mp >0 && mpr >0){
-            return true;
-        }
-        return false;
+    public int delMallShippingByshippingNo(String shippingNo) {
+        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
+        int mp = mallShippingDao.delMallShippingByshippingNo(shopNo,shippingNo);
+        return mp;
     }
 }

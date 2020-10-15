@@ -2,6 +2,7 @@ package com.ycandyz.master.service.mall.goodsManage;
 
 import com.github.pagehelper.PageInfo;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
+import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
 import com.ycandyz.master.vo.MallShippingVO;
@@ -28,5 +29,5 @@ public interface MallShippingService {
 
     List<MallShippingRegionProvinceDTO> selMallShippingRegionProvince();
 
-    boolean delMallShippingByshippingNo(String shippingNo);
+    int delMallShippingByshippingNo(String shippingNo);
 }

@@ -17,7 +17,10 @@
         values (#{shopNo},#{specNo},#{specName},#{sortValue},#{status},now(),now());
     </insert>
     <delete id="delMallSpecBySpecNo" parameterType="java.lang.String">
-        delete from mall_spec where shop_no = #{shopNo} and spec_no = #{specNo};
+        delete t1,t2
+        from mall_spec as t1
+        left join mall_spec_value as t2 on t1.spec_no = t2.spec_no
+        where t1.shop_no = #{shopNo} and t1.spec_no = #{specNo};
     </delete>
     <select id="selMallSpecBySpecNo" resultMap="BaseResultMap" parameterType="java.lang.String">
           select * from mall_spec where shop_no = #{shopNo}  and spec_no=#{specNo};
@@ -25,7 +28,7 @@
     <select id="selMallSpecByKeyWord" resultMap="BaseResultMap" parameterType="java.lang.String">
         select * from mall_spec where shop_no = #{shopNo}  and spec_name like "%"#{keyWord}"%";
     </select>
-    <select id="selMallSpecByShopNo" parameterType="java.lang.String" resultType="java.lang.String">
+    <select id="selMallSpecNoByShopNo" parameterType="java.lang.String" resultType="java.lang.String">
         select spec_no from mall_spec where shop_no = #{shopNo};
     </select>
 

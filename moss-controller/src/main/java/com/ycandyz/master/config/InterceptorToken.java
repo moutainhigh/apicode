@@ -3,10 +3,13 @@ package com.ycandyz.master.config;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONUtil;
+import com.ycandyz.master.constants.RedisConstants;
 import com.ycandyz.master.enmus.ResultEnum;
 import com.ycandyz.master.entities.CommonResult;
+import com.ycandyz.master.entities.user.TokenEntity;
 import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.service.user.IUserService;
+import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +35,9 @@ public class InterceptorToken implements HandlerInterceptor {
     @Resource
     private IUserService userService;
 
+    @Resource
+    private RedisUtil redisUtil;
+
     @Value(value = "${token.authConfigSecret}")
     private String authConfigSecret;
 
@@ -49,10 +55,12 @@ public class InterceptorToken implements HandlerInterceptor {
             PrintWriter out = null ;
 
             CommonResult result = null;
+            TokenEntity tokenEntity = null;
             Integer userId = 0;
             if(StrUtil.isNotEmpty(token)){
                 try {
-                    userId = TokenUtil.verifyToken(token, authConfigSecret);
+                    tokenEntity = TokenUtil.verifyToken(token, authConfigSecret);
+                    userId = Integer.parseInt(tokenEntity.getUserId());
                 }catch (JSONException e){
                     log.error("token 解析失败");
                     result = new CommonResult(ResultEnum.TOKEN_ILLEGAL.getValue(),ResultEnum.TOKEN_ILLEGAL.getDesc(),null);
@@ -108,6 +116,7 @@ public class InterceptorToken implements HandlerInterceptor {
                     return false;
                 }
             }
+            redisUtil.set(RedisConstants.SHOPNO,tokenEntity.getShopNo());
             return true;
         }
         return false;
