@@ -17,7 +17,7 @@ public class TokenUtil {
      * @param token
      * @return
      */
-    public static Integer verifyToken(String token,String secret) throws JSONException {
+    public static JSONObject verifyToken(String token,String secret) throws JSONException {
 
         Integer userId = 0;
         String decodeStr = Base64.decodeStr(token);
@@ -31,10 +31,12 @@ public class TokenUtil {
         String jtiResult = SecureUtil.md5(verifyStr);
 
         if(jtiStr.equals(jtiResult)){
-            String userIdJson = json.get("user_id").toString();
-            userId = Integer.parseInt(userIdJson);
+//            String userIdJson = json.get("user_id").toString();
+//            userId = Integer.parseInt(userIdJson);
+            return json;
         }
-        return userId;
+        return null;
+//        return userId;
     }
 
 }

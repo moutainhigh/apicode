@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallAfterSalesDao">
+
+    <select id="getTrendMallAfterSalesPage" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
+        SELECT
+            sales.after_sales_no as afterSalesNo,
+            sales.order_no as orderNo,
+            sales.order_detail_no as orderDetailNo,
+            modetail.item_name as itemName,
+            modetail.goods_no as goodsNo,
+            sales.status as status,
+            sales.sub_status as subStatus,
+            sales.quantity as quantity,
+            sales.money as money,
+            modetail.real_money as realMoney,
+            mo.pay_type as payType,
+            modetail.quantity as detailQuantity,
+            concat(u.`name`,' ',u.phone) as userName,
+            sales.apply_at as applyAt
+        FROM
+            mall_after_sales sales
+            LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
+            LEFT JOIN user u ON sales.user_id=u.id
+            WHERE
+            1=1
+            <if test="p.refundNo != null and p.refundNo != ''">
+                and
+                modetail.refund_no=#{p.refundNo}
+            </if>
+            <if test="p.afterSalesNo != null and p.afterSalesNo != ''">
+                and
+                sales.after_sales_no = #{p.afterSalesNo}
+            </if>
+            <if test="p.status != null">
+                and
+                sales.status=#{p.status}
+            </if>
+            <if test="p.subStatus != null">
+                and
+                sales.sub_status=#{p.subStatus}
+            </if>
+            <if test="p.applyAtFrom != null">
+                and
+                from_unixtime(sales.apply_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.applyAtFrom}
+            </if>
+            <if test="p.applyAtTo != null">
+                and
+                from_unixtime(sales.apply_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.applyAtTo}
+            </if>
+            <if test="p.orderNo != null and p.orderNo != ''">
+                and
+                sales.order_no=#{p.orderNo}
+            </if>
+            <if test="p.shopItem != null and p.shopItem != ''">
+                and
+                (modetail.item_name LIKE concat('%',#{p.shopItem},'%') OR modetail.goods_no LIKE concat('%',#{p.shopItem},'%'))
+            </if>
+            <if test="p.userName != null and p.userName != ''">
+                and
+                (u.`name` LIKE concat('%',#{p.userName},'%') OR u.phone LIKE concat('%',#{p.userName},'%'))
+            </if>
+    </select>
+
+    <select id="querySalesDetail" parameterType="java.lang.Long" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
+        SELECT
+            sales.after_sales_no as afterSalesNo,
+            sales.order_no as orderNo,
+            sales.order_detail_no as orderDetailNo,
+            modetail.item_name as itemName,
+            modetail.goods_no as goodsNo,
+            sales.status as status,
+            sales.sub_status as subStatus,
+            sales.quantity as salesQuantity,
+            sales.money as money,
+            modetail.real_money as realMoney,
+            #mo.pay_type as payType,
+            modetail.quantity as detailQuantity,
+            #concat(u.`name`,' ',u.phone) as userName,
+            sales.apply_at as applyAt,
+            sales.audit_first_at as auditFirstAt;
+            sales.send_at as sendAt,
+            sales.audit_second_at as auditSecondAt
+        FROM
+            mall_after_sales sales
+            LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
+            LEFT JOIN user u ON sales.user_id=u.id
+            LEFT JOIN mall_order mo ON sales.order_no=mo.order_no
+            WHERE
+            sales.id=#{id}
+    </select>
+</mapper>

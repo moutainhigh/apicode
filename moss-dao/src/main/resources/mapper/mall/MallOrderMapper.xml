@@ -132,7 +132,7 @@
             and
             (ship.receiver like concat('%',#{p.consignor},'%') OR u.phone like concat('%',#{p.consignor},'%'))	/**收货人名称或者手机号*/
         </if>
-        <if test="p.deliverType != null and p.deliverType != ''">
+        <if test="p.deliverType != null">
             and
             mo.deliver_type=#{p.deliverType}	/**发货方式:1-配送 2-自提*/
         </if>

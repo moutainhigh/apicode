@@ -1,21 +1,19 @@
-package com.ycandyz.master.entities.mall;
+package com.ycandyz.master.model.mall;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@TableName("mall_after_sales")
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@ApiModel(value="mall_after_sales对象", description="售后表")
-public class MallAfterSales extends Model {
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ApiModel(value="售后表", description="售后表查询VO")
+public class MallAfterSalesVO {
 
     @ApiModelProperty(value = "id")
     private Long id;
@@ -82,7 +80,16 @@ public class MallAfterSales extends Model {
     /**二次审核时间*/
     @ApiModelProperty(value = "二次审核时间")
     private Long auditSecondAt;
-    /**订单详情编号*/
-    @ApiModelProperty(value = "订单详情编号")
-    private String orderDetailNo;
+    @ApiModelProperty(value = "商品名称")
+    private String itemName;
+    @ApiModelProperty(value = "货号")
+    private String goodsNo;
+    @ApiModelProperty(value = "实付金额")
+    private BigDecimal realMoney;
+    @ApiModelProperty(value = "支付类型")
+    private Integer payType;
+    @ApiModelProperty(value = "退款金额")
+    private Integer detailQuantity;
+    @ApiModelProperty(value = "购买用户")
+    private String userName;
 }

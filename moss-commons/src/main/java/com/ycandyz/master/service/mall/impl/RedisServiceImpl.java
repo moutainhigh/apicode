@@ -1,4 +1,4 @@
-package com.ycandyz.master.service.impl;
+package com.ycandyz.master.service.mall.impl;
 
 import com.ycandyz.master.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
