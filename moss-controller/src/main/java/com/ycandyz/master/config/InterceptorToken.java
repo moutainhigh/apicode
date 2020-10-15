@@ -2,14 +2,13 @@ package com.ycandyz.master.config;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONException;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.ycandyz.master.constants.RedisConstants;
-import com.ycandyz.master.enmus.ResultEnum;
 import com.ycandyz.master.entities.CommonResult;
-import com.ycandyz.master.entities.user.TokenEntity;
 import com.ycandyz.master.entities.user.User;
+import com.ycandyz.master.enums.ResultEnum;
+import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.user.IUserService;
-import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,14 +34,22 @@ public class InterceptorToken implements HandlerInterceptor {
     @Resource
     private IUserService userService;
 
-    @Resource
-    private RedisUtil redisUtil;
-
     @Value(value = "${token.authConfigSecret}")
     private String authConfigSecret;
 
+    @Value("${exclude.path}")
+    private String excludePath;
+
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
+
+        String path = httpServletRequest.getServletPath();
+        log.info(path);
+        if (excludePath.contains(path)) {
+            log.info("requestUrl: {}", path);
+            // 请求放行
+            return true;
+        }
         String url = httpServletRequest.getRequestURI();
         String token = httpServletRequest.getHeader("token");
         String method = httpServletRequest.getMethod();
@@ -55,12 +62,14 @@ public class InterceptorToken implements HandlerInterceptor {
             PrintWriter out = null ;
 
             CommonResult result = null;
-            TokenEntity tokenEntity = null;
             Integer userId = 0;
+            String shopNo = "";
             if(StrUtil.isNotEmpty(token)){
                 try {
-                    tokenEntity = TokenUtil.verifyToken(token, authConfigSecret);
-                    userId = Integer.parseInt(tokenEntity.getUserId());
+//                    userId = TokenUtil.verifyToken(token, authConfigSecret);
+                    JSONObject jsonObject = TokenUtil.verifyToken(token, authConfigSecret);
+                    userId = jsonObject.getInt("user_id");
+                    shopNo = jsonObject.getStr("shop_no");
                 }catch (JSONException e){
                     log.error("token 解析失败");
                     result = new CommonResult(ResultEnum.TOKEN_ILLEGAL.getValue(),ResultEnum.TOKEN_ILLEGAL.getDesc(),null);
@@ -100,6 +109,12 @@ public class InterceptorToken implements HandlerInterceptor {
                             httpServletResponse.sendError(500);
                             return false;
                         }
+                    }else {
+                        //获取到用户信息
+                        //查看shop_no
+                        UserVO userVO = userToUserVO(ukeUser);
+                        userVO.setShopNo(shopNo);
+                        httpServletRequest.getSession().setAttribute("currentUser", userVO);
                     }
                 }
             }else{
@@ -116,7 +131,6 @@ public class InterceptorToken implements HandlerInterceptor {
                     return false;
                 }
             }
-            redisUtil.set(RedisConstants.SHOPNO,tokenEntity.getShopNo());
             return true;
         }
         return false;
@@ -130,5 +144,33 @@ public class InterceptorToken implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
         // System.out.println("视图渲染之后的操作");
+    }
+
+    private UserVO userToUserVO(User user){
+        UserVO userVO = new UserVO();
+        userVO.setAppstoreId(user.getAppstoreId());
+        userVO.setDisableReason(user.getDisableReason());
+        userVO.setEmail(user.getEmail());
+        userVO.setHeadimg(user.getHeadimg());
+        userVO.setId(user.getId());
+        userVO.setInviteCode(user.getInviteCode());
+        userVO.setInviteStatus(user.getInviteStatus());
+        userVO.setInviteUserId(user.getInviteUserId());
+        userVO.setIsAuth(user.getIsAuth());
+        userVO.setIsDel(user.getIsDel());
+        userVO.setIsDisable(user.getIsDisable());
+        userVO.setName(user.getName());
+        userVO.setNickname(user.getNickname());
+        userVO.setPhone(user.getPhone());
+        userVO.setRegistDevice(user.getRegistDevice());
+        userVO.setRegistPlatfrom(user.getRegistPlatfrom());
+        userVO.setSex(user.getSex());
+        userVO.setWxGzhOpenId(user.getWxGzhOpenId());
+        userVO.setWxId(user.getWxId());
+        userVO.setWxMiniOpenId(user.getWxMiniOpenId());
+        userVO.setWxOpenId(user.getWxOpenId());
+        userVO.setWxUnionId(user.getWxUnionId());
+        userVO.setBlockChainId(user.getBlockChainId());
+        return userVO;
     }
 }

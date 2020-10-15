@@ -5,12 +5,13 @@ import com.ycandyz.master.entities.user.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @Description: 用户信息
- * @Author: Wang Yang
- * @Date:   2020-09-23
- * @Version: V1.0
+ * <p>
+ * 用户表 Mapper 接口
+ * </p>
+ *
+ * @author SanGang
+ * @since 2020-10-13
  */
-
 @Mapper
 public interface UserDao extends BaseMapper<User> {
 

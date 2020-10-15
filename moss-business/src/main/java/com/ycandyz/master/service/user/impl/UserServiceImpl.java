@@ -1,18 +1,22 @@
 package com.ycandyz.master.service.user.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.user.UserDao;
+import com.ycandyz.master.domain.query.user.UserQuery;
 import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.service.user.IUserService;
 import org.springframework.stereotype.Service;
 
 /**
- * @Description: 用户信息
- * @Author: Wang Yang
- * @Date:   2020-09-23
- * @Version: V1.0
+ * <p>
+ * @Description 用户表 业务类
+ * </p>
+ *
+ * @author SanGang
+ * @since 2020-10-13
+ * @version 2.0
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUserService {
+public class UserServiceImpl extends BaseService<UserDao,User,UserQuery> implements IUserService {
 
 }

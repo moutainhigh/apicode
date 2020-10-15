@@ -6,8 +6,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 /**
  * @author: WangYang
@@ -21,6 +24,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     private InterceptorToken tokenInterceptor;
     @Autowired
     private InterceptorLog logInterceptor;
+    @Autowired
+    private com.ycandyz.master.auth.CurrentUserHandlerMethodArgReslover CurrentUserHandlerMethodArgReslover;
 
     @Bean
     public CorsFilter corsFilter() {
@@ -42,6 +47,18 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry){
         // 注册 token 验证拦截器
          registry.addInterceptor(tokenInterceptor).addPathPatterns("/**");
-         //registry.addInterceptor(logInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(logInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(logInterceptor).excludePathPatterns("/youchuan-master/login"); //排除登录接口
     }
+
+    /**
+     * 参数解析器
+     *
+     * @param argumentResolvers
+     */
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(CurrentUserHandlerMethodArgReslover);
+    }
+
 }

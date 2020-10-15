@@ -1,15 +1,17 @@
 package com.ycandyz.master.service.user;
 
-
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.entities.user.User;
 
 /**
- * @Description: 用户信息
- * @Author: Wang Yang
- * @Date:   2020-09-23
- * @Version: V1.0
+ * <p>
+ * @Description 用户表 业务接口类
+ * </p>
+ *
+ * @author SanGang
+ * @since 2020-10-13
+ * @version 2.0
  */
-public interface IUserService extends IService<User> {
-
+public interface IUserService extends IService<User>{
+	
 }
