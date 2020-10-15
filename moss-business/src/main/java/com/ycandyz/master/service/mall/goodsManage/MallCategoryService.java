@@ -2,6 +2,7 @@ package com.ycandyz.master.service.mall.goodsManage;
 
 
 import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
+import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.vo.MallCategoryVO;
 
 import java.util.List;
@@ -16,11 +17,11 @@ public interface MallCategoryService {
     /**
      * @Description: 添加商品
     */
-    List<MallCategoryDTO> addMallCategory(MallCategoryVO mallCategoryVO);
+    List<MallCategoryDTO> addMallCategory(MallCategoryVO mallCategoryVO, UserVO userVO);
 
-    MallCategoryDTO selCategoryByCategoryNo(String categoryNo);
+    MallCategoryDTO selCategoryByCategoryNo(String categoryNo,UserVO userVO);
 
-    int delCategoryByCategoryNo(String categoryNo);
+    int delCategoryByCategoryNo(String categoryNo,UserVO userVO);
 
-    List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo);
+    List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo,UserVO userVO);
 }

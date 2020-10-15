@@ -26,7 +26,7 @@
           select * from mall_spec where shop_no = #{shopNo}  and spec_no=#{specNo};
     </select>
     <select id="selMallSpecByKeyWord" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select * from mall_spec where shop_no = #{shopNo}  and spec_name like "%"#{keyWord}"%";
+        select * from mall_spec where shop_no = #{shopNo}  and spec_name like "%"#{keyWord}"%"
     </select>
     <select id="selMallSpecNoByShopNo" parameterType="java.lang.String" resultType="java.lang.String">
         select spec_no from mall_spec where shop_no = #{shopNo};

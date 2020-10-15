@@ -5,6 +5,7 @@ import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
+import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.vo.MallShippingVO;
 
 import java.util.List;
@@ -17,17 +18,17 @@ import java.util.List;
 */
 public interface MallShippingService {
 
-    List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO);
+    List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO,UserVO userVO);
 
     void updateMallShipping(MallShipping mallShipping);
 
-    MallShippingDTO selMallShippingByShippingNo(String shippingNo);
+    MallShippingDTO selMallShippingByShippingNo(String shippingNo,UserVO userVO);
 
     PageInfo<MallShipping> selMallShippingByKeyWord(Integer page, Integer PageSize, String shippingName);
 
-    List<MallShippingDTO> selMallShippingByShopNo(String shopNo);
+    List<MallShippingDTO> selMallShippingByShopNo(UserVO userVO);
 
     List<MallShippingRegionProvinceDTO> selMallShippingRegionProvince();
 
-    int delMallShippingByshippingNo(String shippingNo);
+    int delMallShippingByshippingNo(String shippingNo, UserVO userVO);
 }

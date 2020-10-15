@@ -9,8 +9,10 @@ import com.ycandyz.master.enmus.SortValueEnum;
 import com.ycandyz.master.enmus.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.entities.mall.goodsManage.MallParentCategory;
+import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
 import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
+import com.ycandyz.master.utils.IDGeneratorUtils;
 import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.SnowFlakeUtil;
 import com.ycandyz.master.vo.MallCategoryVO;
@@ -35,18 +37,14 @@ public class MallCategoryServiceImpl implements MallCategoryService {
     @Resource
     private MallCategoryDao mallCategoryDao;
 
-    @Resource
-    private RedisUtil redisUtil;
-
     /**
      * @Description: 添加商品分类
     */
     @Override
-    public List<MallCategoryDTO> addMallCategory(MallCategoryVO mallCategoryVO) {
+    public List<MallCategoryDTO> addMallCategory(MallCategoryVO mallCategoryVO, UserVO userVO) {
         log.info("添加商品分类入参:{}",mallCategoryVO);
-        SnowFlakeUtil snowFlake = new SnowFlakeUtil(1, 1);
-        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
-        String categoryNo = String.valueOf(snowFlake.nextId());
+        String shopNo = userVO.getShopNo();
+        String categoryNo = String.valueOf(IDGeneratorUtils.getLongId());
         MallCategory mallCategory = new MallCategory();
         mallCategory.setShopNo(shopNo);
         mallCategory.setCategoryNo(categoryNo);
@@ -61,7 +59,7 @@ public class MallCategoryServiceImpl implements MallCategoryService {
             mallCategory.setLayer(LayerEnum.SECONDLAYER.getCode());
         }
         mallCategoryDao.addMallCategory(mallCategory);
-        List<MallCategoryDTO> mallCategoryDTOS = selCategoryByShopNo(shopNo);
+        List<MallCategoryDTO> mallCategoryDTOS = selCategoryByShopNo(userVO);
         return mallCategoryDTOS;
     }
 
@@ -70,9 +68,9 @@ public class MallCategoryServiceImpl implements MallCategoryService {
      * @Description: 查询单个分类信息-第二级分类
     */
     @Override
-    public MallCategoryDTO selCategoryByCategoryNo(String categoryNo) {
-        log.info("根据categoryNo:{}查询单个分类信息",categoryNo);
-        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
+    public MallCategoryDTO selCategoryByCategoryNo(String categoryNo,UserVO userVO) {
+        log.info("根据categoryNo:{};userVO:{}查询单个分类信息",categoryNo,userVO);
+        String shopNo = userVO.getShopNo();
         MallCategoryDTO mallCategoryDTO = new MallCategoryDTO();
         MallCategory mallCategory = mallCategoryDao.selCategoryByCategoryNo(shopNo,categoryNo);
         if (mallCategory != null){
@@ -91,7 +89,8 @@ public class MallCategoryServiceImpl implements MallCategoryService {
     /**
      * @Description: 根据商户查询全部分类
     */
-    public List<MallCategoryDTO> selCategoryByShopNo(String shopNo) {
+    public List<MallCategoryDTO> selCategoryByShopNo(UserVO userVO) {
+        String shopNo = userVO.getShopNo();
         log.info("根据商户shopNo:{}查询全部分类",shopNo);
         List<MallCategoryDTO> mallCategoryDTOS = Lists.newArrayList();
         List<MallCategory> mallCategories = mallCategoryDao.selCategoryNoByShopNo(shopNo);
@@ -100,7 +99,7 @@ public class MallCategoryServiceImpl implements MallCategoryService {
             return null;
         }
         for (MallCategory m: mallCategories) {
-            List<MallCategoryDTO>  mallCategoryDTO = selCategoryByParentCategoryNo(m.getCategoryNo());
+            List<MallCategoryDTO>  mallCategoryDTO = selCategoryByParentCategoryNo(m.getCategoryNo(),userVO);
             mallCategoryDTOS.addAll(mallCategoryDTO);
         }
         return mallCategoryDTOS;
@@ -110,8 +109,9 @@ public class MallCategoryServiceImpl implements MallCategoryService {
      * @Description: 删除
     */
     @Override
-    public int delCategoryByCategoryNo(String categoryNo) {
-        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
+    public int delCategoryByCategoryNo(String categoryNo,UserVO userVO) {
+        log.info("删除商品分类入参categoryNo:{};user:{}",categoryNo,userVO);
+        String shopNo = userVO.getShopNo();
         int i = mallCategoryDao.delCategoryByCategoryNo(shopNo, categoryNo);
         return i;
     }
@@ -120,9 +120,9 @@ public class MallCategoryServiceImpl implements MallCategoryService {
      * @Description: 查询某个分类的子类列表
      */
     @Override
-    public List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo) {
-        log.info("根据parentCategoryNo:{}查询某个分类的子类列表",parentCategoryNo);
-        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
+    public List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo,UserVO userVO) {
+        log.info("根据parentCategoryNo:{};user:{}查询某个分类的子类列表",parentCategoryNo,userVO);
+        String shopNo = userVO.getShopNo();
         ArrayList<MallCategoryDTO> mallCategoryDTOS = Lists.newArrayList();
         MallParentCategory mallParentCategory = mallCategoryDao.selParentCategoryByCategoryNo(shopNo, parentCategoryNo);
         if (mallParentCategory == null){

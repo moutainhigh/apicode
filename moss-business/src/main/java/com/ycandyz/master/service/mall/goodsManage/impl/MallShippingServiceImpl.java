@@ -16,9 +16,9 @@ import com.ycandyz.master.enmus.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegion;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegionProvince;
+import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallShippingService;
-import com.ycandyz.master.utils.RedisUtil;
-import com.ycandyz.master.utils.SnowFlakeUtil;
+import com.ycandyz.master.utils.IDGeneratorUtils;
 import com.ycandyz.master.vo.MallShippingRegionVO;
 import com.ycandyz.master.vo.MallShippingVO;
 import lombok.extern.slf4j.Slf4j;
@@ -48,18 +48,14 @@ public class MallShippingServiceImpl implements MallShippingService {
     @Resource
     private MallShippingRegionDao mallShippingRegionDao;
 
-    @Resource
-    private RedisUtil redisUtil;
-
     /**
      * @Description: 添加运费模版
     */
     @Override
     @Transactional
-    public List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO) {
-        SnowFlakeUtil snowFlake = new SnowFlakeUtil(1, 1);
-        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
-        String shippingNo = String.valueOf(snowFlake.nextId());
+    public List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO, UserVO userVO) {
+        String shopNo = userVO.getShopNo();
+        String shippingNo = String.valueOf(IDGeneratorUtils.getLongId());
 
         MallShipping mallShipping = new MallShipping();
         mallShipping.setShopNo(shopNo);
@@ -74,7 +70,7 @@ public class MallShippingServiceImpl implements MallShippingService {
         MallShippingRegion mallShippingRegion = new MallShippingRegion();
         MallShippingRegionVO[] regions = mallShippingVO.getRegions();
         for (MallShippingRegionVO m : regions) {
-            String regionNo = String.valueOf(snowFlake.nextId());
+            String regionNo = String.valueOf(IDGeneratorUtils.getLongId());
             mallShippingRegion.setShippingNo(shippingNo);
             mallShippingRegion.setFirstCount(m.getFirstCount());
             mallShippingRegion.setFirstPrice(m.getFirstPrice());
@@ -92,7 +88,7 @@ public class MallShippingServiceImpl implements MallShippingService {
             }
         }
         //添加完后展示全部
-        List<MallShippingDTO> mallShippingDTOS = selMallShippingByShopNo(shopNo);
+        List<MallShippingDTO> mallShippingDTOS = selMallShippingByShopNo(userVO);
         return mallShippingDTOS;
     }
 
@@ -104,8 +100,8 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description: 根据shippingNo查询运费模版
     */
     @Override
-    public MallShippingDTO selMallShippingByShippingNo(String shippingNo) {
-        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
+    public MallShippingDTO selMallShippingByShippingNo(String shippingNo,UserVO userVO) {
+        String shopNo = userVO.getShopNo();
         log.info("根据shippingNo查询运费模版入参:shopNo:{},shippingNo:{}",shopNo,shippingNo);
         MallShippingDTO mallShippingDTO = new MallShippingDTO();
         MallShipping mallShipping = mallShippingDao.selMallShippingByShippingNo(shopNo,shippingNo);
@@ -151,7 +147,8 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description:根据商户号查询运费模版
     */
     @Override
-    public List<MallShippingDTO> selMallShippingByShopNo(String shopNo) {
+    public List<MallShippingDTO> selMallShippingByShopNo(UserVO userVO) {
+        String shopNo = userVO.getShopNo();
         List<MallShippingDTO> mallShippingDTOS = new ArrayList<>();
         MallShippingDTO mallShippingDTO = null;
         List<MallShipping> mallShippings = mallShippingDao.selMallShippingByShopNo(shopNo);
@@ -203,8 +200,8 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description: 根据shippingNo删除运费模版
     */
     @Override
-    public int delMallShippingByshippingNo(String shippingNo) {
-        String shopNo = (String) redisUtil.get(RedisConstants.SHOPNO);
+    public int delMallShippingByshippingNo(String shippingNo,UserVO userVO) {
+        String shopNo = userVO.getShopNo();
         int mp = mallShippingDao.delMallShippingByshippingNo(shopNo,shippingNo);
         return mp;
     }

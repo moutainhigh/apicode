@@ -19,7 +19,7 @@
     </insert>
 
     <select id="selMallShippingByKeyWord" resultMap="BaseResultMap" parameterType="java.lang.String">
-            select * from mall_shipping where shipping_name like "%"#{shippingName}"%";
+            select * from mall_shipping where shipping_name like "%"#{shippingName}"%"
     </select>
 
 

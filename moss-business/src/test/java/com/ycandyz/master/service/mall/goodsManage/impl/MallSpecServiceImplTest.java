@@ -20,7 +20,5 @@ public class MallSpecServiceImplTest {
     private MallSpecService mallSpecService;
     @Test
     public void selMallSpecByKeyWord() {
-        PageInfo<MallSpecKeyWordVO> s = mallSpecService.selMallSpecByKeyWord(1, 1, "s");
-        log.info("tets:{}",s);
     }
 }

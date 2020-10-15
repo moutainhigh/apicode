@@ -23,7 +23,7 @@
          select * from mall_spec_value  where spec_no=#{specNo};
     </select>
     <select id="selMallSpecValueByKeyWord" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select * from mall_spec_value  where spec_value like "%"#{keyWord}"%";
+        select * from mall_spec_value  where spec_value like "%"#{keyWord}"%"
     </select>
 
 </mapper>
