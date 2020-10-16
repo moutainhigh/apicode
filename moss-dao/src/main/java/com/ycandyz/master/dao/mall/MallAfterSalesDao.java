@@ -9,10 +9,14 @@ import com.ycandyz.master.entities.mall.MallAfterSales;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface MallAfterSalesDao extends BaseMapper<MallAfterSales> {
 
     Page<MallAfterSalesDTO> getTrendMallAfterSalesPage(PageModel model, @Param("p") MallafterSalesQuery mallafterSalesQuery);
 
     MallAfterSalesDTO querySalesDetail(@Param("id") Long id);
+
+    List<MallAfterSalesDTO> getTrendMallAfterSalesList(@Param("p") MallafterSalesQuery mallafterSalesQuery);
 }

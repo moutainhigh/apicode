@@ -3,11 +3,13 @@ package com.ycandyz.master.controller.mall;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.PageModel;
+import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.MallOrderDetailVO;
 import com.ycandyz.master.model.mall.MallOrderVO;
+import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.mall.impl.MaillOrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +31,8 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @return
      */
     @PostMapping("/order/list")
-    public CommonResult<Page<MallOrderVO>> queryMallOrderList(PageModel model, @RequestBody MallOrderQuery mallOrder){
-        return mallOrderService.queryOrderList(model,mallOrder);
+    public CommonResult<Page<MallOrderVO>> queryMallOrderList(PageModel model, @RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
+        return mallOrderService.queryOrderList(model,mallOrder,userVO);
     }
 
     /**
@@ -39,8 +41,8 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @param response
      */
     @PostMapping("/order/export")
-    public void exportEXT(@RequestBody MallOrderQuery mallOrder, HttpServletResponse response){
-        mallOrderService.exportEXT(mallOrder,response);
+    public void exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO, HttpServletResponse response){
+        mallOrderService.exportEXT(mallOrder,userVO,response);
     }
 
     /**
@@ -59,7 +61,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @return
      */
     @GetMapping("/order/shipment")
-    public CommonResult<String> shipment(@RequestParam("orderNo") String orderNo){
+    public CommonResult<String> shipment(@RequestParam("orderNo") String orderNo, @CurrentUser UserVO userVO){
         boolean flag = mallOrderService.shipment(orderNo);
         if (flag){
             return CommonResult.success("发货成功!");

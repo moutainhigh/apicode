@@ -14,6 +14,7 @@ import com.ycandyz.master.dto.mall.MallOrderDetailDTO;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.MallOrderDetailVO;
 import com.ycandyz.master.model.mall.MallOrderVO;
+import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private MallOrderDao mallOrderDao;
 
     @Override
-    public CommonResult<Page<MallOrderVO>> queryOrderList(PageModel model, MallOrderQuery mallOrderQuery) {
+    public CommonResult<Page<MallOrderVO>> queryOrderList(PageModel model, MallOrderQuery mallOrderQuery, UserVO userVO) {
+        mallOrderQuery.setShopNo(userVO.getShopNo());
         Page<MallOrderDTO> page = mallOrderDao.getTrendMallOrderPage(model,mallOrderQuery);
         Page<MallOrderVO> page1 = new Page<>();
         List<MallOrderVO> list = new ArrayList<>();
@@ -53,7 +55,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return CommonResult.success(page1);
     }
 
-    public void exportEXT(MallOrderQuery mallOrderQuery, HttpServletResponse response){
+    public void exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO, HttpServletResponse response){
+        mallOrderQuery.setShopNo(userVO.getShopNo());
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
         // 通过工具类创建writer，默认创建xls格式
         ExcelWriter writer = ExcelUtil.getWriter();
