@@ -153,16 +153,16 @@ public class MallSpecServiceImpl implements MallSpecService {
         PageInfo<MallSpecKeyWordVO> pageInfo = new PageInfo<>(mallSpecKeyWordVOvalues);
         return pageInfo;
     }
-    public PageInfo<MallSpecKeyWordVO> selMallSpecByKeyWord2(Integer page, Integer pageSize, String keyWord,UserVO userVO) {
-        String shopNo = userVO.getShopNo();
-        PageHelper.startPage(page,pageSize);
-        List<MallSpec> mallSpecs = mallSpecDao.selMallSpecByKeyWord(shopNo,keyWord);
-        log.info("shopNo:{};keyWord:{};规格模版表查询数据库结果:{}",shopNo,keyWord,mallSpecs);
-        List<MallSpecValue> mallSpecValues = mallSpecValueDao.selMallSpecValueByKeyWord(keyWord);
-        log.info("keyWord:{};规格模版value表查询数据库结果:{}",keyWord,mallSpecValues);
-
-        return null;
-    }
+//    public PageInfo<MallSpecKeyWordVO> selMallSpecByKeyWord2(Integer page, Integer pageSize, String keyWord,UserVO userVO) {
+//        String shopNo = userVO.getShopNo();
+//        PageHelper.startPage(page,pageSize);
+//        List<MallSpec> mallSpecs = mallSpecDao.selMallSpecByKeyWord(shopNo,keyWord);
+//        log.info("shopNo:{};keyWord:{};规格模版表查询数据库结果:{}",shopNo,keyWord,mallSpecs);
+//        List<MallSpecValue> mallSpecValues = mallSpecValueDao.selMallSpecValueByKeyWord(keyWord);
+//        log.info("keyWord:{};规格模版value表查询数据库结果:{}",keyWord,mallSpecValues);
+//
+//        return null;
+//    }
 
     /**
      * @Description: 查询规格模版
