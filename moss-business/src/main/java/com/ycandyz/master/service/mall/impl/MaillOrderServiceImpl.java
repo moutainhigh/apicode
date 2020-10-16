@@ -8,12 +8,15 @@ import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.mall.MallOrderDao;
+import com.ycandyz.master.dao.mall.MallShopDao;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.dto.mall.MallOrderDTO;
 import com.ycandyz.master.dto.mall.MallOrderDetailDTO;
+import com.ycandyz.master.dto.mall.MallShopDTO;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.MallOrderDetailVO;
 import com.ycandyz.master.model.mall.MallOrderVO;
+import com.ycandyz.master.model.mall.MallShopAddressVO;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +27,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,6 +35,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
     @Autowired
     private MallOrderDao mallOrderDao;
+
+    @Autowired
+    private MallShopDao mallShopDao;
 
     @Override
     public CommonResult<Page<MallOrderVO>> queryOrderList(PageModel model, MallOrderQuery mallOrderQuery, UserVO userVO) {
@@ -108,7 +115,43 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public boolean shipment(String orderNo) {
+    public boolean verShipmentNo(String shipNumber) {
+
         return false;
     }
+
+    @Override
+    public CommonResult<MallOrderVO> queryDetailByPickupNo(String pickupNo, UserVO userVO) {
+        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
+        if (mallOrderDTO!=null){
+            MallOrderVO mallOrderVO = new MallOrderVO();
+            BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+            return CommonResult.success(mallOrderVO);
+        }
+        return CommonResult.failed("查询提货码未查询到订单");
+    }
+
+    @Override
+    public CommonResult<String> verPickupNo(String orderNo, UserVO userVO) {
+        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByOrderNo(orderNo, userVO.getShopNo());
+        if (mallOrderDTO!=null){
+            Long time = new Date().getTime()/1000;      //获取当前时间到秒
+            mallOrderDTO.setReceiveAt(time.intValue());
+            MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(userVO.getShopNo());
+            if (mallOrderDTO==null){
+                return CommonResult.failed("未查询到店铺");
+            }
+            //更新数据库
+            MallOrder mallOrder = new MallOrder();
+            mallOrder.setId(mallOrderDTO.getId());
+            mallOrder.setReceiveAt(time.intValue());
+            mallOrder.setAfterSalesEndAt(time.intValue()+mallShopDTO.getAsHoldDays()*24*60*60);
+            mallOrder.setStatus(40);
+            mallOrder.setSubStatus(4060);
+            mallOrderDao.updateById(mallOrder);
+            return CommonResult.success("操作成功");
+        }
+        return CommonResult.failed("未查询到待自提订单");
+    }
+
 }

@@ -8,6 +8,7 @@ import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.MallOrderDetailVO;
 import com.ycandyz.master.model.mall.MallOrderVO;
+import com.ycandyz.master.model.mall.MallShopAddressVO;
 import com.ycandyz.master.model.user.UserVO;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,5 +21,10 @@ public interface MallOrderService extends IService<MallOrder> {
 
     CommonResult<MallOrderDetailVO> queryOrderDetail(String orderNo);
 
-    boolean shipment(String orderNo);
+    boolean verShipmentNo(String shipNumber);
+
+    CommonResult<MallOrderVO> queryDetailByPickupNo(String pickupNo, UserVO userVO);
+
+    CommonResult<String> verPickupNo(String orderNo, UserVO userVO);
+
 }

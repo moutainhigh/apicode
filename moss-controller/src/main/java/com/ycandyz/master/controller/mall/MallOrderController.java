@@ -56,17 +56,40 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     }
 
     /**
-     * 订单发货按钮
-     * @param orderNo
+     * 订单发货校验物流单号，调用三方接口，查看物流单号所属物流公司
+     * @param shipNumber
      * @return
      */
-    @GetMapping("/order/shipment")
-    public CommonResult<String> shipment(@RequestParam("orderNo") String orderNo, @CurrentUser UserVO userVO){
-        boolean flag = mallOrderService.shipment(orderNo);
+    @GetMapping("/order/shipment/verification")
+    public CommonResult<String> verShipmentNo(@RequestParam("shipNumber") String shipNumber, @CurrentUser UserVO userVO){
+        boolean flag = mallOrderService.verShipmentNo(shipNumber);
         if (flag){
             return CommonResult.success("发货成功!");
         }
         return CommonResult.failed("发货失败!");
     }
+
+    /**
+     * 通过提货码查询订单
+     * @param pickupNo
+     * @param userVO
+     * @return
+     */
+    @GetMapping("/order/pickup/query")
+    public CommonResult<MallOrderVO> queryDetailByPickupNo(@RequestParam("shipN") String pickupNo, @CurrentUser UserVO userVO){
+        return mallOrderService.queryDetailByPickupNo(pickupNo, userVO);
+    }
+
+    /**
+     * 验证提货码，出货
+     * @param pickupNo
+     * @param userVO
+     * @return
+     */
+    @GetMapping("/order/pickup/verification")
+    public CommonResult<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @CurrentUser UserVO userVO){
+        return mallOrderService.verPickupNo(pickupNo, userVO);
+    }
+
 
 }
