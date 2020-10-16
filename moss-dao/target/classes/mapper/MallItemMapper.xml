@@ -48,31 +48,22 @@
         #{shareSecondLevelRate},#{shareSecondLevelAmount},#{shareThirdMethod},#{shareThirdLevelMethod},#{shareThirdRate},
         #{shareThirdAmount},#{shareThirdLevelRate},#{shareThirdLevelAmount},#{deliveryType},#{pickupAddressIds},#{deliveryTypeBak});
     </insert>
-    <select id="selMallItemByitemNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+    <delete id="delMallItemByItemNo" parameterType="java.lang.String">
+        delete t1,t2,t3 from mall_item as t1
+        left join mall_sku as t2 on t1.item_no = t2.item_no
+        left join mall_sku_spec as t3 on t2.sku_no = t3.sku_no
+        where t1.shop_no = #{shopNo} and t1.item_no = #{itemNo};
+    </delete>
+        <select id="selMallItemByitemNo" resultMap="BaseResultMap" parameterType="java.lang.String">
         select * from mall_item where shop_no = #{shopNo} and item_no = #{itemNo};
     </select>
-    <!--    <delete id="delCategoryByCategoryNo" parameterType="java.lang.String">-->
-<!--        delete from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo};-->
-<!--    </delete>-->
-<!--    <select id="selCategoryByCategoryNo" resultMap="BaseResultMap" parameterType="java.lang.String">-->
-<!--        select * from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo} and layer = 1;-->
-<!--    </select>-->
-<!--    <select id="selParentCategoryByCategoryNo" resultMap="BaseResultMapParent" parameterType="java.lang.String">-->
-<!--         select * from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo} and layer = 0;-->
-<!--    </select>-->
-<!--    <select id="selParentCategoryNoByShopNo" resultType="java.lang.String" parameterType="java.lang.String">-->
-<!--          select parent_category_no from mall_category where shop_no = #{shopNo};-->
-<!--    </select>-->
-<!--    <select id="selCategoryNoByShopNo" resultMap="BaseResultMap" parameterType="java.lang.String">-->
-<!--        select * from mall_category where shop_no = #{shopNo} and layer = 0;-->
-<!--    </select>-->
-<!--    <select id="selParentCategoryByParentCategoryNo"-->
-<!--            resultMap="BaseResultMap" parameterType="java.lang.String">-->
-<!--        select * from mall_category where shop_no = #{shopNo} and parent_category_no = #{parentCategoryNo};-->
-<!--    </select>-->
-<!--    <select id="selCategoryByParentCategoryNo" resultMap="BaseResultMap" parameterType="java.lang.String">-->
-<!--        select * from mall_category where shop_no = #{shopNo} and parent_category_no = #{parentCategoryNo} and layer = 1;-->
-<!--    </select>-->
+    <update id="oprbyItemNo">
+        update mall_item set status = #{status} where item_no in
+        <foreach collection="itemNoList" item="state" open="(" separator="," close=")">
+            #{state}
+        </foreach>
+    </update>
 
 </mapper>
 
