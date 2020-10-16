@@ -3,11 +3,12 @@ package com.ycandyz.master.controller.mall.goodsManage;
 
 import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
+import com.ycandyz.master.dto.mall.goodsManage.MallItemDTO;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallItemService;
+import com.ycandyz.master.vo.MallItemOprVO;
 import com.ycandyz.master.vo.MallItemVO;
-import com.ycandyz.master.vo.MallSpecSingleVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +37,33 @@ public class MallItemController {
 
     @ApiOperation(value = "获取商品详情",notes = "查询",httpMethod = "GET")
     @GetMapping("/item/{itemNo}")
-    public CommonResult<MallItemVO> selMallItemByitemNo(@PathVariable(value = "itemNo") String itemNo, @CurrentUser UserVO userVO){
-        MallItemVO mallItemVO = mallItemService.selMallItemByitemNo(userVO,itemNo);
-        log.info("itemNo:{}；获取商品详情:{}",itemNo,mallItemVO);
-        return CommonResult.success(mallItemVO);
+    public CommonResult<MallItemDTO> selMallItemByitemNo(@PathVariable(value = "itemNo") String itemNo, @CurrentUser UserVO userVO){
+        MallItemDTO mallItemDTO = mallItemService.selMallItemByitemNo(userVO,itemNo);
+        log.info("itemNo:{}；获取商品详情:{}",itemNo,mallItemDTO);
+        return CommonResult.success(mallItemDTO);
     }
+
+
+    @ApiOperation(value = "上下架商品",notes = "修改",httpMethod = "PUT")
+    @PutMapping("/item/opr")
+    public CommonResult<Integer> oprbyItemNo(@RequestBody MallItemOprVO mallItemOprVO, @CurrentUser UserVO userVO){
+        int count = mallItemService.oprbyItemNo(userVO,mallItemOprVO);
+        log.info("userVO:{}；上下架商品:{}",userVO,mallItemOprVO);
+        if (count > 0){
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed(count);
+    }
+
+    @ApiOperation(value = "删除商品",notes = "删除",httpMethod = "DELETE")
+    @DeleteMapping("/item/{itemNo}")
+    public CommonResult delMallItemByItemNo(@PathVariable(value = "specNo") String itemNo, @CurrentUser UserVO userVO){
+        int count = mallItemService.delMallItemByItemNo(itemNo,userVO);
+        if (count > 0) {
+            return CommonResult.success(null);
+        }
+        return CommonResult.failed(null);
+    }
+
 
 }

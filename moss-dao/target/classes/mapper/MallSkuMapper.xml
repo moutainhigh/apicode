@@ -3,18 +3,17 @@
 
 <mapper namespace="com.ycandyz.master.dao.mall.goodsManage.MallSkuDao">
     <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallSku">
-        <id column="item_no" property="categoryNo" jdbcType="VARCHAR"/>
-        <id column="sku_no" property="parentCategoryNo" jdbcType="VARCHAR"/>
-        <id column="sku_name" property="categoryName" jdbcType="VARCHAR"/>
-        <id column="sku_img" property="categoryImg" jdbcType="VARCHAR"/>
-        <id column="sale_price" property="layer" jdbcType="INTEGER" />
-        <id column="sale_price" property="layer" jdbcType="INTEGER" />
-        <id column="sale_price" property="price" jdbcType="INTEGER" />
-        <id column="sale_price" property="stock" jdbcType="INTEGER" />
-        <id column="sale_price" property="frozenStock" jdbcType="INTEGER" />
-        <id column="sale_price" property="goodsNo" jdbcType="INTEGER" />
-        <id column="sale_price" property="realSales" jdbcType="INTEGER" />
-        <id column="sale_price" property="sortValue" jdbcType="INTEGER" />
+        <id column="item_no" property="itemNo" jdbcType="VARCHAR"/>
+        <id column="sku_no" property="skuNo" jdbcType="VARCHAR"/>
+        <id column="sku_name" property="skuName" jdbcType="VARCHAR"/>
+        <id column="sku_img" property="skuImg" jdbcType="VARCHAR" />
+        <id column="sale_price" property="salePrice" jdbcType="DECIMAL" />
+        <id column="price" property="price" jdbcType="DECIMAL" />
+        <id column="stock" property="stock" jdbcType="INTEGER" />
+        <id column="frozen_stock" property="frozenStock" jdbcType="INTEGER" />
+        <id column="goods_no" property="goodsNo" jdbcType="VARCHAR" />
+        <id column="real_sales" property="realSales" jdbcType="INTEGER" />
+        <id column="sort_value" property="sortValue" jdbcType="INTEGER" />
     </resultMap>
 
 

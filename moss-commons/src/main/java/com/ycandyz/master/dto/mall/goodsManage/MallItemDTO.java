@@ -69,18 +69,27 @@ public class MallItemDTO {
     @ApiModelProperty(value = "限购订单数")
     private Integer limitOrders;
 
-    @ApiModelProperty(value = "skus")
+    @ApiModelProperty(value = "SKU列表")
     private MallSkuVO[] skus;
 
-    @ApiModelProperty(value = "销售价格")
-    private BigDecimal salePrice;
+    @ApiModelProperty(value = "商品编号")
+    private String itemNo;
 
-    @ApiModelProperty(value = "原价格")
-    private BigDecimal price;
+    @ApiModelProperty(value = "规格列表")
+    private Integer specs;  ///
 
-    @ApiModelProperty(value = "1- 配送 2-自提")
-    private Integer[] deliveryType;
+    @ApiModelProperty(value = "分类名称")
+    private String categoryName;
 
-    @ApiModelProperty(value = "配送地址")
-    private Integer[] pickupDddrIds;
+    @ApiModelProperty(value = "父分类编号")
+    private String parentCategoryNo;
+
+    @ApiModelProperty(value = "父分类名称")
+    private String parentCategoryName;
+
+    @ApiModelProperty(value = "自提地址")
+    private Integer[] pickupAddressIds;
+
+    @ApiModelProperty(value = "自提地址类型： '[1,2]'")
+    private String deliveryType;
 }

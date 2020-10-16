@@ -7,26 +7,26 @@
         <id column="category_no" property="categoryNo" jdbcType="VARCHAR"/>
         <id column="item_no" property="itemNo" jdbcType="VARCHAR"/>
         <id column="item_name" property="itemName" jdbcType="VARCHAR"/>
-        <id column="item_text" property="itemText" jdbcType="INTEGER" />
-        <id column="banners" property="banners" jdbcType="INTEGER" />
+        <id column="item_text" property="itemText" jdbcType="LONGVARCHAR" />
+        <id column="banners" property="banners" jdbcType="VARCHAR" />
         <id column="base_sales" property="baseSales" jdbcType="INTEGER" />
         <id column="sort_value" property="sortValue" jdbcType="INTEGER" />
-        <id column="share_descr" property="shareDescr" jdbcType="INTEGER" />
-        <id column="share_img" property="shareImg" jdbcType="INTEGER" />
+        <id column="share_descr" property="shareDescr" jdbcType="VARCHAR" />
+        <id column="share_img" property="shareImg" jdbcType="VARCHAR" />
         <id column="stock" property="stock" jdbcType="INTEGER" />
         <id column="sub_stock_method" property="subStockMethod" jdbcType="INTEGER" />
-        <id column="goods_no" property="goodsNo" jdbcType="INTEGER" />
+        <id column="goods_no" property="goodsNo" jdbcType="VARCHAR" />
         <id column="deliver_method" property="deliverMethod" jdbcType="INTEGER" />
         <id column="status" property="status" jdbcType="INTEGER" />
         <id column="is_unify_shipping" property="isUnifyShipping" jdbcType="INTEGER" />
-        <id column="unify_shipping" property="unifyShipping" jdbcType="INTEGER" />
-        <id column="shipping_no" property="shippingNo" jdbcType="INTEGER" />
+        <id column="unify_shipping" property="unifyShipping" jdbcType="DECIMAL" />
+        <id column="shipping_no" property="shippingNo" jdbcType="VARCHAR" />
         <id column="initial_purchases" property="initialPurchases" jdbcType="INTEGER" />
         <id column="limit_cycle_type" property="limitCycleType" jdbcType="INTEGER" />
         <id column="limit_skus" property="limitSkus" jdbcType="INTEGER" />
         <id column="limit_orders" property="limitOrders" jdbcType="INTEGER" />
-        <id column="pickup_address_ids" property="pickupAddressIds" jdbcType="INTEGER" />
-        <id column="delivery_type" property="deliveryType" jdbcType="INTEGER" />
+        <id column="pickup_address_ids" property="pickupAddressIds" jdbcType="VARCHAR" />
+        <id column="delivery_type" property="deliveryType" jdbcType="VARCHAR" />
     </resultMap>
 
     <insert id="addMallItem" parameterType="com.ycandyz.master.entities.mall.goodsManage.MallItem">

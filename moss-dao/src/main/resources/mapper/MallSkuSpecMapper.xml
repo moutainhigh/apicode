@@ -3,18 +3,18 @@
 
 <mapper namespace="com.ycandyz.master.dao.mall.goodsManage.MallSkuSpecDao">
     <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallSkuSpec">
-        <id column="category_no" property="categoryNo" jdbcType="VARCHAR"/>
-        <id column="parent_category_no" property="parentCategoryNo" jdbcType="VARCHAR"/>
-        <id column="category_name" property="categoryName" jdbcType="VARCHAR"/>
-        <id column="category_img" property="categoryImg" jdbcType="VARCHAR"/>
-        <id column="layer" property="layer" jdbcType="INTEGER" />
+        <id column="sku_no" property="skuNo" jdbcType="VARCHAR"/>
+        <id column="spec_name" property="specName" jdbcType="VARCHAR"/>
+        <id column="spec_value" property="specValue" jdbcType="VARCHAR"/>
     </resultMap>
 
     <insert id="addMallSkuSpec" parameterType="com.ycandyz.master.entities.mall.goodsManage.MallSkuSpec">
         insert into mall_sku_spec(id,sku_no,spec_name,spec_value,created_time,updated_time)
         values (#{id},#{skuNo},#{specName},#{specValue},now(),now());
     </insert>
-    <select id="selMallSkuSpecBySkuNo" resultType="com.ycandyz.master.entities.mall.goodsManage.MallSkuSpec"></select>
+    <select id="selMallSkuSpecBySkuNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from mall_sku_spec where sku_no = #{skuNo};
+    </select>
 
 
 </mapper>

@@ -4,33 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BranchesTreeState">
-    <expand>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-    </expand>
+    <expand />
     <select />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37f2c88e-dd82-45b2-94f6-ae3a8a16b1d5" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/MallItemService.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/MallItemService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallItemServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallItemServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-commons/src/main/java/com/ycandyz/master/dto/mall/goodsManage/MallItemDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-commons/src/main/java/com/ycandyz/master/dto/mall/goodsManage/MallItemDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallItemController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallItemController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallItemDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallItemDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallSkuDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallSkuDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallSkuSpecDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallSkuSpecDao.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallItemMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallItemMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallSkuMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallSkuMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallSkuSpecMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallSkuSpecMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -100,18 +85,11 @@
     <key name="CreateTestDialog.RecentsKey">
       <recent name="com.ycandyz.master.service.mall.goodsManage.impl" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/moss-dao/src/main/resources/mapper" />
-      <recent name="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master" />
-    </key>
-    <key name="CreateTestDialog.Recents.Supers">
-      <recent name="" />
-    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ycandyz.master.vo" />
       <recent name="com.ycandyz.master.dto.mall.goodsManage" />
       <recent name="com.ycandyz.master.dao.mall.goodsManage" />
       <recent name="com.ycandyz.master.entities.mall.goodsManage" />
-      <recent name="com.ycandyz.master.vo" />
       <recent name="com.ycandyz.master.enmus" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
@@ -121,8 +99,26 @@
       <recent name="$PROJECT_DIR$/moss-commons/src/main/java/com/ycandyz/master/utils" />
       <recent name="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master" />
     </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/moss-dao/src/main/resources/mapper" />
+      <recent name="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master" />
+    </key>
   </component>
   <component name="RunManager" selected="Spring Boot.MasterControllerMain">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="MallSpecServiceImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="moss-business" />
       <extension name="coverage">
@@ -163,6 +159,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.MallSpecServiceImplTest.selMallSpecByKeyWord" />
+        <item itemvalue="JUnit.MallSpecServiceImplTest" />
         <item itemvalue="JUnit.MallSpecServiceImplTest.selMallSpecByKeyWord" />
         <item itemvalue="JUnit.MallSpecServiceImplTest" />
       </list>
@@ -208,12 +206,12 @@
     </state>
     <state x="579" y="314" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602491589217" />
     <state x="2469" y="508" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.877/1440.23.2560.1353@1440.23.2560.1353" timestamp="1602486792063" />
-    <state x="1176" y="395" key="#com.intellij.ide.util.MemberChooser" timestamp="1602829359770">
+    <state x="1176" y="395" key="#com.intellij.ide.util.MemberChooser" timestamp="1602839825625">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state x="2616" y="413" key="#com.intellij.ide.util.MemberChooser/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602596463541" />
     <state x="2616" y="395" key="#com.intellij.ide.util.MemberChooser/0.23.1440.877/1440.23.2560.1353@1440.23.2560.1353" timestamp="1602486410029" />
-    <state x="1176" y="395" key="#com.intellij.ide.util.MemberChooser/0.23.2560.1353@0.23.2560.1353" timestamp="1602829359770" />
+    <state x="1176" y="395" key="#com.intellij.ide.util.MemberChooser/0.23.2560.1353@0.23.2560.1353" timestamp="1602839825625" />
     <state x="2505" y="517" key="#com.intellij.ide.util.PackageChooserDialog" timestamp="1602644956185">
       <screen x="1440" y="23" width="2560" height="1417" />
     </state>
@@ -227,87 +225,87 @@
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state x="1028" y="463" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.2560.1353@0.23.2560.1353" timestamp="1602662907878" />
-    <state x="1043" y="420" key="#xdebugger.evaluate" timestamp="1602753566256">
+    <state x="1043" y="420" key="#xdebugger.evaluate" timestamp="1602837214728">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
-    <state x="1043" y="420" key="#xdebugger.evaluate/0.23.2560.1353@0.23.2560.1353" timestamp="1602753566256" />
-    <state width="1149" height="445" key="DebuggerActiveHint" timestamp="1602754277391">
+    <state x="1043" y="420" key="#xdebugger.evaluate/0.23.2560.1353@0.23.2560.1353" timestamp="1602837214728" />
+    <state width="1149" height="445" key="DebuggerActiveHint" timestamp="1602837147126">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="1149" height="466" key="DebuggerActiveHint/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660651257" />
-    <state width="1149" height="445" key="DebuggerActiveHint/0.23.2560.1353@0.23.2560.1353" timestamp="1602754277391" />
+    <state width="1149" height="445" key="DebuggerActiveHint/0.23.2560.1353@0.23.2560.1353" timestamp="1602837147126" />
     <state x="100" y="123" width="2360" height="1153" key="DiffContextDialog" timestamp="1602749847377">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state x="100" y="123" width="2360" height="1153" key="DiffContextDialog/0.23.2560.1353@0.23.2560.1353" timestamp="1602749847377" />
-    <state width="2518" height="605" key="GridCell.Tab.0.bottom" timestamp="1602811515975">
+    <state width="2518" height="344" key="GridCell.Tab.0.bottom" timestamp="1602842304469">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="1281" height="388" key="GridCell.Tab.0.bottom/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602489081889" />
     <state width="2518" height="341" key="GridCell.Tab.0.bottom/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660552701" />
-    <state width="2518" height="605" key="GridCell.Tab.0.bottom/0.23.2560.1353@0.23.2560.1353" timestamp="1602811515975" />
-    <state width="2518" height="605" key="GridCell.Tab.0.center" timestamp="1602811515974">
+    <state width="2518" height="344" key="GridCell.Tab.0.bottom/0.23.2560.1353@0.23.2560.1353" timestamp="1602842304469" />
+    <state width="2518" height="344" key="GridCell.Tab.0.center" timestamp="1602842304468">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="1281" height="388" key="GridCell.Tab.0.center/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602489081886" />
     <state width="2518" height="341" key="GridCell.Tab.0.center/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660552700" />
-    <state width="2518" height="605" key="GridCell.Tab.0.center/0.23.2560.1353@0.23.2560.1353" timestamp="1602811515974" />
-    <state width="2518" height="605" key="GridCell.Tab.0.left" timestamp="1602811515974">
+    <state width="2518" height="344" key="GridCell.Tab.0.center/0.23.2560.1353@0.23.2560.1353" timestamp="1602842304468" />
+    <state width="2518" height="344" key="GridCell.Tab.0.left" timestamp="1602842304468">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="1281" height="388" key="GridCell.Tab.0.left/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602489081885" />
     <state width="2518" height="341" key="GridCell.Tab.0.left/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660552699" />
-    <state width="2518" height="605" key="GridCell.Tab.0.left/0.23.2560.1353@0.23.2560.1353" timestamp="1602811515974" />
-    <state width="2518" height="605" key="GridCell.Tab.0.right" timestamp="1602811515975">
+    <state width="2518" height="344" key="GridCell.Tab.0.left/0.23.2560.1353@0.23.2560.1353" timestamp="1602842304468" />
+    <state width="2518" height="344" key="GridCell.Tab.0.right" timestamp="1602842304469">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="1281" height="388" key="GridCell.Tab.0.right/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602489081887" />
     <state width="2518" height="341" key="GridCell.Tab.0.right/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660552700" />
-    <state width="2518" height="605" key="GridCell.Tab.0.right/0.23.2560.1353@0.23.2560.1353" timestamp="1602811515975" />
-    <state width="2518" height="605" key="GridCell.Tab.1.bottom" timestamp="1602811515976">
+    <state width="2518" height="344" key="GridCell.Tab.0.right/0.23.2560.1353@0.23.2560.1353" timestamp="1602842304469" />
+    <state width="2518" height="344" key="GridCell.Tab.1.bottom" timestamp="1602842304470">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="1281" height="388" key="GridCell.Tab.1.bottom/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602489081891" />
     <state width="2518" height="341" key="GridCell.Tab.1.bottom/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660589274" />
-    <state width="2518" height="605" key="GridCell.Tab.1.bottom/0.23.2560.1353@0.23.2560.1353" timestamp="1602811515976" />
-    <state width="2518" height="605" key="GridCell.Tab.1.center" timestamp="1602811515975">
+    <state width="2518" height="344" key="GridCell.Tab.1.bottom/0.23.2560.1353@0.23.2560.1353" timestamp="1602842304470" />
+    <state width="2518" height="344" key="GridCell.Tab.1.center" timestamp="1602842304470">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="1281" height="388" key="GridCell.Tab.1.center/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602489081890" />
     <state width="2518" height="341" key="GridCell.Tab.1.center/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660589273" />
-    <state width="2518" height="605" key="GridCell.Tab.1.center/0.23.2560.1353@0.23.2560.1353" timestamp="1602811515975" />
-    <state width="2518" height="605" key="GridCell.Tab.1.left" timestamp="1602811515975">
+    <state width="2518" height="344" key="GridCell.Tab.1.center/0.23.2560.1353@0.23.2560.1353" timestamp="1602842304470" />
+    <state width="2518" height="344" key="GridCell.Tab.1.left" timestamp="1602842304470">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="1281" height="388" key="GridCell.Tab.1.left/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602489081889" />
     <state width="2518" height="341" key="GridCell.Tab.1.left/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660589273" />
-    <state width="2518" height="605" key="GridCell.Tab.1.left/0.23.2560.1353@0.23.2560.1353" timestamp="1602811515975" />
-    <state width="2518" height="605" key="GridCell.Tab.1.right" timestamp="1602811515976">
+    <state width="2518" height="344" key="GridCell.Tab.1.left/0.23.2560.1353@0.23.2560.1353" timestamp="1602842304470" />
+    <state width="2518" height="344" key="GridCell.Tab.1.right" timestamp="1602842304470">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="1281" height="388" key="GridCell.Tab.1.right/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602489081890" />
     <state width="2518" height="341" key="GridCell.Tab.1.right/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660589273" />
-    <state width="2518" height="605" key="GridCell.Tab.1.right/0.23.2560.1353@0.23.2560.1353" timestamp="1602811515976" />
-    <state width="2518" height="507" key="GridCell.Tab.2.bottom" timestamp="1602771453194">
+    <state width="2518" height="344" key="GridCell.Tab.1.right/0.23.2560.1353@0.23.2560.1353" timestamp="1602842304470" />
+    <state width="2518" height="507" key="GridCell.Tab.2.bottom" timestamp="1602837539533">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="2518" height="341" key="GridCell.Tab.2.bottom/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660552443" />
-    <state width="2518" height="507" key="GridCell.Tab.2.bottom/0.23.2560.1353@0.23.2560.1353" timestamp="1602771453194" />
-    <state width="2518" height="507" key="GridCell.Tab.2.center" timestamp="1602771453193">
+    <state width="2518" height="507" key="GridCell.Tab.2.bottom/0.23.2560.1353@0.23.2560.1353" timestamp="1602837539533" />
+    <state width="2518" height="507" key="GridCell.Tab.2.center" timestamp="1602837539532">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="2518" height="341" key="GridCell.Tab.2.center/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660552442" />
-    <state width="2518" height="507" key="GridCell.Tab.2.center/0.23.2560.1353@0.23.2560.1353" timestamp="1602771453193" />
-    <state width="2518" height="507" key="GridCell.Tab.2.left" timestamp="1602771453192">
+    <state width="2518" height="507" key="GridCell.Tab.2.center/0.23.2560.1353@0.23.2560.1353" timestamp="1602837539532" />
+    <state width="2518" height="507" key="GridCell.Tab.2.left" timestamp="1602837539532">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="2518" height="341" key="GridCell.Tab.2.left/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660552441" />
-    <state width="2518" height="507" key="GridCell.Tab.2.left/0.23.2560.1353@0.23.2560.1353" timestamp="1602771453192" />
-    <state width="2518" height="507" key="GridCell.Tab.2.right" timestamp="1602771453194">
+    <state width="2518" height="507" key="GridCell.Tab.2.left/0.23.2560.1353@0.23.2560.1353" timestamp="1602837539532" />
+    <state width="2518" height="507" key="GridCell.Tab.2.right" timestamp="1602837539532">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state width="2518" height="341" key="GridCell.Tab.2.right/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602660552442" />
-    <state width="2518" height="507" key="GridCell.Tab.2.right/0.23.2560.1353@0.23.2560.1353" timestamp="1602771453194" />
+    <state width="2518" height="507" key="GridCell.Tab.2.right/0.23.2560.1353@0.23.2560.1353" timestamp="1602837539532" />
     <state x="2308" y="453" key="IDE.errors.dialog" timestamp="1602473135556">
       <screen x="1440" y="23" width="2560" height="1353" />
     </state>
@@ -359,11 +357,11 @@
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state x="1018" y="455" key="extract.method.dialog/0.23.2560.1353@0.23.2560.1353" timestamp="1602770422859" />
-    <state x="1023" y="459" width="774" height="490" key="find.popup" timestamp="1602818093935">
+    <state x="1023" y="459" width="774" height="490" key="find.popup" timestamp="1602842459607">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state x="2463" y="480" width="774" height="490" key="find.popup/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602646569023" />
-    <state x="1023" y="459" width="774" height="490" key="find.popup/0.23.2560.1353@0.23.2560.1353" timestamp="1602818093935" />
+    <state x="1023" y="459" width="774" height="490" key="find.popup/0.23.2560.1353@0.23.2560.1353" timestamp="1602842459607" />
     <state x="1031" y="495" key="refactoring.ChangeSignatureDialog" timestamp="1602768269581">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>

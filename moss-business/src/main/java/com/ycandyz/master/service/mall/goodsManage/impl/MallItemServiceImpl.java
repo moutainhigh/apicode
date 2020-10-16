@@ -4,12 +4,16 @@ import com.google.common.collect.Lists;
 import com.ycandyz.master.dao.mall.goodsManage.MallItemDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSkuDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSkuSpecDao;
+import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
+import com.ycandyz.master.dto.mall.goodsManage.MallItemDTO;
 import com.ycandyz.master.entities.mall.goodsManage.MallItem;
 import com.ycandyz.master.entities.mall.goodsManage.MallSku;
 import com.ycandyz.master.entities.mall.goodsManage.MallSkuSpec;
 import com.ycandyz.master.model.user.UserVO;
+import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
 import com.ycandyz.master.service.mall.goodsManage.MallItemService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
+import com.ycandyz.master.vo.MallItemOprVO;
 import com.ycandyz.master.vo.MallItemVO;
 import com.ycandyz.master.vo.MallSkuSpecsVO;
 import com.ycandyz.master.vo.MallSkuVO;
@@ -20,7 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,6 +48,9 @@ public class MallItemServiceImpl implements MallItemService {
 
     @Resource
     private MallSkuSpecDao mallSkuSpecDao;
+
+    @Resource
+    private MallCategoryService mallCategoryService;
     /**
      * @Description: 添加商品
     */
@@ -102,7 +111,8 @@ public class MallItemServiceImpl implements MallItemService {
         if (skus != null && skus.length > 0){
             for (MallSkuVO mvo : skus) {
                 mallSku = new MallSku();
-                String skuNo = "md5";
+                String skuNo = ""; //md5做
+
                 mallSku.setItemNo(itemNo);
                 mallSku.setSkuNo(skuNo);  //后面再改getMallSkuNo()
                 mallSku.setPrice(mvo.getPrice());
@@ -130,17 +140,17 @@ public class MallItemServiceImpl implements MallItemService {
      * @Description: 查询商品详情
     */
     @Override
-    public MallItemVO selMallItemByitemNo(UserVO userVO, String itemNo) {
-        MallItem mallItem = mallItemDao.selMallItemByitemNo(userVO.getShopNo(),itemNo);
-        MallItemVO mallItemVO = new MallItemVO();
-        MallSkuVO mallSkuVO = null;
+    public MallItemDTO selMallItemByitemNo(UserVO userVO, String itemNo) {
+       log.info("查询商品详情入参userVO:{};itemNo:{}",userVO,itemNo);
+        MallItemDTO mallItemDTO = new MallItemDTO();
         List<MallSkuVO> mallSkuVOs = Lists.newArrayList();
-        MallSkuSpecsVO mallSkuSpecsVO = null;
         List<MallSkuSpecsVO> mallSkuSpecsVOs = Lists.newArrayList();
         MallSkuVO[] mallSkuVOArr = new MallSkuVO[mallSkuVOs.size()];
         MallSkuSpecsVO[] mallSkuSpecsVOArr = new MallSkuSpecsVO[mallSkuSpecsVOs.size()];
-        if (mallItem != null){
-            BeanUtils.copyProperties(mallItem,mallItemVO);
+        MallItem mallItem = mallItemDao.selMallItemByitemNo(userVO.getShopNo(),itemNo);
+        if (mallItem == null){
+            log.info("根据userVO:{};itemNo:{}查询商品详情不存在",userVO,itemNo);
+            return null;
         }
         List<MallSku> mallSkus = mallSkuDao.selMallSkuByitemNo(itemNo);
         if (mallSkus != null && mallSkus.size() > 0){
@@ -148,19 +158,77 @@ public class MallItemServiceImpl implements MallItemService {
                 List<MallSkuSpec> mallSkuSpecs = mallSkuSpecDao.selMallSkuSpecBySkuNo(m.getSkuNo());
                 if (mallSkuSpecs != null && mallSkuSpecs.size() > 0){
                     for (MallSkuSpec mspec: mallSkuSpecs) {
+                        MallSkuSpecsVO mallSkuSpecsVO =new MallSkuSpecsVO();
                         BeanUtils.copyProperties(mspec,mallSkuSpecsVO);
                         mallSkuSpecsVOs.add(mallSkuSpecsVO);
                     }
                 }
-                mallSkuVO = new MallSkuVO();
+                MallSkuVO mallSkuVO = new MallSkuVO();
                 BeanUtils.copyProperties(m,mallSkuVO);
                 mallSkuVO.setSkuSpecs(mallSkuSpecsVOs.toArray(mallSkuSpecsVOArr));
                 mallSkuVOs.add(mallSkuVO);
             }
         }
-        mallItemVO.setSkus(mallSkuVOs.toArray(mallSkuVOArr));
-        return mallItemVO;
+        MallCategoryDTO mallCategoryDTO = mallCategoryService.selCategoryByCategoryNo(mallItem.getCategoryNo(), userVO);
+        if (mallCategoryDTO != null){
+            mallItemDTO.setCategorNo(mallItem.getCategoryNo());
+            mallItemDTO.setCategoryName(mallCategoryDTO.getCategoryName());
+            mallItemDTO.setParentCategoryNo(mallCategoryDTO.getParentCategoryNo());
+            mallItemDTO.setParentCategoryName(mallCategoryDTO.getParentCategory().getCategoryName());
+        }
+        BeanUtils.copyProperties(mallItem,mallItemDTO);
+        mallItemDTO.setSkus(mallSkuVOs.toArray(mallSkuVOArr));
+        mallItemDTO.setDeliveryType(mallItem.getDeliveryType());
+        return mallItemDTO;
     }
 
+    
+    /**
+     * @Description: 上下架商品
+    */
+    @Override
+    public int oprbyItemNo(UserVO userVO, MallItemOprVO mallItemOprVO) {
+        String shopNo = userVO.getShopNo();
+        int i = 0;
+        if (mallItemOprVO != null){
+            i = mallItemDao.oprbyItemNo(shopNo, Arrays.asList(mallItemOprVO.getItemNoList()),mallItemOprVO.getStatus());
+        }
+        return i;
+    }
+
+
+    /**
+     * @Description: 删除商品
+    */
+    @Override
+    public int delMallItemByItemNo(String itemNo, UserVO userVO) {
+        String shopNo = userVO.getShopNo();
+        int r = mallItemDao.delMallItemByItemNo(shopNo,itemNo);
+        return r;
+    }
+
+
+//    private static String bytesToHexString(Object info) {
+//        MessageDigest messageDigest = null;
+//        StringBuilder sb = null;
+//        try {
+//            messageDigest = MessageDigest.getInstance("MD5");
+//
+//            messageDigest.update(info.getBytes());
+//            byte[] digest = messageDigest.digest();
+//            sb = new StringBuilder();
+//            for (int i = 0; i < bytes.length; i++) {
+//                String hex = Integer.toHexString(0xFF & bytes[i]);
+//                if (hex.length() == 1) {
+//                    sb.append('0');
+//                }
+//                sb.append(hex);
+//            }
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return sb.toString();
+//    }
 
 }
