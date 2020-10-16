@@ -25,5 +25,11 @@ mybatis:
 token:
   authConfigSecret: c1f5d2f3f9f818c1a2c03da10c81e542          #token密钥
 
+pagehelper:
+  helper-dialect: mysql
+
+logging:
+  level:
+    com.ycandyz.master.dao: debug
 exclude:
   path: /login,/error

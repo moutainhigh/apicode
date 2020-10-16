@@ -1,9 +1,7 @@
 package com.ycandyz.master.dto.user;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.ycandyz.master.entities.user.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * <p>
@@ -14,8 +12,7 @@ import lombok.Setter;
  * @since 2020-10-13
  * @version 2.0
  */
-@Getter
-@Setter
+@Data
 public class UserDTO extends User {
 
 }

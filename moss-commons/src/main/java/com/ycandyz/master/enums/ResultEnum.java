@@ -9,6 +9,8 @@ import lombok.Getter;
 @Getter
 public enum ResultEnum {
 
+    SUCCESS(200, "操作成功"),
+    FAILED(500, "操作失败"),
     /**
      * 登陆注册返回code
      */
@@ -38,6 +40,7 @@ public enum ResultEnum {
     MALL_ITEM_LIMIT_SKUS(20019, "商品已超过可购买件数限制"),
     MALL_ITEM_IS_FULL(20020, "购物车已经满啦"),
     MALL_ITEM_MAX_ORDER (20021, "最多支持60个商品下单～");
+
 
     private int value;
 
