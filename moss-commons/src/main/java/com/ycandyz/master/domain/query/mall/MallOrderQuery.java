@@ -43,10 +43,12 @@ public class MallOrderQuery implements Serializable {
     private Integer payedAtForm;
     @ApiModelProperty(value = "支付结束时间",name="payedAtTo",required=true)
     private Integer payedAtTo;
-    @ApiModelProperty(value = "收货开始时间",name="payedAtForm",required=true)
+    @ApiModelProperty(value = "收货开始时间",name="receiveAtForm",required=true)
     private Integer receiveAtForm;
-    @ApiModelProperty(value = "收货结束时间",name="payedAtTo",required=true)
+    @ApiModelProperty(value = "收货结束时间",name="receiveAtTo",required=true)
     private Integer receiveAtTo;
-    @ApiModelProperty(value = "是否售后:0-否，1-是",name="payedAtTo",required=true)
+    @ApiModelProperty(value = "是否售后:0-否，1-是",name="afterSalesStatus",required=true)
     private Integer afterSalesStatus;
+    @ApiModelProperty(value = "商店标号",name="shopNo",required=true)
+    private String shopNo;
 }
