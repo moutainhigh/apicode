@@ -23,8 +23,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37f2c88e-dd82-45b2-94f6-ae3a8a16b1d5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallSpecServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallSpecServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-commons/src/main/java/com/ycandyz/master/entities/mall/goodsManage/Goods.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-commons/src/main/java/com/ycandyz/master/entities/mall/goodsManage/MallItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/MallItemService.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/MallItemService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallItemServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallItemServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallItemController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallItemController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallItemDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallItemDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallSkuDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallSkuDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallSkuSpecDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/java/com/ycandyz/master/dao/mall/goodsManage/MallSkuSpecDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallItemMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallItemMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallSkuMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallSkuMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallSkuSpecMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/moss-dao/src/main/resources/mapper/MallSkuSpecMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,12 +100,19 @@
     <key name="CreateTestDialog.RecentsKey">
       <recent name="com.ycandyz.master.service.mall.goodsManage.impl" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/moss-dao/src/main/resources/mapper" />
+      <recent name="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ycandyz.master.dto.mall.goodsManage" />
       <recent name="com.ycandyz.master.dao.mall.goodsManage" />
       <recent name="com.ycandyz.master.entities.mall.goodsManage" />
       <recent name="com.ycandyz.master.vo" />
       <recent name="com.ycandyz.master.enmus" />
-      <recent name="com.ycandyz.master.dto.mall.goodsManage" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/moss-dao/src/main/resources/mapper" />
@@ -107,28 +121,8 @@
       <recent name="$PROJECT_DIR$/moss-commons/src/main/java/com/ycandyz/master/utils" />
       <recent name="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master" />
     </key>
-    <key name="CreateTestDialog.Recents.Supers">
-      <recent name="" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/moss-dao/src/main/resources/mapper" />
-      <recent name="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master" />
-    </key>
   </component>
   <component name="RunManager" selected="Spring Boot.MasterControllerMain">
-    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="CLASS" />
-      <properties />
-      <listeners />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="MallSpecServiceImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="moss-business" />
       <extension name="coverage">
@@ -214,12 +208,12 @@
     </state>
     <state x="579" y="314" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.813/1440.23.2560.1417@0.23.1440.813" timestamp="1602491589217" />
     <state x="2469" y="508" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.877/1440.23.2560.1353@1440.23.2560.1353" timestamp="1602486792063" />
-    <state x="1176" y="395" key="#com.intellij.ide.util.MemberChooser" timestamp="1602816118827">
+    <state x="1176" y="395" key="#com.intellij.ide.util.MemberChooser" timestamp="1602829359770">
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state x="2616" y="413" key="#com.intellij.ide.util.MemberChooser/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602596463541" />
     <state x="2616" y="395" key="#com.intellij.ide.util.MemberChooser/0.23.1440.877/1440.23.2560.1353@1440.23.2560.1353" timestamp="1602486410029" />
-    <state x="1176" y="395" key="#com.intellij.ide.util.MemberChooser/0.23.2560.1353@0.23.2560.1353" timestamp="1602816118827" />
+    <state x="1176" y="395" key="#com.intellij.ide.util.MemberChooser/0.23.2560.1353@0.23.2560.1353" timestamp="1602829359770" />
     <state x="2505" y="517" key="#com.intellij.ide.util.PackageChooserDialog" timestamp="1602644956185">
       <screen x="1440" y="23" width="2560" height="1417" />
     </state>

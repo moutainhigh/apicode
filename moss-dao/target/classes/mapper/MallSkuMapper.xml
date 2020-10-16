@@ -2,19 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.ycandyz.master.dao.mall.goodsManage.MallSkuDao">
-<!--    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallItem">-->
-<!--        <id column="category_no" property="categoryNo" jdbcType="VARCHAR"/>-->
-<!--        <id column="parent_category_no" property="parentCategoryNo" jdbcType="VARCHAR"/>-->
-<!--        <id column="category_name" property="categoryName" jdbcType="VARCHAR"/>-->
-<!--        <id column="category_img" property="categoryImg" jdbcType="VARCHAR"/>-->
-<!--        <id column="layer" property="layer" jdbcType="INTEGER" />-->
-<!--    </resultMap>-->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallSku">
+        <id column="item_no" property="categoryNo" jdbcType="VARCHAR"/>
+        <id column="sku_no" property="parentCategoryNo" jdbcType="VARCHAR"/>
+        <id column="sku_name" property="categoryName" jdbcType="VARCHAR"/>
+        <id column="sku_img" property="categoryImg" jdbcType="VARCHAR"/>
+        <id column="sale_price" property="layer" jdbcType="INTEGER" />
+        <id column="sale_price" property="layer" jdbcType="INTEGER" />
+        <id column="sale_price" property="price" jdbcType="INTEGER" />
+        <id column="sale_price" property="stock" jdbcType="INTEGER" />
+        <id column="sale_price" property="frozenStock" jdbcType="INTEGER" />
+        <id column="sale_price" property="goodsNo" jdbcType="INTEGER" />
+        <id column="sale_price" property="realSales" jdbcType="INTEGER" />
+        <id column="sale_price" property="sortValue" jdbcType="INTEGER" />
+    </resultMap>
 
-<!--    <resultMap id="BaseResultMapParent" type="com.ycandyz.master.entities.mall.goodsManage.MallParentCategory">-->
-<!--        <id column="category_no" property="categoryNo" jdbcType="VARCHAR"/>-->
-<!--        <id column="category_name" property="categoryName" jdbcType="VARCHAR"/>-->
-<!--        <id column="category_img" property="categoryImg" jdbcType="VARCHAR"/>-->
-<!--    </resultMap>-->
 
     <insert id="addMallSku" parameterType="com.ycandyz.master.entities.mall.goodsManage.MallSku">
         insert into mall_sku(id,item_no,sku_no,sku_name,sku_img,sale_price,price,stock,frozen_stock,
@@ -22,28 +24,11 @@
         values (#{id},#{itemNo},#{skuNo},#{skuName},#{skuImg},#{salePrice},#{price},
         #{stock},#{frozenStock},#{goodsNo},now(),now(),#{realSales},#{sortValue});
     </insert>
-<!--    <delete id="delCategoryByCategoryNo" parameterType="java.lang.String">-->
-<!--        delete from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo};-->
-<!--    </delete>-->
-<!--    <select id="selCategoryByCategoryNo" resultMap="BaseResultMap" parameterType="java.lang.String">-->
-<!--        select * from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo} and layer = 1;-->
-<!--    </select>-->
-<!--    <select id="selParentCategoryByCategoryNo" resultMap="BaseResultMapParent" parameterType="java.lang.String">-->
-<!--         select * from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo} and layer = 0;-->
-<!--    </select>-->
-<!--    <select id="selParentCategoryNoByShopNo" resultType="java.lang.String" parameterType="java.lang.String">-->
-<!--          select parent_category_no from mall_category where shop_no = #{shopNo};-->
-<!--    </select>-->
-<!--    <select id="selCategoryNoByShopNo" resultMap="BaseResultMap" parameterType="java.lang.String">-->
-<!--        select * from mall_category where shop_no = #{shopNo} and layer = 0;-->
-<!--    </select>-->
-<!--    <select id="selParentCategoryByParentCategoryNo"-->
-<!--            resultMap="BaseResultMap" parameterType="java.lang.String">-->
-<!--        select * from mall_category where shop_no = #{shopNo} and parent_category_no = #{parentCategoryNo};-->
-<!--    </select>-->
-<!--    <select id="selCategoryByParentCategoryNo" resultMap="BaseResultMap" parameterType="java.lang.String">-->
-<!--        select * from mall_category where shop_no = #{shopNo} and parent_category_no = #{parentCategoryNo} and layer = 1;-->
-<!--    </select>-->
+    <select id="selMallSkuByitemNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from mall_sku where item_no = #{itemNo};
+    </select>
+
+
 
 </mapper>
 

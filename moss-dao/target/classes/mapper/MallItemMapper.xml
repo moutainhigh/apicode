@@ -2,19 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.ycandyz.master.dao.mall.goodsManage.MallItemDao">
-<!--    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallItem">-->
-<!--        <id column="category_no" property="categoryNo" jdbcType="VARCHAR"/>-->
-<!--        <id column="parent_category_no" property="parentCategoryNo" jdbcType="VARCHAR"/>-->
-<!--        <id column="category_name" property="categoryName" jdbcType="VARCHAR"/>-->
-<!--        <id column="category_img" property="categoryImg" jdbcType="VARCHAR"/>-->
-<!--        <id column="layer" property="layer" jdbcType="INTEGER" />-->
-<!--    </resultMap>-->
-
-<!--    <resultMap id="BaseResultMapParent" type="com.ycandyz.master.entities.mall.goodsManage.MallParentCategory">-->
-<!--        <id column="category_no" property="categoryNo" jdbcType="VARCHAR"/>-->
-<!--        <id column="category_name" property="categoryName" jdbcType="VARCHAR"/>-->
-<!--        <id column="category_img" property="categoryImg" jdbcType="VARCHAR"/>-->
-<!--    </resultMap>-->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallItem">
+        <id column="shop_no" property="shopNo" jdbcType="VARCHAR"/>
+        <id column="category_no" property="categoryNo" jdbcType="VARCHAR"/>
+        <id column="item_no" property="itemNo" jdbcType="VARCHAR"/>
+        <id column="item_name" property="itemName" jdbcType="VARCHAR"/>
+        <id column="item_text" property="itemText" jdbcType="INTEGER" />
+        <id column="banners" property="banners" jdbcType="INTEGER" />
+        <id column="base_sales" property="baseSales" jdbcType="INTEGER" />
+        <id column="sort_value" property="sortValue" jdbcType="INTEGER" />
+        <id column="share_descr" property="shareDescr" jdbcType="INTEGER" />
+        <id column="share_img" property="shareImg" jdbcType="INTEGER" />
+        <id column="stock" property="stock" jdbcType="INTEGER" />
+        <id column="sub_stock_method" property="subStockMethod" jdbcType="INTEGER" />
+        <id column="goods_no" property="goodsNo" jdbcType="INTEGER" />
+        <id column="deliver_method" property="deliverMethod" jdbcType="INTEGER" />
+        <id column="status" property="status" jdbcType="INTEGER" />
+        <id column="is_unify_shipping" property="isUnifyShipping" jdbcType="INTEGER" />
+        <id column="unify_shipping" property="unifyShipping" jdbcType="INTEGER" />
+        <id column="shipping_no" property="shippingNo" jdbcType="INTEGER" />
+        <id column="initial_purchases" property="initialPurchases" jdbcType="INTEGER" />
+        <id column="limit_cycle_type" property="limitCycleType" jdbcType="INTEGER" />
+        <id column="limit_skus" property="limitSkus" jdbcType="INTEGER" />
+        <id column="limit_orders" property="limitOrders" jdbcType="INTEGER" />
+        <id column="pickup_address_ids" property="pickupAddressIds" jdbcType="INTEGER" />
+        <id column="delivery_type" property="deliveryType" jdbcType="INTEGER" />
+    </resultMap>
 
     <insert id="addMallItem" parameterType="com.ycandyz.master.entities.mall.goodsManage.MallItem">
         insert into mall_item(id,shop_no,category_no,item_no,item_name,item_text,item_cover,banners,base_sales,
@@ -35,7 +48,10 @@
         #{shareSecondLevelRate},#{shareSecondLevelAmount},#{shareThirdMethod},#{shareThirdLevelMethod},#{shareThirdRate},
         #{shareThirdAmount},#{shareThirdLevelRate},#{shareThirdLevelAmount},#{deliveryType},#{pickupAddressIds},#{deliveryTypeBak});
     </insert>
-<!--    <delete id="delCategoryByCategoryNo" parameterType="java.lang.String">-->
+    <select id="selMallItemByitemNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from mall_item where shop_no = #{shopNo} and item_no = #{itemNo};
+    </select>
+    <!--    <delete id="delCategoryByCategoryNo" parameterType="java.lang.String">-->
 <!--        delete from mall_category where shop_no = #{shopNo} and category_no = #{categoryNo};-->
 <!--    </delete>-->
 <!--    <select id="selCategoryByCategoryNo" resultMap="BaseResultMap" parameterType="java.lang.String">-->

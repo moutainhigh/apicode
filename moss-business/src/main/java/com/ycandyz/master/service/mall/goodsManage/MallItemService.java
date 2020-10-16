@@ -6,4 +6,5 @@ import com.ycandyz.master.vo.MallItemVO;
 public interface MallItemService {
     void addMallItem(MallItemVO mallItemVO, UserVO user);
 
+    MallItemVO selMallItemByitemNo(UserVO userVO, String itemNo);
 }

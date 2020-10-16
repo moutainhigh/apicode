@@ -7,13 +7,11 @@ import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallItemService;
 import com.ycandyz.master.vo.MallItemVO;
+import com.ycandyz.master.vo.MallSpecSingleVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -29,11 +27,19 @@ public class MallItemController {
 
 
     @ApiOperation(value = "添加商品",notes = "添加",httpMethod = "POST")
-    @PostMapping("/category")
+    @PostMapping("/item")
     public CommonResult<List<MallCategoryDTO>> addMallItem(@RequestBody MallItemVO MallItemVO, @CurrentUser UserVO user){
         mallItemService.addMallItem(MallItemVO,user);
         return CommonResult.success(null);
     }
 
+
+    @ApiOperation(value = "获取商品详情",notes = "查询",httpMethod = "GET")
+    @GetMapping("/item/{itemNo}")
+    public CommonResult<MallItemVO> selMallItemByitemNo(@PathVariable(value = "itemNo") String itemNo, @CurrentUser UserVO userVO){
+        MallItemVO mallItemVO = mallItemService.selMallItemByitemNo(userVO,itemNo);
+        log.info("itemNo:{}；获取商品详情:{}",itemNo,mallItemVO);
+        return CommonResult.success(mallItemVO);
+    }
 
 }

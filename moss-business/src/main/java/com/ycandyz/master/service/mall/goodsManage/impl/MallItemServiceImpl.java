@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.mall.goodsManage.impl;
 
+import com.google.common.collect.Lists;
 import com.ycandyz.master.dao.mall.goodsManage.MallItemDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSkuDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSkuSpecDao;
@@ -14,10 +15,13 @@ import com.ycandyz.master.vo.MallSkuSpecsVO;
 import com.ycandyz.master.vo.MallSkuVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Description: 商品管理
@@ -120,6 +124,42 @@ public class MallItemServiceImpl implements MallItemService {
 
             }
         }
+    }
+
+    /**
+     * @Description: 查询商品详情
+    */
+    @Override
+    public MallItemVO selMallItemByitemNo(UserVO userVO, String itemNo) {
+        MallItem mallItem = mallItemDao.selMallItemByitemNo(userVO.getShopNo(),itemNo);
+        MallItemVO mallItemVO = new MallItemVO();
+        MallSkuVO mallSkuVO = null;
+        List<MallSkuVO> mallSkuVOs = Lists.newArrayList();
+        MallSkuSpecsVO mallSkuSpecsVO = null;
+        List<MallSkuSpecsVO> mallSkuSpecsVOs = Lists.newArrayList();
+        MallSkuVO[] mallSkuVOArr = new MallSkuVO[mallSkuVOs.size()];
+        MallSkuSpecsVO[] mallSkuSpecsVOArr = new MallSkuSpecsVO[mallSkuSpecsVOs.size()];
+        if (mallItem != null){
+            BeanUtils.copyProperties(mallItem,mallItemVO);
+        }
+        List<MallSku> mallSkus = mallSkuDao.selMallSkuByitemNo(itemNo);
+        if (mallSkus != null && mallSkus.size() > 0){
+            for (MallSku m: mallSkus) {
+                List<MallSkuSpec> mallSkuSpecs = mallSkuSpecDao.selMallSkuSpecBySkuNo(m.getSkuNo());
+                if (mallSkuSpecs != null && mallSkuSpecs.size() > 0){
+                    for (MallSkuSpec mspec: mallSkuSpecs) {
+                        BeanUtils.copyProperties(mspec,mallSkuSpecsVO);
+                        mallSkuSpecsVOs.add(mallSkuSpecsVO);
+                    }
+                }
+                mallSkuVO = new MallSkuVO();
+                BeanUtils.copyProperties(m,mallSkuVO);
+                mallSkuVO.setSkuSpecs(mallSkuSpecsVOs.toArray(mallSkuSpecsVOArr));
+                mallSkuVOs.add(mallSkuVO);
+            }
+        }
+        mallItemVO.setSkus(mallSkuVOs.toArray(mallSkuVOArr));
+        return mallItemVO;
     }
 
 
