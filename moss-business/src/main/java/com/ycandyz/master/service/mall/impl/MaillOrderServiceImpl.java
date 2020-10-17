@@ -115,12 +115,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public boolean verShipmentNo(String shipNumber) {
-
-        return false;
-    }
-
-    @Override
     public CommonResult<MallOrderVO> queryDetailByPickupNo(String pickupNo, UserVO userVO) {
         MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null){

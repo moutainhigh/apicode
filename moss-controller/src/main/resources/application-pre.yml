@@ -22,5 +22,14 @@ mybatis:
 token:
   authConfigSecret: c1f5d2f3f9f818c1a2c03da10c81e542          #token密钥
 
-exclude:
-  path: /login,/error
+#快递100相关参数
+kuaidi:
+  autonumber:
+    url: http://www.kuaidi100.com/autonumber/auto?num=NUM&key=KEY
+  poll:
+    url: https://poll.kuaidi100.com/poll
+    callback: https://uat-api-manage.ycandyz.com/uke/j/youchuan-master/mall/order/shipment/callback
+  key: RGUCsfJZ9794
+  customer: FDED135A3EEE3F24749F3FB244D0A03B
+  secret: 0aa5dd906ba7404db4ac569ca8da20a6
+  userid: 7edbc3841b3a4bb9b4443d4a2ee654ff

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallShopShippingDao">
+
+    <select id="queryByOrderNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopShippingDTO">
+        select
+            id as id,
+            order_no as orderNo,
+            shop_shipping_no as shopShippingNo,
+            `type` as type,
+            company_code as companyCode,
+            company as company,
+            `number` as number,
+            shipping_money as shippingMoney,
+            receiver as receiver,
+            receiver_headimg as receiverHeadimg,
+            receiver_phone as receiverPhone,
+            receiver_address as receiverAddress,
+            created_time as createdTime,
+            updated_time as updatedTime,
+            status as status
+        from mall_shop_shipping
+        where order_no=#{orderNo}
+    </select>
+
+</mapper>
