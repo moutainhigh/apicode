@@ -21,8 +21,6 @@ public interface MallOrderService extends IService<MallOrder> {
 
     CommonResult<MallOrderDetailVO> queryOrderDetail(String orderNo);
 
-    boolean verShipmentNo(String shipNumber);
-
     CommonResult<MallOrderVO> queryDetailByPickupNo(String pickupNo, UserVO userVO);
 
     CommonResult<String> verPickupNo(String orderNo, UserVO userVO);

@@ -56,20 +56,6 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     }
 
     /**
-     * 订单发货校验物流单号，调用三方接口，查看物流单号所属物流公司
-     * @param shipNumber
-     * @return
-     */
-    @GetMapping("/order/shipment/verification")
-    public CommonResult<String> verShipmentNo(@RequestParam("shipNumber") String shipNumber, @CurrentUser UserVO userVO){
-        boolean flag = mallOrderService.verShipmentNo(shipNumber);
-        if (flag){
-            return CommonResult.success("发货成功!");
-        }
-        return CommonResult.failed("发货失败!");
-    }
-
-    /**
      * 通过提货码查询订单
      * @param pickupNo
      * @param userVO
