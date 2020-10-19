@@ -23,6 +23,9 @@ mybatis:
 token:
   authConfigSecret: c1f5d2f3f9f818c1a2c03da10c81e542          #token密钥
 
+exclude:
+  path: /login,/error,/swagger-ui.html
+
 #快递100相关参数
 kuaidi:
   autonumber:
