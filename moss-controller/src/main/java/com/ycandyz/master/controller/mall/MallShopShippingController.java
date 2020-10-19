@@ -10,6 +10,8 @@ import com.ycandyz.master.model.mall.MallShopShippingVO;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.service.mall.impl.MallShopShippingServiceImpl;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,9 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
      * @return
      */
     @ApiOperation(value = "订单发货校验物流单号",notes = "订单发货校验物流单号",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="shipNumber",value="物流单号",required=true,dataType="String")
+    })
     @GetMapping("/order/shipment/verification")
     public CommonResult<MallShopShippingVO> verShipmentNo(@RequestParam("shipNumber") String shipNumber){
         return mallShopShippingService.verShipmentNo(shipNumber);
@@ -39,6 +44,12 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
      * @return
      */
     @ApiOperation(value = "确认发货",notes = "确认发货",httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String"),
+            @ApiImplicitParam(name="company",value="快递公司名",required=true,dataType="String"),
+            @ApiImplicitParam(name="companyCode",value="快递公司编码",required=true,dataType="String"),
+            @ApiImplicitParam(name="number",value="快递单号",required=true,dataType="String")
+    })
     @PostMapping("/order/shipment/enterShipping")
     @ResponseBody
     public CommonResult<String> enterShipping(@RequestBody MallShopShippingQuery mallShopShippingQuery){

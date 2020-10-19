@@ -13,6 +13,8 @@ import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.mall.impl.MaillOrderServiceImpl;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +58,9 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @return
      */
     @ApiOperation(value = "查看订单详情",notes = "查看订单详情",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String")
+    })
     @GetMapping("/order/detail")
     public CommonResult<MallOrderDetailVO> queryOrderDetail(@RequestParam("orderNo") String orderNo){
         return mallOrderService.queryOrderDetail(orderNo);
@@ -68,8 +73,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @return
      */
     @ApiOperation(value = "通过提货码查询订单",notes = "通过提货码查询订单",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
+    })
     @GetMapping("/order/pickup/query")
-    public CommonResult<MallOrderVO> queryDetailByPickupNo(@RequestParam("shipN") String pickupNo, @CurrentUser UserVO userVO){
+    public CommonResult<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @CurrentUser UserVO userVO){
         return mallOrderService.queryDetailByPickupNo(pickupNo, userVO);
     }
 
@@ -80,6 +88,9 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @return
      */
     @ApiOperation(value = "验证提货码,出货",notes = "验证提货码,出货",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
+    })
     @GetMapping("/order/pickup/verification")
     public CommonResult<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @CurrentUser UserVO userVO){
         return mallOrderService.verPickupNo(pickupNo, userVO);

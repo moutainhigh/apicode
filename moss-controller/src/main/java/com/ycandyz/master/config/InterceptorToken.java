@@ -70,7 +70,7 @@ public class InterceptorToken implements HandlerInterceptor {
             return true;
         }
         String url = httpServletRequest.getRequestURI();
-        String token = httpServletRequest.getHeader("token");
+        String token = httpServletRequest.getHeader("x-auth-token");
         String method = httpServletRequest.getMethod();
         if (!method.equals("OPTIONS")){
             log.info(token);
