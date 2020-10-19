@@ -22,8 +22,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37f2c88e-dd82-45b2-94f6-ae3a8a16b1d5" name="Default Changelist" comment="更新swagger接口的权限开放">
-      <change beforePath="$PROJECT_DIR$/moss-controller/src/main/resources/application-pre.yml" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/resources/application-pre.yml" afterDir="false" />
+    <list default="true" id="37f2c88e-dd82-45b2-94f6-ae3a8a16b1d5" name="Default Changelist" comment="更新token认证key和swagger接口必传参数验证">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,7 +186,7 @@
       <workItem from="1602494839102" duration="16256000" />
       <workItem from="1602560988985" duration="94852000" />
       <workItem from="1602764894047" duration="21434000" />
-      <workItem from="1603071412235" duration="5476000" />
+      <workItem from="1603071412235" duration="7766000" />
     </task>
     <task id="LOCAL-00001" summary="更新swagger接口的权限开放">
       <created>1603077210719</created>
@@ -195,7 +195,21 @@
       <option name="project" value="LOCAL" />
       <updated>1603077210719</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="revise">
+      <created>1603077277863</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1603077277863</updated>
+    </task>
+    <task id="LOCAL-00003" summary="更新token认证key和swagger接口必传参数验证">
+      <created>1603079893999</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1603079893999</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -215,7 +229,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="更新swagger接口的权限开放" />
-    <option name="LAST_COMMIT_MESSAGE" value="更新swagger接口的权限开放" />
+    <MESSAGE value="revise" />
+    <MESSAGE value="更新token认证key和swagger接口必传参数验证" />
+    <option name="LAST_COMMIT_MESSAGE" value="更新token认证key和swagger接口必传参数验证" />
   </component>
   <component name="WindowStateProjectService">
     <state x="2457" y="555" key="#com.intellij.codeInsight.template.impl.EditVariableDialog" timestamp="1602484471001">
@@ -373,10 +389,10 @@
     </state>
     <state width="500" height="467" key="SwitcherDM/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602596253265" />
     <state width="500" height="476" key="SwitcherDM/0.23.2560.1353@0.23.2560.1353" timestamp="1602681120225" />
-    <state x="880" y="431" key="Vcs.Push.Dialog.v2" timestamp="1603077213067">
+    <state x="880" y="431" key="Vcs.Push.Dialog.v2" timestamp="1603079895659">
       <screen x="0" y="23" width="2560" height="1337" />
     </state>
-    <state x="880" y="431" key="Vcs.Push.Dialog.v2/0.23.2560.1337@0.23.2560.1337" timestamp="1603077213067" />
+    <state x="880" y="431" key="Vcs.Push.Dialog.v2/0.23.2560.1337@0.23.2560.1337" timestamp="1603079895659" />
     <state x="2533" y="684" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1602506671331">
       <screen x="1440" y="23" width="2560" height="1417" />
     </state>
@@ -396,11 +412,11 @@
       <screen x="0" y="23" width="2560" height="1353" />
     </state>
     <state x="1018" y="455" key="extract.method.dialog/0.23.2560.1353@0.23.2560.1353" timestamp="1602770422859" />
-    <state x="1023" y="454" width="774" height="490" key="find.popup" timestamp="1603074679691">
+    <state x="1023" y="454" width="774" height="490" key="find.popup" timestamp="1603080098423">
       <screen x="0" y="23" width="2560" height="1337" />
     </state>
     <state x="2463" y="480" width="774" height="490" key="find.popup/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602646569023" />
-    <state x="1023" y="454" width="774" height="490" key="find.popup/0.23.2560.1337@0.23.2560.1337" timestamp="1603074679691" />
+    <state x="1023" y="454" width="774" height="490" key="find.popup/0.23.2560.1337@0.23.2560.1337" timestamp="1603080098423" />
     <state x="1023" y="459" width="774" height="490" key="find.popup/0.23.2560.1353@0.23.2560.1353" timestamp="1602842459607" />
     <state x="1031" y="495" key="refactoring.ChangeSignatureDialog" timestamp="1602768269581">
       <screen x="0" y="23" width="2560" height="1353" />
