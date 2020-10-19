@@ -11,6 +11,8 @@ import com.ycandyz.master.model.mall.MallAfterSalesVO;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
 import com.ycandyz.master.service.mall.impl.MaillOrderServiceImpl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/mall")
+@Api(tags="mall-售后订单表")
 public class MallAfterSalesController extends BaseController<MaillOrderServiceImpl, MallAfterSales, MallafterSalesQuery> {
 
     @Autowired
@@ -29,6 +32,7 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
      * @param mallafterSalesQuery
      * @return
      */
+    @ApiOperation(value = "获取售后订单列表",notes = "获取售后订单列表",httpMethod = "POST")
     @PostMapping("/sales/list")
     public CommonResult<Page<MallAfterSalesVO>> querySalesListPage(PageModel pageModel, @RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO userVO){
         return mallAfterSalesService.querySalesListPage(pageModel,mallafterSalesQuery, userVO);
@@ -39,6 +43,7 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
      * @param id
      * @return
      */
+    @ApiOperation(value = "查看售后订单详情",notes = "查看售后订单详情",httpMethod = "GET")
     @GetMapping("/sales/detail")
     public CommonResult<MallAfterSalesVO> querySalesDetail(@RequestParam("id") Long id){
         if (id!=null && id>0){
@@ -53,6 +58,7 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
      * @param user
      * @return
      */
+    @ApiOperation(value = "第一次审核按钮",notes = "第一次审核按钮",httpMethod = "POST")
     @PostMapping("/sales/audit/first")
     public CommonResult refundAuditFirst(@RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO user){
         boolean flag = mallAfterSalesService.refundAuditFirst(mallafterSalesQuery,user);
@@ -67,6 +73,7 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
      * @param mallafterSalesQuery
      * @param response
      */
+    @ApiOperation(value = "售后订单导出",notes = "售后订单导出",httpMethod = "POST")
     @PostMapping("/sales/export")
     public void exportEXT(@RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO userVO, HttpServletResponse response){
         mallAfterSalesService.exportEXT(mallafterSalesQuery, userVO,response);

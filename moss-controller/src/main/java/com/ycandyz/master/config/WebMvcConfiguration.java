@@ -46,9 +46,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         // 注册 token 验证拦截器
-         registry.addInterceptor(tokenInterceptor).addPathPatterns("/**");
-        registry.addInterceptor(logInterceptor).addPathPatterns("/**");
-        registry.addInterceptor(logInterceptor).excludePathPatterns("/youchuan-master/login"); //排除登录接口
+         registry.addInterceptor(tokenInterceptor).addPathPatterns("/**").excludePathPatterns("/META-INF/**/**","/swagger-ui.html/**","/swagger-resources");
+        registry.addInterceptor(logInterceptor);
     }
 
     /**
@@ -60,5 +59,15 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(CurrentUserHandlerMethodArgReslover);
     }
+
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/static/**")
+//                .addResourceLocations("classpath:/static/");
+//        registry.addResourceHandler("/favicon.ico")
+//                .addResourceLocations("classpath:/static/images/favicon.ico");
+//        registry.addResourceHandler("/webjars/**")
+//                .addResourceLocations("classpath:/webjars/");
+//    }
 
 }

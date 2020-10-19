@@ -9,11 +9,14 @@ import com.ycandyz.master.entities.mall.MallShopShipping;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.service.mall.impl.MallShopShippingServiceImpl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/mall")
+@Api(tags="mall-订单商家快递信息表")
 public class MallShopShippingController extends BaseController<MallShopShippingServiceImpl, MallShopShipping, MallShopShippingQuery> {
 
     @Autowired
@@ -24,6 +27,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
      * @param shipNumber
      * @return
      */
+    @ApiOperation(value = "订单发货校验物流单号",notes = "订单发货校验物流单号",httpMethod = "GET")
     @GetMapping("/order/shipment/verification")
     public CommonResult<MallShopShippingVO> verShipmentNo(@RequestParam("shipNumber") String shipNumber){
         return mallShopShippingService.verShipmentNo(shipNumber);
@@ -34,7 +38,9 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
      * @param mallShopShippingQuery
      * @return
      */
+    @ApiOperation(value = "确认发货",notes = "确认发货",httpMethod = "POST")
     @PostMapping("/order/shipment/enterShipping")
+    @ResponseBody
     public CommonResult<String> enterShipping(@RequestBody MallShopShippingQuery mallShopShippingQuery){
         return mallShopShippingService.enterShipping(mallShopShippingQuery);
     }

@@ -32,7 +32,7 @@ logging:
   level:
     com.ycandyz.master.dao: debug
 exclude:
-  path: /login,/error
+  path: /login,/error,/swagger-ui.html
 
 #快递100相关参数
 kuaidi:
