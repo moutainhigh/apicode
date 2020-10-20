@@ -157,10 +157,18 @@ public class MallCategoryServiceImpl implements MallCategoryService {
         String shopNo = userVO.getShopNo();
         log.info("编辑商品分类入参:{};:{}",mallCategoryVO,shopNo);
         String parentCategoryNo = mallCategoryVO.getParentCategoryNo();
+        String categoryNo = mallCategoryVO.getCategoryNo();
+
         if (StringUtils.isBlank(parentCategoryNo)){
-            int i = mallCategoryDao.updateMallParentCategory(mallCategoryVO,shopNo);
+            MallParentCategory mallParentCategory = mallCategoryDao.selParentCategoryByCategoryNo(shopNo, categoryNo);
+            if (mallParentCategory != null){
+                int i = mallCategoryDao.updateMallParentCategory(mallCategoryVO,shopNo);
+            }
         }else {
-            int i = mallCategoryDao.updateMallCategory(mallCategoryVO,shopNo);
+            MallCategory mallCategory = mallCategoryDao.selCategoryByCategoryNo(shopNo, categoryNo);
+            if (mallCategory != null && mallCategory.getParentCategoryNo().equals(parentCategoryNo)){
+                int i = mallCategoryDao.updateMallCategory(mallCategoryVO,shopNo);
+            }
         }
         List<MallCategoryDTO> mallCategoryDTOS = selCategoryByShopNo(userVO);
         return mallCategoryDTOS;

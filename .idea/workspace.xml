@@ -9,18 +9,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37f2c88e-dd82-45b2-94f6-ae3a8a16b1d5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallCategoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallCategoryServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallShippingServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/goodsManage/impl/MallShippingServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/impl/MallShopAddressServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/impl/MallShopAddressServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/impl/MallShopShippingServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/mall/impl/MallShopShippingServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/base/BaseRegionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/base/BaseRegionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/MallOrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/MallOrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/MallShopAddressController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/MallShopAddressController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/MallShopShippingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/MallShopShippingController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallCategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallCategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallItemController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallItemController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallShippingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master/controller/mall/goodsManage/MallShippingController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +27,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dev" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="JupyterTrust" id="61a0e637-9f3e-49ac-9cd5-9ec313f83fc7" />
@@ -89,13 +83,6 @@
     <key name="CreateTestDialog.RecentsKey">
       <recent name="com.ycandyz.master.service.mall.goodsManage.impl" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/moss-dao/src/main/resources/mapper" />
-      <recent name="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master" />
-    </key>
-    <key name="CreateTestDialog.Recents.Supers">
-      <recent name="" />
-    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.ycandyz.master.vo" />
       <recent name="com.ycandyz.master.dto.mall.goodsManage" />
@@ -109,6 +96,13 @@
       <recent name="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master/service/user" />
       <recent name="$PROJECT_DIR$/moss-commons/src/main/java/com/ycandyz/master/utils" />
       <recent name="$PROJECT_DIR$/moss-controller/src/main/java/com/ycandyz/master" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/moss-dao/src/main/resources/mapper" />
+      <recent name="$PROJECT_DIR$/moss-business/src/main/java/com/ycandyz/master" />
     </key>
   </component>
   <component name="RunManager" selected="Spring Boot.MasterControllerMain">
@@ -385,17 +379,6 @@
     </state>
     <state x="2468" y="332" width="670" height="676" key="search.everywhere.popup/0.23.1440.813/1440.23.2560.1417@1440.23.2560.1417" timestamp="1602582639215" />
     <state x="1028" y="318" width="670" height="646" key="search.everywhere.popup/0.23.2560.1353@0.23.2560.1353" timestamp="1603174750247" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <default-breakpoints>
-        <breakpoint type="python-exception">
-          <properties notifyOnTerminate="true" exception="BaseException">
-            <option name="notifyOnTerminate" value="true" />
-          </properties>
-        </breakpoint>
-      </default-breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
