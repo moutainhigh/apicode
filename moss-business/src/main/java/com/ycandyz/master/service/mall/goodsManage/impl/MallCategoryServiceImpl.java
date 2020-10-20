@@ -2,19 +2,16 @@ package com.ycandyz.master.service.mall.goodsManage.impl;
 
 
 import com.google.common.collect.Lists;
-import com.ycandyz.master.constants.RedisConstants;
 import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
 import com.ycandyz.master.enmus.LayerEnum;
-import com.ycandyz.master.enmus.SortValueEnum;
-import com.ycandyz.master.enmus.StatusEnum;
+import com.ycandyz.master.enums.SortValueEnum;
+import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.entities.mall.goodsManage.MallParentCategory;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
 import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.utils.IDGeneratorUtils;
-import com.ycandyz.master.utils.RedisUtil;
-import com.ycandyz.master.utils.SnowFlakeUtil;
 import com.ycandyz.master.vo.MallCategoryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -146,6 +143,26 @@ public class MallCategoryServiceImpl implements MallCategoryService {
             mallCategoryDTO.setParentCategory(mallParentCategory);
             mallCategoryDTOS.add(mallCategoryDTO);
         }
+        return mallCategoryDTOS;
+    }
+
+    /**
+     * @Description: 编辑商品分类
+     * @Author li Zhuo
+     * @Date 2020/10/19
+     * @Version: V1.0
+    */
+    @Override
+    public List<MallCategoryDTO> updateMallCategory(MallCategoryVO mallCategoryVO, UserVO userVO) {
+        String shopNo = userVO.getShopNo();
+        log.info("编辑商品分类入参:{};:{}",mallCategoryVO,shopNo);
+        String parentCategoryNo = mallCategoryVO.getParentCategoryNo();
+        if (StringUtils.isBlank(parentCategoryNo)){
+            int i = mallCategoryDao.updateMallParentCategory(mallCategoryVO,shopNo);
+        }else {
+            int i = mallCategoryDao.updateMallCategory(mallCategoryVO,shopNo);
+        }
+        List<MallCategoryDTO> mallCategoryDTOS = selCategoryByShopNo(userVO);
         return mallCategoryDTOS;
     }
 

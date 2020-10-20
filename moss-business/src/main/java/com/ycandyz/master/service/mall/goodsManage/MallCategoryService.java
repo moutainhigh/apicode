@@ -24,4 +24,6 @@ public interface MallCategoryService {
     int delCategoryByCategoryNo(String categoryNo,UserVO userVO);
 
     List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo,UserVO userVO);
+
+    List<MallCategoryDTO> updateMallCategory(MallCategoryVO mallCategoryVO, UserVO userVO);
 }

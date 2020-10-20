@@ -1,5 +1,6 @@
 package com.ycandyz.master.dto.mall.goodsManage;
 
+import com.ycandyz.master.entities.PickupAddress;
 import com.ycandyz.master.vo.MallSkuVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -88,7 +89,7 @@ public class MallItemDTO {
     private String parentCategoryName;
 
     @ApiModelProperty(value = "自提地址")
-    private Integer[] pickupAddressIds;
+    private PickupAddress[] pickupAddressIds;
 
     @ApiModelProperty(value = "自提地址类型： '[1,2]'")
     private String deliveryType;

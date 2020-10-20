@@ -1,6 +1,7 @@
 package com.ycandyz.master.dao.mall.goodsManage;
 
 import com.ycandyz.master.entities.mall.goodsManage.MallSpec;
+import com.ycandyz.master.vo.MallSpecVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,4 +16,5 @@ public interface MallSpecDao {
 
     List<String> selMallSpecNoByShopNo(@Param("shopNo") String shopNo);
 
+    int updateMallSpec(@Param("specNo") String specNo,@Param("specName") String specName,@Param("shopNo") String shopNo);
 }

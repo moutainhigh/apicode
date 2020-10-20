@@ -1,6 +1,7 @@
 package com.ycandyz.master.dao.mall.goodsManage;
 
 import com.ycandyz.master.entities.mall.goodsManage.MallItem;
+import com.ycandyz.master.vo.MallItemVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,7 +14,9 @@ public interface MallItemDao {
 
     MallItem selMallItemByitemNo(@Param("shopNo") String shopNo, @Param("itemNo") String itemNo);
 
-    int delMallItemByItemNo(String shopNo, String itemNo);
+    int delMallItemByItemNo(@Param("shopNo")String shopNo, @Param("itemNo") String itemNo);
 
     int oprbyItemNo(@Param("shopNo") String shopNo, @Param("itemNoList") List<String> itemNoList, @Param("status") Integer status);
+
+    int updateMallItem(@Param("mallItem") MallItem mallItem, @Param("shopNo") String shopNo);
 }

@@ -47,4 +47,14 @@ public class MallSpecValue {
 
     @ApiModelProperty(value = "updatedTime")
     private Date updatedTime;
+
+    public MallSpecValue(String specNo, String specValue, Integer sortValue, Integer status) {
+        this.specNo = specNo;
+        this.specValue = specValue;
+        this.sortValue = sortValue;
+        this.status = status;
+    }
+
+    public MallSpecValue() {
+    }
 }

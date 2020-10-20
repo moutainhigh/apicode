@@ -2,7 +2,6 @@ package com.ycandyz.master.service.mall.goodsManage;
 
 import com.github.pagehelper.PageInfo;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
 import com.ycandyz.master.model.user.UserVO;
@@ -20,7 +19,7 @@ public interface MallShippingService {
 
     List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO,UserVO userVO);
 
-    void updateMallShipping(MallShipping mallShipping);
+    List<MallShippingDTO> updateMallShipping(MallShippingVO mallShippingVO, UserVO userVO);
 
     MallShippingDTO selMallShippingByShippingNo(String shippingNo,UserVO userVO);
 

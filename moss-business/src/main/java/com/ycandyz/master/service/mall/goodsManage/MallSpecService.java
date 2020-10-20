@@ -13,4 +13,6 @@ public interface MallSpecService {
     int delMallSpecBySpecNo(String specNo,UserVO userVO);
     PageInfo<MallSpecKeyWordVO> selMallSpecByKeyWord(Integer page, Integer pageSize, String keyWord,UserVO userVO);
     MallSpecSingleVO selMallSpecSingleBySpecNo(UserVO userVO, String specNo);
+
+    List<MallSpecSingleVO> updateMallSpec(MallSpecVO mallSpecVO,UserVO userVO);
 }

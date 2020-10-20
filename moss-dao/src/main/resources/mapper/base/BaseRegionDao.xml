@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.ycandyz.master.dao.base.BaseRegionDao">
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.BaseRegion">
+        <result column="region_code" property="regionCode" jdbcType="VARCHAR"/>
+        <result column="region_name" property="regionName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selBaseRegion" resultMap="BaseResultMap" >
+		select
+			a1.region_code as parent_id,
+			a1.region_name as parent_name,
+			a2.region_code as child_id,
+			a2.region_name as child_name
+		from base_region as a1
+    left join base_region as a2
+    on a1.region_code = a2.pid;
+    </select>
+
+</mapper>
+
+

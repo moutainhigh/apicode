@@ -13,4 +13,6 @@ public interface MallItemService {
     int oprbyItemNo(UserVO userVO, MallItemOprVO mallItemOprVO);
 
     int delMallItemByItemNo(String itemNo, UserVO userVO);
+
+    void updateMallItem(MallItemVO mallItemVO, UserVO userVO);
 }

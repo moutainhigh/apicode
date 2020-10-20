@@ -6,10 +6,13 @@ import com.ycandyz.master.dao.mall.goodsManage.MallSkuDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSkuSpecDao;
 import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallItemDTO;
+import com.ycandyz.master.enums.SortValueEnum;
+import com.ycandyz.master.entities.PickupAddress;
 import com.ycandyz.master.entities.mall.goodsManage.MallItem;
 import com.ycandyz.master.entities.mall.goodsManage.MallSku;
 import com.ycandyz.master.entities.mall.goodsManage.MallSkuSpec;
 import com.ycandyz.master.model.user.UserVO;
+import com.ycandyz.master.service.base.PickupAdressService;
 import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
 import com.ycandyz.master.service.mall.goodsManage.MallItemService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
@@ -18,14 +21,11 @@ import com.ycandyz.master.vo.MallItemVO;
 import com.ycandyz.master.vo.MallSkuSpecsVO;
 import com.ycandyz.master.vo.MallSkuVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,6 +51,11 @@ public class MallItemServiceImpl implements MallItemService {
 
     @Resource
     private MallCategoryService mallCategoryService;
+
+    @Resource
+    private PickupAdressService pickupAdressService;
+
+
     /**
      * @Description: 添加商品
     */
@@ -60,78 +65,55 @@ public class MallItemServiceImpl implements MallItemService {
         log.info("添加商品入参:{}",mallItemVO);
         String itemNo = String.valueOf(IDGeneratorUtils.getLongId());
         MallItem mallItem = new MallItem();
+        BeanUtils.copyProperties(mallItemVO,mallItem);
         mallItem.setShopNo(userVO.getShopNo());
-        mallItem.setCategoryNo(mallItemVO.getCategorNo());
         mallItem.setItemNo(itemNo);
-        mallItem.setItemName(mallItemVO.getItemName());
-        mallItem.setItemText(mallItemVO.getItemText());
-        //mallItem.setItemCover(mallItemVO.getI)  //前端未传参数
-        mallItem.setBanners(ArrayUtils.toString(mallItemVO.getBanners()));
-        mallItem.setBaseSales(mallItemVO.getBaseSales());
-        // mallItem.setRealSales(mallItemVO.getr) //前端未传参数
-        mallItem.setSortValue(mallItemVO.getSortValue());
-        mallItem.setShareDescr(mallItemVO.getSharDescr());
-        mallItem.setShareImg(mallItemVO.getShareImg());
-        mallItem.setPrice(mallItemVO.getPrice());
-        //mallItem.setLowestSalePrice(mallItemVO.getlo)
-        //mallItem.setHighestSalePrice(mallItemVO.geth)
-        mallItem.setStock(mallItemVO.getStock());
-        //mallItem.setFrozenStock(mallItemVO.getf)
+        mallItem.setBanners(PraseArraytoString(mallItemVO.getBanners()));
         mallItem.setSubStockMethod(mallItemVO.getSubStockMethod());
-        mallItem.setGoodsNo(mallItemVO.getGoodsNo());
-        mallItem.setDeliverMethod(mallItemVO.getDeliverMethod());
-        mallItem.setStatus(mallItemVO.getStatus());
-        mallItem.setIsUnifyShipping(mallItemVO.getIsUnifyShipping());
-        mallItem.setShippingNo(mallItemVO.getShippingNo());
-        mallItem.setUnifyShipping(mallItemVO.getUnifyShipping());
-        mallItem.setInitialPurchases(mallItemVO.getInitialPurchases());
-        mallItem.setLimitCycleType(mallItemVO.getLimitCycleType());
-        mallItem.setLimitSkus(mallItemVO.getLimitSkus());
-        mallItem.setLimitOrders(mallItemVO.getLimitOrders());
-        //mallItem.setQrCodeUrl(mallItemVO.getq);
-        //mallItem.setIsEnableShare(mallItemVO.geti)
-//        mallItem.setShareSecondAmount();
-//        mallItem.setShareSecondMethod();
-//        mallItem.setShareSecondRate();
-//        mallItem.setShareSecondLevelAmount();
-//        mallItem.setShareSecondLevelMethod();
-//        mallItem.setShareSecondLevelRate();
-//        mallItem.setShareThirdAmount();
-//        mallItem.setShareThirdMethod();
-//        mallItem.setShareThirdRate();
-//        mallItem.setShareThirdLevelAmount();
-//        mallItem.setShareThirdLevelMethod();
-//        mallItem.setShareThirdLevelRate();
-        mallItem.setDeliveryType(ArrayUtils.toString(mallItemVO.getDeliveryType()));
-        mallItem.setPickupAddressIds(ArrayUtils.toString(mallItemVO.getPickupDddrIds()));
-        mallItem.setDeliveryTypeBak(ArrayUtils.toString(mallItemVO.getDeliveryType()));
+        mallItem.setDeliveryType(PraseArraytoString(mallItemVO.getDeliveryType()));
+        mallItem.setPickupAddressIds(PraseArraytoString(mallItemVO.getPickupAddressIds()));
         mallItemDao.addMallItem(mallItem);
         MallSkuVO[] skus = mallItemVO.getSkus();
+        insertMallSku(itemNo, skus);
+    }
+
+    private String PraseArraytoString(Object[] integers) {
+        List<Object> lists = Lists.newArrayList();
+        Arrays.stream(integers).forEach(s -> lists.add(s));
+        return lists+"";
+    }
+
+    private void insertMallSku(String itemNo, MallSkuVO[] skus) {
         MallSku mallSku = null;
         if (skus != null && skus.length > 0){
+            int i = 0;
             for (MallSkuVO mvo : skus) {
                 mallSku = new MallSku();
-                String skuNo = ""; //md5做
-
+                String skuNobyIdG = String.valueOf(IDGeneratorUtils.getLongId());
+                StringBuffer skuNo = new StringBuffer();
+                skuNo.append(itemNo)
+                        .append("_")
+                        .append(skuNobyIdG);
                 mallSku.setItemNo(itemNo);
-                mallSku.setSkuNo(skuNo);  //后面再改getMallSkuNo()
+                mallSku.setSkuNo(skuNo.toString());
                 mallSku.setPrice(mvo.getPrice());
                 mallSku.setSalePrice(mvo.getSalePrice());
                 mallSku.setStock(mvo.getStock());
                 mallSku.setGoodsNo(mvo.getGoodsNo());
+                mallSku.setSortValue(SortValueEnum.DEFAULT.getCode()+i);
                 mallSkuDao.addMallSku(mallSku);
                 MallSkuSpecsVO[] skuSpecs = mvo.getSkuSpecs();
                 MallSkuSpec mallSkuSpec = null;
                 if (skuSpecs != null && skuSpecs.length > 0){
                     for (MallSkuSpecsVO mspec: skuSpecs) {
                         mallSkuSpec = new MallSkuSpec();
-                        mallSkuSpec.setSkuNo(skuNo);
+                        mallSkuSpec.setSkuNo(skuNo.toString());
                         mallSkuSpec.setSpecName(mspec.getSpecName());
                         mallSkuSpec.setSpecValue(mspec.getSpecValue());
                         mallSkuSpecDao.addMallSkuSpec(mallSkuSpec);
                     }
                 }
-
+            i++;
             }
         }
     }
@@ -174,15 +156,37 @@ public class MallItemServiceImpl implements MallItemService {
             mallItemDTO.setCategorNo(mallItem.getCategoryNo());
             mallItemDTO.setCategoryName(mallCategoryDTO.getCategoryName());
             mallItemDTO.setParentCategoryNo(mallCategoryDTO.getParentCategoryNo());
-            mallItemDTO.setParentCategoryName(mallCategoryDTO.getParentCategory().getCategoryName());
+            mallItemDTO.setParentCategoryName(mallCategoryDTO.getParentCategory() == null ? null : mallCategoryDTO.getParentCategory().getCategoryName());
         }
         BeanUtils.copyProperties(mallItem,mallItemDTO);
         mallItemDTO.setSkus(mallSkuVOs.toArray(mallSkuVOArr));
         mallItemDTO.setDeliveryType(mallItem.getDeliveryType());
+        //查询自提地址
+        List<Integer> ids = parseIds(mallItem.getPickupAddressIds());
+        List<PickupAddress> pickupAddresses = pickupAdressService.selPickupAddress(ids);
+        if (pickupAddresses != null){
+            PickupAddress[] pickupAddressesArr = new PickupAddress[pickupAddresses.size()];
+            mallItemDTO.setPickupAddressIds(pickupAddresses.toArray(pickupAddressesArr));
+        }else {
+            mallItemDTO.setPickupAddressIds(null);
+        }
+
         return mallItemDTO;
     }
 
-    
+    private List<Integer> parseIds(String s) {
+        int beginIndex = s.indexOf("[") == 0 ? 1 : 0;
+        int endIndex = s.lastIndexOf("]") + 1 == s.length() ? s.lastIndexOf("]") : s.length();
+        s = s.substring(beginIndex, endIndex);
+        if (s.length() <= 0){
+            return null;
+        }
+        List<Integer> ids = Lists.newArrayList();
+        Arrays.stream(s.split(",")).forEach(s1 -> ids.add(Integer.parseInt(s1)));
+        return ids;
+    }
+
+
     /**
      * @Description: 上下架商品
     */
@@ -207,28 +211,31 @@ public class MallItemServiceImpl implements MallItemService {
         return r;
     }
 
+    /**
+     * @Description: 编辑商品
+    */
+    @Override
+    public void updateMallItem(MallItemVO mallItemVO, UserVO userVO) {
+        String shopNo = userVO.getShopNo();
+        log.info("编辑商品入参:{};:{}",mallItemVO,shopNo);
+        String itemNo = mallItemVO.getItemNo();
+        MallSkuVO[] skus = mallItemVO.getSkus();
 
-//    private static String bytesToHexString(Object info) {
-//        MessageDigest messageDigest = null;
-//        StringBuilder sb = null;
-//        try {
-//            messageDigest = MessageDigest.getInstance("MD5");
-//
-//            messageDigest.update(info.getBytes());
-//            byte[] digest = messageDigest.digest();
-//            sb = new StringBuilder();
-//            for (int i = 0; i < bytes.length; i++) {
-//                String hex = Integer.toHexString(0xFF & bytes[i]);
-//                if (hex.length() == 1) {
-//                    sb.append('0');
-//                }
-//                sb.append(hex);
-//            }
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return sb.toString();
-//    }
+        MallItem mallItem = new MallItem();
+        BeanUtils.copyProperties(mallItemVO,mallItem);
+        mallItem.setShopNo(shopNo);
+        mallItem.setBanners(PraseArraytoString(mallItemVO.getBanners()));
+        mallItem.setSubStockMethod(mallItemVO.getSubStockMethod());
+        mallItem.setDeliveryType(PraseArraytoString(mallItemVO.getDeliveryType()));
+        mallItem.setPickupAddressIds(PraseArraytoString(mallItemVO.getPickupAddressIds()));
+
+        int i = mallItemDao.updateMallItem(mallItem,shopNo);
+        if (skus != null && skus.length > 0){
+            int i2 = mallSkuDao.deleteSkuDao(itemNo);
+            insertMallSku(itemNo,skus);
+        }
+
+
+    }
 
 }
