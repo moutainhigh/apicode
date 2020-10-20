@@ -2,7 +2,6 @@ package com.ycandyz.master.controller.mall.goodsManage;
 
 import com.github.pagehelper.PageInfo;
 import com.ycandyz.master.auth.CurrentUser;
-import com.ycandyz.master.dto.mall.goodsManage.MallSpecDTO;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallSpecService;
