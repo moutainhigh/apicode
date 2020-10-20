@@ -7,12 +7,17 @@ import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.model.mall.MallAfterSalesVO;
+import com.ycandyz.master.model.user.UserVO;
+
+import javax.servlet.http.HttpServletResponse;
 
 public interface MallAfterSalesService extends IService<MallAfterSales> {
 
-    CommonResult<Page<MallAfterSalesVO>> querySalesList(PageModel model, MallafterSalesQuery mallafterSalesQuery);
+    CommonResult<Page<MallAfterSalesVO>> querySalesListPage(PageModel model, MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
 
     CommonResult<MallAfterSalesVO> querySalesDetail(Long id);
 
-    boolean refundAuditFirst(Long id, Integer subStatus);
+    boolean refundAuditFirst(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
+
+    void exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO, HttpServletResponse response);
 }

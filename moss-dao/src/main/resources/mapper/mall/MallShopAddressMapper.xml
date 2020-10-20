@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallShopAddressDao">
+
+    <select id="queryByShopNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopAddressDTO">
+        select
+            id as id,
+            shop_no as shopNo,
+            shop_address_no as shopAddressNo,
+            receiver as receiver,
+            phone_number as phoneNumber,
+            province as province,
+            province_id as provinceId,
+            city as city,
+            city_id as cityId,
+            district as district,
+            district_id as districtId,
+            detail_address as detailAddress,
+            is_default as isDefault,
+            status as status,
+            created_time as createdTime,
+            updated_time as updatedTime
+        from mall_shop_address
+        where shop_no=#{shopNo}
+    </select>
+
+</mapper>

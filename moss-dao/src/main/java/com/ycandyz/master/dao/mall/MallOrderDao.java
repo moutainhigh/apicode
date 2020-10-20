@@ -25,4 +25,8 @@ public interface MallOrderDao extends BaseMapper<MallOrder> {
     List<MallOrderDTO> getTrendMallOrder(@Param("p") MallOrderQuery mallOrderQuery);
 
     MallOrderDetailDTO queryOrderDetail(@Param("orderNo") String orderNo);
+
+    MallOrderDTO queryDetailByPickupNo(@Param("pickupNo") String pickupNo, @Param("shopNo") String shopNo);
+
+    MallOrderDTO queryDetailByOrderNo(@Param("orderNo") String orderNo, @Param("shopNo") String shopNo);
 }

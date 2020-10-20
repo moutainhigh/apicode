@@ -11,8 +11,10 @@ import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.user.IUserService;
 import com.ycandyz.master.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 /**
  * @author: WangYang
@@ -45,13 +48,29 @@ public class InterceptorToken implements HandlerInterceptor {
 
         String path = httpServletRequest.getServletPath();
         log.info(path);
-        if (excludePath.contains(path)) {
+
+        String[] excludeUrl = {"/instances",
+                "/actuator/**",
+                "/druid/**",
+                "/assets/**",
+                "/webjars/**",
+                "/configuration/ui",
+                "/swagger-resources",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/docs.html",
+                "/doc.html",
+                "/swagger-resources/**",
+                "/v2/api-docs"};
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        boolean flow = Arrays.stream(excludeUrl).anyMatch(p -> antPathMatcher.match(p,path));
+        if (excludePath.contains(path) || flow) {
             log.info("requestUrl: {}", path);
             // 请求放行
             return true;
         }
         String url = httpServletRequest.getRequestURI();
-        String token = httpServletRequest.getHeader("token");
+        String token = httpServletRequest.getHeader("x-auth-token");
         String method = httpServletRequest.getMethod();
         if (!method.equals("OPTIONS")){
             log.info(token);

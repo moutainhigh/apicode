@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallShopDao">
+
+    <select id="queryByShopNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopDTO">
+        select
+            shop_no as shopNo,
+            shop_name as shopName,
+            organize_id as organizeId,
+            bg_img as bgImg,
+            entry_name as entryName,
+            as_hold_days as asHoldDays,
+            cs_contact as csContact,
+            cs_phone_number as csPhoneNumber,
+            cs_weixin_no as csWeixinNo,
+            status as status,
+            operate_status as operateStatus,
+            unix_timestamp(created_time) as createdTime
+        from mall_shop
+        where shop_no=#{shopNo}
+    </select>
+
+</mapper>

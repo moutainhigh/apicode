@@ -21,7 +21,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .pathMapping("/")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.ycandyz.uke.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.ycandyz.master.controller"))
                 .paths(PathSelectors.any())
                 .build().apiInfo(new ApiInfoBuilder()
                         .title("深圳有传科技有限公司-接口文档")

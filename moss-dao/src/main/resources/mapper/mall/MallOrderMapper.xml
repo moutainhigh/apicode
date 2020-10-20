@@ -30,7 +30,7 @@
                 LEFT JOIN (select modetail.order_no FROM mall_order_detail modetail LEFT JOIN user u ON modetail.share_user_id=u.id WHERE u.`name` like concat('%',#{p.socialPartner},'%') OR u.phone like concat('%',#{p.socialPartner},'%')) a ON mo.order_no=a.order_no /**合伙人*/
             </if>
         WHERE
-            1=1
+            mo.shop_no=#{p.shopNo} and mo.is_del=0
             <if test="p.orderNo != null and p.orderNo != ''">
                 and
                 mo.order_no  like concat('%',#{p.orderNo},'%')	/**订单编号*/
@@ -85,6 +85,7 @@
                 <if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
                 <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>
             </if>
+            group by mo.id
     </select>
 
     <select id="getTrendMallOrder" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
@@ -115,7 +116,7 @@
             LEFT JOIN (select modetail.order_no FROM mall_order_detail modetail LEFT JOIN user u ON modetail.share_user_id=u.id WHERE u.`name` like concat('%',#{p.socialPartner},'%') OR u.phone like concat('%',#{p.socialPartner},'%')) a ON mo.order_no=a.order_no /**合伙人*/
         </if>
         WHERE
-        1=1
+        mo.shop_no=#{p.shopNo} and mo.is_del=0
         <if test="p.orderNo != null and p.orderNo != ''">
             and
             mo.order_no  like concat('%',#{p.orderNo},'%')	/**订单编号*/
@@ -170,6 +171,7 @@
             <if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
             <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>
         </if>
+        group by mo.id
     </select>
 
     <select id="queryOrderDetail" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
@@ -192,5 +194,37 @@
             LEFT JOIN mall_shop_shipping ship ON o.order_no=ship.order_no
         WHERE
             o.order_no = #{orderNo}
+    </select>
+
+    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
+        select
+            mo.id as id,
+            mo.cart_order_id as cartOrderSn,
+            mo.real_money as realMoney,
+            mo.payed_at as payedAt,
+            mo.buyer_remark as buyerRemark,
+            mo.status as status,
+            mo.sub_status as subStatus,
+            mo.deliver_method as deliverMethod,
+        from mall_order mo
+        left join mall_order_detail modetail on mo.order_no=modetail.order_no
+        where mo.shop_no=#{shopNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
+        group by mo.id
+    </select>
+
+    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
+        select
+            mo.id as id,
+            mo.cart_order_id as cartOrderSn,
+            mo.real_money as realMoney,
+            mo.payed_at as payedAt,
+            mo.buyer_remark as buyerRemark,
+            mo.status as status,
+            mo.sub_status as subStatus,
+            mo.deliver_method as deliverMethod,
+        from mall_order mo
+        left join mall_order_detail modetail on mo.order_no=modetail.order_no
+        where mo.order_no=#{orderNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
+        group by mo.id
     </select>
 </mapper>
