@@ -1,7 +1,7 @@
 package com.ycandyz.master.service.mall.impl;
 
 import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.MallShopAddressDao;
 import com.ycandyz.master.domain.query.mall.MallShopAddressQuery;
 import com.ycandyz.master.dto.mall.MallShopAddressDTO;

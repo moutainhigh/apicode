@@ -1,4 +1,4 @@
-package com.ycandyz.master.base.extension;
+package com.ycandyz.master.controller.base.extension;
 
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.extension.activerecord.Model;

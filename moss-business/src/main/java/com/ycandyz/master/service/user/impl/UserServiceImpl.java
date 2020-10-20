@@ -1,6 +1,6 @@
 package com.ycandyz.master.service.user.impl;
 
-import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.user.UserDao;
 import com.ycandyz.master.domain.query.user.UserQuery;
 import com.ycandyz.master.entities.user.User;

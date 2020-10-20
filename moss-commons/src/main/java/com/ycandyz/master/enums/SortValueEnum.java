@@ -1,4 +1,4 @@
-package com.ycandyz.master.enmus;
+package com.ycandyz.master.enums;
 
 public enum SortValueEnum {
     DEFAULT(0,"默认");

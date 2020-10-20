@@ -2,7 +2,6 @@ package com.ycandyz.master.controller.mall.goodsManage;
 
 
 import com.ycandyz.master.auth.CurrentUser;
-import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallItemDTO;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.model.user.UserVO;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Api(value="商品分类",tags={"商品管理-商品动态接口"})
 @RestController
@@ -29,7 +27,7 @@ public class MallItemController {
 
     @ApiOperation(value = "添加商品",notes = "添加",httpMethod = "POST")
     @PostMapping("/item")
-    public CommonResult<List<MallCategoryDTO>> addMallItem(@RequestBody MallItemVO MallItemVO, @CurrentUser UserVO user){
+    public CommonResult addMallItem(@RequestBody MallItemVO MallItemVO, @CurrentUser UserVO user){
         mallItemService.addMallItem(MallItemVO,user);
         return CommonResult.success(null);
     }
@@ -57,7 +55,7 @@ public class MallItemController {
 
     @ApiOperation(value = "删除商品",notes = "删除",httpMethod = "DELETE")
     @DeleteMapping("/item/{itemNo}")
-    public CommonResult delMallItemByItemNo(@PathVariable(value = "specNo") String itemNo, @CurrentUser UserVO userVO){
+    public CommonResult delMallItemByItemNo(@PathVariable(value = "itemNo") String itemNo, @CurrentUser UserVO userVO){
         int count = mallItemService.delMallItemByItemNo(itemNo,userVO);
         if (count > 0) {
             return CommonResult.success(null);
@@ -65,5 +63,12 @@ public class MallItemController {
         return CommonResult.failed(null);
     }
 
+    @ApiOperation(value = "编辑商品分类",notes = "put",httpMethod = "PUT")
+    @PutMapping("/item")
+    public CommonResult updateMallItem(@RequestBody MallItemVO mallItemVO, @CurrentUser UserVO userVO){
+        log.info("修改运费模版请求参数:{}",mallItemVO);
+        mallItemService.updateMallItem(mallItemVO,userVO);
+        return CommonResult.success(null);
+    }
 
 }

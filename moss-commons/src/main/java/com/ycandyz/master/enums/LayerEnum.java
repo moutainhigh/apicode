@@ -1,7 +1,11 @@
-package com.ycandyz.master.enmus;
+package com.ycandyz.master.enums;
 
-public enum StatusEnum {
-    DEFAULT(1,"默认");
+import lombok.Getter;
+
+
+public enum LayerEnum {
+    FITRSTLAYER(0,"第一级"),
+    SECONDLAYER(1,"第二级");
     ;
     private Integer code;
     private String  desc;
@@ -15,7 +19,7 @@ public enum StatusEnum {
         this.code = code;
     }
 
-    StatusEnum(Integer code, String desc) {
+    LayerEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }

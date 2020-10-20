@@ -8,17 +8,23 @@ import java.math.BigDecimal;
 @Data
 public class MallItemVO {
 
+    @ApiModelProperty(value = "商品编号")
+    private String itemNo;
+
     @ApiModelProperty(value = "商品名称")
     private String itemName;
 
     @ApiModelProperty(value = "分类编号")
-    private String categorNo;
+    private String categoryNo;
 
     @ApiModelProperty(value = "商品描述")
     private String itemText;
 
     @ApiModelProperty(value = "轮播图，jsonarray")
     private String[] banners;
+
+    @ApiModelProperty(value = "封面图")
+    private String itemCover;
 
     @ApiModelProperty(value = "基础销量")
     private Integer baseSales;
@@ -27,7 +33,7 @@ public class MallItemVO {
     private Integer sortValue;
 
     @ApiModelProperty(value = "分享描述")
-    private String sharDescr;
+    private String shareDescr;
 
     @ApiModelProperty(value = "分享图片")
     private String shareImg;
@@ -81,5 +87,8 @@ public class MallItemVO {
     private Integer[] deliveryType;
 
     @ApiModelProperty(value = "配送地址")
-    private Integer[] pickupDddrIds;
+    private Integer[] pickupAddressIds;
+
+    @ApiModelProperty(value = "最高销售价格")
+    private BigDecimal highestSalePrice;
 }

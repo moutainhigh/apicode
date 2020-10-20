@@ -1,4 +1,4 @@
-package com.ycandyz.master.base;
+package com.ycandyz.master.controller.base;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.ycandyz.master.api.CommonResult;

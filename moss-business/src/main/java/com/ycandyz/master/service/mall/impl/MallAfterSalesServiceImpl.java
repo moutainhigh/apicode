@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.util.StringUtil;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.PageModel;
-import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.MallAfterSalesDao;
 import com.ycandyz.master.dao.mall.MallAfterSalesLogDao;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;

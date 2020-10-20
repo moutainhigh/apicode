@@ -56,4 +56,11 @@ public class MallCategoryController {
         return CommonResult.failed(null);
     }
 
+    @ApiOperation(value = "编辑商品分类",notes = "put",httpMethod = "PUT")
+    @PutMapping("/category")
+    public CommonResult<List<MallCategoryDTO>> updateMallCategory(@RequestBody MallCategoryVO mallCategoryVO, @CurrentUser UserVO userVO){
+        log.info("修改运费模版请求参数:{}",mallCategoryVO);
+        List<MallCategoryDTO> mallCategoryDTOS = mallCategoryService.updateMallCategory(mallCategoryVO,userVO);
+        return CommonResult.success(mallCategoryDTOS);
+    }
 }

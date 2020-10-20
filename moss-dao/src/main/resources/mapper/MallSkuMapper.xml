@@ -18,13 +18,76 @@
 
 
     <insert id="addMallSku" parameterType="com.ycandyz.master.entities.mall.goodsManage.MallSku">
-        insert into mall_sku(id,item_no,sku_no,sku_name,sku_img,sale_price,price,stock,frozen_stock,
-        goods_no,created_time,updated_time,real_sales,sort_value)
-        values (#{id},#{itemNo},#{skuNo},#{skuName},#{skuImg},#{salePrice},#{price},
-        #{stock},#{frozenStock},#{goodsNo},now(),now(),#{realSales},#{sortValue});
+
+<!--        insert into mall_sku-->
+<!--        <trim prefix="(" suffix=")" suffixOverrides=",">-->
+<!--            <if test="itemNo != null">-->
+<!--                item_no,-->
+<!--            </if>-->
+<!--            <if test="skuNo != null">-->
+<!--                sku_no,-->
+<!--            </if>-->
+
+<!--            <if test="salePrice != null">-->
+<!--                sale_price,-->
+<!--            </if>-->
+<!--            <if test="price != null">-->
+<!--                price,-->
+<!--            </if>-->
+<!--            <if test="stock != null">-->
+<!--                stock,-->
+<!--            </if>-->
+
+<!--            <if test="goodsNo != null">-->
+<!--                goods_no,-->
+<!--            </if>-->
+<!--            <if test="createdTime != null">-->
+<!--                created_time,-->
+<!--            </if>-->
+<!--            <if test="updatedTime != null">-->
+<!--                updated_time,-->
+<!--            </if>-->
+
+<!--        </trim>-->
+<!--        <trim prefix="values (" suffix=")" suffixOverrides=",">-->
+<!--            <if test="itemNo != null">-->
+<!--                #{itemNo,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="skuNo != null">-->
+<!--                #{skuNo,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="salePrice != null">-->
+<!--                #{salePrice,jdbcType=DECIMAL},-->
+<!--            </if>-->
+<!--            <if test="price != null">-->
+<!--                #{price,jdbcType=DECIMAL},-->
+<!--            </if>-->
+<!--            <if test="stock != null">-->
+<!--                #{stock,jdbcType=INTEGER},-->
+<!--            </if>-->
+<!--            <if test="goodsNo != null">-->
+<!--                #{goodsNo,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="createdTime != null">-->
+<!--                now(),-->
+<!--            </if>-->
+<!--            <if test="updatedTime != null">-->
+<!--                now(),-->
+<!--            </if>-->
+<!--        </trim>-->
+        insert into mall_sku(id,item_no,sku_no,sale_price,price,stock,
+        goods_no,created_time,updated_time,sort_value)
+        values (#{id,jdbcType=BIGINT},#{itemNo,jdbcType=VARCHAR},#{skuNo,jdbcType=VARCHAR},#{salePrice,jdbcType=DECIMAL},#{price,jdbcType=DECIMAL},
+        #{stock,jdbcType=INTEGER},#{goodsNo,jdbcType=VARCHAR},now(),now(),#{sortValue,jdbcType=INTEGER});
     </insert>
+    <delete id="deleteSkuDao">
+        delete t1,t2
+        from mall_sku as t1
+        left join mall_sku_spec as t2 on t1.sku_no = t2.sku_no
+        where t1.item_no = #{itemNo,jdbcType=VARCHAR};
+    </delete>
     <select id="selMallSkuByitemNo" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select * from mall_sku where item_no = #{itemNo};
+        select * from mall_sku where item_no = #{itemNo,jdbcType=VARCHAR};
     </select>
 
 

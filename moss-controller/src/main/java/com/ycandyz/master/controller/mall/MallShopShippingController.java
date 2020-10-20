@@ -1,7 +1,7 @@
 package com.ycandyz.master.controller.mall;
 
 import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.base.BaseController;
+import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
 import com.ycandyz.master.domain.shipment.query.ShipmentParamQuery;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;

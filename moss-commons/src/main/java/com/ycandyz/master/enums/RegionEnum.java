@@ -1,10 +1,9 @@
-package com.ycandyz.master.enmus;
+package com.ycandyz.master.enums;
 
 import lombok.Getter;
 
 import java.util.Arrays;
 
-@Getter
 public enum RegionEnum {
     DONGBEI("东北", new String[]{"黑龙江省", "吉林省", "辽宁省"}),
     HUADONG("华东", new String[]{"上海市", "江苏省", "浙江省", "安徽省", "福建省", "江西省", "山东省", "台湾省"}),

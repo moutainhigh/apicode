@@ -1,4 +1,4 @@
-package com.ycandyz.master.base;
+package com.ycandyz.master.controller.base;
 
 import com.ycandyz.master.annotation.Condition;
 import com.ycandyz.master.enums.ConditionEnum;

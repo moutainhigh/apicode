@@ -12,4 +12,6 @@ public interface MallSkuDao {
     void addMallSku(MallSku mallSku);
 
     List<MallSku> selMallSkuByitemNo(String itemNo);
+
+    int deleteSkuDao(String itemNo);
 }

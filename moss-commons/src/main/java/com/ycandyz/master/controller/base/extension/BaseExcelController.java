@@ -1,4 +1,4 @@
-package com.ycandyz.master.base.extension;/*
+package com.ycandyz.master.controller.base.extension;/*
  * package com.sangang.video.admin.common.api.base.extension;
  * 
  * import java.io.File; import java.io.FileOutputStream; import

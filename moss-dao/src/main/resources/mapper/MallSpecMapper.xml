@@ -2,34 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ycandyz.master.dao.mall.goodsManage.MallSpecDao">
     <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallSpec">
-        <id column="id" property="id" jdbcType="BIGINT" />
-        <id column="shop_no" property="shopNo" jdbcType="VARCHAR"/>
-        <id column="spec_no" property="specNo" jdbcType="VARCHAR"/>
-        <id column="spec_name" property="specName" jdbcType="VARCHAR"/>
-        <id column="sort_value" property="sortValue" jdbcType="INTEGER"/>
-        <id column="status" property="status" jdbcType="INTEGER"/>
-        <id column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
-        <id column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+        <result column="id" property="id" jdbcType="BIGINT" />
+        <result column="shop_no" property="shopNo" jdbcType="VARCHAR"/>
+        <result column="spec_no" property="specNo" jdbcType="VARCHAR"/>
+        <result column="spec_name" property="specName" jdbcType="VARCHAR"/>
+        <result column="sort_value" property="sortValue" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
     <insert id="addMallSpec" parameterType="com.ycandyz.master.entities.mall.goodsManage.MallSpec">
-        insert into mall_spec (shop_no,spec_no,spec_name,sort_value,status,created_time,updated_time)
-        values (#{shopNo},#{specNo},#{specName},#{sortValue},#{status},now(),now());
+        insert into mall_spec (id,shop_no,spec_no,spec_name,sort_value,status,created_time,updated_time)
+        values (#{id,jdbcType=BIGINT},#{shopNo,jdbcType=VARCHAR},#{specNo,jdbcType=VARCHAR},#{specName,jdbcType=VARCHAR},#{sortValue,jdbcType=INTEGER},#{status,jdbcType=INTEGER},now(),now());
     </insert>
+
+    <update id="updateMallSpec">
+        update mall_spec set spec_name = #{specName,jdbcType=VARCHAR},updated_time = now() where spec_no = #{specNo,jdbcType=VARCHAR} and shop_no = #{shopNo,jdbcType=VARCHAR};
+    </update>
+
     <delete id="delMallSpecBySpecNo" parameterType="java.lang.String">
         delete t1,t2
         from mall_spec as t1
         left join mall_spec_value as t2 on t1.spec_no = t2.spec_no
-        where t1.shop_no = #{shopNo} and t1.spec_no = #{specNo};
+        where t1.shop_no = #{shopNo,jdbcType=VARCHAR} and t1.spec_no = #{specNo,jdbcType=VARCHAR};
     </delete>
     <select id="selMallSpecBySpecNo" resultMap="BaseResultMap" parameterType="java.lang.String">
-          select * from mall_spec where shop_no = #{shopNo}  and spec_no=#{specNo};
+          select * from mall_spec where shop_no = #{shopNo,jdbcType=VARCHAR}  and spec_no=#{specNo,jdbcType=VARCHAR};
     </select>
     <select id="selMallSpecByKeyWord" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select * from mall_spec where shop_no = #{shopNo}  and spec_name like "%"#{keyWord}"%"
+        select * from mall_spec where shop_no = #{shopNo,jdbcType=VARCHAR}  and spec_name like "%"#{keyWord,jdbcType=VARCHAR}"%"
     </select>
     <select id="selMallSpecNoByShopNo" parameterType="java.lang.String" resultType="java.lang.String">
-        select spec_no from mall_spec where shop_no = #{shopNo};
+        select spec_no from mall_spec where shop_no = #{shopNo,jdbcType=VARCHAR};
     </select>
 
 </mapper>

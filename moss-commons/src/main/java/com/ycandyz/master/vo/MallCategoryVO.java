@@ -12,10 +12,15 @@ import lombok.Data;
 @Data
 public class MallCategoryVO {
 
+    @ApiModelProperty(value = "商品分类编号")
+    private String categoryNo;
+
     @ApiModelProperty(value = "父分类编号")
     private String parentCategoryNo;
+
     @ApiModelProperty(value = "分类名称")
     private String categoryName;
+
     @ApiModelProperty(value = "分类图片")
     private String categoryImg;
 }

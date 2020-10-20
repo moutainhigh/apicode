@@ -3,38 +3,44 @@
 <mapper namespace="com.ycandyz.master.dao.mall.goodsManage.MallShippingDao">
     <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallShipping">
         <id column="id" property="id" jdbcType="BIGINT" />
-        <id column="shop_no" property="shopNo" jdbcType="VARCHAR"/>
-        <id column="shipping_no" property="shippingNo" jdbcType="VARCHAR"/>
-        <id column="shipping_name" property="shippingName" jdbcType="VARCHAR"/>
-        <id column="shipping_method" property="shippingMethod" jdbcType="VARCHAR"/>
-        <id column="sort_value" property="sortValue" jdbcType="INTEGER"/>
-        <id column="status" property="status" jdbcType="INTEGER"/>
-        <id column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
-        <id column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+        <result column="shop_no" property="shopNo" jdbcType="VARCHAR"/>
+        <result column="shipping_no" property="shippingNo" jdbcType="VARCHAR"/>
+        <result column="shipping_name" property="shippingName" jdbcType="VARCHAR"/>
+        <result column="shipping_method" property="shippingMethod" jdbcType="VARCHAR"/>
+        <result column="sort_value" property="sortValue" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
     </resultMap>
 
     <insert id="addMallShipping" parameterType="com.ycandyz.master.entities.mall.goodsManage.MallShipping">
-        insert into mall_shipping (shop_no,shipping_no,shipping_name,shipping_method,sort_value,status,created_time,updated_time)
-        values (#{shopNo},#{shippingNo},#{shippingName},#{shippingMethod},#{sortValue},#{status},now(),now());
+        insert into mall_shipping (id,shop_no,shipping_no,shipping_name,shipping_method,sort_value,status,created_time,updated_time)
+        values (#{id,jdbcType=BIGINT},#{shopNo,jdbcType=VARCHAR},#{shippingNo,jdbcType=VARCHAR},
+        #{shippingName,jdbcType=VARCHAR},#{shippingMethod,jdbcType=INTEGER},
+        #{sortValue,jdbcType=INTEGER},#{status,jdbcType=INTEGER},now(),now());
     </insert>
+    <update id="updateMallShipping">
+        update mall_shipping set shipping_name = #{mallShippingVO.shippingName,jdbcType=VARCHAR},shipping_method = #{mallShippingVO.shippingMethod,jdbcType=VARCHAR},
+        updated_time = now() where shop_no = #{shopNo,jdbcType=VARCHAR} and shipping_no = #{mallShippingVO.shippingNo,jdbcType=VARCHAR};
+    </update>
 
     <select id="selMallShippingByKeyWord" resultMap="BaseResultMap" parameterType="java.lang.String">
-            select * from mall_shipping where shipping_name like "%"#{shippingName}"%"
+            select * from mall_shipping where shipping_name like "%"#{shippingName,jdbcType=VARCHAR}"%"
     </select>
 
 
     <select id="selMallShippingByShopNo" resultMap="BaseResultMap" parameterType="java.lang.String">
-            select * from mall_shipping where shop_no =#{shop_no};
+            select * from mall_shipping where shop_no =#{shop_no,jdbcType=VARCHAR};
     </select>
 
     <select id="selMallShippingByShippingNo" resultMap="BaseResultMap" parameterType="java.lang.String">
-            select * from mall_shipping where shop_no = #{shopNo} and shipping_no = #{shippingNo};
+            select * from mall_shipping where shop_no = #{shopNo,jdbcType=VARCHAR} and shipping_no = #{shippingNo,jdbcType=VARCHAR};
     </select>
 
     <delete id="delMallShippingByshippingNo" parameterType="java.lang.String">
         delete t1,t2,t3 from mall_shipping as t1
         left join mall_shipping_region as t2 on t1.shipping_no = t2.shipping_no
         left join mall_shipping_region_province as t3 on t2.region_no = t3.region_no
-        where t1.shop_no = #{shopNo} and t1.shipping_no = #{shippingNo};
+        where t1.shop_no = #{shopNo,jdbcType=VARCHAR} and t1.shipping_no = #{shippingNo,jdbcType=VARCHAR};
     </delete>
 </mapper>

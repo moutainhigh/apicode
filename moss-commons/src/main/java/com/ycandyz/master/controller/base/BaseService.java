@@ -1,4 +1,4 @@
-package com.ycandyz.master.base;
+package com.ycandyz.master.controller.base;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;

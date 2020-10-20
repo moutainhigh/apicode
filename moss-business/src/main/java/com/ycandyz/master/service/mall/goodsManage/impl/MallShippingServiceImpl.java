@@ -3,16 +3,15 @@ package com.ycandyz.master.service.mall.goodsManage.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
-import com.ycandyz.master.constants.RedisConstants;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingRegionDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingRegionProvinceDao;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
-import com.ycandyz.master.enmus.RegionEnum;
-import com.ycandyz.master.enmus.SortValueEnum;
-import com.ycandyz.master.enmus.StatusEnum;
+import com.ycandyz.master.enums.RegionEnum;
+import com.ycandyz.master.enums.SortValueEnum;
+import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegion;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegionProvince;
@@ -66,10 +65,38 @@ public class MallShippingServiceImpl implements MallShippingService {
         mallShipping.setStatus(StatusEnum.DEFAULT.getCode());
         log.info("添加运费模版表mall_shipping:{}",mallShipping);
         mallShippingDao.addMallShipping(mallShipping);
-
-        MallShippingRegion mallShippingRegion = new MallShippingRegion();
         MallShippingRegionVO[] regions = mallShippingVO.getRegions();
-        for (MallShippingRegionVO m : regions) {
+        updateMallShippingRegion(shippingNo, regions);
+        //添加完后展示全部
+        List<MallShippingDTO> mallShippingDTOS = selMallShippingByShopNo(userVO);
+        return mallShippingDTOS;
+    }
+
+
+    /**
+     * @Description: 编辑模版
+     * @Author li Zhuo
+     * @Date 2020/10/19
+     * @Version: V1.0
+    */
+    @Override
+    public List<MallShippingDTO> updateMallShipping(MallShippingVO mallShippingVO, UserVO userVO) {
+        String shopNo = userVO.getShopNo();
+        log.info("编辑模版入参:{};:{}",mallShippingVO,shopNo);
+        String shippingNo = mallShippingVO.getShippingNo();
+        MallShippingRegionVO[] regions = mallShippingVO.getRegions();
+        int r = mallShippingDao.updateMallShipping(shopNo,mallShippingVO);
+        if (regions.length > 0){
+            int i = mallShippingRegionDao.delMallShippingRegionByshippingNo(shippingNo);
+            updateMallShippingRegion(shippingNo, regions);
+        }
+        List<MallShippingDTO> mallShippingDTOS = selMallShippingByShopNo(userVO);
+        return mallShippingDTOS;
+    }
+
+    private void updateMallShippingRegion(String shippingNo, MallShippingRegionVO[] regions) {
+        for (MallShippingRegionVO m: regions) {
+            MallShippingRegion mallShippingRegion = new MallShippingRegion();
             String regionNo = String.valueOf(IDGeneratorUtils.getLongId());
             mallShippingRegion.setShippingNo(shippingNo);
             mallShippingRegion.setFirstCount(m.getFirstCount());
@@ -77,25 +104,18 @@ public class MallShippingServiceImpl implements MallShippingService {
             mallShippingRegion.setMoreCount(m.getMoreCount());
             mallShippingRegion.setMorePrice(m.getMorePrice());
             mallShippingRegion.setRegionNo(regionNo);
-            log.info("添加运费模版表mall_shipping_region:{}",mallShipping);
+            log.info("添加运费模版表mall_shipping_region:{}",mallShippingRegion);
             mallShippingRegionDao.addmallShippingRegion(mallShippingRegion);
             for (String p: m.getProvinces()) {
                 MallShippingRegionProvince mallShippingRegionProvince = new MallShippingRegionProvince();
                 mallShippingRegionProvince.setRegionNo(regionNo);
                 mallShippingRegionProvince.setProvince(p);
-                log.info("添加运费模版表mall_shipping_region_province:{}",mallShipping);
+                log.info("添加运费模版表mall_shipping_region_province:{}",mallShippingRegionProvince);
                 mallShippingRegionProvinceDao.addMallShippingRegionProvince(mallShippingRegionProvince);
             }
         }
-        //添加完后展示全部
-        List<MallShippingDTO> mallShippingDTOS = selMallShippingByShopNo(userVO);
-        return mallShippingDTOS;
     }
 
-    @Override
-    public void updateMallShipping(MallShipping mallShipping) {
-
-    }
     /**
      * @Description: 根据shippingNo查询运费模版
     */

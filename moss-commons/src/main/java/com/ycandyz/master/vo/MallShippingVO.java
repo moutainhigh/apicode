@@ -17,4 +17,8 @@ public class MallShippingVO {
 
     @ApiModelProperty(value = "区域及价格")
     private MallShippingRegionVO[] regions;
+
+    @ApiModelProperty(value = "运费模版编号")
+    private String shippingNo;
+
 }

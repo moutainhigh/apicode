@@ -62,4 +62,6 @@ public class MallSku {
 
     @ApiModelProperty(value = "同一item_no中的sku的排序值")
     private Integer sortValue;
+
+
 }

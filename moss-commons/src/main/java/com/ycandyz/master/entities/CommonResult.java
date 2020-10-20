@@ -1,6 +1,6 @@
 package com.ycandyz.master.entities;
 
-import com.ycandyz.master.enmus.ResultEnum;
+import com.ycandyz.master.enums.ResultEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

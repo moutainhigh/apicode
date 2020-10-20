@@ -2,7 +2,6 @@ package com.ycandyz.master.controller.mall.goodsManage;
 
 import com.github.pagehelper.PageInfo;
 import com.ycandyz.master.auth.CurrentUser;
-import com.ycandyz.master.dto.mall.goodsManage.MallSpecDTO;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallSpecService;
@@ -62,15 +61,11 @@ public class MallSpecController {
         return CommonResult.success(mallSpecSingleVO);
     }
 
-    //TODO
     @ApiOperation(value = "编辑规格模版",notes = "put",httpMethod = "PUT")
     @PutMapping("/spec")
-    public MallSpecDTO putMallSpec(@RequestBody MallSpecVO mallSpecVO, @CurrentUser UserVO userVO){
+    public CommonResult<List<MallSpecSingleVO>> updateMallSpec(@RequestBody MallSpecVO mallSpecVO, @CurrentUser UserVO userVO){
         log.info("修改规格模版请求参数:{}",mallSpecVO);
-        String specNo = mallSpecVO.getSpecName();
-        MallSpecSingleVO oldMallSpecSingleVO = mallSpecService.selMallSpecSingleBySpecNo(userVO,specNo);
-        log.info("specNo:{}；查询旧规格模版:{}",specNo,oldMallSpecSingleVO);
-        //mallSpecService.putMallSpec(mallSpecVO);
-        return null;
+        List<MallSpecSingleVO> mallSpecSingleVOS = mallSpecService.updateMallSpec(mallSpecVO,userVO);
+        return CommonResult.success(mallSpecSingleVOS);
     }
 }

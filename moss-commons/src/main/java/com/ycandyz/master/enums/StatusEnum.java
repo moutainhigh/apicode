@@ -1,8 +1,7 @@
-package com.ycandyz.master.enmus;
+package com.ycandyz.master.enums;
 
-public enum LayerEnum {
-    FITRSTLAYER(0,"第一级"),
-    SECONDLAYER(1,"第二级");
+public enum StatusEnum {
+    DEFAULT(1,"默认");
     ;
     private Integer code;
     private String  desc;
@@ -16,7 +15,7 @@ public enum LayerEnum {
         this.code = code;
     }
 
-    LayerEnum(Integer code, String desc) {
+    StatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }

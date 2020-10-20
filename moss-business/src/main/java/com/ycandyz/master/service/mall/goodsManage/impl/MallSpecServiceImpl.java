@@ -4,18 +4,16 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.ycandyz.master.constants.RedisConstants;
 import com.ycandyz.master.dao.mall.goodsManage.MallSpecDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSpecValueDao;
-import com.ycandyz.master.enmus.SortValueEnum;
-import com.ycandyz.master.enmus.StatusEnum;
+import com.ycandyz.master.enums.SortValueEnum;
+import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallSpec;
 import com.ycandyz.master.entities.mall.goodsManage.MallSpecValue;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallSpecService;
 import com.ycandyz.master.utils.DateUtil;
 import com.ycandyz.master.utils.IDGeneratorUtils;
-import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.vo.MallSpecKeyWordVO;
 import com.ycandyz.master.vo.MallSpecSingleVO;
 import com.ycandyz.master.vo.MallSpecVO;
@@ -207,6 +205,30 @@ public class MallSpecServiceImpl implements MallSpecService {
         }
         log.info("specNo:{};单个规格模版查询数据库结果:{}",specNo,mallSpecSingleVO);
         return mallSpecSingleVO;
+    }
+
+    /**
+     * @Description: 编辑规格模版
+     * @Author li Zhuo
+     * @Date 2020/10/19
+     * @Version: V1.0
+    */
+    @Override
+    public List<MallSpecSingleVO> updateMallSpec(MallSpecVO mallSpecVO,UserVO userVO) {
+        String shopNo = userVO.getShopNo();
+        log.info("编辑规格模版入参:{};{}",mallSpecVO,shopNo);
+        String specNo = mallSpecVO.getSpecNo();
+        String specName = mallSpecVO.getSpecName();
+        String[] specValues = mallSpecVO.getSpecValues();
+        int i = mallSpecDao.updateMallSpec(specNo,specName,shopNo);
+        if (specValues.length > 0){
+            int i1 = mallSpecValueDao.delMallSpecValueBySpecNo(specNo);
+            for (String s: specValues) {
+                mallSpecValueDao.addMallSpecValue(new MallSpecValue(specNo,s,SortValueEnum.DEFAULT.getCode(),StatusEnum.DEFAULT.getCode()));
+            }
+        }
+        List<MallSpecSingleVO> mallSpecSingleVOS = selMallSpecByShopNo(userVO);
+        return mallSpecSingleVOS;
     }
 
     /**

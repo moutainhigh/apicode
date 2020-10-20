@@ -2,7 +2,7 @@ package com.ycandyz.master.controller.user;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.base.BaseController;
+import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.user.UserQuery;
 import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.service.user.impl.UserServiceImpl;
