@@ -2,12 +2,10 @@ package com.ycandyz.master.controller.mall.goodsManage;
 
 import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
 import com.ycandyz.master.vo.MallCategoryVO;
-import com.ycandyz.master.vo.MallShippingVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

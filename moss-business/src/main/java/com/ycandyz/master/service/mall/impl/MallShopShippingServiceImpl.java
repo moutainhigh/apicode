@@ -4,7 +4,7 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.MallShopShippingDao;
 import com.ycandyz.master.dao.mall.MallShopShippingLogDao;
 import com.ycandyz.master.dao.mall.MallShopShippingPollLogDao;

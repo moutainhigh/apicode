@@ -3,7 +3,7 @@ package com.ycandyz.master.service.mall.goodsManage.impl;
 
 import com.google.common.collect.Lists;
 import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
-import com.ycandyz.master.enmus.LayerEnum;
+import com.ycandyz.master.enums.LayerEnum;
 import com.ycandyz.master.enums.SortValueEnum;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;

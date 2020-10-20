@@ -2,12 +2,10 @@ package com.ycandyz.master.controller.mall.goodsManage;
 
 
 import com.ycandyz.master.auth.CurrentUser;
-import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallItemDTO;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallItemService;
-import com.ycandyz.master.vo.MallCategoryVO;
 import com.ycandyz.master.vo.MallItemOprVO;
 import com.ycandyz.master.vo.MallItemVO;
 import io.swagger.annotations.Api;

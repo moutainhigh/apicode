@@ -9,7 +9,7 @@ import com.ycandyz.master.dao.mall.goodsManage.MallShippingRegionProvinceDao;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
-import com.ycandyz.master.enmus.RegionEnum;
+import com.ycandyz.master.enums.RegionEnum;
 import com.ycandyz.master.enums.SortValueEnum;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
