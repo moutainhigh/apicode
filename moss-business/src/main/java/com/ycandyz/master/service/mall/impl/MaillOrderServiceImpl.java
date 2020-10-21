@@ -10,9 +10,7 @@ import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.dto.mall.*;
-import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallOrder;
-import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
@@ -60,7 +58,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private MallBuyerShippingLogDao mallBuyerShippingLogDao;
 
     @Autowired
-    private MallSocialShareFlowDao mallSocialShareFlowDao;
+    private WxMallSocialShareFlowDao mallSocialShareFlowDao;
 
     @Override
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(PageResult pageResult, MallOrderQuery mallOrderQuery, UserVO userVO) {
@@ -256,11 +254,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
 
             //查询佣金流水表
-            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderNo(mallOrderVO.getOrderNo());
+            List<WxMallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderNo(mallOrderVO.getOrderNo());
             if (mallSocialShareFlowDTOs!=null && mallSocialShareFlowDTOs.size()>0){
-                List<MallSocialShareFlowVO> flowList = new ArrayList<>();
+                List<WxMallSocialShareFlowVO> flowList = new ArrayList<>();
                 mallSocialShareFlowDTOs.forEach(dto->{
-                    MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
+                    WxMallSocialShareFlowVO mallSocialShareFlowVO = new WxMallSocialShareFlowVO();
                     BeanUtils.copyProperties(dto,mallSocialShareFlowVO);
                     flowList.add(mallSocialShareFlowVO);
                 });
