@@ -1,8 +1,5 @@
 package com.ycandyz.master.model.mall;
 
-import com.ycandyz.master.dto.mall.MallAfterSalesDTO;
-import com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO;
-import com.ycandyz.master.dto.mall.MallSocialShareFlowDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -189,5 +186,5 @@ public class MallOrderVO {
     private List<MallBuyerShippingLogVO> buyerShippingLog;
     /**关联佣金流水表*/
     @ApiModelProperty(value = "关联佣金流水表")
-    private List<MallSocialShareFlowVO> shareInfo;
+    private List<WxMallSocialShareFlowVO> shareInfo;
 }

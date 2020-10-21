@@ -184,5 +184,5 @@ public class MallOrderDTO {
     private List<MallBuyerShippingLogDTO> buyerShippingLog;
     /**关联佣金流水表*/
     @ApiModelProperty(value = "关联佣金流水表")
-    private List<MallSocialShareFlowDTO> shareInfo;
+    private List<WxMallSocialShareFlowDTO> shareInfo;
 }
