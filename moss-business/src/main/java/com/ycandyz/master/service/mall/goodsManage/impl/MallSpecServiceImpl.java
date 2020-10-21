@@ -118,19 +118,22 @@ public class MallSpecServiceImpl implements MallSpecService {
         }else if (mallSpecsPage !=null && mallSpecsPage.getRecords().size() == 0 && mallSpecValues != null && mallSpecValues.size() > 0){
             mallSpecValues.stream().forEach(mv->specNoValueMap.put(mv.getSpecNo(),mv.getSpecValue()));
             List<String> specNovalues = Lists.newArrayList();
+            List<String> list = mallSpecDao.selMallSpecNoByShopNo(shopNo);
             for (Map.Entry<String, String> e : specNoValueMap.entrySet()) {
-                MallSpecVO mallSpecVO = selMallSpecBySpecNo(e.getKey());
-                log.info("shopNo:{};specNo:{};规格模版表查询selMallSpecBySpecNo接口结果:{}",shopNo,e.getKey(),mallSpecVO);
-                specNovalues.add(e.getValue());
-                MallSpecKeyWordVO mallSpecKeyWordVO = new MallSpecKeyWordVO();
-                if (mallSpecVO != null) {
-                    mallSpecKeyWordVO.setSpecNo(mallSpecVO.getSpecNo());
-                    mallSpecKeyWordVO.setSpecName(mallSpecVO.getSpecName());
-                    mallSpecKeyWordVO.setSpecValues(mallSpecVO.getSpecValues());
-                    mallSpecKeyWordVO.setCreatedStr(mallSpecVO.getCreatedTime());
-                    mallSpecKeyWordVO.setUpdatedStr(mallSpecVO.getUpdatedTime());
+                if(list.contains(e.getKey())){
+                    MallSpecVO mallSpecVO = selMallSpecBySpecNo(e.getKey());
+                    log.info("shopNo:{};specNo:{};规格模版表查询selMallSpecBySpecNo接口结果:{}",shopNo,e.getKey(),mallSpecVO);
+                    specNovalues.add(e.getValue());
+                    MallSpecKeyWordVO mallSpecKeyWordVO = new MallSpecKeyWordVO();
+                    if (mallSpecVO != null) {
+                        mallSpecKeyWordVO.setSpecNo(mallSpecVO.getSpecNo());
+                        mallSpecKeyWordVO.setSpecName(mallSpecVO.getSpecName());
+                        mallSpecKeyWordVO.setSpecValues(mallSpecVO.getSpecValues());
+                        mallSpecKeyWordVO.setCreatedStr(mallSpecVO.getCreatedTime());
+                        mallSpecKeyWordVO.setUpdatedStr(mallSpecVO.getUpdatedTime());
+                    }
+                    mallSpecKeyWordVOvalues.add(mallSpecKeyWordVO);
                 }
-                mallSpecKeyWordVOvalues.add(mallSpecKeyWordVO);
             }
         }else if (mallSpecsPage !=null && mallSpecsPage.getRecords().size() > 0 && mallSpecValues != null && mallSpecValues.size() > 0){
             List<String> specNos = mallSpecDao.selMallSpecNoByShopNo(shopNo);
