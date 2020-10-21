@@ -196,16 +196,58 @@
         group by mo.id
     </select>
 
-    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
+    <resultMap id="BasePickUpResultMap" type="com.ycandyz.master.dto.mall.MallOrderDTO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="order_no" property="orderNo" />
+        <result column="shop_no" property="shopNo" />
+        <result column="cart_order_id" property="cartOrderSn" />
+        <result column="real_money" property="realMoney" />
+        <result column="payed_at" property="payedAt" />
+        <result column="buyer_remark" property="payedAt" />
+        <result column="pick_up_address_name" property="pickUpAddressName" />
+        <result column="pick_up_address_detail" property="pickUpAddressDetail" />
+        <result column="pre_phone" property="prePhone" />
+        <result column="status" property="status" />
+        <result column="sub_status" property="subStatus" />
+        <result column="deliver_method" property="deliverMethod" />
+        <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
+            <result column="order_detail_no" property="orderDetailNo" />
+            <result column="item_no" property="itemNo" />
+            <result column="goods_no" property="goodsNo" />
+            <result column="sku_no" property="skuNo" />
+            <result column="item_name" property="itemName" />
+            <result column="item_cover" property="itemCover" />
+            <result column="skuQuantity" property="skuQuantity" />
+            <result column="skuPrice" property="skuPrice" />
+            <result column="total_money" property="totalMoney" />
+            <result column="real_money" property="realMoney" />
+        </collection>
+    </resultMap>
+
+    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultMap="BasePickUpResultMap">
         select
-            mo.id as id,
-            mo.cart_order_id as cartOrderSn,
-            mo.real_money as realMoney,
-            mo.payed_at as payedAt,
-            mo.buyer_remark as buyerRemark,
-            mo.status as status,
-            mo.sub_status as subStatus,
-            mo.deliver_method as deliverMethod,
+            mo.id,
+            mo.order_no,
+            mo.shop_no,
+            mo.cart_order_id,
+            mo.real_money,
+            mo.payed_at,
+            mo.buyer_remark,
+            mo.pick_up_address_name,
+            mo.pick_up_address_detail,
+            mo.pre_phone,
+            mo.status,
+            mo.sub_status,
+            mo.deliver_method,
+            modetail.item_no,
+            modetail.goods_no,
+            modetail.sku_no,
+            modetail.item_name,
+            modetail.item_cover,
+            modetail.quantity as skuQuantity,
+            modetail.price as skuPrice,
+            modetail.total_money,
+            modetail.real_money
         from mall_order mo
         left join mall_order_detail modetail on mo.order_no=modetail.order_no
         where mo.shop_no=#{shopNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
