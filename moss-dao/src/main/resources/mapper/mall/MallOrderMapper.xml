@@ -8,9 +8,11 @@
             cart.order_sn as cartOrderSn,
             mo.order_no as orderNo,
             group_concat(modetail.item_name) as	itemName,
+            group_concat(modetail.item_no) as	itemNo,
             modetail.goods_no as goodsNo,
             modetail.quantity as quantity,
             mo.all_money as allMoney,
+            mo.total_money as totalMoney,
             mo.pay_type as payType,
             mo.`status` as status,
             mo.after_sales_status as afterSalesStatus,
@@ -177,28 +179,22 @@
         group by mo.id
     </select>
 
-<!--    <select id="queryOrderDetail" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">-->
-<!--        SELECT-->
-<!--            o.status as	status,-->
-<!--            o.sub_status as subStatus,-->
-<!--            o.payed_at as payedAt,-->
-<!--            o.order_at as orderAt,-->
-<!--            o.close_at as closeAt,-->
-<!--            modetail.item_name as itemName,-->
-<!--            modetail.item_cover as itemCover,-->
-<!--            modetail.goods_no as goodsNo,-->
-<!--            /**规格*/-->
-<!--            modetail.quantity as skuQuantity,-->
-<!--            modetail.price as skuPrice,-->
-<!--            ship.shipping_money as shipMoney,-->
-<!--            o.all_money as allMoney-->
-<!--        FROM-->
-<!--            mall_order o LEFT JOIN mall_order_detail modetail ON o.order_no=modetail.order_no-->
-<!--            LEFT JOIN mall_shop_shipping ship ON o.order_no=ship.order_no-->
-<!--        WHERE-->
-<!--            o.order_no = #{orderNo}-->
-<!--            GROUP BY o.id-->
-<!--    </select>-->
+    <select id="queryDetailByOrderNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
+        select
+            mo.id as id,
+            mo.cart_order_id as cartOrderSn,
+            mo.real_money as realMoney,
+            mo.payed_at as payedAt,
+            mo.buyer_remark as buyerRemark,
+            mo.status as status,
+            mo.sub_status as subStatus,
+            mo.deliver_method as deliverMethod,
+        from mall_order mo
+        left join mall_order_detail modetail on mo.order_no=modetail.order_no
+        left join mall_shop_shipping ship on mo.order_no=ship.order_no
+        where mo.order_no=#{orderNo} and mo.shop_no=#{shopNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
+        group by mo.id
+    </select>
 
     <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
         select
@@ -212,8 +208,7 @@
             mo.deliver_method as deliverMethod,
         from mall_order mo
         left join mall_order_detail modetail on mo.order_no=modetail.order_no
-        left join mall_shop_shipping ship on mo.order_no=ship.order_no
-        where mo.order_no=#{orderNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
+        where mo.shop_no=#{shopNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
         group by mo.id
     </select>
 
@@ -289,4 +284,6 @@
         where mo.order_no = #{orderNo}
         group by mo.id
     </select>
+
+
 </mapper>
