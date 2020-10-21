@@ -45,7 +45,7 @@ public class MallSpecController {
         return ReturnResponse.failed("删除规格模版失败");
     }
 
-    @ApiOperation(value = "关键字查询模版",notes = "查询",httpMethod = "GET")
+    @ApiOperation(value = "关键字查询规格模版",notes = "查询",httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(name="keyWord",value="关键字",required=true,dataType="String")
     })

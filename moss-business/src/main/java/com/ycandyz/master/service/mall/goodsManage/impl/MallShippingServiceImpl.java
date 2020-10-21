@@ -190,8 +190,8 @@ public class MallShippingServiceImpl implements MallShippingService {
                 }
                 MallShippingRegionDTO[] mallShippingRegionDTOS = new MallShippingRegionDTO[mallShippingRegionDTOList.size()];
                 mallShippingKwDTO.setRegions(mallShippingRegionDTOList.toArray(mallShippingRegionDTOS));
-                mallShippingKwDTO.setCreatedStr(DateUtil.defaultFormatDate(m.getCreatedTime()));
-                mallShippingKwDTO.setUpdatedStr(DateUtil.defaultFormatDate(m.getUpdatedTime()));
+                mallShippingKwDTO.setCreatedStr(DateUtil.AddEightHoursDateToString(m.getCreatedTime()));
+                mallShippingKwDTO.setUpdatedStr(DateUtil.AddEightHoursDateToString(m.getUpdatedTime()));
                 mallShippingKwDTOS.add(mallShippingKwDTO);
             }
         }

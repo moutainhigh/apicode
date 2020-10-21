@@ -10,7 +10,7 @@ import java.util.Date;
 @Slf4j
 public class DateUtil {
 
-    public static final String DEFAULT_DAY_PATTERN = "yyyy-MM-dd hh:mm:ss";
+    public static final String DEFAULT_DAY_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     public static Date defaultParseDate(String dateStr) {
         if (StringUtils.isEmpty(dateStr)) {
@@ -32,4 +32,16 @@ public class DateUtil {
         SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DAY_PATTERN);
         return sdf.format(date);
     }
+
+    public static String AddEightHoursDateToString(Date date) {
+        if (date == null) {
+            return null;
+        }
+        long time = date.getTime();
+        long eightHours = 8*60*60*1000;
+
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DAY_PATTERN);
+        return sdf.format(new Date(time+eightHours));
+    }
+
 }

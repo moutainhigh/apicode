@@ -36,7 +36,7 @@ public class MallShippingController {
         return ReturnResponse.success(mallShippingDTOS);
     }
 
-    @ApiOperation(value = "关键字查询模版",notes = "查询",httpMethod = "GET")
+    @ApiOperation(value = "关键字查询运费模版",notes = "查询",httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(name="keyWord",value="关键字",required=true,dataType="String")
     })
