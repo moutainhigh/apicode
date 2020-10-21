@@ -3,6 +3,7 @@ package com.ycandyz.master.config;
 import com.ycandyz.master.constants.LogConstant;
 import com.ycandyz.master.utils.TraceIdUtil;
 import org.slf4j.MDC;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Description:
  */
 @Component
+@Order(2)
 public class InterceptorLog implements HandlerInterceptor {
 
     @Override

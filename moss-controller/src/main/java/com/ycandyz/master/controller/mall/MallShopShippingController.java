@@ -1,6 +1,7 @@
 package com.ycandyz.master.controller.mall;
 
 import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
 import com.ycandyz.master.domain.shipment.query.ShipmentParamQuery;
@@ -34,7 +35,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
             @ApiImplicitParam(name="shipNumber",value="物流单号",required=true,dataType="String")
     })
     @GetMapping("/order/shipment/verification")
-    public CommonResult<MallShopShippingVO> verShipmentNo(@RequestParam("shipNumber") String shipNumber){
+    public ReturnResponse<MallShopShippingVO> verShipmentNo(@RequestParam("shipNumber") String shipNumber){
         return mallShopShippingService.verShipmentNo(shipNumber);
     }
 
@@ -52,7 +53,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
     })
     @PostMapping("/order/shipment/enterShipping")
     @ResponseBody
-    public CommonResult<String> enterShipping(@RequestBody MallShopShippingQuery mallShopShippingQuery){
+    public ReturnResponse<String> enterShipping(@RequestBody MallShopShippingQuery mallShopShippingQuery){
         return mallShopShippingService.enterShipping(mallShopShippingQuery);
     }
 

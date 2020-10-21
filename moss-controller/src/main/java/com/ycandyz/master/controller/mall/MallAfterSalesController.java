@@ -1,8 +1,8 @@
 package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.api.PageModel;
+import com.ycandyz.master.api.PageResult;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
@@ -30,14 +30,14 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
 
     /**
      * 获取售后订单列表
-     * @param pageModel
+     * @param pageResult
      * @param mallafterSalesQuery
      * @return
      */
     @ApiOperation(value = "获取售后订单列表",notes = "获取售后订单列表",httpMethod = "POST")
     @PostMapping("/sales/list")
-    public CommonResult<Page<MallAfterSalesVO>> querySalesListPage(PageModel pageModel, @RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO userVO){
-        return mallAfterSalesService.querySalesListPage(pageModel,mallafterSalesQuery, userVO);
+    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(PageResult pageResult, @RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO userVO){
+        return mallAfterSalesService.querySalesListPage(pageResult,mallafterSalesQuery, userVO);
     }
 
     /**
@@ -50,11 +50,11 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
             @ApiImplicitParam(name="id",value="订单id",required=true,dataType="Long")
     })
     @GetMapping("/sales/detail")
-    public CommonResult<MallAfterSalesVO> querySalesDetail(@RequestParam("id") Long id){
+    public ReturnResponse<MallAfterSalesVO> querySalesDetail(@RequestParam("id") Long id){
         if (id!=null && id>0){
             return mallAfterSalesService.querySalesDetail(id);
         }
-        return CommonResult.failed("传入id为空");
+        return ReturnResponse.failed("传入id为空");
     }
 
     /**
@@ -71,12 +71,12 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
             @ApiImplicitParam(name="receiverAddress",value="收货地址",required=true,dataType="String")
     })
     @PostMapping("/sales/audit/first")
-    public CommonResult refundAuditFirst(@RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO user){
+    public ReturnResponse refundAuditFirst(@RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO user){
         boolean flag = mallAfterSalesService.refundAuditFirst(mallafterSalesQuery,user);
         if (flag){
-            return CommonResult.success("审核成功");
+            return ReturnResponse.success("审核成功");
         }
-        return CommonResult.failed("审核失败");
+        return ReturnResponse.failed("审核失败");
     }
 
     /**

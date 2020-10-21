@@ -8,14 +8,14 @@
             cart.order_sn as cartOrderSn,
             mo.order_no as orderNo,
             group_concat(modetail.item_name) as	itemName,
-            /**货号*/
+            modetail.goods_no as goodsNo,
+            modetail.quantity as quantity,
             mo.all_money as allMoney,
             mo.pay_type as payType,
-            /**数量*/
             mo.`status` as status,
             mo.after_sales_status as afterSalesStatus,
             concat(u.`name`,' ',u.phone) as payuser,
-            concat(ship.receiver,' ',ship.receiver_phone) as shipuser,
+            concat(ship.receiver,' ',ship.receiver_phone) as receiverName,
             ship.receiver_address as receiverAddress,
             mo.order_at as orderAt,
             cart.payment_time as paymentTime,
@@ -85,6 +85,9 @@
                 <if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
                 <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>
             </if>
+            <if test="p.status != null">
+                and mo.status=#{p.status}
+            </if>
             group by mo.id
     </select>
 
@@ -101,7 +104,7 @@
         mo.`status` as status,
         mo.after_sales_status as afterSalesStatus,
         concat(u.`name`,' ',u.phone) as payuser,
-        concat(ship.receiver,' ',ship.receiver_phone) as shipuser,
+        concat(ship.receiver,' ',ship.receiver_phone) as receiverName,
         ship.receiver_address as receiverAddress,
         mo.order_at as orderAt,
         cart.payment_time as paymentTime,
@@ -194,6 +197,7 @@
             LEFT JOIN mall_shop_shipping ship ON o.order_no=ship.order_no
         WHERE
             o.order_no = #{orderNo}
+            GROUP BY o.id
     </select>
 
     <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
@@ -215,6 +219,7 @@
     <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
         select
             mo.id as id,
+            mo.order_no as orderNo,
             mo.cart_order_id as cartOrderSn,
             mo.real_money as realMoney,
             mo.payed_at as payedAt,
@@ -222,8 +227,23 @@
             mo.status as status,
             mo.sub_status as subStatus,
             mo.deliver_method as deliverMethod,
+            ship.receiver as receiverName,
+            ship.receiver_phone as receiverPhone,
+            mo.total_money as totalMoney,
+            mo.buyer_remark as buyerRemark,
+            mo.order_at as orderAt,
+            mo.pay_type as payType,
+            mo.trade_no as tradeNo,
+            mo.send_at as sendAt,
+            mo.receive_at as receiveAt,
+            mo.cancel_at as cancelAt,
+            mo.cancel_reason as cancelReason,
+            modetail.order_detail_no as orderDetailNo,
+            modetail.item_no as itemNo,
+            modetail.goods_no as goodsNo
         from mall_order mo
         left join mall_order_detail modetail on mo.order_no=modetail.order_no
+        left join mall_shop_shipping ship on mo.order_no=ship.order_no
         where mo.order_no=#{orderNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
         group by mo.id
     </select>

@@ -3,7 +3,7 @@ package com.ycandyz.master.service.mall.impl;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.MallShopShippingDao;
 import com.ycandyz.master.dao.mall.MallShopShippingLogDao;
@@ -59,7 +59,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
     private String kuaidiCallbackUrl;
 
     @Override
-    public CommonResult<MallShopShippingVO> verShipmentNo(String shipNumber) {
+    public ReturnResponse<MallShopShippingVO> verShipmentNo(String shipNumber) {
         String result = HttpUtil.get(autonumberUrl.replace("NUM",shipNumber).replace("KEY",kuaidiKey));
         JSONObject jsonObject = JSONUtil.parseArray(result).getJSONObject(0);
         if (jsonObject!=null) {
@@ -69,17 +69,17 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                 mallShopShippingVO.setCompany(value);
                 mallShopShippingVO.setCompanyCode(jsonObject.getStr("comCode"));
                 mallShopShippingVO.setNumber(shipNumber);
-                return CommonResult.success(mallShopShippingVO);
+                return ReturnResponse.success(mallShopShippingVO);
             }
         }
-        return CommonResult.failed("为查询到快递记录。");
+        return ReturnResponse.failed("为查询到快递记录。");
     }
 
     @Override
-    public CommonResult<String> enterShipping(MallShopShippingQuery mallShopShippingQuery) {
+    public ReturnResponse<String> enterShipping(MallShopShippingQuery mallShopShippingQuery) {
         MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(mallShopShippingQuery.getOrderNo());
         if (mallShopShippingDTO==null){
-            return CommonResult.failed("未查询到当前记录");
+            return ReturnResponse.failed("未查询到当前记录");
         }
         MallShopShipping mallShopShipping = new MallShopShipping();
         mallShopShipping.setId(mallShopShippingDTO.getId());
@@ -117,7 +117,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             }
         }
         mallShopShippingDao.updateById(mallShopShipping);
-        return CommonResult.success("发货成功");
+        return ReturnResponse.success("发货成功");
     }
 
     @Override

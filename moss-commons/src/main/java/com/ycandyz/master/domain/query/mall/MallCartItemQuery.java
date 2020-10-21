@@ -19,6 +19,8 @@ import java.io.Serializable;
 @ApiModel(description="商城购物车-商品列表")
 public class MallCartItemQuery implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @ApiModelProperty(value = "用户编号")
     private Integer userId;
 
