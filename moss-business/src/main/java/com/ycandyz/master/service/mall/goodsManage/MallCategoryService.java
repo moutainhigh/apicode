@@ -17,13 +17,13 @@ public interface MallCategoryService {
     /**
      * @Description: 添加商品
     */
-    List<MallCategoryDTO> addMallCategory(MallCategoryVO mallCategoryVO, UserVO userVO);
+    List<MallCategoryDTO> addMallCategory(MallCategoryVO mallCategoryVO);
 
-    MallCategoryDTO selCategoryByCategoryNo(String categoryNo,UserVO userVO);
+    MallCategoryDTO selCategoryByCategoryNo(String categoryNo);
 
-    int delCategoryByCategoryNo(String categoryNo,UserVO userVO);
+    int delCategoryByCategoryNo(String categoryNo);
 
-    List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo,UserVO userVO);
+    List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo);
 
-    List<MallCategoryDTO> updateMallCategory(MallCategoryVO mallCategoryVO, UserVO userVO);
+    List<MallCategoryDTO> updateMallCategory(MallCategoryVO mallCategoryVO);
 }

@@ -20,7 +20,7 @@ public class MallItemOprVO {
     @ApiModelProperty(value = "商品编号列表")
     private String[] itemNoList;
 
-    @ApiModelProperty(value = "状态 10 # 产品下架 = 20")
+    @ApiModelProperty(value = "10: 上架中，20: 已下架，30: 售罄，40: 仓库中，50: 删除")
     private Integer status;
 
 }

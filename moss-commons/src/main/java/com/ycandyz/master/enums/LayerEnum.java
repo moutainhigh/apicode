@@ -1,7 +1,5 @@
 package com.ycandyz.master.enums;
 
-import lombok.Getter;
-
 
 public enum LayerEnum {
     FITRSTLAYER(0,"第一级"),

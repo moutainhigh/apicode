@@ -6,13 +6,13 @@ import com.ycandyz.master.vo.MallItemOprVO;
 import com.ycandyz.master.vo.MallItemVO;
 
 public interface MallItemService {
-    void addMallItem(MallItemVO mallItemVO, UserVO user);
+    void addMallItem(MallItemVO mallItemVO);
 
-    MallItemDTO selMallItemByitemNo(UserVO userVO, String itemNo);
+    MallItemDTO selMallItemByitemNo(String itemNo);
 
-    int oprbyItemNo(UserVO userVO, MallItemOprVO mallItemOprVO);
+    int oprbyItemNo(MallItemOprVO mallItemOprVO);
 
-    int delMallItemByItemNo(String itemNo, UserVO userVO);
+    int delMallItemByItemNo(String itemNo);
 
-    void updateMallItem(MallItemVO mallItemVO, UserVO userVO);
+    void updateMallItem(MallItemVO mallItemVO);
 }

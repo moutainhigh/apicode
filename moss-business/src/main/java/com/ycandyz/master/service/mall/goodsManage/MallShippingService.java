@@ -17,17 +17,17 @@ import java.util.List;
 */
 public interface MallShippingService {
 
-    List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO,UserVO userVO);
+    List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO);
 
-    List<MallShippingDTO> updateMallShipping(MallShippingVO mallShippingVO, UserVO userVO);
+    List<MallShippingDTO> updateMallShipping(MallShippingVO mallShippingVO);
 
-    MallShippingDTO selMallShippingByShippingNo(String shippingNo,UserVO userVO);
+    MallShippingDTO selMallShippingByShippingNo(String shippingNo);
 
     PageInfo<MallShipping> selMallShippingByKeyWord(Integer page, Integer PageSize, String shippingName);
 
-    List<MallShippingDTO> selMallShippingByShopNo(UserVO userVO);
+    List<MallShippingDTO> selMallShippingByShopNo();
 
     List<MallShippingRegionProvinceDTO> selMallShippingRegionProvince();
 
-    int delMallShippingByshippingNo(String shippingNo, UserVO userVO);
+    int delMallShippingByshippingNo(String shippingNo);
 }

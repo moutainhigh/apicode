@@ -1,10 +1,8 @@
 package com.ycandyz.master.controller.mall.goodsManage;
 
 
-import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.dto.mall.goodsManage.MallItemDTO;
 import com.ycandyz.master.entities.CommonResult;
-import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallItemService;
 import com.ycandyz.master.vo.MallItemOprVO;
 import com.ycandyz.master.vo.MallItemVO;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
-@Api(value="商品分类",tags={"商品管理-商品动态接口"})
+@Api(value="商品分类",tags={"商品管理-商品管理动态接口"})
 @RestController
 @RequestMapping("/mallItem")
 @Slf4j
@@ -27,16 +25,16 @@ public class MallItemController {
 
     @ApiOperation(value = "添加商品",notes = "添加",httpMethod = "POST")
     @PostMapping("/item")
-    public CommonResult addMallItem(@RequestBody MallItemVO MallItemVO, @CurrentUser UserVO user){
-        mallItemService.addMallItem(MallItemVO,user);
+    public CommonResult addMallItem(@RequestBody MallItemVO MallItemVO){
+        mallItemService.addMallItem(MallItemVO);
         return CommonResult.success(null);
     }
 
 
     @ApiOperation(value = "获取商品详情",notes = "查询",httpMethod = "GET")
     @GetMapping("/item/{itemNo}")
-    public CommonResult<MallItemDTO> selMallItemByitemNo(@PathVariable(value = "itemNo") String itemNo, @CurrentUser UserVO userVO){
-        MallItemDTO mallItemDTO = mallItemService.selMallItemByitemNo(userVO,itemNo);
+    public CommonResult<MallItemDTO> selMallItemByitemNo(@PathVariable(value = "itemNo") String itemNo){
+        MallItemDTO mallItemDTO = mallItemService.selMallItemByitemNo(itemNo);
         log.info("itemNo:{}；获取商品详情:{}",itemNo,mallItemDTO);
         return CommonResult.success(mallItemDTO);
     }
@@ -44,9 +42,9 @@ public class MallItemController {
 
     @ApiOperation(value = "上下架商品",notes = "修改",httpMethod = "PUT")
     @PutMapping("/item/opr")
-    public CommonResult<Integer> oprbyItemNo(@RequestBody MallItemOprVO mallItemOprVO, @CurrentUser UserVO userVO){
-        int count = mallItemService.oprbyItemNo(userVO,mallItemOprVO);
-        log.info("userVO:{}；上下架商品:{}",userVO,mallItemOprVO);
+    public CommonResult<Integer> oprbyItemNo(@RequestBody MallItemOprVO mallItemOprVO){
+        int count = mallItemService.oprbyItemNo(mallItemOprVO);
+        log.info("上下架商品:{}",mallItemOprVO);
         if (count > 0){
             return CommonResult.success(count);
         }
@@ -55,8 +53,8 @@ public class MallItemController {
 
     @ApiOperation(value = "删除商品",notes = "删除",httpMethod = "DELETE")
     @DeleteMapping("/item/{itemNo}")
-    public CommonResult delMallItemByItemNo(@PathVariable(value = "itemNo") String itemNo, @CurrentUser UserVO userVO){
-        int count = mallItemService.delMallItemByItemNo(itemNo,userVO);
+    public CommonResult delMallItemByItemNo(@PathVariable(value = "itemNo") String itemNo){
+        int count = mallItemService.delMallItemByItemNo(itemNo);
         if (count > 0) {
             return CommonResult.success(null);
         }
@@ -65,9 +63,9 @@ public class MallItemController {
 
     @ApiOperation(value = "编辑商品分类",notes = "put",httpMethod = "PUT")
     @PutMapping("/item")
-    public CommonResult updateMallItem(@RequestBody MallItemVO mallItemVO, @CurrentUser UserVO userVO){
+    public CommonResult updateMallItem(@RequestBody MallItemVO mallItemVO){
         log.info("修改运费模版请求参数:{}",mallItemVO);
-        mallItemService.updateMallItem(mallItemVO,userVO);
+        mallItemService.updateMallItem(mallItemVO);
         return CommonResult.success(null);
     }
 

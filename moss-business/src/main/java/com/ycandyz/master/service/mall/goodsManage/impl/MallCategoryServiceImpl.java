@@ -9,6 +9,7 @@ import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.entities.mall.goodsManage.MallParentCategory;
 import com.ycandyz.master.model.user.UserVO;
+import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
 import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.utils.IDGeneratorUtils;
@@ -38,8 +39,9 @@ public class MallCategoryServiceImpl implements MallCategoryService {
      * @Description: 添加商品分类
     */
     @Override
-    public List<MallCategoryDTO> addMallCategory(MallCategoryVO mallCategoryVO, UserVO userVO) {
-        log.info("添加商品分类入参:{}",mallCategoryVO);
+    public List<MallCategoryDTO> addMallCategory(MallCategoryVO mallCategoryVO) {
+        UserVO userVO = UserRequest.getCurrentUser();
+        log.info("添加商品分类入参::mallCategoryVO:{};userVO:{}",mallCategoryVO,userVO);
         String shopNo = userVO.getShopNo();
         String categoryNo = String.valueOf(IDGeneratorUtils.getLongId());
         MallCategory mallCategory = new MallCategory();
@@ -56,7 +58,7 @@ public class MallCategoryServiceImpl implements MallCategoryService {
             mallCategory.setLayer(LayerEnum.SECONDLAYER.getCode());
         }
         mallCategoryDao.addMallCategory(mallCategory);
-        List<MallCategoryDTO> mallCategoryDTOS = selCategoryByShopNo(userVO);
+        List<MallCategoryDTO> mallCategoryDTOS = selCategoryByShopNo();
         return mallCategoryDTOS;
     }
 
@@ -65,7 +67,8 @@ public class MallCategoryServiceImpl implements MallCategoryService {
      * @Description: 查询单个分类信息-第二级分类
     */
     @Override
-    public MallCategoryDTO selCategoryByCategoryNo(String categoryNo,UserVO userVO) {
+    public MallCategoryDTO selCategoryByCategoryNo(String categoryNo) {
+        UserVO userVO = UserRequest.getCurrentUser();
         log.info("根据categoryNo:{};userVO:{}查询单个分类信息",categoryNo,userVO);
         String shopNo = userVO.getShopNo();
         MallCategoryDTO mallCategoryDTO = new MallCategoryDTO();
@@ -86,7 +89,8 @@ public class MallCategoryServiceImpl implements MallCategoryService {
     /**
      * @Description: 根据商户查询全部分类
     */
-    public List<MallCategoryDTO> selCategoryByShopNo(UserVO userVO) {
+    public List<MallCategoryDTO> selCategoryByShopNo() {
+        UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         log.info("根据商户shopNo:{}查询全部分类",shopNo);
         List<MallCategoryDTO> mallCategoryDTOS = Lists.newArrayList();
@@ -96,7 +100,7 @@ public class MallCategoryServiceImpl implements MallCategoryService {
             return null;
         }
         for (MallCategory m: mallCategories) {
-            List<MallCategoryDTO>  mallCategoryDTO = selCategoryByParentCategoryNo(m.getCategoryNo(),userVO);
+            List<MallCategoryDTO>  mallCategoryDTO = selCategoryByParentCategoryNo(m.getCategoryNo());
             mallCategoryDTOS.addAll(mallCategoryDTO);
         }
         return mallCategoryDTOS;
@@ -106,7 +110,8 @@ public class MallCategoryServiceImpl implements MallCategoryService {
      * @Description: 删除
     */
     @Override
-    public int delCategoryByCategoryNo(String categoryNo,UserVO userVO) {
+    public int delCategoryByCategoryNo(String categoryNo) {
+        UserVO userVO = UserRequest.getCurrentUser();
         log.info("删除商品分类入参categoryNo:{};user:{}",categoryNo,userVO);
         String shopNo = userVO.getShopNo();
         int i = mallCategoryDao.delCategoryByCategoryNo(shopNo, categoryNo);
@@ -117,7 +122,8 @@ public class MallCategoryServiceImpl implements MallCategoryService {
      * @Description: 查询某个分类的子类列表
      */
     @Override
-    public List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo,UserVO userVO) {
+    public List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo) {
+        UserVO userVO = UserRequest.getCurrentUser();
         log.info("根据parentCategoryNo:{};user:{}查询某个分类的子类列表",parentCategoryNo,userVO);
         String shopNo = userVO.getShopNo();
         ArrayList<MallCategoryDTO> mallCategoryDTOS = Lists.newArrayList();
@@ -153,7 +159,8 @@ public class MallCategoryServiceImpl implements MallCategoryService {
      * @Version: V1.0
     */
     @Override
-    public List<MallCategoryDTO> updateMallCategory(MallCategoryVO mallCategoryVO, UserVO userVO) {
+    public List<MallCategoryDTO> updateMallCategory(MallCategoryVO mallCategoryVO) {
+        UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         log.info("编辑商品分类入参:{};:{}",mallCategoryVO,shopNo);
         String parentCategoryNo = mallCategoryVO.getParentCategoryNo();
@@ -170,7 +177,7 @@ public class MallCategoryServiceImpl implements MallCategoryService {
                 int i = mallCategoryDao.updateMallCategory(mallCategoryVO,shopNo);
             }
         }
-        List<MallCategoryDTO> mallCategoryDTOS = selCategoryByShopNo(userVO);
+        List<MallCategoryDTO> mallCategoryDTOS = selCategoryByShopNo();
         return mallCategoryDTOS;
     }
 

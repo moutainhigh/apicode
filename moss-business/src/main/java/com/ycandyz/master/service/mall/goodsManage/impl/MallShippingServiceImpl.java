@@ -16,6 +16,7 @@ import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegion;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegionProvince;
 import com.ycandyz.master.model.user.UserVO;
+import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.mall.goodsManage.MallShippingService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import com.ycandyz.master.vo.MallShippingRegionVO;
@@ -52,7 +53,8 @@ public class MallShippingServiceImpl implements MallShippingService {
     */
     @Override
     @Transactional
-    public List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO, UserVO userVO) {
+    public List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO) {
+        UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         String shippingNo = String.valueOf(IDGeneratorUtils.getLongId());
 
@@ -68,7 +70,7 @@ public class MallShippingServiceImpl implements MallShippingService {
         MallShippingRegionVO[] regions = mallShippingVO.getRegions();
         updateMallShippingRegion(shippingNo, regions);
         //添加完后展示全部
-        List<MallShippingDTO> mallShippingDTOS = selMallShippingByShopNo(userVO);
+        List<MallShippingDTO> mallShippingDTOS = selMallShippingByShopNo();
         return mallShippingDTOS;
     }
 
@@ -80,7 +82,8 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Version: V1.0
     */
     @Override
-    public List<MallShippingDTO> updateMallShipping(MallShippingVO mallShippingVO, UserVO userVO) {
+    public List<MallShippingDTO> updateMallShipping(MallShippingVO mallShippingVO) {
+        UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         log.info("编辑模版入参:{};:{}",mallShippingVO,shopNo);
         String shippingNo = mallShippingVO.getShippingNo();
@@ -90,7 +93,7 @@ public class MallShippingServiceImpl implements MallShippingService {
             int i = mallShippingRegionDao.delMallShippingRegionByshippingNo(shippingNo);
             updateMallShippingRegion(shippingNo, regions);
         }
-        List<MallShippingDTO> mallShippingDTOS = selMallShippingByShopNo(userVO);
+        List<MallShippingDTO> mallShippingDTOS = selMallShippingByShopNo();
         return mallShippingDTOS;
     }
 
@@ -120,7 +123,8 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description: 根据shippingNo查询运费模版
     */
     @Override
-    public MallShippingDTO selMallShippingByShippingNo(String shippingNo,UserVO userVO) {
+    public MallShippingDTO selMallShippingByShippingNo(String shippingNo) {
+        UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         log.info("根据shippingNo查询运费模版入参:shopNo:{},shippingNo:{}",shopNo,shippingNo);
         MallShippingDTO mallShippingDTO = new MallShippingDTO();
@@ -167,7 +171,8 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description:根据商户号查询运费模版
     */
     @Override
-    public List<MallShippingDTO> selMallShippingByShopNo(UserVO userVO) {
+    public List<MallShippingDTO> selMallShippingByShopNo() {
+        UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         List<MallShippingDTO> mallShippingDTOS = new ArrayList<>();
         MallShippingDTO mallShippingDTO = null;
@@ -220,7 +225,8 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description: 根据shippingNo删除运费模版
     */
     @Override
-    public int delMallShippingByshippingNo(String shippingNo,UserVO userVO) {
+    public int delMallShippingByshippingNo(String shippingNo) {
+        UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         int mp = mallShippingDao.delMallShippingByshippingNo(shopNo,shippingNo);
         return mp;
