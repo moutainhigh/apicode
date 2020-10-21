@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallSocialShareFlowDao">
+
+    <select id="queryByOrderNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallSocialShareFlowDTO">
+        select
+            id as id,
+            share_bill_no as shareBillNo,
+            user_id as userId,
+            `user_name` as userName,
+            phone_no as phoneNo,
+            organize_id as organizeId,
+            `organize_name` as organizeName,
+            amount as amount,
+            relation_info as relationInfo,
+            order_no as orderNo,
+            order_create_time as orderCreateTime,
+            bank_bill_no as bankBillNo,
+            bank_bill_time as bankBillTime,
+            status as status,
+            created_time as createdTime,
+            updated_time as updatedTime,
+            share_type as shareType,
+            level as level
+        from mall_social_share_flow
+        where order_no=#{orderNo}
+    </select>
+
+</mapper>

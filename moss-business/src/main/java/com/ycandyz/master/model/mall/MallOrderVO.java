@@ -1,8 +1,13 @@
 package com.ycandyz.master.model.mall;
 
+import com.ycandyz.master.dto.mall.MallAfterSalesDTO;
+import com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO;
+import com.ycandyz.master.dto.mall.MallSocialShareFlowDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -158,4 +163,31 @@ public class MallOrderVO {
     /**SKU数量*/
     @ApiModelProperty(value = "购买数量")
     private java.lang.String quantity;
+    /**关联订单详情*/
+    @ApiModelProperty(value = "关联订单详情")
+    private List<MallOrderDetailVO> details;
+    /**关联商店*/
+    @ApiModelProperty(value = "关联商店")
+    private MallShopVO shopInfo;
+    /**关联售后*/
+    @ApiModelProperty(value = "关联售后")
+    private List<MallAfterSalesVO> afterSales;
+    /**关联售后日志*/
+    @ApiModelProperty(value = "关联售后日志")
+    private List<MallAfterSalesLogVO> afterSalesLog;
+    /**关联卖家物流表*/
+    @ApiModelProperty(value = "关联卖家物流表")
+    private MallShopShippingVO shopShipping;
+    /**关联卖家物流日志表*/
+    @ApiModelProperty(value = "关联卖家物流日志表")
+    private List<MallShopShippingLogVO> shopShippingLog;
+    /**关联买家寄出的快递表*/
+    @ApiModelProperty(value = "关联买家寄出的快递表")
+    private List<MallBuyerShippingVO> buyerShipping;
+    /**关联买家寄出的快递物流日志表*/
+    @ApiModelProperty(value = "关联买家寄出的快递物流日志表")
+    private List<MallBuyerShippingLogVO> buyerShippingLog;
+    /**关联佣金流水表*/
+    @ApiModelProperty(value = "关联佣金流水表")
+    private List<MallSocialShareFlowVO> shareInfo;
 }

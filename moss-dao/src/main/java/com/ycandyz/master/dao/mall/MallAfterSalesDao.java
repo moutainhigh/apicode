@@ -18,4 +18,11 @@ public interface MallAfterSalesDao extends BaseMapper<MallAfterSales> {
     MallAfterSalesDTO querySalesDetail(@Param("id") Long id);
 
     List<MallAfterSalesDTO> getTrendMallAfterSalesList(@Param("p") MallafterSalesQuery mallafterSalesQuery);
+
+    /**
+     * 通过订单详情获取
+     * @param orderDetailNoList
+     * @return
+     */
+    List<MallAfterSalesDTO> querySalesByOrderDetailNoList(@Param("list") List<String> orderDetailNoList);
 }

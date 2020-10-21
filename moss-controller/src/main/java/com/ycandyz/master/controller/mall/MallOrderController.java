@@ -62,8 +62,8 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String")
     })
     @GetMapping("/order/detail")
-    public ReturnResponse<MallOrderDetailVO> queryOrderDetail(@RequestParam("orderNo") String orderNo){
-        return mallOrderService.queryOrderDetail(orderNo);
+    public ReturnResponse<MallOrderVO> queryOrderDetail(@RequestParam("orderNo") String orderNo, @CurrentUser UserVO userVO){
+        return mallOrderService.queryOrderDetail(orderNo,userVO);
     }
 
     /**

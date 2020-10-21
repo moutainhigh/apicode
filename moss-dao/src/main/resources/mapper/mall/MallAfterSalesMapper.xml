@@ -11,7 +11,7 @@
             modetail.goods_no as goodsNo,
             sales.status as status,
             sales.sub_status as subStatus,
-            sales.quantity as quantity,
+            sales.quantity as skuQuantity,
             sales.money as money,
             modetail.real_money as realMoney,
             mo.pay_type as payType,
@@ -71,7 +71,7 @@
             modetail.goods_no as goodsNo,
             sales.status as status,
             sales.sub_status as subStatus,
-            sales.quantity as salesQuantity,
+            sales.quantity as skuQuantity,
             sales.money as money,
             modetail.real_money as realMoney,
             mo.pay_type as payType,
@@ -99,7 +99,7 @@
         modetail.goods_no as goodsNo,
         sales.status as status,
         sales.sub_status as subStatus,
-        sales.quantity as quantity,
+        sales.quantity as skuQuantity,
         sales.money as money,
         modetail.real_money as realMoney,
         mo.pay_type as payType,
@@ -148,5 +148,35 @@
             and
             (u.`name` LIKE concat('%',#{p.userName},'%') OR u.phone LIKE concat('%',#{p.userName},'%'))
         </if>
+    </select>
+
+    <select id="querySalesByOrderDetailNoList" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
+        SELECT
+            sales.after_sales_no as afterSalesNo,
+            sales.order_no as orderNo,
+            sales.order_detail_no as orderDetailNo,
+            sales.status as status,
+            sales.sub_status as subStatus,
+            sales.quantity as skuQuantity,
+            sales.money as money,
+            sales.apply_at as applyAt,
+            sales.audit_first_at as auditFirstAt,
+            sales.send_at as sendAt,
+            sales.audit_second_at as auditSecondAt,
+            sales.photos as photos,
+            sales.price as skuPrice,
+            sales.remark as remark,
+            sales.reason as reason
+        FROM
+            mall_after_sales sales
+        where
+            1=1
+            <if test="list!=null">
+                and
+                sales.order_detail_no in
+                <foreach collection="list" item="orderDetailNo" index="index" open="(" close=")" separator=",">
+                    #{orderDetailNo}
+                </foreach>
+            </if>
     </select>
 </mapper>

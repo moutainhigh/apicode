@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,6 +39,9 @@ public class MallOrderDetailVO {
     /**订单关闭时间*/
     @ApiModelProperty(value = "订单关闭时间")
     private java.lang.Integer closeAt;
+    /**商品编号*/
+    @ApiModelProperty(value = "商品编号")
+    private java.lang.String itemNo;
     /**商品名称*/
     @ApiModelProperty(value = "商品名称")
     private java.lang.String itemName;
@@ -46,12 +51,18 @@ public class MallOrderDetailVO {
     /**货号*/
     @ApiModelProperty(value = "货号")
     private java.lang.String goodsNo;
+    /**订单金额*/
+    @ApiModelProperty(value = "订单金额")
+    private java.lang.String totalMoney;
+    /**实际支付金额*/
+    @ApiModelProperty(value = "实际支付金额")
+    private java.lang.String realMoney;
     /**SKU数量*/
     @ApiModelProperty(value = "SKU数量")
-    private java.lang.String quantity;
+    private java.lang.String skuQuantity;
     /**SKU价格*/
     @ApiModelProperty(value = "SKU价格")
-    private java.math.BigDecimal price;
+    private java.math.BigDecimal skuPrice;
     /**运费*/
     @ApiModelProperty(value = "运费")
     private java.math.BigDecimal shipMoney;
@@ -61,4 +72,10 @@ public class MallOrderDetailVO {
     /**订单详情编号*/
     @ApiModelProperty(value = "订单详情编号")
     private String orderDetailNo;
+    /**SKU编号*/
+    @ApiModelProperty(value = "SKU编号")
+    private String skuNo;
+    /**关联订单详情规格值表*/
+    @ApiModelProperty(value = "关联订单详情规格值表")
+    private List<MallOrderDetailSpecVO> specs;
 }

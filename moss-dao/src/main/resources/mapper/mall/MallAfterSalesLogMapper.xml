@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallAfterSalesLogDao">
+
+    <select id="querySalesLogByShopNoAndSalesNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallAfterSalesLogDTO">
+        select
+            id as id,
+            after_sales_no as afterSalesNo,
+            shop_no as shopNo,
+            user_id as userId,
+            log_no as logNo,
+            context_shop as contextShop,
+            context_buyer as contextBuyer,
+            created_time as createdTime,
+            updated_time as updatedTime
+        from mall_after_sales_log
+        where shop_no=#{shopNo} and after_sales_no in
+        <foreach collection="list" item="afterSalesNo" index="index" open="(" close=")" separator=",">
+            #{afterSalesNo}
+        </foreach>
+    </select>
+</mapper>

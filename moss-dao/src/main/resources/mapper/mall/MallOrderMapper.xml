@@ -177,28 +177,28 @@
         group by mo.id
     </select>
 
-    <select id="queryOrderDetail" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
-        SELECT
-            o.status as	status,
-            o.sub_status as subStatus,
-            o.payed_at as payedAt,
-            o.order_at as orderAt,
-            o.close_at as closeAt,
-            modetail.item_name as itemName,
-            modetail.item_cover as itemCover,
-            modetail.goods_no as goodsNo,
-            /**规格*/
-            modetail.quantity as quantity,
-            modetail.price as price,
-            ship.shipping_money as shipMoney,
-            o.all_money as allMoney
-        FROM
-            mall_order o LEFT JOIN mall_order_detail modetail ON o.order_no=modetail.order_no
-            LEFT JOIN mall_shop_shipping ship ON o.order_no=ship.order_no
-        WHERE
-            o.order_no = #{orderNo}
-            GROUP BY o.id
-    </select>
+<!--    <select id="queryOrderDetail" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">-->
+<!--        SELECT-->
+<!--            o.status as	status,-->
+<!--            o.sub_status as subStatus,-->
+<!--            o.payed_at as payedAt,-->
+<!--            o.order_at as orderAt,-->
+<!--            o.close_at as closeAt,-->
+<!--            modetail.item_name as itemName,-->
+<!--            modetail.item_cover as itemCover,-->
+<!--            modetail.goods_no as goodsNo,-->
+<!--            /**规格*/-->
+<!--            modetail.quantity as skuQuantity,-->
+<!--            modetail.price as skuPrice,-->
+<!--            ship.shipping_money as shipMoney,-->
+<!--            o.all_money as allMoney-->
+<!--        FROM-->
+<!--            mall_order o LEFT JOIN mall_order_detail modetail ON o.order_no=modetail.order_no-->
+<!--            LEFT JOIN mall_shop_shipping ship ON o.order_no=ship.order_no-->
+<!--        WHERE-->
+<!--            o.order_no = #{orderNo}-->
+<!--            GROUP BY o.id-->
+<!--    </select>-->
 
     <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
         select
@@ -210,41 +210,83 @@
             mo.status as status,
             mo.sub_status as subStatus,
             mo.deliver_method as deliverMethod,
-        from mall_order mo
-        left join mall_order_detail modetail on mo.order_no=modetail.order_no
-        where mo.shop_no=#{shopNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
-        group by mo.id
-    </select>
-
-    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
-        select
-            mo.id as id,
-            mo.order_no as orderNo,
-            mo.cart_order_id as cartOrderSn,
-            mo.real_money as realMoney,
-            mo.payed_at as payedAt,
-            mo.buyer_remark as buyerRemark,
-            mo.status as status,
-            mo.sub_status as subStatus,
-            mo.deliver_method as deliverMethod,
-            ship.receiver as receiverName,
-            ship.receiver_phone as receiverPhone,
-            mo.total_money as totalMoney,
-            mo.buyer_remark as buyerRemark,
-            mo.order_at as orderAt,
-            mo.pay_type as payType,
-            mo.trade_no as tradeNo,
-            mo.send_at as sendAt,
-            mo.receive_at as receiveAt,
-            mo.cancel_at as cancelAt,
-            mo.cancel_reason as cancelReason,
-            modetail.order_detail_no as orderDetailNo,
-            modetail.item_no as itemNo,
-            modetail.goods_no as goodsNo
         from mall_order mo
         left join mall_order_detail modetail on mo.order_no=modetail.order_no
         left join mall_shop_shipping ship on mo.order_no=ship.order_no
         where mo.order_no=#{orderNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
+        group by mo.id
+    </select>
+
+    <resultMap id="BasePlusResultMap" type="com.ycandyz.master.dto.mall.MallOrderDTO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="order_no" property="orderNo" />
+        <result column="cart_order_sn" property="cartOrderSn" />
+        <result column="real_money" property="realMoney" />
+        <result column="payed_at" property="payedAt" />
+        <result column="buyer_remark" property="buyerRemark" />
+        <result column="status" property="status" />
+        <result column="deliver_method" property="deliverMethod" />
+        <result column="receiver" property="receiverName" />
+        <result column="receiver_phone" property="receiverPhone" />
+        <result column="total_money" property="totalMoney" />
+        <result column="buyer_remark" property="buyerRemark" />
+        <result column="order_at" property="orderAt" />
+        <result column="pay_type" property="payType" />
+        <result column="trade_no" property="tradeNo" />
+        <result column="send_at" property="sendAt" />
+        <result column="receive_at" property="receiveAt" />
+        <result column="cancel_at" property="cancelAt" />
+        <result column="cancel_reason" property="cancelReason" />
+        <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
+            <result column="order_detail_no" property="orderDetailNo" />
+            <result column="item_no" property="itemNo" />
+            <result column="goods_no" property="goodsNo" />
+            <result column="sku_no" property="skuNo" />
+            <result column="item_name" property="itemName" />
+            <result column="item_cover" property="itemCover" />
+            <result column="skuQuantity" property="skuQuantity" />
+            <result column="skuPrice" property="skuPrice" />
+            <result column="total_money" property="totalMoney" />
+            <result column="real_money" property="realMoney" />
+        </collection>
+    </resultMap>
+
+    <select id="queryOrderDetail" parameterType="java.lang.String" resultMap="BasePlusResultMap">
+        select
+            mo.id,
+            mo.order_no,
+            mo.cart_order_sn,
+            mo.real_money,
+            mo.payed_at,
+            mo.buyer_remark,
+            mo.status,
+            mo.sub_status,
+            mo.deliver_method,
+            ship.receiver,
+            ship.receiver_phone,
+            mo.total_money,
+            mo.buyer_remark,
+            mo.order_at,
+            mo.pay_type,
+            mo.trade_no,
+            mo.send_at,
+            mo.receive_at,
+            mo.cancel_at,
+            mo.cancel_reason,
+            modetail.order_detail_no,
+            modetail.item_no,
+            modetail.goods_no,
+            modetail.sku_no,
+            modetail.item_name,
+            modetail.item_cover,
+            modetail.quantity as skuQuantity,
+            modetail.price as skuPrice,
+            modetail.total_money,
+            modetail.real_money
+        from mall_order mo
+        left join mall_order_detail modetail on mo.order_no=modetail.order_no
+        left join mall_shop_shipping ship on mo.order_no=ship.order_no
+        where mo.order_no = #{orderNo}
         group by mo.id
     </select>
 </mapper>

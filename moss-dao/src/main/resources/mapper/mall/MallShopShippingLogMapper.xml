@@ -2,26 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ycandyz.master.dao.mall.MallShopShippingLogDao">
 
-    <select id="queryByOrderNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
-        select
-            id as id,
-            shop_shipping_no as shopShippingNo,
-            company_code as companyCode,
-            company as company,
-            `number` as number,
-            context as context,
-            area_code as areaCode,
-            area_name as areaName,
-            shipping_money as shippingMoney,
-            status as status,
-            is_check as isCheck,
-            log_at as logAt,
-            created_time as createdTime,
-            updated_time as updatedTime
-        from mall_shop_shipping_log
-        where shop_shipping_no=#{orderNo} and status=3
-    </select>
-
     <select id="selectByShipNumberLast" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
         select
             id as id,
@@ -42,5 +22,26 @@
         where `number`=#{number}
         order by createdTime desc
         limit 1
+    </select>
+
+    <select id="selectListByOrderNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
+        select
+            log.id as id,
+            log.shop_shipping_no as shopShippingNo,
+            log.company_code as companyCode,
+            log.company as company,
+            log.`number` as number,
+            log.context as context,
+            log.area_code as areaCode,
+            log.area_name as areaName,
+            log.shipping_money as shippingMoney,
+            log.status as status,
+            log.is_check as isCheck,
+            log.log_at as logAt,
+            log.created_time as createdTime,
+            log.updated_time as updatedTime
+        from mall_shop_shipping_log log
+        left join mall_shop_shipping ship on log.shop_shipping_no=ship.shop_shipping_no
+        where ship.order_no=#{orderNo}
     </select>
 </mapper>

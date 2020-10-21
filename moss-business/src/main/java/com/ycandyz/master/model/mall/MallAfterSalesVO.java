@@ -40,10 +40,10 @@ public class MallAfterSalesVO {
     private String photos;
     /**SKU数量*/
     @ApiModelProperty(value = "SKU数量")
-    private Integer quantity;
+    private Integer skuQuantity;
     /**SKU单价*/
     @ApiModelProperty(value = "SKU单价")
-    private BigDecimal price;
+    private BigDecimal skuPrice;
     /**商家退款给用户的金额（商家输入的退款金额）*/
     @ApiModelProperty(value = "商家退款给用户的金额（商家输入的退款金额）")
     private BigDecimal money;

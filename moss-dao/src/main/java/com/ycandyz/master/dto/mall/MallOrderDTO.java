@@ -3,6 +3,8 @@ package com.ycandyz.master.dto.mall;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -156,5 +158,31 @@ public class MallOrderDTO {
     /**SKU数量*/
     @ApiModelProperty(value = "购买数量")
     private java.lang.String quantity;
-
+    /**关联订单详情*/
+    @ApiModelProperty(value = "关联订单详情")
+    private List<MallOrderDetailDTO> details;
+    /**关联商店*/
+    @ApiModelProperty(value = "关联商店")
+    private MallShopDTO shopInfo;
+    /**关联售后*/
+    @ApiModelProperty(value = "关联售后")
+    private List<MallAfterSalesDTO> afterSales;
+    /**关联售后日志*/
+    @ApiModelProperty(value = "关联售后日志")
+    private List<MallAfterSalesLogDTO> afterSalesLog;
+    /**关联卖家物流表*/
+    @ApiModelProperty(value = "关联卖家物流表")
+    private MallShopShippingDTO shopShipping;
+    /**关联卖家物流日志表*/
+    @ApiModelProperty(value = "关联卖家物流日志表")
+    private List<MallShopShippingLogDTO> shopShippingLog;
+    /**关联买家寄出的快递表*/
+    @ApiModelProperty(value = "关联买家寄出的快递表")
+    private List<MallBuyerShippingDTO> buyerShipping;
+    /**关联买家寄出的快递物流日志表*/
+    @ApiModelProperty(value = "关联买家寄出的快递物流日志表")
+    private List<MallBuyerShippingLogDTO> buyerShippingLog;
+    /**关联佣金流水表*/
+    @ApiModelProperty(value = "关联佣金流水表")
+    private List<MallSocialShareFlowDTO> shareInfo;
 }

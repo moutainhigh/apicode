@@ -6,14 +6,16 @@ import com.ycandyz.master.entities.mall.MallShopShippingLog;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface MallShopShippingLogDao extends BaseMapper<MallShopShippingLog> {
 
     /**
-     * 查询当前订单号是否已经被签收
+     * 查询当前订单号查询物流信息
      * @return
      */
-    MallShopShippingLogDTO selectByShopShippingNoAndStatus(@Param("shopShippingNo") String shopShippingNo);
+    List<MallShopShippingLogDTO> selectListByOrderNo(@Param("orderNo") String orderNo);
 
     /**
      * 通过物流单号查询当前最新的一条记录

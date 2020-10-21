@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallBuyerShippingDao">
+
+    <select id="queryByAfterSalesNoList" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallBuyerShippingDTO">
+        select
+            id as id,
+            after_sales_no as afterSalesNo,
+            buyer_shipping_no as buyerShippingNo,
+            `type` as type,
+            company_code as companyCode,
+            company as company,
+            `number` as number,
+            shipping_money as shippingMoney,
+            receiver as receiver,
+            receiver_phone as receiverPhone,
+            receiver_address as receiverAddress,
+            created_time as createdTime,
+            updated_time as updatedTime,
+            status as status
+        from mall_buyer_shipping
+        where after_sales_no in
+        <foreach collection="list" item="afterSalesNo" index="index" open="(" close=")" separator=",">
+            #{afterSalesNo}
+        </foreach>
+    </select>
+</mapper>

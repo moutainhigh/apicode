@@ -18,7 +18,7 @@ public interface MallOrderService extends IService<MallOrder> {
 
     void exportEXT(MallOrderQuery mallOrder, UserVO userVO, HttpServletResponse response);
 
-    ReturnResponse<MallOrderDetailVO> queryOrderDetail(String orderNo);
+    ReturnResponse<MallOrderVO> queryOrderDetail(String orderNo, UserVO userVO);
 
     ReturnResponse<MallOrderVO> queryDetailByPickupNo(String pickupNo, UserVO userVO);
 
