@@ -86,7 +86,7 @@ public class ${table.controllerName} {
     
     @ApiOperation(value = "查询全部")
     @GetMapping(value = "select/list")
-    public ReturnResponse<ListObject> selectList(${entity}${cfg.querySuffix} query) {
+    public ReturnResponse<Object> selectList(${entity}${cfg.querySuffix} query) {
         return ReturnResponse.success(service.list(query));
     }
     
