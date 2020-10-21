@@ -3,6 +3,7 @@ package com.ycandyz.master.controller.mall.goodsManage;
 import com.github.pagehelper.PageInfo;
 import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
+import com.ycandyz.master.dto.mall.goodsManage.MallShippingKwDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
@@ -42,7 +43,7 @@ public class MallShippingController {
     @GetMapping("/shipping")
     public CommonResult<Object> selMallShippingByKeyWord(@RequestParam(value = "page",defaultValue = "1") Integer page,
                                                          @RequestParam(value = "pageSize",defaultValue = "5") Integer pageSize,@RequestParam(value = "keyWord") String keyWord){
-        PageInfo<MallShipping> mallShipping = mallShippingService.selMallShippingByKeyWord(page,pageSize,keyWord);
+        PageInfo<MallShippingKwDTO> mallShipping = mallShippingService.selMallShippingByKeyWord(page,pageSize,keyWord);
         if (mallShipping != null){
             log.info("关键字:{}；查询运费模版结果{}",keyWord,mallShipping);
             return CommonResult.success(mallShipping);

@@ -2,6 +2,7 @@ package com.ycandyz.master.service.mall.goodsManage;
 
 import com.github.pagehelper.PageInfo;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
+import com.ycandyz.master.dto.mall.goodsManage.MallShippingKwDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
 import com.ycandyz.master.model.user.UserVO;
@@ -23,7 +24,7 @@ public interface MallShippingService {
 
     MallShippingDTO selMallShippingByShippingNo(String shippingNo);
 
-    PageInfo<MallShipping> selMallShippingByKeyWord(Integer page, Integer PageSize, String shippingName);
+    PageInfo<MallShippingKwDTO> selMallShippingByKeyWord(Integer page, Integer PageSize, String shippingName);
 
     List<MallShippingDTO> selMallShippingByShopNo();
 

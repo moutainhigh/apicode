@@ -7,6 +7,7 @@ import com.ycandyz.master.dao.mall.goodsManage.MallShippingDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingRegionDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingRegionProvinceDao;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
+import com.ycandyz.master.dto.mall.goodsManage.MallShippingKwDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
 import com.ycandyz.master.enums.RegionEnum;
@@ -18,6 +19,7 @@ import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegionProvince;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.mall.goodsManage.MallShippingService;
+import com.ycandyz.master.utils.DateUtil;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import com.ycandyz.master.vo.MallShippingRegionVO;
 import com.ycandyz.master.vo.MallShippingVO;
@@ -160,10 +162,36 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description: 根据关键字查询模版
     */
     @Override
-    public PageInfo<MallShipping>  selMallShippingByKeyWord(Integer page, Integer pageSize, String shippingName) {
+    public PageInfo<MallShippingKwDTO>  selMallShippingByKeyWord(Integer page, Integer pageSize, String shippingName) {
         PageHelper.startPage(page,pageSize);
         List<MallShipping> mallShippings = mallShippingDao.selMallShippingByKeyWord(shippingName);
-        PageInfo<MallShipping> pageInfo = new PageInfo<>(mallShippings);
+        List<MallShippingKwDTO> mallShippingKwDTOS = new ArrayList<>();
+        MallShippingKwDTO mallShippingKwDTO = null;
+        for (MallShipping m:mallShippings) {
+            mallShippingKwDTO = new MallShippingKwDTO();
+            mallShippingKwDTO.setShippingName(m.getShippingName());
+            mallShippingKwDTO.setShippingMethod(m.getShippingMethod());
+            List<MallShippingRegion> mallShippingRegions = mallShippingRegionDao.selMallShippingRegionByShippingNo(m.getShippingNo());
+            MallShippingRegionDTO mallShippingRegionDTO = null;
+            ArrayList<MallShippingRegionDTO> mallShippingRegionDTOList = Lists.newArrayList();
+            for (MallShippingRegion mr: mallShippingRegions) {
+                mallShippingRegionDTO = new MallShippingRegionDTO();
+                mallShippingRegionDTO.setFirstCount(mr.getFirstCount());
+                mallShippingRegionDTO.setFirstPrice(mr.getFirstPrice());
+                mallShippingRegionDTO.setMoreCount(mr.getMoreCount());
+                mallShippingRegionDTO.setMorePrice(mr.getMorePrice());
+                List<String> provinces = mallShippingRegionProvinceDao.selMallShippingRegionProvinceByRegionNo(mr.getRegionNo());
+                String[] pAr = new String[provinces.size()];
+                mallShippingRegionDTO.setProvinces(provinces.toArray(pAr));
+                mallShippingRegionDTOList.add(mallShippingRegionDTO);
+            }
+            MallShippingRegionDTO[] mallShippingRegionDTOS = new MallShippingRegionDTO[mallShippingRegionDTOList.size()];
+            mallShippingKwDTO.setRegions(mallShippingRegionDTOList.toArray(mallShippingRegionDTOS));
+            mallShippingKwDTO.setCreatedStr(DateUtil.defaultFormatDate(m.getCreatedTime()));
+            mallShippingKwDTO.setUpdatedStr(DateUtil.defaultFormatDate(m.getUpdatedTime()));
+            mallShippingKwDTOS.add(mallShippingKwDTO);
+        }
+        PageInfo<MallShippingKwDTO> pageInfo = new PageInfo<>(mallShippingKwDTOS);
         return pageInfo;
     }
 
