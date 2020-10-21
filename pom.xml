@@ -13,6 +13,7 @@
         <module>moss-business</module>
         <module>moss-commons</module>
         <module>moss-dao</module>
+        <module>moss-apicode</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
