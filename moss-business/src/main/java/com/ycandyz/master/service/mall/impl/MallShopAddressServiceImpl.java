@@ -1,6 +1,6 @@
 package com.ycandyz.master.service.mall.impl;
 
-import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.MallShopAddressDao;
 import com.ycandyz.master.domain.query.mall.MallShopAddressQuery;
@@ -22,7 +22,7 @@ public class MallShopAddressServiceImpl extends BaseService<MallShopAddressDao, 
     private MallShopAddressDao mallShopAddressDao;
 
     @Override
-    public CommonResult<List<MallShopAddressVO>> queryShopAddressList(String shopNo) {
+    public ReturnResponse<List<MallShopAddressVO>> queryShopAddressList(String shopNo) {
         List<MallShopAddressVO> result = new ArrayList<>();
         List<MallShopAddressDTO> list = mallShopAddressDao.queryByShopNo(shopNo);
         if (list!=null && list.size()>0){
@@ -33,6 +33,6 @@ public class MallShopAddressServiceImpl extends BaseService<MallShopAddressDao, 
                 result.add(mallShopAddressVO);
             }
         }
-        return CommonResult.success(result);
+        return ReturnResponse.success(result);
     }
 }

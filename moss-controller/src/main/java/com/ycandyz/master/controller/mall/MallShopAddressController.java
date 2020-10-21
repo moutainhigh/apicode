@@ -1,6 +1,6 @@
 package com.ycandyz.master.controller.mall;
 
-import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallShopAddressQuery;
@@ -33,7 +33,7 @@ public class MallShopAddressController extends BaseController<MallShopAddressSer
      */
     @ApiOperation(value = "商家地址列表",notes = "商家地址列表",httpMethod = "GET")
     @GetMapping("/order/shop/address/list")
-    public CommonResult<List<MallShopAddressVO>> queryShopAddressList(@CurrentUser UserVO userVO){
+    public ReturnResponse<List<MallShopAddressVO>> queryShopAddressList(@CurrentUser UserVO userVO){
         return mallShopAddressService.queryShopAddressList(userVO.getShopNo());
     }
 }

@@ -15,6 +15,8 @@ import java.util.Date;
 @ApiModel(description="退款表")
 public class MallafterSalesQuery implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "订单编号")

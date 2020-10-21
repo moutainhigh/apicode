@@ -74,11 +74,11 @@
             sales.quantity as salesQuantity,
             sales.money as money,
             modetail.real_money as realMoney,
-            #mo.pay_type as payType,
+            mo.pay_type as payType,
             modetail.quantity as detailQuantity,
             #concat(u.`name`,' ',u.phone) as userName,
             sales.apply_at as applyAt,
-            sales.audit_first_at as auditFirstAt;
+            sales.audit_first_at as auditFirstAt,
             sales.send_at as sendAt,
             sales.audit_second_at as auditSecondAt
         FROM

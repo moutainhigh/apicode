@@ -140,7 +140,10 @@ public class MallOrderDTO {
     private java.lang.String payuser;
     /**收货人*/
     @ApiModelProperty(value = "收货人")
-    private java.lang.String shipuser;
+    private java.lang.String receiverName;
+    /**收货人手机*/
+    @ApiModelProperty(value = "收货人手机")
+    private java.lang.String receiverPhone;
     /**收货地址*/
     @ApiModelProperty(value = "收货地址")
     private java.lang.String receiverAddress;
@@ -150,4 +153,8 @@ public class MallOrderDTO {
     /**货号*/
     @ApiModelProperty(value = "货号")
     private java.lang.String goodsNo;
+    /**SKU数量*/
+    @ApiModelProperty(value = "购买数量")
+    private java.lang.String quantity;
+
 }

@@ -58,4 +58,7 @@ public class MallOrderDetailVO {
     /**总金额（包含real_money和shop_shipping中的运费）*/
     @ApiModelProperty(value = "总金额（包含real_money和shop_shipping中的运费）")
     private java.math.BigDecimal allMoney;
+    /**订单详情编号*/
+    @ApiModelProperty(value = "订单详情编号")
+    private String orderDetailNo;
 }

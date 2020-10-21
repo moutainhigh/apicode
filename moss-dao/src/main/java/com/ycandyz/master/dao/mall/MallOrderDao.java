@@ -2,7 +2,6 @@ package com.ycandyz.master.dao.mall;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.dto.mall.MallOrderDTO;
 import com.ycandyz.master.dto.mall.MallOrderDetailDTO;
@@ -20,7 +19,7 @@ public interface MallOrderDao extends BaseMapper<MallOrder> {
      * @param mallOrderQuery
      * @return
      */
-    Page<MallOrderDTO> getTrendMallOrderPage(PageModel model, @Param("p") MallOrderQuery mallOrderQuery);
+    Page<MallOrderDTO> getTrendMallOrderPage(Page page, @Param("p") MallOrderQuery mallOrderQuery);
 
     List<MallOrderDTO> getTrendMallOrder(@Param("p") MallOrderQuery mallOrderQuery);
 

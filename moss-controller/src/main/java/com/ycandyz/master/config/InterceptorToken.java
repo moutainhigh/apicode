@@ -13,6 +13,7 @@ import com.ycandyz.master.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 
 @Slf4j
 @Component
+@Order(1)
 public class InterceptorToken implements HandlerInterceptor {
 
     @Resource

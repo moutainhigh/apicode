@@ -5,8 +5,8 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.util.StringUtil;
-import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.api.PageModel;
+import com.ycandyz.master.api.PageResult;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.MallAfterSalesDao;
 import com.ycandyz.master.dao.mall.MallAfterSalesLogDao;
@@ -42,10 +42,11 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     private MallAfterSalesLogDao mallAfterSalesLogDao;
 
     @Override
-    public CommonResult<Page<MallAfterSalesVO>> querySalesListPage(PageModel model, MallafterSalesQuery mallafterSalesQuery, UserVO userVO) {
+    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(PageResult model, MallafterSalesQuery mallafterSalesQuery, UserVO userVO) {
         Page<MallAfterSalesVO> mallPage = new Page<>();
         mallafterSalesQuery.setShopNo(userVO.getShopNo());
-        Page<MallAfterSalesDTO> page = mallAfterSalesDao.getTrendMallAfterSalesPage(model,mallafterSalesQuery);
+        Page pageQuery = new Page(model.getPage(),model.getPage_size(),model.getTotal());
+        Page<MallAfterSalesDTO> page = mallAfterSalesDao.getTrendMallAfterSalesPage(pageQuery,mallafterSalesQuery);
         if (page.getRecords()!=null && page.getRecords().size()>0){
             List<MallAfterSalesVO> list = new ArrayList<>();
             MallAfterSalesVO mallAfterSalesVO = null;
@@ -60,18 +61,18 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             mallPage.setCurrent(page.getCurrent());
             mallPage.setPages(page.getPages());
         }
-        return CommonResult.success(mallPage);
+        return ReturnResponse.success(mallPage);
     }
 
     @Override
-    public CommonResult<MallAfterSalesVO> querySalesDetail(Long id) {
+    public ReturnResponse<MallAfterSalesVO> querySalesDetail(Long id) {
         MallAfterSalesVO mallAfterSalesVO = null;
         MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(id);
         if (mallAfterSalesDTO!=null){
             mallAfterSalesVO = new MallAfterSalesVO();
             BeanUtils.copyProperties(mallAfterSalesDTO,mallAfterSalesVO);
         }
-        return CommonResult.success(mallAfterSalesVO);
+        return ReturnResponse.success(mallAfterSalesVO);
     }
 
     @Transactional
@@ -120,7 +121,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         writer.addHeaderAlias("status", "状态");
         writer.addHeaderAlias("afterSalesStatus", "售后");
         writer.addHeaderAlias("payuser", "购买用户");
-        writer.addHeaderAlias("shipuser", "收货人");
+        writer.addHeaderAlias("receiverName", "收货人");
         writer.addHeaderAlias("receiverAddress", "收货地址");
         writer.addHeaderAlias("orderAt", "下单时间");
         writer.addHeaderAlias("paymentTime", "支付时间");

@@ -1,8 +1,8 @@
 package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.api.PageModel;
+import com.ycandyz.master.api.PageResult;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
@@ -37,8 +37,8 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "订单列表",notes = "订单列表",httpMethod = "POST")
     @PostMapping("/order/list")
-    public CommonResult<Page<MallOrderVO>> queryMallOrderList(PageModel model, @RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
-        return mallOrderService.queryOrderList(model,mallOrder,userVO);
+    public ReturnResponse<Page<MallOrderVO>> queryMallOrderList(PageResult pageResult, @RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
+        return mallOrderService.queryOrderList(pageResult,mallOrder,userVO);
     }
 
     /**
@@ -62,7 +62,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String")
     })
     @GetMapping("/order/detail")
-    public CommonResult<MallOrderDetailVO> queryOrderDetail(@RequestParam("orderNo") String orderNo){
+    public ReturnResponse<MallOrderDetailVO> queryOrderDetail(@RequestParam("orderNo") String orderNo){
         return mallOrderService.queryOrderDetail(orderNo);
     }
 
@@ -77,7 +77,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
     })
     @GetMapping("/order/pickup/query")
-    public CommonResult<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @CurrentUser UserVO userVO){
+    public ReturnResponse<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @CurrentUser UserVO userVO){
         return mallOrderService.queryDetailByPickupNo(pickupNo, userVO);
     }
 
@@ -92,7 +92,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
     })
     @GetMapping("/order/pickup/verification")
-    public CommonResult<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @CurrentUser UserVO userVO){
+    public ReturnResponse<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @CurrentUser UserVO userVO){
         return mallOrderService.verPickupNo(pickupNo, userVO);
     }
 
