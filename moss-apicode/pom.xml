@@ -8,7 +8,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <groupId>com.ycandyz.uke</groupId>
-    <artifactId>api-code</artifactId>
+    <artifactId>moss-apicode</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>moss-apicode</name>
     <description>Demo project for Spring Boot</description>
