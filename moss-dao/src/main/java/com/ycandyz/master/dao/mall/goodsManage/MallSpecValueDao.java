@@ -1,5 +1,6 @@
 package com.ycandyz.master.dao.mall.goodsManage;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.entities.mall.goodsManage.MallSpecValue;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

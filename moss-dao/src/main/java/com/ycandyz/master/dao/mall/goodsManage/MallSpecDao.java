@@ -1,5 +1,6 @@
 package com.ycandyz.master.dao.mall.goodsManage;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.entities.mall.goodsManage.MallSpec;
 import com.ycandyz.master.vo.MallSpecVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface MallSpecDao {
     void addMallSpec(MallSpec mallSpec);
     int delMallSpecBySpecNo(@Param("shopNo")String shopNo,@Param("specNo") String specNo);
-    List<MallSpec> selMallSpecByKeyWord(@Param("shopNo") String shopNo, @Param("keyWord") String keyWord);
+    Page<MallSpec> selMallSpecByKeyWord(Page page, @Param("shopNo") String shopNo, @Param("keyWord") String keyWord);
     MallSpec selMallSpecBySpecNo(@Param("shopNo") String shopNo, @Param("specNo")String specNo);
 
     List<String> selMallSpecNoByShopNo(@Param("shopNo") String shopNo);

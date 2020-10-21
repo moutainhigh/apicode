@@ -1,6 +1,8 @@
 package com.ycandyz.master.service.mall.goodsManage;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageInfo;
+import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingKwDTO;
 import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
@@ -24,7 +26,7 @@ public interface MallShippingService {
 
     MallShippingDTO selMallShippingByShippingNo(String shippingNo);
 
-    PageInfo<MallShippingKwDTO> selMallShippingByKeyWord(Integer page, Integer PageSize, String shippingName);
+    Page<MallShippingKwDTO> selMallShippingByKeyWord(PageResult pageResult, String shippingName);
 
     List<MallShippingDTO> selMallShippingByShopNo();
 

@@ -1,11 +1,14 @@
 package com.ycandyz.master.service.mall.goodsManage.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.dao.mall.goodsManage.MallSpecDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSpecValueDao;
+import com.ycandyz.master.dto.mall.goodsManage.MallShippingKwDTO;
 import com.ycandyz.master.enums.SortValueEnum;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallSpec;
@@ -19,6 +22,7 @@ import com.ycandyz.master.vo.MallSpecKeyWordVO;
 import com.ycandyz.master.vo.MallSpecSingleVO;
 import com.ycandyz.master.vo.MallSpecVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
@@ -81,12 +85,12 @@ public class MallSpecServiceImpl implements MallSpecService {
      * @Description: 根据关键字查询规格模版
      */
     @Override
-    public PageInfo<MallSpecKeyWordVO> selMallSpecByKeyWord(Integer page, Integer pageSize, String keyWord) {
+    public Page<MallSpecKeyWordVO> selMallSpecByKeyWord(PageResult pageResult, String keyWord) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
-        PageHelper.startPage(page,pageSize);
-        List<MallSpec> mallSpecs = mallSpecDao.selMallSpecByKeyWord(shopNo,keyWord);
-        log.info("shopNo:{};keyWord:{};规格模版表查询数据库结果:{}",shopNo,keyWord,mallSpecs);
+        Page pageQuery = new Page(pageResult.getPage(),pageResult.getPage_size(),pageResult.getTotal());
+        Page<MallSpec> mallSpecsPage = mallSpecDao.selMallSpecByKeyWord(pageQuery,shopNo,keyWord);
+        log.info("shopNo:{};keyWord:{};规格模版表查询数据库结果:{}",shopNo,keyWord,mallSpecsPage);
         List<MallSpecValue> mallSpecValues = mallSpecValueDao.selMallSpecValueByKeyWord(keyWord);
         log.info("keyWord:{};规格模版value表查询数据库结果:{}",keyWord,mallSpecValues);
         HashMap<String, String> specNoNameMap = Maps.newHashMap();
@@ -95,9 +99,9 @@ public class MallSpecServiceImpl implements MallSpecService {
         List<String> spvspecNovalues = Lists.newArrayList();
         List<String> values = Lists.newArrayList();
         List<MallSpecKeyWordVO> mallSpecKeyWordVOvalues = Lists.newArrayList();
-
-        if (mallSpecs.size() >0 && mallSpecValues.size() == 0){
-            mallSpecs.stream().forEach(m->specNoNameMap.put(m.getSpecName(),m.getSpecNo()));
+        Page<MallSpecKeyWordVO> page1 = new Page<>();
+        if (mallSpecsPage !=null && mallSpecsPage.getRecords().size() >0 && mallSpecValues != null && mallSpecValues.size() == 0){
+            mallSpecsPage.getRecords().stream().forEach(m->specNoNameMap.put(m.getSpecName(),m.getSpecNo()));
             for (Map.Entry<String, String> e : specNoNameMap.entrySet()) {
                 List<MallSpecValue> mallSpecValues1 = mallSpecValueDao.selMallSpecValueBySpecNo(e.getValue());
                 log.info("specNo:{};规格模版value表查询数据库结果:{}",e.getValue(),mallSpecValues1);
@@ -107,11 +111,11 @@ public class MallSpecServiceImpl implements MallSpecService {
                 mallSpecKeyWordVO.setSpecNo(e.getValue());
                 mallSpecKeyWordVO.setSpecName(e.getKey());
                 mallSpecKeyWordVO.setSpecValues(values.toArray(mallSpecValues1Array));
-                mallSpecKeyWordVO.setCreatedStr(DateUtil.defaultFormatDate(mallSpecs.get(0).getCreatedTime()));
-                mallSpecKeyWordVO.setUpdatedStr(DateUtil.defaultFormatDate(mallSpecs.get(0).getUpdatedTime()));
+                mallSpecKeyWordVO.setCreatedStr(DateUtil.defaultFormatDate(mallSpecsPage.getRecords().get(0).getCreatedTime()));
+                mallSpecKeyWordVO.setUpdatedStr(DateUtil.defaultFormatDate(mallSpecsPage.getRecords().get(0).getUpdatedTime()));
                 mallSpecKeyWordVOvalues.add(mallSpecKeyWordVO);
             }
-        }else if (mallSpecs.size() == 0 && mallSpecValues.size() > 0){
+        }else if (mallSpecsPage !=null && mallSpecsPage.getRecords().size() == 0 && mallSpecValues != null && mallSpecValues.size() > 0){
             mallSpecValues.stream().forEach(mv->specNoValueMap.put(mv.getSpecNo(),mv.getSpecValue()));
             List<String> specNovalues = Lists.newArrayList();
             for (Map.Entry<String, String> e : specNoValueMap.entrySet()) {
@@ -128,9 +132,13 @@ public class MallSpecServiceImpl implements MallSpecService {
                 }
                 mallSpecKeyWordVOvalues.add(mallSpecKeyWordVO);
             }
-        }else if (mallSpecs.size() > 0 && mallSpecValues.size() > 0){
+        }else if (mallSpecsPage !=null && mallSpecsPage.getRecords().size() > 0 && mallSpecValues != null && mallSpecValues.size() > 0){
             List<String> specNos = mallSpecDao.selMallSpecNoByShopNo(shopNo);
-            mallSpecs.stream().forEach(m->spspecNovalues.add(m.getSpecNo()));
+            List<MallSpec> records = mallSpecsPage.getRecords();
+            for (MallSpec m: records) {
+                spspecNovalues.add(m.getSpecNo());
+            }
+            records.stream().forEach(m->spspecNovalues.add(m.getSpecNo()));
             mallSpecValues.stream().forEach(m->spvspecNovalues.add(m.getSpecNo()));
             List<String> spcollect = spspecNovalues.stream().filter(s -> specNos.contains(s)).collect(Collectors.toList());
             List<String> spvcollect = spvspecNovalues.stream().filter(s -> specNos.contains(s)).collect(Collectors.toList());
@@ -142,18 +150,15 @@ public class MallSpecServiceImpl implements MallSpecService {
                 log.info("shopNo:{};specNo:{};规格模版表查询selMallSpecBySpecNo接口结果:{}",shopNo,s,mallSpecVO);
                 MallSpecKeyWordVO mallSpecKeyWordVO = new MallSpecKeyWordVO();
                 if (mallSpecVO != null) {
-                    mallSpecKeyWordVO.setSpecNo(mallSpecVO.getSpecNo());
-                    mallSpecKeyWordVO.setSpecName(mallSpecVO.getSpecName());
-                    mallSpecKeyWordVO.setSpecValues(mallSpecVO.getSpecValues());
-                    mallSpecKeyWordVO.setCreatedStr(mallSpecVO.getCreatedTime());
-                    mallSpecKeyWordVO.setUpdatedStr(mallSpecVO.getUpdatedTime());
+                    BeanUtils.copyProperties(mallSpecVO,mallSpecKeyWordVO);
                 }
                 mallSpecKeyWordVOvalues.add(mallSpecKeyWordVO);
             }
         }
         log.info("keyWord:{};规格模版查询数据库整合结果:{}",keyWord,mallSpecKeyWordVOvalues);
-        PageInfo<MallSpecKeyWordVO> pageInfo = new PageInfo<>(mallSpecKeyWordVOvalues);
-        return pageInfo;
+        BeanUtils.copyProperties(mallSpecsPage,page1);
+        page1.setRecords(mallSpecKeyWordVOvalues);
+        return page1;
     }
 //    public PageInfo<MallSpecKeyWordVO> selMallSpecByKeyWord2(Integer page, Integer pageSize, String keyWord,UserVO userVO) {
 //        String shopNo = userVO.getShopNo();
