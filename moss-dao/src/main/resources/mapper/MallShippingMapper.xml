@@ -25,7 +25,7 @@
     </update>
 
     <select id="selMallShippingByKeyWord" resultMap="BaseResultMap" parameterType="java.lang.String">
-            select * from mall_shipping where shipping_name like "%"#{shippingName,jdbcType=VARCHAR}"%"
+            select * from mall_shipping where shop_no = #{shopNo,jdbcType=VARCHAR} and shipping_name like "%"#{shippingName,jdbcType=VARCHAR}"%"
     </select>
 
 

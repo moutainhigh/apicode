@@ -124,8 +124,8 @@ public class MallCategoryServiceImpl implements MallCategoryService {
     @Override
     public List<MallCategoryDTO> selCategoryByParentCategoryNo(String parentCategoryNo) {
         UserVO userVO = UserRequest.getCurrentUser();
-        log.info("根据parentCategoryNo:{};user:{}查询某个分类的子类列表",parentCategoryNo,userVO);
         String shopNo = userVO.getShopNo();
+        log.info("根据parentCategoryNo:{};shopNo:{}查询某个分类的子类列表",parentCategoryNo,shopNo);
         ArrayList<MallCategoryDTO> mallCategoryDTOS = Lists.newArrayList();
         MallParentCategory mallParentCategory = mallCategoryDao.selParentCategoryByCategoryNo(shopNo, parentCategoryNo);
         if (mallParentCategory == null){

@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface MallShippingDao {
     void addMallShipping(MallShipping mallShipping);
-    Page<MallShipping>  selMallShippingByKeyWord(Page page, @Param("shippingName") String shippingName);
+    Page<MallShipping>  selMallShippingByKeyWord(Page page, @Param("shippingName") String shippingName,@Param("shopNo") String shopNo);
     MallShipping selMallShippingByShippingNo(@Param("shopNo") String shopNo,@Param("shippingNo") String shippingNo);
     List<MallShipping>  selMallShippingByShopNo(String shopNo);
     int delMallShippingByshippingNo(@Param("shopNo") String shopNo,@Param("shippingNo") String shippingNo);

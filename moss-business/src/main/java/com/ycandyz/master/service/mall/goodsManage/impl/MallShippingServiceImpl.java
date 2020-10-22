@@ -167,8 +167,11 @@ public class MallShippingServiceImpl implements MallShippingService {
     */
     @Override
     public Page<MallShippingKwDTO>  selMallShippingByKeyWord(PageResult pageResult, String shippingName) {
+        UserVO userVO = UserRequest.getCurrentUser();
+        String shopNo = userVO.getShopNo();
+        log.info("根据关键字查询模版:shopNo:{};shippingName:{}",shopNo,shippingName);
         Page pageQuery = new Page(pageResult.getPage(),pageResult.getPage_size(),pageResult.getTotal());
-        Page<MallShipping> page = mallShippingDao.selMallShippingByKeyWord(pageQuery,shippingName);
+        Page<MallShipping> page = mallShippingDao.selMallShippingByKeyWord(pageQuery,shippingName,shopNo);
         List<MallShippingKwDTO> mallShippingKwDTOS = new ArrayList<>();
         Page<MallShippingKwDTO> page1 = new Page<>();
         MallShippingKwDTO mallShippingKwDTO = null;
@@ -190,8 +193,8 @@ public class MallShippingServiceImpl implements MallShippingService {
                 }
                 MallShippingRegionDTO[] mallShippingRegionDTOS = new MallShippingRegionDTO[mallShippingRegionDTOList.size()];
                 mallShippingKwDTO.setRegions(mallShippingRegionDTOList.toArray(mallShippingRegionDTOS));
-                mallShippingKwDTO.setCreatedStr(DateUtil.AddEightHoursDateToString(m.getCreatedTime()));
-                mallShippingKwDTO.setUpdatedStr(DateUtil.AddEightHoursDateToString(m.getUpdatedTime()));
+                mallShippingKwDTO.setCreatedStr(DateUtil.defaultFormatDate(m.getCreatedTime()));
+                mallShippingKwDTO.setUpdatedStr(DateUtil.defaultFormatDate(m.getUpdatedTime()));
                 mallShippingKwDTOS.add(mallShippingKwDTO);
             }
         }

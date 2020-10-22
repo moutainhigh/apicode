@@ -111,8 +111,8 @@ public class MallSpecServiceImpl implements MallSpecService {
                 mallSpecKeyWordVO.setSpecNo(e.getValue());
                 mallSpecKeyWordVO.setSpecName(e.getKey());
                 mallSpecKeyWordVO.setSpecValues(values.toArray(mallSpecValues1Array));
-                mallSpecKeyWordVO.setCreatedStr(DateUtil.AddEightHoursDateToString(mallSpecsPage.getRecords().get(0).getCreatedTime()));
-                mallSpecKeyWordVO.setUpdatedStr(DateUtil.AddEightHoursDateToString(mallSpecsPage.getRecords().get(0).getUpdatedTime()));
+                mallSpecKeyWordVO.setCreatedStr(DateUtil.defaultFormatDate(mallSpecsPage.getRecords().get(0).getCreatedTime()));
+                mallSpecKeyWordVO.setUpdatedStr(DateUtil.defaultFormatDate(mallSpecsPage.getRecords().get(0).getUpdatedTime()));
                 mallSpecKeyWordVOvalues.add(mallSpecKeyWordVO);
             }
         }else if (mallSpecsPage !=null && mallSpecsPage.getRecords().size() == 0 && mallSpecValues != null && mallSpecValues.size() > 0){
@@ -191,8 +191,8 @@ public class MallSpecServiceImpl implements MallSpecService {
             mallSpecVO.setSpecNo(mallSpec.getSpecNo());
             mallSpecVO.setSpecName(mallSpec.getSpecName());
             mallSpecVO.setSpecValues(values.toArray(valuesarray));
-            mallSpecVO.setCreatedTime(DateUtil.AddEightHoursDateToString(mallSpec.getCreatedTime()));
-            mallSpecVO.setUpdatedTime(DateUtil.AddEightHoursDateToString(mallSpec.getUpdatedTime()));
+            mallSpecVO.setCreatedTime(DateUtil.defaultFormatDate(mallSpec.getCreatedTime()));
+            mallSpecVO.setUpdatedTime(DateUtil.defaultFormatDate(mallSpec.getUpdatedTime()));
         }
         log.info("specNo:{};规格模版查询数据库结果:{}",specNo,mallSpecVO);
         return mallSpecVO;
