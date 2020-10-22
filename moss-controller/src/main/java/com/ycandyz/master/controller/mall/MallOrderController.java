@@ -31,13 +31,13 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
 
     /**
      * 获取订单表集合
-     * @param model
+     * @param pageResult
      * @param mallOrder
      * @return
      */
     @ApiOperation(value = "订单列表",notes = "订单列表",httpMethod = "POST")
     @PostMapping("/order/list")
-    public ReturnResponse<Page<MallOrderVO>> queryMallOrderList(PageResult pageResult, @RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
+    public ReturnResponse<Page<MallOrderVO>> queryMallOrderList(@RequestBody PageResult pageResult, @RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
         return mallOrderService.queryOrderList(pageResult,mallOrder,userVO);
     }
 

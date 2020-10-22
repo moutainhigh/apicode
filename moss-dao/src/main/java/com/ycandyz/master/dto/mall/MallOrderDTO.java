@@ -107,6 +107,18 @@ public class MallOrderDTO {
     /**销售员id*/
     @ApiModelProperty(value = "销售员id")
     private java.lang.Integer sellerUserId;
+    /**合伙人信息 分销用户手机号*/
+    @ApiModelProperty(value = "合伙人信息 分销用户手机号")
+    private String sellerUserPhone;
+    /**合伙人信息 分销用户名称*/
+    @ApiModelProperty(value = "合伙人信息 分销用户名称")
+    private String sellerUserName;
+    /**是否开启分销 0没有/1开启*/
+    @ApiModelProperty(value = "是否开启分销 0没有/1开启")
+    private String isEnableShare;
+    /**合伙人信息 分销用户名称*/
+    @ApiModelProperty(value = "分佣金额")
+    private String shareAmount;
     /**0-未删除  1-由用户删除  2-由商家删除*/
     @ApiModelProperty(value = "0-未删除  1-由用户删除  2-由商家删除")
     private java.lang.Integer isDel;
