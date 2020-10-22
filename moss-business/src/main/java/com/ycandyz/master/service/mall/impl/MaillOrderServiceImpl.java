@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -274,6 +271,32 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         if (mallOrderDTO!=null){
             MallOrderVO mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+            if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
+                List<String> orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
+                List<MallOrderDetailSpecDTO> specList = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);     //查询订单详情规格值表
+                Map<String, List<MallOrderDetailSpecVO>> map = null;
+                if (specList!=null){
+                    List<MallOrderDetailSpecVO> specVoList = new ArrayList<>();
+                    specList.forEach(spec->{
+                        MallOrderDetailSpecVO mallOrderDetailSpecVO = new MallOrderDetailSpecVO();
+                        BeanUtils.copyProperties(spec,mallOrderDetailSpecVO);
+                        specVoList.add(mallOrderDetailSpecVO);
+                    });
+                    map = specVoList.stream().collect(Collectors.groupingBy(input -> input.getOrderDetailNo()));        //吧specVO集合转换为map类型，方便下面做判断和取值
+                }else {
+                    map = new HashMap<>();
+                }
+                List<MallOrderDetailVO> list = new ArrayList<>();
+                for(MallOrderDetailDTO dto : mallOrderDTO.getDetails()){
+                    MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
+                    BeanUtils.copyProperties(dto,mallOrderDetailVO);
+                    if (map.containsKey(mallOrderDetailVO.getOrderDetailNo())){
+                        mallOrderDetailVO.setSpecs(map.get(mallOrderDetailVO.getOrderDetailNo()));
+                    }
+                    list.add(mallOrderDetailVO);
+                }
+                mallOrderVO.setDetails(list);
+            }
             return ReturnResponse.success(mallOrderVO);
         }
         return ReturnResponse.failed("查询提货码未查询到订单");
