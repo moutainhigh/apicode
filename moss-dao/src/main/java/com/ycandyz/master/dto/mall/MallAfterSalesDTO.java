@@ -96,4 +96,6 @@ public class MallAfterSalesDTO {
     private MallOrderByAfterSalesDTO order;
     @ApiModelProperty(value = "订单详情")
     private String orderDetailNo;
+    @ApiModelProperty(value = "退款中关联订单详情")
+    private MallOrderDetailByAfterSalesDTO details;
 }

@@ -1,6 +1,7 @@
 package com.ycandyz.master.model.mall;
 
 import com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO;
+import com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -99,4 +100,6 @@ public class MallAfterSalesVO {
     private MallOrderByAfterSalesVO order;
     @ApiModelProperty(value = "订单详情")
     private String orderDetailNo;
+    @ApiModelProperty(value = "退款中关联订单详情")
+    private MallOrderDetailByAfterSalesDTO details;
 }
