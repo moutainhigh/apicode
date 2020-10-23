@@ -275,6 +275,8 @@
         <result column="status" property="status" />
         <result column="sub_status" property="subStatus" />
         <result column="deliver_method" property="deliverMethod" />
+        <result column="deliver_type" property="deliverType" />
+        <result column="shippingMoney" property="shippingMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -304,6 +306,8 @@
             mo.status,
             mo.sub_status,
             mo.deliver_method,
+            mo.`after_sales_status`,
+            mo.`deliver_type`,
             modetail.item_no,
             modetail.goods_no,
             modetail.sku_no,
