@@ -62,10 +62,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
         MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
         //获取企业id
-        if (mallOrderQuery.getOrganizeId()==null) {
-            return ReturnResponse.failed("传入企业id参数为空");
-        }
-        Long organizeId = mallOrderQuery.getOrganizeId();
+//        if (mallOrderQuery.getOrganizeId()==null) {
+//            return ReturnResponse.failed("传入企业id参数为空");
+//        }
+//        Long organizeId = mallOrderQuery.getOrganizeId();
         mallOrderQuery.setShopNo(userVO.getShopNo());
         Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
         Page<MallOrderDTO> page = mallOrderDao.getTrendMallOrderPage(pageQuery,mallOrderQuery);

@@ -6,6 +6,7 @@ import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.util.StringUtil;
 import com.ycandyz.master.api.PageResult;
+import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.MallAfterSalesDao;
@@ -42,10 +43,11 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     private MallAfterSalesLogDao mallAfterSalesLogDao;
 
     @Override
-    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(PageResult model, MallafterSalesQuery mallafterSalesQuery, UserVO userVO) {
+    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
         Page<MallAfterSalesVO> mallPage = new Page<>();
+        MallafterSalesQuery mallafterSalesQuery = requestParams.getT();
         mallafterSalesQuery.setShopNo(userVO.getShopNo());
-        Page pageQuery = new Page(model.getPage(),model.getPage_size(),model.getTotal());
+        Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
         Page<MallAfterSalesDTO> page = mallAfterSalesDao.getTrendMallAfterSalesPage(pageQuery,mallafterSalesQuery);
         if (page.getRecords()!=null && page.getRecords().size()>0){
             List<MallAfterSalesVO> list = new ArrayList<>();

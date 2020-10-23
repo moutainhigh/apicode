@@ -11,11 +11,13 @@
             modetail.goods_no as goodsNo,
             sales.status as status,
             sales.sub_status as subStatus,
+            modetail.sku_no as skuNo,
             sales.quantity as skuQuantity,
+            sales.price as skuPrice,
             sales.money as money,
-            modetail.real_money as realMoney,
+            modetail.real_money as orderRealMoney,
             mo.pay_type as payType,
-            modetail.quantity as detailQuantity,
+            modetail.quantity as orderQuantity,
             concat(u.`name`,' ',u.phone) as userName,
             sales.apply_at as applyAt
         FROM

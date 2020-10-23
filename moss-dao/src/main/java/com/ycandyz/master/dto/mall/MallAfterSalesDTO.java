@@ -83,11 +83,13 @@ public class MallAfterSalesDTO {
     @ApiModelProperty(value = "货号")
     private String goodsNo;
     @ApiModelProperty(value = "实付金额")
-    private BigDecimal realMoney;
+    private BigDecimal orderRealMoney;
     @ApiModelProperty(value = "支付类型")
     private Integer payType;
-    @ApiModelProperty(value = "退款金额")
-    private Integer detailQuantity;
+    @ApiModelProperty(value = "实际购买SKU数量")
+    private Integer orderQuantity;
     @ApiModelProperty(value = "购买用户")
     private String userName;
+    @ApiModelProperty(value = "SKU编号")
+    private String skuNo;
 }

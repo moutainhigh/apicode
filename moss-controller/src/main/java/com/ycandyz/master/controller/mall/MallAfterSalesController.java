@@ -2,6 +2,7 @@ package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.PageResult;
+import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.auth.CurrentUser;
@@ -36,8 +37,8 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
      */
     @ApiOperation(value = "获取售后订单列表",notes = "获取售后订单列表",httpMethod = "POST")
     @PostMapping("/sales/list")
-    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(PageResult pageResult, @RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO userVO){
-        return mallAfterSalesService.querySalesListPage(pageResult,mallafterSalesQuery, userVO);
+    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, @CurrentUser UserVO userVO){
+        return mallAfterSalesService.querySalesListPage(requestParams, userVO);
     }
 
     /**
