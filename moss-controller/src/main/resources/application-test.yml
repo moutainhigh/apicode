@@ -10,7 +10,7 @@ spring:
     #url: jdbc:mysql://youchuan-prod-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
     #username: project_test
     #password: pxEQg*ow
-    url: jdbc:mysql://youchuan-test-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc-test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useJDBCCompliantTimezoneShift=true&useSSL=false
+    url: jdbc:mysql://youchuan-test-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc-test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useJDBCCompliantTimezoneShift=true&useSSL=false&zeroDateTimeBehavior=convertToNull
     username: project
     password: lKURYZ7HQq8k4rCC
   redis:

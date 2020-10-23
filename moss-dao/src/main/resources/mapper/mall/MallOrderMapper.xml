@@ -332,6 +332,7 @@
         <result column="payed_at" property="payedAt" />
         <result column="buyer_remark" property="buyerRemark" />
         <result column="status" property="status" />
+        <result column="sub_status" property="subStatus" />
         <result column="deliver_method" property="deliverMethod" />
         <result column="receiver" property="receiverName" />
         <result column="receiver_phone" property="receiverPhone" />
@@ -346,6 +347,9 @@
         <result column="cancel_reason" property="cancelReason" />
         <result column="deliver_type" property="deliverType" />
         <result column="shippingMoney" property="shippingMoney" />
+        <result column="pick_up_address_name" property="pickUpAddressName" />
+        <result column="pick_up_address_detail" property="pickUpAddressDetail" />
+        <result column="pre_phone" property="prePhone" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -383,6 +387,9 @@
             mo.cancel_at,
             mo.cancel_reason,
             mo.`deliver_type`,
+            mo.pick_up_address_name,
+            mo.pick_up_address_detail,
+            mo.pre_phone,
             mo.total_money-mo.real_money as shippingMoney,
             modetail.order_detail_no,
             modetail.item_no,
