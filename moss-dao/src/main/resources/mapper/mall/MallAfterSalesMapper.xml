@@ -44,7 +44,7 @@
             <result column="detailPrice" property="detailPrice" />
         </collection>
     </resultMap>
-    <select id="getTrendMallAfterSalesPage" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
+    <select id="getTrendMallAfterSalesPage" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultMap="BaseAfterSalesDetailResultMap">
         SELECT
             sales.id as id,
             sales.after_sales_no,
