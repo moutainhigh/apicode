@@ -1,5 +1,6 @@
 package com.ycandyz.master.model.mall;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO;
 import com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO;
 import io.swagger.annotations.ApiModel;
@@ -66,6 +67,7 @@ public class MallAfterSalesVO {
     private Long closeAt;
     /**createdTime*/
     @ApiModelProperty(value = "createdTime")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
     /**updatedTime*/
     @ApiModelProperty(value = "updatedTime")
