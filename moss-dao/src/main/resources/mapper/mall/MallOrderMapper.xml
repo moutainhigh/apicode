@@ -19,6 +19,8 @@
         <result column="receiverAddress" property="receiverAddress" />
         <result column="order_at" property="orderAt" />
         <result column="receive_at" property="receiveAt" />
+        <result column="deliver_type" property="deliverType" />
+        <result column="shippingMoney" property="shippingMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -46,6 +48,8 @@
             mo.pay_type,
             mo.`status`,
             mo.`after_sales_status`,
+            mo.`deliver_type`,
+            mo.total_money-mo.real_money as shippingMoney,
             concat( u.`name`, ' ', u.phone ) AS payuser,
             concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
             ship.receiver_address AS receiverAddress,

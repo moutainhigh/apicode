@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -202,4 +203,6 @@ public class MallOrderVO {
     /**售后*/
     @ApiModelProperty(value = "售后 100: 暂无：还在有效期内，目前还没有申请售后; 110: 否：超过有效期，但是没有申请售后; 111: 是：申请了售后就是，跟有效期无关")
     private Integer asStatus;
+    @ApiModelProperty(value = "运费")
+    private BigDecimal shippingMoney;
 }

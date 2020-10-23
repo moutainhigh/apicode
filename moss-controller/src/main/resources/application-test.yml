@@ -11,8 +11,8 @@ spring:
     #username: project_test
     #password: pxEQg*ow
     url: jdbc:mysql://youchuan-test-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc-test?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useJDBCCompliantTimezoneShift=true&useSSL=false
-      username: project
-      password: lKURYZ7HQq8k4rCC
+    username: project
+    password: lKURYZ7HQq8k4rCC
   redis:
     host: youchuan-test-redis.5fqnep.0001.cnn1.cache.amazonaws.com.cn
     port: 6379
