@@ -1,5 +1,6 @@
 package com.ycandyz.master.model.mall;
 
+import com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -38,11 +39,11 @@ public class MallAfterSalesVO {
     /**退款凭证图，jsonarray*/
     @ApiModelProperty(value = "退款凭证图，jsonarray")
     private String photos;
-    /**SKU数量*/
-    @ApiModelProperty(value = "SKU数量")
+    /**退款商品数量*/
+    @ApiModelProperty(value = "退款商品数量")
     private Integer skuQuantity;
-    /**SKU单价*/
-    @ApiModelProperty(value = "SKU单价")
+    /**退款商品的单价*/
+    @ApiModelProperty(value = "退款商品的单价")
     private BigDecimal skuPrice;
     /**商家退款给用户的金额（商家输入的退款金额）*/
     @ApiModelProperty(value = "商家退款给用户的金额（商家输入的退款金额）")
@@ -94,4 +95,6 @@ public class MallAfterSalesVO {
     private String userName;
     @ApiModelProperty(value = "SKU编号")
     private String skuNo;
+    @ApiModelProperty(value = "退款中关联订单")
+    private MallOrderByAfterSalesVO order;
 }

@@ -74,6 +74,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         MallOrderVO mallOrderVo = null;
         if (page.getRecords()!=null && page.getRecords().size()>0) {
             for (MallOrderDTO mallOrderDTO : page.getRecords()) {
+                if (mallOrderDTO.getCartOrderSn()==null || "".equals(mallOrderDTO.getCartOrderSn())){
+                    mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());
+                }
                 if (mallOrderDTO.getAfterSalesStatus()!=null){
                     //修改售后返回值给前端
                     if (mallOrderDTO.getAfterSalesStatus()==0){
