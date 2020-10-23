@@ -3,7 +3,7 @@
 <mapper namespace="com.ycandyz.master.dao.mall.MallAfterSalesDao">
 
     <resultMap id="BaseAfterSalesDetailResultMap" type="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
-        <id column="id" property="id" />
+        <id column="id" jdbcType="BIGINT" property="id" />
         <result column="after_sales_no" property="afterSalesNo" />
         <result column="order_no" property="orderNo" />
         <result column="order_detail_no" property="orderDetailNo" />
