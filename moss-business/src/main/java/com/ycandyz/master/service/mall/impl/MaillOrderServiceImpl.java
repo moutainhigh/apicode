@@ -68,7 +68,12 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 //        Long organizeId = mallOrderQuery.getOrganizeId();
         mallOrderQuery.setShopNo(userVO.getShopNo());
         Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
-        Page<MallOrderDTO> page = mallOrderDao.getTrendMallOrderPage(pageQuery,mallOrderQuery);
+        Page<MallOrderDTO> page = null;
+        try {
+            mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
+        }catch (Exception e){
+            page = new Page<>(0,10,0);
+        }
         Page<MallOrderVO> page1 = new Page<>();
         List<MallOrderVO> list = new ArrayList<>();
         MallOrderVO mallOrderVo = null;
