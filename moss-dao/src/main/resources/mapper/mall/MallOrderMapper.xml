@@ -62,8 +62,8 @@
             uu.phone as sellerUserPhone,
             s.amount as shareAmount
         FROM
-        mall_cart_order cart
-        LEFT JOIN mall_order mo ON cart.id = mo.cart_order_id
+        mall_order mo
+        LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
         LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
         LEFT JOIN user u ON mo.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
