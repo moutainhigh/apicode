@@ -308,6 +308,7 @@
             mo.deliver_method,
             mo.`after_sales_status`,
             mo.`deliver_type`,
+            mo.total_money-mo.real_money as shippingMoney,
             modetail.item_no,
             modetail.goods_no,
             modetail.sku_no,
@@ -343,6 +344,8 @@
         <result column="receive_at" property="receiveAt" />
         <result column="cancel_at" property="cancelAt" />
         <result column="cancel_reason" property="cancelReason" />
+        <result column="deliver_type" property="deliverType" />
+        <result column="shippingMoney" property="shippingMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -379,6 +382,8 @@
             mo.receive_at,
             mo.cancel_at,
             mo.cancel_reason,
+            mo.`deliver_type`,
+            mo.total_money-mo.real_money as shippingMoney,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
