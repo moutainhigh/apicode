@@ -3,6 +3,7 @@ package com.ycandyz.master.service.mall;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.PageResult;
+import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.entities.mall.MallOrder;
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface MallOrderService extends IService<MallOrder> {
 
-    ReturnResponse<Page<MallOrderVO>> queryOrderList(PageResult pageResult, MallOrderQuery mallOrderQuery, UserVO userVO);
+    ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO);
 
     void exportEXT(MallOrderQuery mallOrder, UserVO userVO, HttpServletResponse response);
 

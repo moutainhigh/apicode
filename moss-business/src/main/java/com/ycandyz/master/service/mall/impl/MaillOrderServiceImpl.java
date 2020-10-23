@@ -5,6 +5,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.PageResult;
+import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
@@ -58,15 +59,36 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private WxMallSocialShareFlowDao mallSocialShareFlowDao;
 
     @Override
-    public ReturnResponse<Page<MallOrderVO>> queryOrderList(PageResult pageResult, MallOrderQuery mallOrderQuery, UserVO userVO) {
+    public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
+        MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
+        //获取企业id
+//        if (mallOrderQuery.getOrganizeId()==null) {
+//            return ReturnResponse.failed("传入企业id参数为空");
+//        }
+//        Long organizeId = mallOrderQuery.getOrganizeId();
         mallOrderQuery.setShopNo(userVO.getShopNo());
-        Page pageQuery = new Page(pageResult.getPage(),pageResult.getPage_size(),pageResult.getTotal());
+        Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
         Page<MallOrderDTO> page = mallOrderDao.getTrendMallOrderPage(pageQuery,mallOrderQuery);
         Page<MallOrderVO> page1 = new Page<>();
         List<MallOrderVO> list = new ArrayList<>();
         MallOrderVO mallOrderVo = null;
         if (page.getRecords()!=null && page.getRecords().size()>0) {
             for (MallOrderDTO mallOrderDTO : page.getRecords()) {
+                if (mallOrderDTO.getCartOrderSn()==null || "".equals(mallOrderDTO.getCartOrderSn())){
+                    mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());
+                }
+                if (mallOrderDTO.getAfterSalesStatus()!=null){
+                    //修改售后返回值给前端
+                    if (mallOrderDTO.getAfterSalesStatus()==0){
+                        mallOrderDTO.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+                    }else {
+                        if (mallOrderDTO.getAfterSalesEndAt()!=null && mallOrderDTO.getAfterSalesEndAt()>new Date().getTime()/1000){
+                            mallOrderDTO.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                        }else {
+                            mallOrderDTO.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                        }
+                    }
+                }
                 mallOrderVo = new MallOrderVO();
                 BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
                 list.add(mallOrderVo);

@@ -2,25 +2,52 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ycandyz.master.dao.mall.MallAfterSalesDao">
 
+    <resultMap id="BaseAfterSalesDetailResultMap" type="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
+
+    </resultMap>
     <select id="getTrendMallAfterSalesPage" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
         SELECT
             sales.after_sales_no as afterSalesNo,
             sales.order_no as orderNo,
             sales.order_detail_no as orderDetailNo,
-            modetail.item_name as itemName,
-            modetail.goods_no as goodsNo,
+            sales.created_at as createdAt,
+            sales.reason as reason,
+            sales.remark as remark,
+            sales.photos as photos,
+            sales.quantity as skuQuantity,
+            sales.price as skuPrice,
+            sales.money as money,
+            sales.send_at as sendAt,
+            sales.receive_at as receiveAt,
             sales.status as status,
             sales.sub_status as subStatus,
-            sales.quantity as skuQuantity,
-            sales.money as money,
-            modetail.real_money as realMoney,
-            mo.pay_type as payType,
-            modetail.quantity as detailQuantity,
+            sales.close_at as closeAt,
+            sales.apply_at as applyAt,
+            sales.audit_first_at as auditFirstAt,
+            sales.audit_second_at as auditSecondAt,
             concat(u.`name`,' ',u.phone) as userName,
-            sales.apply_at as applyAt
+
+            mo.shop_no as shopNo,
+            mo.order_no as moOrderNo,
+            mo.status as moStatus,
+            mo.total_money as totalMoney,
+            mo.real_money as realMoney,
+            mo.deliver_method as deliverMethod,
+            mo.all_money-mo.real_money as shipping_money,
+
+            modetail.order_no as detailOrderNo
+            modetail.order_detail_no as orderDetailNo,
+            modetail.item_no as itemNo,
+            modetail.item_name as itemName,
+            modetail.item_cover as itemCover,
+            modetail.goods_no as goodsNo,
+            modetail.sku_no as skuNo,
+            modetail.quantity sa detailQuantity,
+            modetail.price as price
         FROM
             mall_after_sales sales
             LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
+            left join mall_order mo on modetail.order_no=mo.order_no
             LEFT JOIN user u ON sales.user_id=u.id
             WHERE
             sales.shop_no=#{p.shopNo}

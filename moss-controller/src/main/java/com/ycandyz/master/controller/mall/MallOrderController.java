@@ -1,13 +1,12 @@
 package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.api.PageResult;
+import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.entities.mall.MallOrder;
-import com.ycandyz.master.model.mall.MallOrderDetailVO;
 import com.ycandyz.master.model.mall.MallOrderVO;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
@@ -37,8 +36,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "订单列表",notes = "订单列表",httpMethod = "POST")
     @PostMapping("/order/list")
-    public ReturnResponse<Page<MallOrderVO>> queryMallOrderList(@RequestBody PageResult pageResult, @RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
-        return mallOrderService.queryOrderList(pageResult,mallOrder,userVO);
+    public ReturnResponse<Page<MallOrderVO>> queryMallOrderList(@RequestBody RequestParams<MallOrderQuery> requestParams, @CurrentUser UserVO userVO){
+        if (requestParams.getT()==null){
+            return ReturnResponse.failed("请求入参为空");
+        }
+        return mallOrderService.queryOrderList(requestParams,userVO);
     }
 
     /**
