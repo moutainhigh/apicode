@@ -26,9 +26,9 @@ public class YcCodeGenerator {
 
 
 	//表名
-	private static final String tableName = "menu_node";
+	private static final String tableName = "organize_rel";
 	//生成文件所在目录层级
-	private static final String moduleName = "menu";
+	private static final String moduleName = "organize";
 	private static final String daoName = "moss-dao";
 	private static final String serviceName = "moss-business";
 	private static final String controllerName = "moss-controller";

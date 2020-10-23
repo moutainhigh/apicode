@@ -78,4 +78,13 @@ public class MallOrderDetailVO {
     /**关联订单详情规格值表*/
     @ApiModelProperty(value = "关联订单详情规格值表")
     private List<MallOrderDetailSpecVO> specs;
+    /**是否可以分销*/
+    @ApiModelProperty(value = "是否可以分销")
+    private Integer isEnableShare;
+    /**分佣金额*/
+    @ApiModelProperty(value = "分佣金额")
+    private Integer shareAmount;
+    /**一层分销合伙人用户id*/
+    @ApiModelProperty(value = "一层分销合伙人用户id")
+    private Integer shareUserId;
 }

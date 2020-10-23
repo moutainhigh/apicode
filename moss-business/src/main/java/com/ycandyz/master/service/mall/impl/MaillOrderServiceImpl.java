@@ -5,6 +5,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.PageResult;
+import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
@@ -58,9 +59,15 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private WxMallSocialShareFlowDao mallSocialShareFlowDao;
 
     @Override
-    public ReturnResponse<Page<MallOrderVO>> queryOrderList(PageResult pageResult, MallOrderQuery mallOrderQuery, UserVO userVO) {
+    public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams requestParams, UserVO userVO) {
+        MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
+        //获取企业id
+        if (mallOrderQuery.getOrganizeId()==null) {
+            return ReturnResponse.failed("传入企业id参数为空");
+        }
+        Long organizeId = mallOrderQuery.getOrganizeId();
         mallOrderQuery.setShopNo(userVO.getShopNo());
-        Page pageQuery = new Page(pageResult.getPage(),pageResult.getPage_size(),pageResult.getTotal());
+        Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
         Page<MallOrderDTO> page = mallOrderDao.getTrendMallOrderPage(pageQuery,mallOrderQuery);
         Page<MallOrderVO> page1 = new Page<>();
         List<MallOrderVO> list = new ArrayList<>();

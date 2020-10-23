@@ -53,4 +53,6 @@ public class MallOrderQuery implements Serializable {
     private String shopNo;
     @ApiModelProperty(value = "10-待支付  20-待发货 30-待收货 40-已收货  50-已取消",name="status",required=true)
     private Integer status;
+    @ApiModelProperty(value = "企业id",name="organizeId",required=true)
+    private Long organizeId;
 }

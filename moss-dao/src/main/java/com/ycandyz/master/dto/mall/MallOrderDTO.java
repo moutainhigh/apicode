@@ -83,8 +83,8 @@ public class MallOrderDTO {
     /**商家发货时间*/
     @ApiModelProperty(value = "商家发货时间")
     private java.lang.Integer sendAt;
-    /**receiveAt*/
-    @ApiModelProperty(value = "receiveAt")
+    /**收货时间*/
+    @ApiModelProperty(value = "收货时间")
     private java.lang.Integer receiveAt;
     /**买家地址邮政编码*/
     @ApiModelProperty(value = "买家地址邮政编码")
