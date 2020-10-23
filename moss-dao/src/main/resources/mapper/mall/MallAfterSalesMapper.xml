@@ -3,17 +3,57 @@
 <mapper namespace="com.ycandyz.master.dao.mall.MallAfterSalesDao">
 
     <resultMap id="BaseAfterSalesDetailResultMap" type="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
-
+        <id column="id" property="id" />
+        <result column="after_sales_no" property="afterSalesNo" />
+        <result column="order_no" property="orderNo" />
+        <result column="order_detail_no" property="orderDetailNo" />
+        <result column="created_at" property="createdAt" />
+        <result column="reason" property="reason" />
+        <result column="remark" property="remark" />
+        <result column="photos" property="photos" />
+        <result column="skuQuantity" property="skuQuantity" />
+        <result column="skuPrice" property="skuPrice" />
+        <result column="money" property="money" />
+        <result column="send_at" property="sendAt" />
+        <result column="receive_at" property="receiveAt" />
+        <result column="status" property="status" />
+        <result column="sub_status" property="subStatus" />
+        <result column="close_at" property="closeAt" />
+        <result column="apply_at" property="applyAt" />
+        <result column="audit_first_at" property="auditFirstAt" />
+        <result column="audit_second_at" property="auditSecondAt" />
+        <result column="userName" property="userName" />
+        <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO">
+            <result column="shop_no" property="shopNo" />
+            <result column="moOrderNo" property="moOrderNo" />
+            <result column="moStatus" property="moStatus" />
+            <result column="total_money" property="totalMoney" />
+            <result column="real_money" property="realMoney" />
+            <result column="deliver_method" property="deliverMethod" />
+            <result column="shipping_money" property="shippingMoney" />
+        </collection>
+        <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO">
+            <result column="detailOrderNo" property="detailOrderNo" />
+            <result column="orderDetailNo" property="orderDetailNo" />
+            <result column="item_no" property="itemNo" />
+            <result column="item_name" property="itemName" />
+            <result column="item_cover" property="itemCover" />
+            <result column="goods_no" property="goodsNo" />
+            <result column="sku_no" property="skuNo" />
+            <result column="detailQuantity" property="detailQuantity" />
+            <result column="detailPrice" property="detailPrice" />
+        </collection>
     </resultMap>
     <select id="getTrendMallAfterSalesPage" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
         SELECT
-            sales.after_sales_no as afterSalesNo,
-            sales.order_no as orderNo,
+            sales.id as id,
+            sales.after_sales_no,
+            sales.order_no,
             sales.order_detail_no as orderDetailNo,
-            sales.created_at as createdAt,
-            sales.reason as reason,
-            sales.remark as remark,
-            sales.photos as photos,
+            sales.created_at,
+            sales.reason,
+            sales.remark,
+            sales.photos,
             sales.quantity as skuQuantity,
             sales.price as skuPrice,
             sales.money as money,
@@ -43,7 +83,7 @@
             modetail.goods_no as goodsNo,
             modetail.sku_no as skuNo,
             modetail.quantity sa detailQuantity,
-            modetail.price as price
+            modetail.price as detailPrice
         FROM
             mall_after_sales sales
             LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
