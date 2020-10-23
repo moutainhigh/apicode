@@ -26,9 +26,9 @@ public class YcCodeGenerator {
 
 
 	//表名
-	private static final String tableName = "menu_node";
+	private static final String tableName = "customer";
 	//生成文件所在目录层级
-	private static final String moduleName = "menu";
+	private static final String moduleName = "customer";
 	private static final String daoName = "moss-dao";
 	private static final String serviceName = "moss-business";
 	private static final String controllerName = "moss-controller";
@@ -51,10 +51,10 @@ public class YcCodeGenerator {
 		module = packageName.substring(packageName.lastIndexOf('.')+1);
 		parentPackageName = packageName.substring(0,packageName.lastIndexOf('.'));
 		daoRun();
-		projectName = serviceName;
-		serviceRun();
-		projectName = controllerName;
-		controllerRun();
+//		projectName = serviceName;
+//		serviceRun();
+//		projectName = controllerName;
+//		controllerRun();
 	}
 
 	public static DataSourceConfig getJdbc() {
