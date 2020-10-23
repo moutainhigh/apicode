@@ -59,7 +59,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private WxMallSocialShareFlowDao mallSocialShareFlowDao;
 
     @Override
-    public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams requestParams, UserVO userVO) {
+    public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
         MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
         //获取企业id
         if (mallOrderQuery.getOrganizeId()==null) {

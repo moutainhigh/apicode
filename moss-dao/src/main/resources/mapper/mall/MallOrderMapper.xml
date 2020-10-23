@@ -33,7 +33,7 @@
         </collection>
     </resultMap>
 
-    <select id="getTrendMallOrderPage" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
+    <select id="getTrendMallOrderPage" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultMap="BaseOrderListResultMap">
         SELECT
             mo.id,
             cart.order_sn,
@@ -66,7 +66,6 @@
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
         left join mall_social_share_flow s on s.order_detail_no = modetail.order_detail_no and s.share_type = 1
         left join user as uu on uu.id = s.user_id
-        GROUP BY mo.id
         WHERE
             mo.shop_no=#{p.shopNo} and mo.is_del=0
             <if test="p.orderNo != null and p.orderNo != ''">
@@ -127,7 +126,8 @@
                 and mo.status=#{p.status}
             </if>
             <if test="p.socialPartner != null and p.socialPartner != ''">
-                and uu.`name` like concat('%',#{p.socialPartner},'%') OR uu.phone like concat('%',#{p.socialPartner},'%') /**合伙人*/
+                and
+                (uu.`name` like concat('%',#{p.socialPartner},'%') OR uu.phone like concat('%',#{p.socialPartner},'%')) /**合伙人*/
             </if>
             group by mo.id
     </select>

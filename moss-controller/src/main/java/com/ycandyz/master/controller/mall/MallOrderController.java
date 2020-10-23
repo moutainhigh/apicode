@@ -36,7 +36,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "订单列表",notes = "订单列表",httpMethod = "POST")
     @PostMapping("/order/list")
-    public ReturnResponse<Page<MallOrderVO>> queryMallOrderList(@RequestBody RequestParams requestParams, @CurrentUser UserVO userVO){
+    public ReturnResponse<Page<MallOrderVO>> queryMallOrderList(@RequestBody RequestParams<MallOrderQuery> requestParams, @CurrentUser UserVO userVO){
         if (requestParams.getT()==null){
             return ReturnResponse.failed("请求入参为空");
         }

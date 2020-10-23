@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface MallOrderService extends IService<MallOrder> {
 
-    ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams requestParams, UserVO userVO);
+    ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO);
 
     void exportEXT(MallOrderQuery mallOrder, UserVO userVO, HttpServletResponse response);
 
