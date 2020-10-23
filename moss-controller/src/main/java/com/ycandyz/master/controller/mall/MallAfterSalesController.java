@@ -31,8 +31,7 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
 
     /**
      * 获取售后订单列表
-     * @param pageResult
-     * @param mallafterSalesQuery
+     * @param requestParams
      * @return
      */
     @ApiOperation(value = "获取售后订单列表",notes = "获取售后订单列表",httpMethod = "POST")

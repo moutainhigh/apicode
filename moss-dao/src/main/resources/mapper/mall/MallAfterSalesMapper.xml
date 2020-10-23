@@ -23,6 +23,7 @@
         FROM
             mall_after_sales sales
             LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
+            left join mall_order mo on modetail.order_no=mo.order_no
             LEFT JOIN user u ON sales.user_id=u.id
             WHERE
             sales.shop_no=#{p.shopNo}

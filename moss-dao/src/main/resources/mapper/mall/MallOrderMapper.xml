@@ -11,6 +11,8 @@
         <result column="total_money" property="totalMoney" />
         <result column="payed_at" property="payedAt" />
         <result column="status" property="status" />
+        <result column="after_sales_status" property="afterSalesStatus" />
+        <result column="after_sales_end_at" property="afterSalesEndAt" />
         <result column="pay_type" property="payType" />
         <result column="payuser" property="payuser" />
         <result column="receiverName" property="receiverName" />
@@ -43,6 +45,7 @@
             mo.payed_at,
             mo.pay_type,
             mo.`status`,
+            mo.`after_sales_status`,
             concat( u.`name`, ' ', u.phone ) AS payuser,
             concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
             ship.receiver_address AS receiverAddress,
@@ -74,7 +77,7 @@
             </if>
             <if test="p.mallName != null and p.mallName != ''">
                 and
-                (modetail.item_no like concat('%',#{p.mallName},'%') OR modetail.item_name like concat('%',#{p.mallName},'%')) /**商品名称或者编号*/
+                (modetail.goods_no like concat('%',#{p.mallName},'%') OR modetail.item_name like concat('%',#{p.mallName},'%')) /**商品名称或者编号*/
             </if>
             <if test="p.userMes != null and p.userMes != ''">
                 and
@@ -128,6 +131,25 @@
             <if test="p.socialPartner != null and p.socialPartner != ''">
                 and
                 (uu.`name` like concat('%',#{p.socialPartner},'%') OR uu.phone like concat('%',#{p.socialPartner},'%')) /**合伙人*/
+            </if>
+            <if test="p.sendAtForm != null">
+                and
+                from_unixtime(mo.send_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.sendAtForm} /**收货时间*/
+            </if>
+            <if test="p.sendAtTo != null">
+                and
+                from_unixtime(mo.send_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.sendAtTo} /**收货时间*/
+            </if>
+            <if test="p.cancelAtForm != null">
+                and
+                from_unixtime(mo.cancel_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.cancelAtForm} /**收货时间*/
+            </if>
+            <if test="p.cancelAtTo != null">
+                and
+                from_unixtime(mo.cancel_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.cancelAtTo} /**收货时间*/
+            </if>
+            <if test="p.cancelReason != null">
+                and mo.cancel_reason=#{p.cancelReason}
             </if>
             group by mo.id
     </select>

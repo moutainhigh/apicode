@@ -46,6 +46,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
         Page<MallAfterSalesVO> mallPage = new Page<>();
         MallafterSalesQuery mallafterSalesQuery = requestParams.getT();
+        if (mallafterSalesQuery==null){
+            mallafterSalesQuery = new MallafterSalesQuery();
+        }
         mallafterSalesQuery.setShopNo(userVO.getShopNo());
         Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
         Page<MallAfterSalesDTO> page = mallAfterSalesDao.getTrendMallAfterSalesPage(pageQuery,mallafterSalesQuery);

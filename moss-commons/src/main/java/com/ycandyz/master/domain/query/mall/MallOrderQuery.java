@@ -55,4 +55,14 @@ public class MallOrderQuery implements Serializable {
     private Integer status;
     @ApiModelProperty(value = "企业id",name="organizeId",required=true)
     private Long organizeId;
+    @ApiModelProperty(value = "发货开始时间",name="sendAtForm",required=true)
+    private Integer sendAtForm;
+    @ApiModelProperty(value = "发货结束时间",name="sendAtTo",required=true)
+    private Integer sendAtTo;
+    @ApiModelProperty(value = "取消订单开始时间",name="cancelAtForm",required=true)
+    private Integer cancelAtForm;
+    @ApiModelProperty(value = "取消订单结束时间",name="cancelAtTo",required=true)
+    private Integer cancelAtTo;
+    @ApiModelProperty(value = "待付款，买家取消订单原因  501010：多拍/拍错/不想要  501011：不喜欢/效果不好  501012：做工/质量问题  501013：商家发错货  501014：未按约定时间发货  501015：与商品描述严重不符  501016：收到商品少件/破损/污渍  501099：其他\\n\\n待发货，买家取消订单原因 503010-多拍/拍错/不想要  503011-协商一致退款  503012-缺货  503013-未按约定时间发货  503099-其他\\n\\n待发货，商家取消订单原因 504010-暂停售卖  504011-缺货/断货  504099-其他\\n",name="cancel_reason",required=true)
+    private Integer cancelReason;
 }

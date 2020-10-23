@@ -74,6 +74,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         MallOrderVO mallOrderVo = null;
         if (page.getRecords()!=null && page.getRecords().size()>0) {
             for (MallOrderDTO mallOrderDTO : page.getRecords()) {
+                if (mallOrderDTO.getAfterSalesStatus()!=null){
+                    //修改售后返回值给前端
+                    if (mallOrderDTO.getAfterSalesStatus()==0){
+                        mallOrderDTO.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+                    }else {
+                        if (mallOrderDTO.getAfterSalesEndAt()>new Date().getTime()/1000){
+                            mallOrderDTO.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                        }else {
+                            mallOrderDTO.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                        }
+                    }
+                }
                 mallOrderVo = new MallOrderVO();
                 BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
                 list.add(mallOrderVo);
