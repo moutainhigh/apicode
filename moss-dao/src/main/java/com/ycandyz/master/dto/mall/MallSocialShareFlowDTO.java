@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Getter
 @Setter
-public class WxMallSocialShareFlowDTO {
+public class MallSocialShareFlowDTO {
 
     /**id*/
     @ApiModelProperty(value = "id")
@@ -33,21 +33,9 @@ public class WxMallSocialShareFlowDTO {
     /**企业名称*/
     @ApiModelProperty(value = "企业名称")
     private String organizeName;
-    /**商品实际支付金额*/
-    @ApiModelProperty(value = "商品实际支付金额")
-    private BigDecimal realMoney;
-    /**商品购买件数*/
-    @ApiModelProperty(value = "商品购买件数")
-    private Integer quantity;
-    /**商品实际价格*/
-    @ApiModelProperty(value = "商品实际价格")
-    private BigDecimal price;
     /**分佣金额*/
     @ApiModelProperty(value = "分佣金额")
     private BigDecimal amount;
-    /**总退回金额*/
-    @ApiModelProperty(value = "总退回金额")
-    private BigDecimal refundAmount;
     /**关联清单支付: xxx元; 分佣：xxx元；退款：xxx元；*/
     @ApiModelProperty(value = "关联清单支付: xxx元; 分佣：xxx元；退款：xxx元；")
     private String relationInfo;
@@ -57,12 +45,15 @@ public class WxMallSocialShareFlowDTO {
     /**子订单编号*/
     @ApiModelProperty(value = "子订单编号")
     private String orderDetailNo;
-    /**购物车订单编号*/
-    @ApiModelProperty(value = "购物车订单编号")
-    private String cartOrderSn;
     /**订单创建时间*/
     @ApiModelProperty(value = "订单创建时间")
     private Integer orderCreateTime;
+    /**银行流水号*/
+    @ApiModelProperty(value = "银行流水号")
+    private String bankBillNo;
+    /**银行流水时间*/
+    @ApiModelProperty(value = "银行流水时间")
+    private String bankBillTime;
     /**状态10: 待结算、20: 已结算、30: 退回*/
     @ApiModelProperty(value = "状态10: 待结算、20: 已结算、30: 退回")
     private Integer status;

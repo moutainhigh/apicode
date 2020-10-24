@@ -4,7 +4,6 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
@@ -56,7 +55,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private MallBuyerShippingLogDao mallBuyerShippingLogDao;
 
     @Autowired
-    private WxMallSocialShareFlowDao mallSocialShareFlowDao;
+    private MallSocialShareFlowDao mallSocialShareFlowDao;
 
     @Override
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
@@ -68,36 +67,36 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 //        Long organizeId = mallOrderQuery.getOrganizeId();
         mallOrderQuery.setShopNo(userVO.getShopNo());
         Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
+        List<MallOrderVO> list = new ArrayList<>();
+        Page<MallOrderVO> page1 = new Page<>();
         Page<MallOrderDTO> page = null;
         try {
-            mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
-        }catch (Exception e){
-            page = new Page<>(0,10,0);
-        }
-        Page<MallOrderVO> page1 = new Page<>();
-        List<MallOrderVO> list = new ArrayList<>();
-        MallOrderVO mallOrderVo = null;
-        if (page.getRecords()!=null && page.getRecords().size()>0) {
-            for (MallOrderDTO mallOrderDTO : page.getRecords()) {
-                if (mallOrderDTO.getCartOrderSn()==null || "".equals(mallOrderDTO.getCartOrderSn())){
-                    mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());
-                }
-                if (mallOrderDTO.getAfterSalesStatus()!=null){
-                    //修改售后返回值给前端
-                    if (mallOrderDTO.getAfterSalesStatus()==0){
-                        mallOrderDTO.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
-                    }else {
-                        if (mallOrderDTO.getAfterSalesEndAt()!=null && mallOrderDTO.getAfterSalesEndAt()>new Date().getTime()/1000){
-                            mallOrderDTO.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+            page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
+            MallOrderVO mallOrderVo = null;
+            if (page.getRecords()!=null && page.getRecords().size()>0) {
+                for (MallOrderDTO mallOrderDTO : page.getRecords()) {
+                    if (mallOrderDTO.getCartOrderSn()==null || "".equals(mallOrderDTO.getCartOrderSn())){
+                        mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());
+                    }
+                    if (mallOrderDTO.getAfterSalesStatus()!=null){
+                        //修改售后返回值给前端
+                        if (mallOrderDTO.getAfterSalesStatus()==0){
+                            mallOrderDTO.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
                         }else {
-                            mallOrderDTO.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                            if (mallOrderDTO.getAfterSalesEndAt()!=null && mallOrderDTO.getAfterSalesEndAt()>new Date().getTime()/1000){
+                                mallOrderDTO.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                            }else {
+                                mallOrderDTO.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                            }
                         }
                     }
+                    mallOrderVo = new MallOrderVO();
+                    BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
+                    list.add(mallOrderVo);
                 }
-                mallOrderVo = new MallOrderVO();
-                BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
-                list.add(mallOrderVo);
             }
+        }catch (Exception e){
+            page = new Page<>(0,10,0);
         }
         page1.setPages(page.getPages());
         page1.setCurrent(page.getCurrent());
@@ -278,11 +277,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
 
             //查询佣金流水表
-            List<WxMallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderNo(mallOrderVO.getOrderNo());
+            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderNo(mallOrderVO.getOrderNo());
             if (mallSocialShareFlowDTOs!=null && mallSocialShareFlowDTOs.size()>0){
-                List<WxMallSocialShareFlowVO> flowList = new ArrayList<>();
+                List<MallSocialShareFlowVO> flowList = new ArrayList<>();
                 mallSocialShareFlowDTOs.forEach(dto->{
-                    WxMallSocialShareFlowVO mallSocialShareFlowVO = new WxMallSocialShareFlowVO();
+                    MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
                     BeanUtils.copyProperties(dto,mallSocialShareFlowVO);
                     flowList.add(mallSocialShareFlowVO);
                 });

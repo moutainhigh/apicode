@@ -197,7 +197,7 @@ public class MallOrderDTO {
     private List<MallBuyerShippingLogDTO> buyerShippingLog;
     /**关联佣金流水表*/
     @ApiModelProperty(value = "关联佣金流水表")
-    private List<WxMallSocialShareFlowDTO> shareInfo;
+    private List<MallSocialShareFlowDTO> shareInfo;
     /**售后*/
     @ApiModelProperty(value = "售后 100: 暂无：还在有效期内，目前还没有申请售后; 110: 否：超过有效期，但是没有申请售后; 111: 是：申请了售后就是，跟有效期无关")
     private Integer asStatus;
