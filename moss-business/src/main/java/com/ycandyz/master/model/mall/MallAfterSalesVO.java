@@ -116,6 +116,8 @@ public class MallAfterSalesVO {
     private MallShopShippingVO shippingInfo;
     @ApiModelProperty(value = "关联商家寄出的快递物流日志表")
     private List<MallShopShippingLogVO> shippinglog;
+    @ApiModelProperty(value = "关联订单详情中商品信息表")
+    private MallItemByMallOrderDetailVO itemInfo;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")

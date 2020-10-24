@@ -166,6 +166,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     mallItemByMallOrderDetailVO.setSpec(mallItemSpecByMallOrderDetailSpecVOS);
                     mallAfterSalesVO.getDetails().setSpecs(mallOrderDetailSpecVOS);
                 }
+                mallAfterSalesVO.setItemInfo(mallItemByMallOrderDetailVO);
             }
 
             //MallAfterSalesLog表
@@ -211,41 +212,41 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             //转换退款原因reason为reasonStr（文字描述）
             if (mallAfterSalesVO.getReason()!=null){
                 if (mallAfterSalesVO.getReason()==10402010){
-                    mallAfterSalesVO.setReasonStr("10402010-多拍/拍错/不想要");
+                    mallAfterSalesVO.setReasonStr("多拍/拍错/不想要");
                 }else if (mallAfterSalesVO.getReason()==10402020){
-                    mallAfterSalesVO.setReasonStr("10402020-不喜欢/效果不好");
+                    mallAfterSalesVO.setReasonStr("不喜欢/效果不好");
                 }else if (mallAfterSalesVO.getReason()==10402030){
-                    mallAfterSalesVO.setReasonStr("10402030-做工/质量问题");
+                    mallAfterSalesVO.setReasonStr("做工/质量问题");
                 }else if (mallAfterSalesVO.getReason()==10402040){
-                    mallAfterSalesVO.setReasonStr("10402040-商家发错货");
+                    mallAfterSalesVO.setReasonStr("商家发错货");
                 }else if (mallAfterSalesVO.getReason()==10402050){
-                    mallAfterSalesVO.setReasonStr("10402050-未按约定时间发货");
+                    mallAfterSalesVO.setReasonStr("未按约定时间发货");
                 }else if (mallAfterSalesVO.getReason()==10402060){
-                    mallAfterSalesVO.setReasonStr("10402060-与商品描述严重不符");
+                    mallAfterSalesVO.setReasonStr("与商品描述严重不符");
                 }else if (mallAfterSalesVO.getReason()==10402070){
-                    mallAfterSalesVO.setReasonStr("10402070-收到商品少件/破损/污渍");
+                    mallAfterSalesVO.setReasonStr("收到商品少件/破损/污渍");
                 }else if (mallAfterSalesVO.getReason()==10402099){
-                    mallAfterSalesVO.setReasonStr("10402099-其他 仅退款原因 未收到货");
+                    mallAfterSalesVO.setReasonStr("其他 仅退款原因 未收到货");
                 }else if (mallAfterSalesVO.getReason()==20401010){
-                    mallAfterSalesVO.setReasonStr("20401010-空包裹");
+                    mallAfterSalesVO.setReasonStr("空包裹");
                 }else if (mallAfterSalesVO.getReason()==20401020){
-                    mallAfterSalesVO.setReasonStr("20401020-快递/物流一直未到");
+                    mallAfterSalesVO.setReasonStr("快递/物流一直未到");
                 }else if (mallAfterSalesVO.getReason()==20401030){
-                    mallAfterSalesVO.setReasonStr("20401030-快递/物流无跟踪记录");
+                    mallAfterSalesVO.setReasonStr("快递/物流无跟踪记录");
                 }else if (mallAfterSalesVO.getReason()==20401040){
-                    mallAfterSalesVO.setReasonStr("20401040-货物破损/变质 仅退款原因 已收到货");
+                    mallAfterSalesVO.setReasonStr("货物破损/变质 仅退款原因 已收到货");
                 }else if (mallAfterSalesVO.getReason()==20402010){
-                    mallAfterSalesVO.setReasonStr("20402010-不喜欢/效果不好");
+                    mallAfterSalesVO.setReasonStr("不喜欢/效果不好");
                 }else if (mallAfterSalesVO.getReason()==20402020){
-                    mallAfterSalesVO.setReasonStr("20402020-做工/质量问题");
+                    mallAfterSalesVO.setReasonStr("做工/质量问题");
                 }else if (mallAfterSalesVO.getReason()==20402030){
-                    mallAfterSalesVO.setReasonStr("20402030-商家发错货未按约定时间发货");
+                    mallAfterSalesVO.setReasonStr("商家发错货未按约定时间发货");
                 }else if (mallAfterSalesVO.getReason()==20402040){
-                    mallAfterSalesVO.setReasonStr("20402040-与商品描述严重不符");
+                    mallAfterSalesVO.setReasonStr("与商品描述严重不符");
                 }else if (mallAfterSalesVO.getReason()==20402050){
-                    mallAfterSalesVO.setReasonStr("20402050-收到商品少件/破损/污渍");
+                    mallAfterSalesVO.setReasonStr("收到商品少件/破损/污渍");
                 }else if (mallAfterSalesVO.getReason()==20402099){
-                    mallAfterSalesVO.setReasonStr("20402099-其他");
+                    mallAfterSalesVO.setReasonStr("其他");
                 }
             }
 
