@@ -50,22 +50,27 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             mallafterSalesQuery = new MallafterSalesQuery();
         }
         mallafterSalesQuery.setShopNo(userVO.getShopNo());
-        Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
-        Page<MallAfterSalesDTO> page = mallAfterSalesDao.getTrendMallAfterSalesPage(pageQuery,mallafterSalesQuery);
-        if (page.getRecords()!=null && page.getRecords().size()>0){
-            List<MallAfterSalesVO> list = new ArrayList<>();
-            MallAfterSalesVO mallAfterSalesVO = null;
-            for (MallAfterSalesDTO mallAfterSalesDTO : page.getRecords()){
-                mallAfterSalesVO = new MallAfterSalesVO();
-                BeanUtils.copyProperties(mallAfterSalesDTO,mallAfterSalesVO);
-                list.add(mallAfterSalesVO);
+        Page pageQuery = new Page(requestParams.getPage(), requestParams.getPage_size());
+        List<MallAfterSalesVO> list = new ArrayList<>();
+        Page<MallAfterSalesDTO> page = null;
+        try {
+            page = mallAfterSalesDao.getTrendMallAfterSalesPage(pageQuery, mallafterSalesQuery);
+            if (page.getRecords() != null && page.getRecords().size() > 0) {
+                MallAfterSalesVO mallAfterSalesVO = null;
+                for (MallAfterSalesDTO mallAfterSalesDTO : page.getRecords()) {
+                    mallAfterSalesVO = new MallAfterSalesVO();
+                    BeanUtils.copyProperties(mallAfterSalesDTO, mallAfterSalesVO);
+                    list.add(mallAfterSalesVO);
+                }
             }
-            mallPage.setTotal(page.getTotal());
-            mallPage.setSize(page.getSize());
-            mallPage.setRecords(list);
-            mallPage.setCurrent(page.getCurrent());
-            mallPage.setPages(page.getPages());
+        }catch (Exception e){
+            page = new Page<>(0,10,0);
         }
+        mallPage.setTotal(page.getTotal());
+        mallPage.setSize(page.getSize());
+        mallPage.setRecords(list);
+        mallPage.setCurrent(page.getCurrent());
+        mallPage.setPages(page.getPages());
         return ReturnResponse.success(mallPage);
     }
 

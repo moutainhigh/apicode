@@ -75,14 +75,14 @@
             mo.deliver_method as deliverMethod,
             mo.all_money-mo.real_money as shipping_money,
 
-            modetail.order_no as detailOrderNo
+            modetail.order_no as detailOrderNo,
             modetail.order_detail_no as orderDetailNo,
             modetail.item_no as itemNo,
             modetail.item_name as itemName,
             modetail.item_cover as itemCover,
             modetail.goods_no as goodsNo,
             modetail.sku_no as skuNo,
-            modetail.quantity sa detailQuantity,
+            modetail.quantity as detailQuantity,
             modetail.price as detailPrice
         FROM
             mall_after_sales sales
