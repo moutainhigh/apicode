@@ -36,7 +36,7 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
      */
     @ApiOperation(value = "获取售后订单列表",notes = "获取售后订单列表",httpMethod = "POST")
     @PostMapping("/sales/list")
-    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, @CurrentUser UserVO userVO){
+    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(@RequestBody RequestParams<MallafterSalesQuery> requestParams, @CurrentUser UserVO userVO){
         return mallAfterSalesService.querySalesListPage(requestParams, userVO);
     }
 
