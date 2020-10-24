@@ -299,7 +299,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null){
             //判断pickNo查询到订单是否是orderNo的订单
-            if (StringUtils.isEmpty(orderNo)){
+            if (StringUtils.isNotEmpty(orderNo)){
                 //orderNo不为空，说明是订单详情中进行的订单校验
                 if (!orderNo.equals(mallOrderDTO.getOrderNo())){
                     return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
