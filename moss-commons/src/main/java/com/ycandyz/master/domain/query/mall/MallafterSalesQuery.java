@@ -46,4 +46,6 @@ public class MallafterSalesQuery implements Serializable {
     private String receiver;
     @ApiModelProperty(value = "商家编号")
     private String shopNo;
+    @ApiModelProperty(value = "售后状态 1-待审核 2-待买家退货 3-待确认退款 4-退款成功 5-退款失败 6-退款关闭")
+    private Integer state;
 }

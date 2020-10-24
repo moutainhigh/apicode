@@ -13,10 +13,15 @@ import com.ycandyz.master.dao.mall.MallAfterSalesDao;
 import com.ycandyz.master.dao.mall.MallAfterSalesLogDao;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
 import com.ycandyz.master.dto.mall.MallAfterSalesDTO;
+import com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO;
+import com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallAfterSalesLog;
+import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.enums.SalesEnum;
 import com.ycandyz.master.model.mall.MallAfterSalesVO;
+import com.ycandyz.master.model.mall.MallOrderByAfterSalesVO;
+import com.ycandyz.master.model.mall.MallOrderDetailByAfterSalesVO;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
@@ -58,8 +63,40 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             if (page.getRecords() != null && page.getRecords().size() > 0) {
                 MallAfterSalesVO mallAfterSalesVO = null;
                 for (MallAfterSalesDTO mallAfterSalesDTO : page.getRecords()) {
+                    Integer subStatus = mallAfterSalesDTO.getSubStatus();
+                    Integer state = null;
+                    if (subStatus!=null){
+                        if (subStatus==1010){
+                            state = 1;
+                        }else if (subStatus==1030){
+                            state = 2;
+                        }else if (subStatus==1050 || subStatus==2010){
+                            state = 3;
+                        }else if (subStatus==1080 || subStatus==2020 || subStatus==2030){
+                            state = 4;
+                        }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050){
+                            state = 6;
+                        }else {
+                            state = 5;
+                        }
+                    }
+                    mallAfterSalesDTO.setState(state);
                     mallAfterSalesVO = new MallAfterSalesVO();
                     BeanUtils.copyProperties(mallAfterSalesDTO, mallAfterSalesVO);
+                    MallOrderByAfterSalesDTO mallOrderByAfterSalesDTO = mallAfterSalesDTO.getOrder();
+                    if (mallOrderByAfterSalesDTO!=null){
+                        //关联订单
+                        MallOrderByAfterSalesVO mallOrderByAfterSalesVO = new MallOrderByAfterSalesVO();
+                        BeanUtils.copyProperties(mallOrderByAfterSalesDTO, mallOrderByAfterSalesVO);
+                        mallAfterSalesVO.setOrder(mallOrderByAfterSalesVO);
+                    }
+                    MallOrderDetailByAfterSalesDTO mallOrderDetailByAfterSalesDTO = mallAfterSalesDTO.getDetails();
+                    if (mallOrderDetailByAfterSalesDTO!=null){
+                        //关联订单详情
+                        MallOrderDetailByAfterSalesVO mallOrderDetailByAfterSalesVO = new MallOrderDetailByAfterSalesVO();
+                        BeanUtils.copyProperties(mallOrderDetailByAfterSalesDTO,mallOrderDetailByAfterSalesVO);
+                        mallAfterSalesVO.setDetails(mallOrderDetailByAfterSalesVO);
+                    }
                     list.add(mallAfterSalesVO);
                 }
             }

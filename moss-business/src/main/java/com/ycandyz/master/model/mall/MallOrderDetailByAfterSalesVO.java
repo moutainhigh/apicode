@@ -1,5 +1,6 @@
 package com.ycandyz.master.model.mall;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -14,13 +15,22 @@ import java.math.BigDecimal;
 @Setter
 public class MallOrderDetailByAfterSalesVO {
 
+    @ApiModelProperty(value = "订单编号")
     private String orderNo;
+    @ApiModelProperty(value = "订单详情编号")
     private String orderDetailNo;
+    @ApiModelProperty(value = "商品编号")
     private String itemNo;
+    @ApiModelProperty(value = "商品名称")
     private String itemName;
+    @ApiModelProperty(value = "商品封面图")
     private String itemCover;
+    @ApiModelProperty(value = "货号")
     private String goodsNo;
+    @ApiModelProperty(value = "SKU编号")
     private String skuNo;
+    @ApiModelProperty(value = "SKU数量")
     private Integer quantity;
+    @ApiModelProperty(value = "SKU价格")
     private BigDecimal price;
 }

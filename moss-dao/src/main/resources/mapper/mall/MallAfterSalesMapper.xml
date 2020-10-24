@@ -25,23 +25,23 @@
         <result column="userName" property="userName" />
         <collection property="order" ofType="com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO">
             <result column="shop_no" property="shopNo" />
-            <result column="moOrderNo" property="moOrderNo" />
-            <result column="moStatus" property="moStatus" />
+            <result column="moOrderNo" property="orderNo" />
+            <result column="moStatus" property="orderStatus" />
             <result column="total_money" property="totalMoney" />
             <result column="real_money" property="realMoney" />
             <result column="deliver_method" property="deliverMethod" />
             <result column="shipping_money" property="shippingMoney" />
         </collection>
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO">
-            <result column="detailOrderNo" property="detailOrderNo" />
+            <result column="detailOrderNo" property="orderNo" />
             <result column="orderDetailNo" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
             <result column="item_name" property="itemName" />
             <result column="item_cover" property="itemCover" />
             <result column="goods_no" property="goodsNo" />
             <result column="sku_no" property="skuNo" />
-            <result column="detailQuantity" property="detailQuantity" />
-            <result column="detailPrice" property="detailPrice" />
+            <result column="detailQuantity" property="quantity" />
+            <result column="detailPrice" property="price" />
         </collection>
     </resultMap>
     <select id="getTrendMallAfterSalesPage" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultMap="BaseAfterSalesDetailResultMap">
@@ -49,39 +49,39 @@
             sales.id as id,
             sales.after_sales_no,
             sales.order_no,
-            sales.order_detail_no as orderDetailNo,
+            sales.order_detail_no,
             sales.created_at,
             sales.reason,
             sales.remark,
             sales.photos,
             sales.quantity as skuQuantity,
             sales.price as skuPrice,
-            sales.money as money,
-            sales.send_at as sendAt,
-            sales.receive_at as receiveAt,
-            sales.status as status,
-            sales.sub_status as subStatus,
-            sales.close_at as closeAt,
-            sales.apply_at as applyAt,
-            sales.audit_first_at as auditFirstAt,
-            sales.audit_second_at as auditSecondAt,
+            sales.money,
+            sales.send_at,
+            sales.receive_at,
+            sales.status,
+            sales.sub_status,
+            sales.close_at,
+            sales.apply_at,
+            sales.audit_first_at,
+            sales.audit_second_at,
             concat(u.`name`,' ',u.phone) as userName,
 
-            mo.shop_no as shopNo,
+            mo.shop_no,
             mo.order_no as moOrderNo,
             mo.status as moStatus,
-            mo.total_money as totalMoney,
-            mo.real_money as realMoney,
-            mo.deliver_method as deliverMethod,
+            mo.total_money,
+            mo.real_money,
+            mo.deliver_method,
             mo.all_money-mo.real_money as shipping_money,
 
             modetail.order_no as detailOrderNo,
             modetail.order_detail_no as orderDetailNo,
-            modetail.item_no as itemNo,
-            modetail.item_name as itemName,
-            modetail.item_cover as itemCover,
-            modetail.goods_no as goodsNo,
-            modetail.sku_no as skuNo,
+            modetail.item_no,
+            modetail.item_name,
+            modetail.item_cover,
+            modetail.goods_no,
+            modetail.sku_no,
             modetail.quantity as detailQuantity,
             modetail.price as detailPrice
         FROM
@@ -103,9 +103,31 @@
                 and
                 sales.status=#{p.status}
             </if>
-            <if test="p.subStatus != null">
-                and
-                sales.sub_status=#{p.subStatus}
+            <if test="p.state != null">
+                <if test="p.state==1">
+                    and
+                    sales.sub_status=1010
+                </if>
+                <if test="p.state==2">
+                    and
+                    sales.sub_status=1030
+                </if>
+                <if test="p.state==3">
+                    and
+                    (sales.sub_status=1050 or sales.sub_status=2010)
+                </if>
+                <if test="p.state==4">
+                    and
+                    (sales.sub_status=1080 or sales.sub_status=2020 or sales.sub_status=2030)
+                </if>
+                <if test="p.state==6">
+                    and
+                    (sales.sub_status=1020 or sales.sub_status=1040 or sales.sub_status=1060 or sales.sub_status=2050)
+                </if>
+                <if test="p.state==5">
+                    and
+                    sales.sub_status=1090
+                </if>
             </if>
             <if test="p.applyAtFrom != null">
                 and

@@ -105,7 +105,9 @@ public class MallAfterSalesVO {
     @ApiModelProperty(value = "订单详情")
     private String orderDetailNo;
     @ApiModelProperty(value = "退款中关联订单详情")
-    private MallOrderDetailByAfterSalesDTO details;
+    private MallOrderDetailByAfterSalesVO details;
+    @ApiModelProperty(value = "售后状态 1-待审核 2-待买家退货 3-待确认退款 4-退款成功 5-退款失败 6-退款关闭")
+    private Integer state;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")
