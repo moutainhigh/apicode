@@ -94,6 +94,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         MallOrderByAfterSalesVO mallOrderByAfterSalesVO = new MallOrderByAfterSalesVO();
                         BeanUtils.copyProperties(mallOrderByAfterSalesDTO, mallOrderByAfterSalesVO);
                         mallAfterSalesVO.setOrder(mallOrderByAfterSalesVO);
+
+                        //支付方式拼接
+                        mallAfterSalesVO.setPayType(mallOrderByAfterSalesVO.getPayType());
                     }
                     MallOrderDetailByAfterSalesDTO mallOrderDetailByAfterSalesDTO = mallAfterSalesDTO.getDetails();
                     if (mallOrderDetailByAfterSalesDTO!=null){
@@ -101,7 +104,17 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         MallOrderDetailByAfterSalesVO mallOrderDetailByAfterSalesVO = new MallOrderDetailByAfterSalesVO();
                         BeanUtils.copyProperties(mallOrderDetailByAfterSalesDTO,mallOrderDetailByAfterSalesVO);
                         mallAfterSalesVO.setDetails(mallOrderDetailByAfterSalesVO);
+
+                        //购买数量拼接
+                        mallAfterSalesVO.setOrderQuantity(mallOrderDetailByAfterSalesVO.getQuantity());
+                        //货号拼接
+                        mallAfterSalesVO.setGoodsNo(mallOrderDetailByAfterSalesVO.getGoodsNo());
+                        //商品名称拼接
+                        mallAfterSalesVO.setItemName(mallOrderDetailByAfterSalesVO.getItemName());
                     }
+
+
+
                     list.add(mallAfterSalesVO);
                 }
             }

@@ -29,6 +29,7 @@
             <result column="moStatus" property="orderStatus" />
             <result column="total_money" property="totalMoney" />
             <result column="real_money" property="realMoney" />
+            <result column="pay_type" property="payType" />
             <result column="deliver_method" property="deliverMethod" />
             <result column="shipping_money" property="shippingMoney" />
         </collection>
@@ -73,6 +74,7 @@
             mo.total_money,
             mo.real_money,
             mo.deliver_method,
+            mo.pay_type,
             mo.all_money-mo.real_money as shipping_money,
 
             modetail.order_no as detailOrderNo,

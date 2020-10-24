@@ -29,6 +29,8 @@ public class MallOrderByAfterSalesVO {
     private String deliverMethod;
     @ApiModelProperty(value = "商家发货快递运费")
     private String shippingMoney;
+    @ApiModelProperty(value = "支付方式：0-未知  1-支付宝 2-微信  3-银联")
+    private Integer payType;
     @ApiModelProperty(value = "关联商店表")
     private MallShopVO shop;
 }
