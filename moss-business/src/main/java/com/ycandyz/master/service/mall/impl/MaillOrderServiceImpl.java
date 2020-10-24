@@ -339,9 +339,17 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<String> verPickupNo(String orderNo, UserVO userVO) {
-        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByOrderNo(orderNo, userVO.getShopNo());
+    public ReturnResponse<String> verPickupNo(String pickupNo, String orderNo, UserVO userVO) {
+//        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByOrderNo(orderNo, userVO.getShopNo());
+        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null){
+            //判断pickNo查询到订单是否是orderNo的订单
+            if (StringUtils.isNotEmpty(orderNo)){
+                //orderNo不为空，说明是订单详情中进行的订单校验
+                if (!orderNo.equals(mallOrderDTO.getOrderNo())){
+                    return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
+                }
+            }
             Long time = new Date().getTime()/1000;      //获取当前时间到秒
             mallOrderDTO.setReceiveAt(time.intValue());
             MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(userVO.getShopNo());

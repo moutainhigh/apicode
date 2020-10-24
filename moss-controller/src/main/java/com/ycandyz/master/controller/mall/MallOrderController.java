@@ -90,11 +90,12 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "验证提货码,出货",notes = "验证提货码,出货",httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
+            @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String"),
+            @ApiImplicitParam(name="orderNo",value="订单号",dataType="String")
     })
     @GetMapping("/order/pickup/verification")
-    public ReturnResponse<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @CurrentUser UserVO userVO){
-        return mallOrderService.verPickupNo(pickupNo, userVO);
+    public ReturnResponse<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
+        return mallOrderService.verPickupNo(pickupNo,orderNo, userVO);
     }
 
 
