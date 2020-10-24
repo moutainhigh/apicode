@@ -20,6 +20,7 @@ import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, MallAfterSales, MallafterSalesQuery> implements MallAfterSalesService {
@@ -210,6 +208,53 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 mallAfterSalesVO.getOrder().setShop(mallShopVO);
             }
 
+            //转换退款原因reason为reasonStr（文字描述）
+            if (mallAfterSalesVO.getReason()!=null){
+                if (mallAfterSalesVO.getReason()==10402010){
+                    mallAfterSalesVO.setReasonStr("10402010-多拍/拍错/不想要");
+                }else if (mallAfterSalesVO.getReason()==10402020){
+                    mallAfterSalesVO.setReasonStr("10402020-不喜欢/效果不好");
+                }else if (mallAfterSalesVO.getReason()==10402030){
+                    mallAfterSalesVO.setReasonStr("10402030-做工/质量问题");
+                }else if (mallAfterSalesVO.getReason()==10402040){
+                    mallAfterSalesVO.setReasonStr("10402040-商家发错货");
+                }else if (mallAfterSalesVO.getReason()==10402050){
+                    mallAfterSalesVO.setReasonStr("10402050-未按约定时间发货");
+                }else if (mallAfterSalesVO.getReason()==10402060){
+                    mallAfterSalesVO.setReasonStr("10402060-与商品描述严重不符");
+                }else if (mallAfterSalesVO.getReason()==10402070){
+                    mallAfterSalesVO.setReasonStr("10402070-收到商品少件/破损/污渍");
+                }else if (mallAfterSalesVO.getReason()==10402099){
+                    mallAfterSalesVO.setReasonStr("10402099-其他 仅退款原因 未收到货");
+                }else if (mallAfterSalesVO.getReason()==20401010){
+                    mallAfterSalesVO.setReasonStr("20401010-空包裹");
+                }else if (mallAfterSalesVO.getReason()==20401020){
+                    mallAfterSalesVO.setReasonStr("20401020-快递/物流一直未到");
+                }else if (mallAfterSalesVO.getReason()==20401030){
+                    mallAfterSalesVO.setReasonStr("20401030-快递/物流无跟踪记录");
+                }else if (mallAfterSalesVO.getReason()==20401040){
+                    mallAfterSalesVO.setReasonStr("20401040-货物破损/变质 仅退款原因 已收到货");
+                }else if (mallAfterSalesVO.getReason()==20402010){
+                    mallAfterSalesVO.setReasonStr("20402010-不喜欢/效果不好");
+                }else if (mallAfterSalesVO.getReason()==20402020){
+                    mallAfterSalesVO.setReasonStr("20402020-做工/质量问题");
+                }else if (mallAfterSalesVO.getReason()==20402030){
+                    mallAfterSalesVO.setReasonStr("20402030-商家发错货未按约定时间发货");
+                }else if (mallAfterSalesVO.getReason()==20402040){
+                    mallAfterSalesVO.setReasonStr("20402040-与商品描述严重不符");
+                }else if (mallAfterSalesVO.getReason()==20402050){
+                    mallAfterSalesVO.setReasonStr("20402050-收到商品少件/破损/污渍");
+                }else if (mallAfterSalesVO.getReason()==20402099){
+                    mallAfterSalesVO.setReasonStr("20402099-其他");
+                }
+            }
+
+            //转换photos，jsonarray为List数组
+            if (StringUtils.isNotEmpty(mallAfterSalesVO.getPhotos())){
+                String demosub = mallAfterSalesVO.getPhotos().substring(1,mallAfterSalesVO.getPhotos().length()-1).replaceAll("\"","");
+                List<String> photosArray = Arrays.asList(demosub.split(","));
+                mallAfterSalesVO.setPhotosArray(photosArray);
+            }
         }
         return ReturnResponse.success(mallAfterSalesVO);
     }

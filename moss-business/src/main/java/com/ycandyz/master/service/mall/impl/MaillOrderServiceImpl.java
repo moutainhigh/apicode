@@ -93,8 +93,17 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     }
                     mallOrderVo = new MallOrderVO();
                     BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
+                    //订单列表显示商品名称数组
                     List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
                     mallOrderVo.setItemName(itemNames);
+                    //订单列表显示商品货号数组
+                    List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).collect(Collectors.toList());
+                    mallOrderVo.setGoodsNo(goodsNos);
+                    List<Integer> skuQuantity = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getSkuQuantity).collect(Collectors.toList());
+                    if (skuQuantity!=null && skuQuantity.size()>0){
+                        int quantity = skuQuantity.stream().reduce(Integer::sum).orElse(0);
+                        mallOrderVo.setQuantity(quantity);
+                    }
                     list.add(mallOrderVo);
                 }
             }

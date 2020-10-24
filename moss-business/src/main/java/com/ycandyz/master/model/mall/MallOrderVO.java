@@ -171,10 +171,10 @@ public class MallOrderVO {
     private java.util.Date paymentTime;
     /**货号*/
     @ApiModelProperty(value = "货号")
-    private java.lang.String goodsNo;
+    private List<String> goodsNo;
     /**SKU数量*/
     @ApiModelProperty(value = "购买数量")
-    private java.lang.String quantity;
+    private java.lang.Integer quantity;
     /**关联订单详情*/
     @ApiModelProperty(value = "关联订单详情")
     private List<MallOrderDetailVO> details;

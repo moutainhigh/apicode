@@ -61,7 +61,7 @@ public class MallOrderDetailVO {
     private java.lang.String realMoney;
     /**SKU数量*/
     @ApiModelProperty(value = "SKU数量")
-    private java.lang.String skuQuantity;
+    private java.lang.Integer skuQuantity;
     /**SKU价格*/
     @ApiModelProperty(value = "SKU价格")
     private java.math.BigDecimal skuPrice;

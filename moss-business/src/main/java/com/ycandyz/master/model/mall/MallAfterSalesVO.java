@@ -145,6 +145,13 @@ public class MallAfterSalesVO {
     @Getter(AccessLevel.NONE)
     private String auditSecondAtStr;
 
+    /**退款原因，文字内容*/
+    @ApiModelProperty(value = "退款原因，文字内容")
+    private String reasonStr;
+    /**退款凭证图jsonarray转换的list*/
+    @ApiModelProperty(value = "退款凭证图jsonarray转换的list")
+    private List<String> photosArray;
+
     public String getReceiveAtStr(){
         try {
             Long at = Long.valueOf(receiveAt) * 1000;

@@ -77,6 +77,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     @ApiImplicitParams({
             @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
     })
+    @Deprecated
     @GetMapping("/order/pickup/query")
     public ReturnResponse<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
         return mallOrderService.queryDetailByPickupNo(pickupNo, orderNo, userVO);
