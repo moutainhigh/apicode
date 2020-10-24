@@ -14,6 +14,7 @@ import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,6 +93,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     }
                     mallOrderVo = new MallOrderVO();
                     BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
+                    List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
+                    mallOrderVo.setItemName(itemNames);
                     list.add(mallOrderVo);
                 }
             }
@@ -292,9 +295,16 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<MallOrderVO> queryDetailByPickupNo(String pickupNo, UserVO userVO) {
+    public ReturnResponse<MallOrderVO> queryDetailByPickupNo(String pickupNo, String orderNo, UserVO userVO) {
         MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null){
+            //判断pickNo查询到订单是否是orderNo的订单
+            if (StringUtils.isEmpty(orderNo)){
+                //orderNo不为空，说明是订单详情中进行的订单校验
+                if (!orderNo.equals(mallOrderDTO.getOrderNo())){
+                    return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
+                }
+            }
             MallOrderVO mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){

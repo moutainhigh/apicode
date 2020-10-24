@@ -155,7 +155,7 @@
             <if test="p.cancelReason != null">
                 and mo.cancel_reason=#{p.cancelReason}
             </if>
-            group by mo.id
+            /**group by mo.id*/
     </select>
 
     <select id="getTrendMallOrder" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
@@ -268,7 +268,7 @@
         <result column="cart_order_id" property="cartOrderSn" />
         <result column="real_money" property="realMoney" />
         <result column="payed_at" property="payedAt" />
-        <result column="buyer_remark" property="payedAt" />
+        <result column="buyer_remark" property="buyerRemark" />
         <result column="pick_up_address_name" property="pickUpAddressName" />
         <result column="pick_up_address_detail" property="pickUpAddressDetail" />
         <result column="pre_phone" property="prePhone" />

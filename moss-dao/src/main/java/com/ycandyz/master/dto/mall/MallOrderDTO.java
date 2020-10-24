@@ -149,7 +149,7 @@ public class MallOrderDTO {
     private java.lang.String cartOrderId;
     /**商品名称*/
     @ApiModelProperty(value = "商品名称")
-    private java.lang.String itemName;
+    private List<String> itemName;
     /**购买用户*/
     @ApiModelProperty(value = "购买用户")
     private java.lang.String payuser;

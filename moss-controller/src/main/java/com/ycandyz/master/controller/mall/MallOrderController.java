@@ -30,8 +30,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
 
     /**
      * 获取订单表集合
-     * @param pageResult
-     * @param mallOrder
+     * @param requestParams
      * @return
      */
     @ApiOperation(value = "订单列表",notes = "订单列表",httpMethod = "POST")
@@ -79,8 +78,8 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
     })
     @GetMapping("/order/pickup/query")
-    public ReturnResponse<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @CurrentUser UserVO userVO){
-        return mallOrderService.queryDetailByPickupNo(pickupNo, userVO);
+    public ReturnResponse<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam("orderNo") String orderNo, @CurrentUser UserVO userVO){
+        return mallOrderService.queryDetailByPickupNo(pickupNo, orderNo, userVO);
     }
 
     /**
