@@ -1,5 +1,6 @@
 package com.ycandyz.master.model.mall;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -21,7 +22,9 @@ public class MallOrderDetailSpecVO {
     @ApiModelProperty(value = "规格值")
     private String specValue;
     @ApiModelProperty(value = "createdTime")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createdTime;
     @ApiModelProperty(value = "updatedTime")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date updatedTime;
 }

@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -87,4 +89,53 @@ public class MallOrderDetailVO {
     /**一层分销合伙人用户id*/
     @ApiModelProperty(value = "一层分销合伙人用户id")
     private Integer shareUserId;
+
+    /**支付时间字符串*/
+    @ApiModelProperty(value = "支付时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String payedAtStr;
+    /**下单时间字符串*/
+    @ApiModelProperty(value = "下单时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String orderAtStr;
+    /**订单关闭时间字符串*/
+    @ApiModelProperty(value = "订单关闭时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String closeAtStr;
+
+    public String getPayedAtStr(){
+        try {
+            Long at = Long.valueOf(payedAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.payedAtStr = sd.format(date);
+        }catch (Exception e){
+            payedAtStr = "";
+        }
+        return payedAtStr;
+    }
+
+    public String getOrderAtStr(){
+        try {
+            Long at = Long.valueOf(orderAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.orderAtStr = sd.format(date);
+        }catch (Exception e){
+            orderAtStr = "";
+        }
+        return orderAtStr;
+    }
+
+    public String getCloseAtStr(){
+        try {
+            Long at = Long.valueOf(closeAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.closeAtStr = sd.format(date);
+        }catch (Exception e){
+            closeAtStr = "";
+        }
+        return closeAtStr;
+    }
 }

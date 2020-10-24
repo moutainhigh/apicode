@@ -274,5 +274,51 @@ public class MallOrderVO {
         return afterSalesEndAtStr;
     }
 
+    public String getOrderAtStr(){
+        try {
+            Long at = Long.valueOf(orderAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.orderAtStr = sd.format(date);
+        }catch (Exception e){
+            orderAtStr = "";
+        }
+        return orderAtStr;
+    }
 
+    public String getSendAtStr(){
+        try {
+            Long at = Long.valueOf(sendAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.sendAtStr = sd.format(date);
+        }catch (Exception e){
+            sendAtStr = "";
+        }
+        return sendAtStr;
+    }
+
+    public String getReceiveAtStr(){
+        try {
+            Long at = Long.valueOf(receiveAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.receiveAtStr = sd.format(date);
+        }catch (Exception e){
+            receiveAtStr = "";
+        }
+        return receiveAtStr;
+    }
+
+    public String getCloseAtStr(){
+        try {
+            Long at = Long.valueOf(closeAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.closeAtStr = sd.format(date);
+        }catch (Exception e){
+            closeAtStr = "";
+        }
+        return closeAtStr;
+    }
 }
