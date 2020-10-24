@@ -15,7 +15,7 @@ public interface MallShopShippingLogDao extends BaseMapper<MallShopShippingLog> 
      * 查询当前订单号查询物流信息
      * @return
      */
-    List<MallShopShippingLogDTO> selectListByOrderNo(@Param("orderNo") String orderNo);
+    List<MallShopShippingLogDTO> selectListByShopShippingNo(@Param("shopShippingNo") String shopShippingNo);
 
     /**
      * 通过物流单号查询当前最新的一条记录

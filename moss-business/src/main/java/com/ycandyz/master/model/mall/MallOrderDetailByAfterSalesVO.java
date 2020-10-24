@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 售后详情接口中返回的订单详情表信息
@@ -33,4 +34,6 @@ public class MallOrderDetailByAfterSalesVO {
     private Integer quantity;
     @ApiModelProperty(value = "SKU价格")
     private BigDecimal price;
+    @ApiModelProperty(value = "订单详情关联规格")
+    private List<MallOrderDetailSpecVO> specs;
 }

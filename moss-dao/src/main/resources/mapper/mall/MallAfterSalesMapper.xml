@@ -151,32 +151,52 @@
             </if>
     </select>
 
-    <select id="querySalesDetail" parameterType="java.lang.Long" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
+    <select id="querySalesDetail" parameterType="java.lang.String" resultMap="BaseAfterSalesDetailResultMap">
         SELECT
-            sales.after_sales_no as afterSalesNo,
-            sales.order_no as orderNo,
-            sales.order_detail_no as orderDetailNo,
-            modetail.item_name as itemName,
-            modetail.goods_no as goodsNo,
-            sales.status as status,
-            sales.sub_status as subStatus,
+            sales.id as id,
+            sales.created_at,
+            sales.after_sales_no,
+            sales.order_no,
+            sales.order_detail_no,
+            sales.reason,
+            sales.remark,
+            sales.photos,
             sales.quantity as skuQuantity,
-            sales.money as money,
-            modetail.real_money as realMoney,
-            mo.pay_type as payType,
+            sales.price as skuPrice,
+            sales.money,
+            sales.send_at,
+            sales.receive_at,
+            sales.status,
+            sales.sub_status,
+            sales.close_at,
+            sales.apply_at,
+            sales.audit_first_at,
+            sales.audit_second_at,
+
+            mo.shop_no,
+            mo.order_no as moOrderNo,
+            mo.status as moStatus,
+            mo.total_money,
+            mo.real_money,
+            mo.deliver_method,
+            mo.all_money-mo.real_money as shipping_money,
+
+            modetail.order_no as detailOrderNo,
+            modetail.order_detail_no as orderDetailNo,
+            modetail.item_no,
+            modetail.item_name,
+            modetail.item_cover,
+            modetail.goods_no,
+            modetail.sku_no,
             modetail.quantity as detailQuantity,
-            #concat(u.`name`,' ',u.phone) as userName,
-            sales.apply_at as applyAt,
-            sales.audit_first_at as auditFirstAt,
-            sales.send_at as sendAt,
-            sales.audit_second_at as auditSecondAt
+            modetail.price as detailPrice
         FROM
             mall_after_sales sales
             LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
             LEFT JOIN user u ON sales.user_id=u.id
             LEFT JOIN mall_order mo ON sales.order_no=mo.order_no
             WHERE
-            sales.id=#{id}
+            sales.after_sales_no=#{afterSalesNo}
     </select>
 
     <select id="getTrendMallAfterSalesList" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">

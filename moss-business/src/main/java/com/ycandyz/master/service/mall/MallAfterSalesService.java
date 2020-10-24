@@ -16,7 +16,7 @@ public interface MallAfterSalesService extends IService<MallAfterSales> {
 
     ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO);
 
-    ReturnResponse<MallAfterSalesVO> querySalesDetail(Long id);
+    ReturnResponse<MallAfterSalesVO> querySalesDetail(String afterSalesNo, UserVO userVO);
 
     boolean refundAuditFirst(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
 

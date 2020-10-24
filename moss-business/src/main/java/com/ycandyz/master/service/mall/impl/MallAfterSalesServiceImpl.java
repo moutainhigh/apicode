@@ -9,19 +9,14 @@ import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
-import com.ycandyz.master.dao.mall.MallAfterSalesDao;
-import com.ycandyz.master.dao.mall.MallAfterSalesLogDao;
+import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
-import com.ycandyz.master.dto.mall.MallAfterSalesDTO;
-import com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO;
-import com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO;
+import com.ycandyz.master.dto.mall.*;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallAfterSalesLog;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.enums.SalesEnum;
-import com.ycandyz.master.model.mall.MallAfterSalesVO;
-import com.ycandyz.master.model.mall.MallOrderByAfterSalesVO;
-import com.ycandyz.master.model.mall.MallOrderDetailByAfterSalesVO;
+import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
@@ -46,6 +41,18 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
     @Autowired
     private MallAfterSalesLogDao mallAfterSalesLogDao;
+
+    @Autowired
+    private MallShopShippingDao mallShopShippingDao;
+
+    @Autowired
+    private MallShopShippingLogDao mallShopShippingLogDao;
+
+    @Autowired
+    private MallOrderDetailSpecDao mallItemSpecByMallOrderDetailSpecVO;
+
+    @Autowired
+    private MallShopDao mallShopDao;
 
     @Override
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
@@ -112,12 +119,97 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     }
 
     @Override
-    public ReturnResponse<MallAfterSalesVO> querySalesDetail(Long id) {
+    public ReturnResponse<MallAfterSalesVO> querySalesDetail(String afterSalesNo, UserVO userVO) {
         MallAfterSalesVO mallAfterSalesVO = null;
-        MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(id);
+        MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(afterSalesNo);
         if (mallAfterSalesDTO!=null){
             mallAfterSalesVO = new MallAfterSalesVO();
             BeanUtils.copyProperties(mallAfterSalesDTO,mallAfterSalesVO);
+
+            MallOrderByAfterSalesDTO mallOrderByAfterSalesDTO = mallAfterSalesDTO.getOrder();
+            if (mallOrderByAfterSalesDTO!=null){
+                //关联订单
+                MallOrderByAfterSalesVO mallOrderByAfterSalesVO = new MallOrderByAfterSalesVO();
+                BeanUtils.copyProperties(mallOrderByAfterSalesDTO, mallOrderByAfterSalesVO);
+                mallAfterSalesVO.setOrder(mallOrderByAfterSalesVO);
+            }
+            MallOrderDetailByAfterSalesDTO mallOrderDetailByAfterSalesDTO = mallAfterSalesDTO.getDetails();
+            if (mallOrderDetailByAfterSalesDTO!=null){
+                //关联订单详情
+                MallOrderDetailByAfterSalesVO mallOrderDetailByAfterSalesVO = new MallOrderDetailByAfterSalesVO();
+                BeanUtils.copyProperties(mallOrderDetailByAfterSalesDTO,mallOrderDetailByAfterSalesVO);
+                mallAfterSalesVO.setDetails(mallOrderDetailByAfterSalesVO);
+
+                //MallOrderDetail中的item信息拼接
+                MallItemByMallOrderDetailVO mallItemByMallOrderDetailVO = new MallItemByMallOrderDetailVO();
+                mallItemByMallOrderDetailVO.setItemNo(mallOrderDetailByAfterSalesVO.getItemNo());
+                mallItemByMallOrderDetailVO.setItemName(mallOrderDetailByAfterSalesVO.getItemName());
+                mallItemByMallOrderDetailVO.setGoodsNo(mallOrderDetailByAfterSalesVO.getGoodsNo());
+                mallItemByMallOrderDetailVO.setItemCover(mallOrderDetailByAfterSalesVO.getItemCover());
+                mallItemByMallOrderDetailVO.setPrice(mallOrderDetailByAfterSalesVO.getPrice());
+                mallItemByMallOrderDetailVO.setQuantity(mallOrderDetailByAfterSalesVO.getQuantity());
+
+                //MallOrderDetailSpec中的specValue商品规格拼接
+                List<MallOrderDetailSpecDTO> mallOrderDetailSpecDTOs = mallItemSpecByMallOrderDetailSpecVO.queryListByOrderDetailNo(mallOrderDetailByAfterSalesVO.getOrderDetailNo());
+                if (mallOrderDetailSpecDTOs!=null && mallOrderDetailSpecDTOs.size()>0){
+                    List<MallOrderDetailSpecVO> mallOrderDetailSpecVOS = new ArrayList<>();
+                    List<MallItemSpecByMallOrderDetailSpecVO> mallItemSpecByMallOrderDetailSpecVOS = new ArrayList<>();
+                    mallOrderDetailSpecDTOs.forEach(dto->{
+                        //拼接数据到item中
+                        MallItemSpecByMallOrderDetailSpecVO mallItemSpecByMallOrderDetailSpecVO = new MallItemSpecByMallOrderDetailSpecVO();
+                        mallItemSpecByMallOrderDetailSpecVO.setSpecValue(dto.getSpecValue());
+                        mallItemSpecByMallOrderDetailSpecVOS.add(mallItemSpecByMallOrderDetailSpecVO);
+
+                        //拼接数据到details中
+                        MallOrderDetailSpecVO mallOrderDetailSpecVO = new MallOrderDetailSpecVO();
+                        BeanUtils.copyProperties(dto,mallOrderDetailSpecVO);
+                        mallOrderDetailSpecVOS.add(mallOrderDetailSpecVO);
+                    });
+                    mallItemByMallOrderDetailVO.setSpec(mallItemSpecByMallOrderDetailSpecVOS);
+                    mallAfterSalesVO.getDetails().setSpecs(mallOrderDetailSpecVOS);
+                }
+            }
+
+            //MallAfterSalesLog表
+            List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNo(mallAfterSalesDTO.getAfterSalesNo(),userVO.getShopNo());
+            if (mallAfterSalesLogDTOs!=null && mallAfterSalesLogDTOs.size()>0){
+                List<MallAfterSalesLogVO> mallAfterSalesLogVOS = new ArrayList<>();
+                mallAfterSalesLogDTOs.forEach(dto->{
+                    MallAfterSalesLogVO mallAfterSalesLogVO = new MallAfterSalesLogVO();
+                    BeanUtils.copyProperties(dto,mallAfterSalesLogVO);
+                    mallAfterSalesLogVOS.add(mallAfterSalesLogVO);
+                });
+                mallAfterSalesVO.setAsLog(mallAfterSalesLogVOS);
+            }
+
+            //MallShopShpping表
+            MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(mallAfterSalesDTO.getOrderNo());
+            if (mallShopShippingDTO!=null){
+                MallShopShippingVO mallShopShippingVO = new MallShopShippingVO();
+                BeanUtils.copyProperties(mallShopShippingDTO,mallShopShippingVO);
+                mallAfterSalesVO.setShippingInfo(mallShopShippingVO);
+
+                //MallShopShippingLog表
+                List<MallShopShippingLogDTO> mallShopShippingLogDTOS = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShippingVO.getShopShippingNo());
+                if (mallShopShippingLogDTOS!=null && mallShopShippingLogDTOS.size()>0){
+                    List<MallShopShippingLogVO> mallShopShippingLogVOS = new ArrayList<>();
+                    mallShopShippingLogDTOS.forEach(dto->{
+                        MallShopShippingLogVO mallShopShippingLogVO = new MallShopShippingLogVO();
+                        BeanUtils.copyProperties(dto,mallShopShippingLogVO);
+                        mallShopShippingLogVOS.add(mallShopShippingLogVO);
+                    });
+                    mallAfterSalesVO.setShippinglog(mallShopShippingLogVOS);
+                }
+            }
+
+            //MallShop信息拼接
+            MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(userVO.getShopNo());
+            if (mallShopDTO!=null){
+                MallShopVO mallShopVO = new MallShopVO();
+                BeanUtils.copyProperties(mallShopDTO,mallShopVO);
+                mallAfterSalesVO.getOrder().setShop(mallShopVO);
+            }
+
         }
         return ReturnResponse.success(mallAfterSalesVO);
     }

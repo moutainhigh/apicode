@@ -197,7 +197,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallOrderVO.setAfterSales(voList);
 
                     //查看售后日志
-                    List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNo(afterSalesNoList, userVO.getShopNo());
+                    List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNoList(afterSalesNoList, userVO.getShopNo());
                     if (mallAfterSalesLogDTOs != null && mallAfterSalesLogDTOs.size() > 0) {
                         List<MallAfterSalesLogVO> salesLogVOList = new ArrayList<>();
                         mallAfterSalesLogDTOs.forEach(dto -> {
@@ -242,19 +242,19 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 MallShopShippingVO mallShopShippingVO = new MallShopShippingVO();
                 BeanUtils.copyProperties(mallShopShippingDTO,mallShopShippingVO);
                 mallOrderVO.setShopShipping(mallShopShippingVO);
-            }
 
-            //商家寄出的快递物流日志表
-            List<MallShopShippingLogDTO> mallShopShippingLogDTOs = mallShopShippingLogDao.selectListByOrderNo(mallOrderVO.getOrderNo());
-            if (mallShopShippingLogDTOs!=null && mallShopShippingLogDTOs.size()>0) {
-                List<MallShopShippingLogVO> voList = new ArrayList<>();
-                mallShopShippingLogDTOs.forEach(dto->{
-                    MallShopShippingLogVO mallShopShippingLogVO = new MallShopShippingLogVO();
-                    BeanUtils.copyProperties(dto,mallShopShippingLogVO);
-                    voList.add(mallShopShippingLogVO);
-                });
+                //商家寄出的快递物流日志表
+                List<MallShopShippingLogDTO> mallShopShippingLogDTOs = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShippingVO.getShopShippingNo());
+                if (mallShopShippingLogDTOs!=null && mallShopShippingLogDTOs.size()>0) {
+                    List<MallShopShippingLogVO> voList = new ArrayList<>();
+                    mallShopShippingLogDTOs.forEach(dto->{
+                        MallShopShippingLogVO mallShopShippingLogVO = new MallShopShippingLogVO();
+                        BeanUtils.copyProperties(dto,mallShopShippingLogVO);
+                        voList.add(mallShopShippingLogVO);
+                    });
 
-                mallOrderVO.setShopShippingLog(voList);
+                    mallOrderVO.setShopShippingLog(voList);
+                }
             }
 
             //查询订单详情规格值表

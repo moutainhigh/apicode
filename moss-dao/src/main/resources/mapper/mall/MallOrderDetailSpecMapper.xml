@@ -20,4 +20,17 @@
             </foreach>
         </if>
     </select>
+
+    <select id="queryListByOrderDetailNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDetailSpecDTO">
+        select
+        id as id,
+        order_detail_no as orderDetailNo,
+        spec_name as specName,
+        spec_value as specValue,
+        created_time as createdTime,
+        updated_time as updatedTime
+        from mall_order_detail_spec
+        where
+        order_detail_no=#{orderDetailNo}
+    </select>
 </mapper>

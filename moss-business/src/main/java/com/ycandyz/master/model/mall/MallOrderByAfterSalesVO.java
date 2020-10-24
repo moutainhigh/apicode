@@ -29,4 +29,6 @@ public class MallOrderByAfterSalesVO {
     private String deliverMethod;
     @ApiModelProperty(value = "商家发货快递运费")
     private String shippingMoney;
+    @ApiModelProperty(value = "关联商店表")
+    private MallShopVO shop;
 }

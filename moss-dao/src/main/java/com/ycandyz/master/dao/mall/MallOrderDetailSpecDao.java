@@ -12,4 +12,7 @@ import java.util.List;
 public interface MallOrderDetailSpecDao extends BaseMapper<MallOrderDetailSpec> {
 
     List<MallOrderDetailSpecDTO> queryListByOrderDetailNoList(@Param("list") List<String> orderDetailNoList);
+
+    List<MallOrderDetailSpecDTO> queryListByOrderDetailNo(@Param("orderDetailNo") String orderDetailNo);
+
 }

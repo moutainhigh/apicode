@@ -3,6 +3,7 @@ package com.ycandyz.master.model.mall;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO;
 import com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO;
+import com.ycandyz.master.dto.mall.MallShopShippingDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -10,6 +11,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -108,6 +110,12 @@ public class MallAfterSalesVO {
     private MallOrderDetailByAfterSalesVO details;
     @ApiModelProperty(value = "售后状态 1-待审核 2-待买家退货 3-待确认退款 4-退款成功 5-退款失败 6-退款关闭")
     private Integer state;
+    @ApiModelProperty(value = "关联售后日志表")
+    private List<MallAfterSalesLogVO> asLog;
+    @ApiModelProperty(value = "关联商家寄出的快递表")
+    private MallShopShippingVO shippingInfo;
+    @ApiModelProperty(value = "关联商家寄出的快递物流日志表")
+    private List<MallShopShippingLogVO> shippinglog;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")

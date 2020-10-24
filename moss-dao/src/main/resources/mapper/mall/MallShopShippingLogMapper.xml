@@ -24,7 +24,7 @@
         limit 1
     </select>
 
-    <select id="selectListByOrderNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
+    <select id="selectListByShopShippingNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
         select
             log.id as id,
             log.shop_shipping_no as shopShippingNo,
@@ -41,7 +41,6 @@
             log.created_time as createdTime,
             log.updated_time as updatedTime
         from mall_shop_shipping_log log
-        left join mall_shop_shipping ship on log.shop_shipping_no=ship.shop_shipping_no
-        where ship.order_no=#{orderNo}
+        where log.shop_shipping_no=#{shopShippingNo}
     </select>
 </mapper>

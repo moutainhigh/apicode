@@ -42,7 +42,7 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
 
     /**
      * 查看售后订单详情
-     * @param id
+     * @param afterSalesNo
      * @return
      */
     @ApiOperation(value = "查看售后订单详情",notes = "查看售后订单详情",httpMethod = "GET")
@@ -50,9 +50,9 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
             @ApiImplicitParam(name="id",value="订单id",required=true,dataType="Long")
     })
     @GetMapping("/sales/detail")
-    public ReturnResponse<MallAfterSalesVO> querySalesDetail(@RequestParam("id") Long id){
-        if (id!=null && id>0){
-            return mallAfterSalesService.querySalesDetail(id);
+    public ReturnResponse<MallAfterSalesVO> querySalesDetail(@RequestParam("afterSalesNo") String afterSalesNo, @CurrentUser UserVO userVO){
+        if (afterSalesNo!=null && !"".equals(afterSalesNo)){
+            return mallAfterSalesService.querySalesDetail(afterSalesNo,userVO);
         }
         return ReturnResponse.failed("传入id为空");
     }
