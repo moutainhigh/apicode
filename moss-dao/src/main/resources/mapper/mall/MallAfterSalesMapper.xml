@@ -233,6 +233,8 @@
             sales.photos as photos,
             sales.price as skuPrice,
             sales.remark as remark,
+            sales.created_at as createdAt,
+            sales.close_at as closeAt,
             sales.reason as reason
         FROM
             mall_after_sales sales

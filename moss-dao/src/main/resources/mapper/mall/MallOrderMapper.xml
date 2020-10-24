@@ -357,6 +357,7 @@
             <result column="sku_no" property="skuNo" />
             <result column="item_name" property="itemName" />
             <result column="item_cover" property="itemCover" />
+            <result column="is_enable_share" property="isEnableShare" />
             <result column="skuQuantity" property="skuQuantity" />
             <result column="skuPrice" property="skuPrice" />
             <result column="total_money" property="totalMoney" />
@@ -397,6 +398,7 @@
             modetail.sku_no,
             modetail.item_name,
             modetail.item_cover,
+            modetail.is_enable_share,
             modetail.quantity as skuQuantity,
             modetail.price as skuPrice,
             modetail.total_money,

@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -205,4 +207,72 @@ public class MallOrderVO {
     private Integer asStatus;
     @ApiModelProperty(value = "运费")
     private BigDecimal shippingMoney;
+
+    /**支付时间字符串*/
+    @ApiModelProperty(value = "支付时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String payedAtStr;
+    /**取消订单时间字符串*/
+    @ApiModelProperty(value = "取消订单时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String cancelAtStr;
+    /**该笔订单售后结束时间字符串*/
+    @ApiModelProperty(value = "该笔订单售后结束时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String afterSalesEndAtStr;
+    /**下单时间字符串*/
+    @ApiModelProperty(value = "下单时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String orderAtStr;
+    /**商家发货时间字符串*/
+    @ApiModelProperty(value = "商家发货时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String sendAtStr;
+    /**收货时间字符串*/
+    @ApiModelProperty(value = "收货时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String receiveAtStr;
+    /**订单关闭时间字符串*/
+    @ApiModelProperty(value = "订单关闭时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String closeAtStr;
+
+
+    public String getPayedAtStr(){
+        try {
+            Long at = Long.valueOf(payedAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.payedAtStr = sd.format(date);
+        }catch (Exception e){
+            payedAtStr = "";
+        }
+        return payedAtStr;
+    }
+
+    public String getCancelAtStr(){
+        try {
+            Long at = Long.valueOf(cancelAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.cancelAtStr = sd.format(date);
+        }catch (Exception e){
+            cancelAtStr = "";
+        }
+        return cancelAtStr;
+    }
+
+    public String getAfterSalesEndAtStr(){
+        try {
+            Long at = Long.valueOf(afterSalesEndAt) * 1000;
+            Date date = new Date(at);
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.afterSalesEndAtStr = sd.format(date);
+        }catch (Exception e){
+            afterSalesEndAtStr = "";
+        }
+        return afterSalesEndAtStr;
+    }
+
+
 }
