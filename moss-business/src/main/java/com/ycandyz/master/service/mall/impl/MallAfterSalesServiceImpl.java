@@ -256,6 +256,26 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 List<String> photosArray = Arrays.asList(demosub.split(","));
                 mallAfterSalesVO.setPhotosArray(photosArray);
             }
+
+            //拼接state字段
+            Integer subStatus = mallAfterSalesDTO.getSubStatus();
+            Integer state = null;
+            if (subStatus!=null){
+                if (subStatus==1010){
+                    state = 1;
+                }else if (subStatus==1030){
+                    state = 2;
+                }else if (subStatus==1050 || subStatus==2010){
+                    state = 3;
+                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030){
+                    state = 4;
+                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050){
+                    state = 6;
+                }else {
+                    state = 5;
+                }
+            }
+            mallAfterSalesVO.setState(state);
         }
         return ReturnResponse.success(mallAfterSalesVO);
     }
