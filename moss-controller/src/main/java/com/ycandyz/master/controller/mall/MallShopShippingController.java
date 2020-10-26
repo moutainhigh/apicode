@@ -1,9 +1,10 @@
 package com.ycandyz.master.controller.mall;
 
-import com.ycandyz.master.api.CommonResult;
+import cn.hutool.json.JSONUtil;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
+import com.ycandyz.master.domain.shipment.query.ShipmentParamLastResultQuery;
 import com.ycandyz.master.domain.shipment.query.ShipmentParamQuery;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.entities.mall.MallShopShipping;
@@ -15,8 +16,15 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -61,13 +69,16 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
 
     /**
      * 快递订阅回调接口
-     * @param shipmentParamQuery
+     * @param request
      * @return
      */
     @PostMapping("/order/shipment/callback")
     @ResponseBody
-    public ShipmentResponseDataVO shipmentCallBack(@RequestBody ShipmentParamQuery shipmentParamQuery){
-        log.info("订阅回调接口+"+shipmentParamQuery.toString());
-        return mallShopShippingService.shipmentCallBack(shipmentParamQuery);
+    public ShipmentResponseDataVO shipmentCallBack(Map<String, Object> params){
+        log.info(params.toString());
+        String sign = params.get("sign").toString();
+        String param = params.get("param").toString();
+        log.info("sign="+sign+",param="+param);
+        return null;
     }
 }

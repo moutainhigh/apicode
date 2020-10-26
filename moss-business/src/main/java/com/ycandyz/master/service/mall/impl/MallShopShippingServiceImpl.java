@@ -118,6 +118,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         headers.put("Content-Type","application/x-www-form-urlencoded");
         String str = com.alibaba.fastjson.JSONObject.toJSONString(pollShipmentParamQuery, SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteMapNullValue);
         String result= HttpUtil.createPost(kuaidiPollUrl).addHeaders(headers).form(params).execute().body();
+        log.info("快递订阅接口请求response返回"+result);
         if (StringUtils.isNotEmpty(result)){
             JSONObject resultObject = JSONUtil.parseObj(result);
             if (!resultObject.getBool("result")){
