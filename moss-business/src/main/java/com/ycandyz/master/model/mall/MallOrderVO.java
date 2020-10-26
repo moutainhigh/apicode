@@ -207,6 +207,8 @@ public class MallOrderVO {
     private Integer asStatus;
     @ApiModelProperty(value = "运费")
     private BigDecimal shippingMoney;
+    @ApiModelProperty(value = "关联订单详情商品信息表")
+    private List<MallItemByMallOrderVO> itemInfoList;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")

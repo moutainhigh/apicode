@@ -20,6 +20,7 @@
         <result column="order_at" property="orderAt" />
         <result column="receive_at" property="receiveAt" />
         <result column="deliver_type" property="deliverType" />
+        <result column="deliver_method" property="deliverMethod" />
         <result column="shippingMoney" property="shippingMoney" />
         <result column="is_enable_share" property="isEnableShare" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
@@ -50,6 +51,7 @@
             mo.`status`,
             mo.`after_sales_status`,
             mo.`deliver_type`,
+            mo.`deliver_method`,
             mo.total_money-mo.real_money as shippingMoney,
             concat( u.`name`, ' ', u.phone ) AS payuser,
             concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,

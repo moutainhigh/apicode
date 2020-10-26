@@ -23,6 +23,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,6 +96,22 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
                     //订单列表显示商品名称数组
                     List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
+
+                    Map<String, String> itemMap = mallOrderDTO.getDetails().stream().collect(Collectors.toMap(MallOrderDetailDTO::getItemNo,MallOrderDetailDTO::getItemName));
+                    if (itemMap!=null){
+                        List<MallItemByMallOrderVO> mallItemByMallOrderVOS = new ArrayList<>();
+                        MallItemByMallOrderVO mallItemByMallOrderVO = null;
+                        for (Map.Entry entrySet : itemMap.entrySet()){
+                            mallItemByMallOrderVO = new MallItemByMallOrderVO();
+                            String key = (String) entrySet.getKey();
+                            String value = (String) entrySet.getValue();
+                            mallItemByMallOrderVO.setItemNo(key);
+                            mallItemByMallOrderVO.setItemName(value);
+                            mallItemByMallOrderVOS.add(mallItemByMallOrderVO);
+                        }
+                        mallOrderVo.setItemInfoList(mallItemByMallOrderVOS);
+                    }
+
                     mallOrderVo.setItemName(itemNames);
                     //订单列表显示商品货号数组
                     List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).collect(Collectors.toList());

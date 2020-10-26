@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * 售后中拼接的商品信息表，数据来源为mall_order_detail
+ * 拼接展示地址mall_order_detail
  */
 @Data
 @AllArgsConstructor
