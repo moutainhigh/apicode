@@ -24,6 +24,12 @@ public class MallShopShippingPollLog extends Model {
     /**订单号 mall_order表*/
     @ApiModelProperty(value = "订单号 mall_order表")
     private String orderNo;
+    /**快递物流单号*/
+    @ApiModelProperty(value = "快递物流单号")
+    private String number;
+    /**数据来源 0-神州通*/
+    @ApiModelProperty(value = "数据来源 0-神州通")
+    private Integer code;
     /**商家快递表编号 mall_shop_shipping表*/
     @ApiModelProperty(value = "商家快递表编号 mall_shop_shipping表")
     private String shopShippingNo;

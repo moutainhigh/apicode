@@ -107,10 +107,13 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                 //记录日志表,后续做kafka队列任务处理相关信息
                 MallShopShippingPollLog mallShopShippingPollLog = new MallShopShippingPollLog();
                 mallShopShippingPollLog.setOrderNo(mallShopShippingDTO.getOrderNo());
+                mallShopShippingPollLog.setNumber(mallShopShippingQuery.getNumber());
+                mallShopShippingPollLog.setCode(0); //神州通项目code码传入0
                 mallShopShippingPollLog.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
                 mallShopShippingPollLog.setLog(resultObject.getStr("message"));
                 mallShopShippingPollLog.setCreatedTime(new Date());
                 mallShopShippingPollLogDao.insert(mallShopShippingPollLog);
+                mallShopShipping.setPollState(2);
             }else {
                 //订阅成功，更新poll_state字段
                 mallShopShipping.setPollState(1);
