@@ -14,9 +14,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/mall")
 @Api(tags="mall-订单商家快递信息表")
@@ -65,6 +67,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
     @PostMapping("/order/shipment/callback")
     @ResponseBody
     public ShipmentResponseDataVO shipmentCallBack(@RequestBody ShipmentParamQuery shipmentParamQuery){
+        log.info("订阅回调接口+"+shipmentParamQuery.toString());
         return mallShopShippingService.shipmentCallBack(shipmentParamQuery);
     }
 }
