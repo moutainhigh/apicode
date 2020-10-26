@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ycandyz.master.api.ReturnResponse;
@@ -34,6 +35,8 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.alibaba.fastjson.serializer.SerializerFeature.WriteNullStringAsEmpty;
 
 @Slf4j
 @Service
@@ -117,28 +120,33 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
 
         Map<String,Object> map = BeanUtil.beanToMap(pollShipmentRequest);
 
-        String result = HttpUtil.post(kuaidiPollUrl+"?schema=json&param="+JSONUtil.toJsonStr(pollShipmentParamQuery).replaceAll("\"","\\\""),new HashMap<>());
-        if (StringUtils.isNotEmpty(result)){
-            JSONObject resultObject = JSONUtil.parseObj(result);
-            if (!resultObject.getBool("result")){
-                //订阅失败
-                //更新快递推送表poll_state字段
-                mallShopShipping.setPollState(2);
-                //记录日志表,后续做kafka队列任务处理相关信息
-                MallShopShippingPollLog mallShopShippingPollLog = new MallShopShippingPollLog();
-                mallShopShippingPollLog.setOrderNo(mallShopShippingDTO.getOrderNo());
-                mallShopShippingPollLog.setNumber(mallShopShippingQuery.getNumber());
-                mallShopShippingPollLog.setCode(0); //神州通项目code码传入0
-                mallShopShippingPollLog.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
-                mallShopShippingPollLog.setLog(resultObject.getStr("message"));
-                mallShopShippingPollLog.setCreatedTime(new Date());
-                mallShopShippingPollLogDao.insert(mallShopShippingPollLog);
-                mallShopShipping.setPollState(2);
-            }else {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type","application/x-www-form-urlencoded");
+
+//        String result = HttpUtil.post(kuaidiPollUrl+"?schema=json&param="+JSONUtil.toJsonStr(pollShipmentParamQuery).replaceAll("\"","\\\""),new HashMap<>());
+        String str = com.alibaba.fastjson.JSONObject.toJSONString(pollShipmentParamQuery, SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteMapNullValue);
+//        String result= HttpUtil.createPost(kuaidiPollUrl).addHeaders(headers).form("?schema=json&param="+str.replaceAll("\"","\\\"")).execute().body();
+//        if (StringUtils.isNotEmpty(result)){
+//            JSONObject resultObject = JSONUtil.parseObj(result);
+//            if (!resultObject.getBool("result")){
+//                //订阅失败
+//                //更新快递推送表poll_state字段
+//                mallShopShipping.setPollState(2);
+//                //记录日志表,后续做kafka队列任务处理相关信息
+//                MallShopShippingPollLog mallShopShippingPollLog = new MallShopShippingPollLog();
+//                mallShopShippingPollLog.setOrderNo(mallShopShippingDTO.getOrderNo());
+//                mallShopShippingPollLog.setNumber(mallShopShippingQuery.getNumber());
+//                mallShopShippingPollLog.setCode(0); //神州通项目code码传入0
+//                mallShopShippingPollLog.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
+//                mallShopShippingPollLog.setLog(resultObject.getStr("message"));
+//                mallShopShippingPollLog.setCreatedTime(new Date());
+//                mallShopShippingPollLogDao.insert(mallShopShippingPollLog);
+//                mallShopShipping.setPollState(2);
+//            }else {
                 //订阅成功，更新poll_state字段
                 mallShopShipping.setPollState(1);
-            }
-        }
+//            }
+//        }
         mallShopShippingDao.updateById(mallShopShipping);
 
         MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",mallShopShippingQuery.getOrderNo()));
