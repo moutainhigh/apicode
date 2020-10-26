@@ -261,7 +261,7 @@
         </if>
     </select>
 
-    <select id="querySalesByOrderDetailNoList" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
+    <select id="querySalesByOrderDetailNoList" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
         SELECT
             sales.after_sales_no as afterSalesNo,
             sales.order_no as orderNo,
@@ -284,12 +284,20 @@
             mall_after_sales sales
         where
             1=1
-            <if test="list!=null">
-                and
-                sales.order_detail_no in
-                <foreach collection="list" item="orderDetailNo" index="index" open="(" close=")" separator=",">
-                    #{orderDetailNo}
-                </foreach>
-            </if>
+            <choose>
+                <when test="orderType!=null and orderType==2">
+                    <if test="list!=null">
+                        and
+                        sales.order_detail_no in
+                        <foreach collection="list" item="orderDetailNo" index="index" open="(" close=")" separator=",">
+                            #{orderDetailNo}
+                        </foreach>
+                    </if>
+                </when>
+                <otherwise>
+                    and
+                    sales.order_no=#{orderNo}
+                </otherwise>
+            </choose>
     </select>
 </mapper>

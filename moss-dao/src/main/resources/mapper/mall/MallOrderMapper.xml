@@ -22,7 +22,7 @@
         <result column="deliver_type" property="deliverType" />
         <result column="deliver_method" property="deliverMethod" />
         <result column="shippingMoney" property="shippingMoney" />
-        <result column="is_enable_share" property="isEnableShare" />
+        <result column="order_type" property="orderType" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -57,6 +57,7 @@
             concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
             ship.receiver_address AS receiverAddress,
             mo.receive_at,
+            mo.order_type,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
@@ -159,6 +160,7 @@
                 and mo.cancel_reason=#{p.cancelReason}
             </if>
             /**group by mo.id*/
+            order by mo.order_at DESC
     </select>
 
     <select id="getTrendMallOrder" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">

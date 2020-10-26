@@ -210,9 +210,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
             }
 
+            Integer orderType = mallOrderVO.getOrderType();
             //查看售后
             if (orderDetailNoList!=null) {
-                List<MallAfterSalesDTO> mallAfterSalesDTOs = mallAfterSalesDao.querySalesByOrderDetailNoList(orderDetailNoList);
+                List<MallAfterSalesDTO> mallAfterSalesDTOs = mallAfterSalesDao.querySalesByOrderDetailNoList(orderDetailNoList, orderType, orderNo);
                 if (mallAfterSalesDTOs != null && mallAfterSalesDTOs.size() > 0) {
                     //获取售后编号列表
                     List<String> afterSalesNoList = new ArrayList<>();

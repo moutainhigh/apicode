@@ -13,10 +13,7 @@ import com.ycandyz.master.dao.mall.MallShopShippingDao;
 import com.ycandyz.master.dao.mall.MallShopShippingLogDao;
 import com.ycandyz.master.dao.mall.MallShopShippingPollLogDao;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
-import com.ycandyz.master.domain.shipment.query.PollShipmentParamQuery;
-import com.ycandyz.master.domain.shipment.query.PollShipmentParametersQuery;
-import com.ycandyz.master.domain.shipment.query.ShipmentParamLastResultQuery;
-import com.ycandyz.master.domain.shipment.query.ShipmentParamQuery;
+import com.ycandyz.master.domain.shipment.query.*;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.dto.mall.MallShopShippingDTO;
 import com.ycandyz.master.dto.mall.MallShopShippingLogDTO;
@@ -35,6 +32,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -103,14 +101,23 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         pollShipmentParamQuery.setKey(kuaidiKey);
         PollShipmentParametersQuery pollShipmentParametersQuery = new PollShipmentParametersQuery();
         pollShipmentParametersQuery.setCallbackurl(kuaidiCallbackUrl);
+
+        pollShipmentParametersQuery.setAutoCom(0);
+        pollShipmentParametersQuery.setInterCom(0);
+        pollShipmentParametersQuery.setResultv2(1);
+
         pollShipmentParamQuery.setParameters(pollShipmentParametersQuery);
-        JSONObject params = new JSONObject();
+        Map<String, Object> params = new HashMap<>();
         params.put("schema","json");
-        params.put("param",JSONUtil.parseObj(pollShipmentParamQuery));
+        params.put("param",JSONUtil.parseObj(pollShipmentParamQuery).toString());
 
-        Map<String,Object> map = BeanUtil.beanToMap(params);
+        PollShipmentRequest pollShipmentRequest = new PollShipmentRequest();
+        pollShipmentRequest.setSchema("json");
+        pollShipmentRequest.setParam(pollShipmentParamQuery);
 
-        String result = HttpUtil.post(kuaidiPollUrl, map);
+        Map<String,Object> map = BeanUtil.beanToMap(pollShipmentRequest);
+
+        String result = HttpUtil.post(kuaidiPollUrl+"?schema=json&param="+JSONUtil.toJsonStr(pollShipmentParamQuery).replaceAll("\"","\\\""),new HashMap<>());
         if (StringUtils.isNotEmpty(result)){
             JSONObject resultObject = JSONUtil.parseObj(result);
             if (!resultObject.getBool("result")){

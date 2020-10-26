@@ -24,5 +24,5 @@ public interface MallAfterSalesDao extends BaseMapper<MallAfterSales> {
      * @param orderDetailNoList
      * @return
      */
-    List<MallAfterSalesDTO> querySalesByOrderDetailNoList(@Param("list") List<String> orderDetailNoList);
+    List<MallAfterSalesDTO> querySalesByOrderDetailNoList(@Param("list") List<String> orderDetailNoList, @Param("orderType") Integer orderType, @Param("orderNo") String orderNo);
 }

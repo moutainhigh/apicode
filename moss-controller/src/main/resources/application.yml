@@ -3,7 +3,7 @@ spring:
   application:
     name: ycandyz-master-controller
   profiles:
-    active: dev
+    active: test
 
 logging:
   config: classpath:logback-spring.xml

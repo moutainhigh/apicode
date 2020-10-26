@@ -142,8 +142,8 @@ public class MallOrderDTO {
     @ApiModelProperty(value = "购物车订单编号")
     private java.lang.String cartOrderSn;
     /**订单类型1->神州通*/
-    @ApiModelProperty(value = "订单类型1->神州通")
-    private java.lang.String orderType;
+    @ApiModelProperty(value = "订单类型1->商城，2->神州通")
+    private Integer orderType;
     /**购物车订单主键*/
     @ApiModelProperty(value = "购物车订单主键")
     private java.lang.String cartOrderId;
