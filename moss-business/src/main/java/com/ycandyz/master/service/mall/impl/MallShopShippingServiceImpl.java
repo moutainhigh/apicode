@@ -1,10 +1,14 @@
 package com.ycandyz.master.service.mall.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
+import com.ycandyz.master.dao.mall.MallOrderDao;
 import com.ycandyz.master.dao.mall.MallShopShippingDao;
 import com.ycandyz.master.dao.mall.MallShopShippingLogDao;
 import com.ycandyz.master.dao.mall.MallShopShippingPollLogDao;
@@ -16,12 +20,14 @@ import com.ycandyz.master.domain.shipment.query.ShipmentParamQuery;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.dto.mall.MallShopShippingDTO;
 import com.ycandyz.master.dto.mall.MallShopShippingLogDTO;
+import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.entities.mall.MallShopShipping;
 import com.ycandyz.master.entities.mall.MallShopShippingLog;
 import com.ycandyz.master.entities.mall.MallShopShippingPollLog;
 import com.ycandyz.master.enums.ExpressEnum;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
 import com.ycandyz.master.service.mall.MallShopShippingService;
+import com.ycandyz.master.utils.QueryUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -42,6 +49,9 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
 
     @Autowired
     private MallShopShippingPollLogDao mallShopShippingPollLogDao;
+
+    @Autowired
+    private MallOrderDao mallOrderDao;
 
     @Value("${kuaidi.autonumber.url}")
     private String autonumberUrl;
@@ -97,7 +107,10 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         JSONObject params = new JSONObject();
         params.put("schema","json");
         params.put("param",JSONUtil.parseObj(pollShipmentParamQuery));
-        String result = HttpUtil.post(kuaidiPollUrl,params);
+
+        Map<String,Object> map = BeanUtil.beanToMap(params);
+
+        String result = HttpUtil.post(kuaidiPollUrl, map);
         if (StringUtils.isNotEmpty(result)){
             JSONObject resultObject = JSONUtil.parseObj(result);
             if (!resultObject.getBool("result")){
@@ -120,6 +133,14 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             }
         }
         mallShopShippingDao.updateById(mallShopShipping);
+
+        MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",mallShopShippingQuery.getOrderNo()));
+        if (mallOrder!=null){
+            mallOrder.setStatus(30);
+            mallOrder.setSubStatus(3010);
+            mallOrderDao.updateById(mallOrder);
+        }
+
         return ReturnResponse.success("发货成功");
     }
 
