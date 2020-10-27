@@ -1,8 +1,8 @@
-package com.ycandyz.master.controller.mall.goodsManage;
+package com.ycandyz.master.controller.mall;
 
 
 import com.ycandyz.master.api.ReturnResponse;
-import com.ycandyz.master.dto.mall.goodsManage.MallItemDTO;
+import com.ycandyz.master.dto.mall.MallItemDTO;
 import com.ycandyz.master.service.mall.goodsManage.MallItemService;
 import com.ycandyz.master.vo.MallItemOprVO;
 import com.ycandyz.master.vo.MallItemVO;
@@ -25,16 +25,16 @@ public class MallItemController {
 
     @ApiOperation(value = "添加商品",notes = "添加",httpMethod = "POST")
     @PostMapping("/item")
-    public ReturnResponse addMallItem(@RequestBody MallItemVO MallItemVO){
-        mallItemService.addMallItem(MallItemVO);
+    public ReturnResponse insert(@RequestBody MallItemVO MallItemVO){
+        mallItemService.insert(MallItemVO);
         return ReturnResponse.success("添加商品成功");
     }
 
 
     @ApiOperation(value = "获取商品详情",notes = "查询",httpMethod = "GET")
     @GetMapping("/item/{itemNo}")
-    public ReturnResponse<MallItemDTO> selMallItemByitemNo(@PathVariable(value = "itemNo") String itemNo){
-        MallItemDTO mallItemDTO = mallItemService.selMallItemByitemNo(itemNo);
+    public ReturnResponse<MallItemDTO> select(@PathVariable(value = "itemNo") String itemNo){
+        MallItemDTO mallItemDTO = mallItemService.select(itemNo);
         log.info("itemNo:{}；获取商品详情:{}",itemNo,mallItemDTO);
         return ReturnResponse.success(mallItemDTO);
     }
@@ -42,8 +42,8 @@ public class MallItemController {
 
     @ApiOperation(value = "上下架商品",notes = "修改",httpMethod = "PUT")
     @PutMapping("/item/opr")
-    public ReturnResponse<Integer> oprbyItemNo(@RequestBody MallItemOprVO mallItemOprVO){
-        int count = mallItemService.oprbyItemNo(mallItemOprVO);
+    public ReturnResponse<Integer> opr(@RequestBody MallItemOprVO mallItemOprVO){
+        int count = mallItemService.opr(mallItemOprVO);
         log.info("上下架商品:{}",mallItemOprVO);
         if (count > 0){
             return ReturnResponse.success(count);
@@ -53,8 +53,8 @@ public class MallItemController {
 
     @ApiOperation(value = "删除商品",notes = "删除",httpMethod = "DELETE")
     @DeleteMapping("/item/{itemNo}")
-    public ReturnResponse delMallItemByItemNo(@PathVariable(value = "itemNo") String itemNo){
-        int count = mallItemService.delMallItemByItemNo(itemNo);
+    public ReturnResponse delete(@PathVariable(value = "itemNo") String itemNo){
+        int count = mallItemService.delete(itemNo);
         if (count > 0) {
             return ReturnResponse.success("删除商品成功");
         }
@@ -63,9 +63,9 @@ public class MallItemController {
 
     @ApiOperation(value = "编辑商品分类",notes = "put",httpMethod = "PUT")
     @PutMapping("/item")
-    public ReturnResponse updateMallItem(@RequestBody MallItemVO mallItemVO){
+    public ReturnResponse update(@RequestBody MallItemVO mallItemVO){
         log.info("修改运费模版请求参数:{}",mallItemVO);
-        mallItemService.updateMallItem(mallItemVO);
+        mallItemService.update(mallItemVO);
         return ReturnResponse.success(null);
     }
 

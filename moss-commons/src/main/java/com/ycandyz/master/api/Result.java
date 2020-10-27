@@ -1,6 +1,6 @@
 package com.ycandyz.master.api;
 
-import com.ycandyz.master.constants.CommonConstant;
+import com.ycandyz.master.constant.CommonConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

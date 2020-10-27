@@ -1,13 +1,10 @@
 package com.ycandyz.master.service.mall.goodsManage;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.PageInfo;
 import com.ycandyz.master.api.PageResult;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingKwDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
-import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
-import com.ycandyz.master.model.user.UserVO;
+import com.ycandyz.master.dto.mall.MallShippingDTO;
+import com.ycandyz.master.dto.mall.MallShippingKwDTO;
+import com.ycandyz.master.dto.mall.MallShippingRegionProvinceDTO;
 import com.ycandyz.master.vo.MallShippingVO;
 
 import java.util.List;
@@ -20,17 +17,17 @@ import java.util.List;
 */
 public interface MallShippingService {
 
-    List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO);
+    List<MallShippingDTO> insert(MallShippingVO mallShippingVO);
 
-    List<MallShippingDTO> updateMallShipping(MallShippingVO mallShippingVO);
+    List<MallShippingDTO> update(MallShippingVO mallShippingVO);
 
-    MallShippingDTO selMallShippingByShippingNo(String shippingNo);
+    MallShippingDTO select(String shippingNo);
 
-    Page<MallShippingKwDTO> selMallShippingByKeyWord(PageResult pageResult, String shippingName);
+    Page<MallShippingKwDTO> selectByKeyWord(PageResult pageResult, String shippingName);
 
     List<MallShippingDTO> selMallShippingByShopNo();
 
-    List<MallShippingRegionProvinceDTO> selMallShippingRegionProvince();
+    List<MallShippingRegionProvinceDTO> selectRegion();
 
-    int delMallShippingByshippingNo(String shippingNo);
+    int delete(String shippingNo);
 }

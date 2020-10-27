@@ -1,14 +1,11 @@
 package com.ycandyz.master.service.mall.goodsManage.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.dao.mall.goodsManage.MallSpecDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSpecValueDao;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingKwDTO;
 import com.ycandyz.master.enums.SortValueEnum;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallSpec;
@@ -44,7 +41,7 @@ public class MallSpecServiceImpl implements MallSpecService {
     */
     @Override
     @Transactional
-    public List<MallSpecSingleVO> addMallSpec(MallSpecVO mallSpecVO) {
+    public List<MallSpecSingleVO> insert(MallSpecVO mallSpecVO) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         String specNo = String.valueOf(IDGeneratorUtils.getLongId());
@@ -74,7 +71,7 @@ public class MallSpecServiceImpl implements MallSpecService {
      * @Description: 删除规格模版
     */
     @Override
-    public int delMallSpecBySpecNo(String specNo) {
+    public int delete(String specNo) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         int r = mallSpecDao.delMallSpecBySpecNo(shopNo,specNo);
@@ -85,7 +82,7 @@ public class MallSpecServiceImpl implements MallSpecService {
      * @Description: 根据关键字查询规格模版
      */
     @Override
-    public Page<MallSpecKeyWordVO> selMallSpecByKeyWord(PageResult pageResult, String keyWord) {
+    public Page<MallSpecKeyWordVO> selectByKeyWord(PageResult pageResult, String keyWord) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         Page pageQuery = new Page(pageResult.getPage(),pageResult.getPage_size(),pageResult.getTotal());
@@ -202,7 +199,7 @@ public class MallSpecServiceImpl implements MallSpecService {
      * @Description: 查询单个规格模版
      */
     @Override
-    public MallSpecSingleVO selMallSpecSingleBySpecNo(String specNo) {
+    public MallSpecSingleVO select(String specNo) {
         UserVO userVO = UserRequest.getCurrentUser();
         List<MallSpecValue>  mallSpecValues = mallSpecValueDao.selMallSpecValueBySpecNo(specNo);
         log.info("specNo:{};规格模版值表查询数据库结果:{}",specNo,mallSpecValues);
@@ -228,7 +225,7 @@ public class MallSpecServiceImpl implements MallSpecService {
      * @Version: V1.0
     */
     @Override
-    public List<MallSpecSingleVO> updateMallSpec(MallSpecVO mallSpecVO) {
+    public List<MallSpecSingleVO> update(MallSpecVO mallSpecVO) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         log.info("编辑规格模版入参:{};{}",mallSpecVO,shopNo);
@@ -255,7 +252,7 @@ public class MallSpecServiceImpl implements MallSpecService {
         List<String> specNos = mallSpecDao.selMallSpecNoByShopNo(userVO.getShopNo());
         ArrayList<MallSpecSingleVO> mallSpecSingleVOS = Lists.newArrayList();
         for (String no:specNos) {
-            MallSpecSingleVO mallSpecSingleVO = selMallSpecSingleBySpecNo(no);
+            MallSpecSingleVO mallSpecSingleVO = select(no);
             mallSpecSingleVOS.add(mallSpecSingleVO);
         }
         return mallSpecSingleVOS;

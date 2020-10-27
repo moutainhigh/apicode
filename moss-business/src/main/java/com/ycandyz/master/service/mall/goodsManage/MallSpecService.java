@@ -11,10 +11,10 @@ import com.ycandyz.master.vo.MallSpecVO;
 import java.util.List;
 
 public interface MallSpecService {
-    List<MallSpecSingleVO> addMallSpec(MallSpecVO mallSpecVO);
-    int delMallSpecBySpecNo(String specNo);
-    Page<MallSpecKeyWordVO> selMallSpecByKeyWord(PageResult pageResult, String keyWord);
-    MallSpecSingleVO selMallSpecSingleBySpecNo(String specNo);
+    List<MallSpecSingleVO> insert(MallSpecVO mallSpecVO);
+    int delete(String specNo);
+    Page<MallSpecKeyWordVO> selectByKeyWord(PageResult pageResult, String keyWord);
+    MallSpecSingleVO select(String specNo);
 
-    List<MallSpecSingleVO> updateMallSpec(MallSpecVO mallSpecVO);
+    List<MallSpecSingleVO> update(MallSpecVO mallSpecVO);
 }

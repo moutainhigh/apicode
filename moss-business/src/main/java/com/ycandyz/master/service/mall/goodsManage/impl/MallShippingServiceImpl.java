@@ -1,24 +1,21 @@
 package com.ycandyz.master.service.mall.goodsManage.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingRegionDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallShippingRegionProvinceDao;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingKwDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
+import com.ycandyz.master.dto.mall.MallShippingDTO;
+import com.ycandyz.master.dto.mall.MallShippingKwDTO;
+import com.ycandyz.master.dto.mall.MallShippingRegionDTO;
+import com.ycandyz.master.dto.mall.MallShippingRegionProvinceDTO;
 import com.ycandyz.master.enums.RegionEnum;
 import com.ycandyz.master.enums.SortValueEnum;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallShipping;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegion;
 import com.ycandyz.master.entities.mall.goodsManage.MallShippingRegionProvince;
-import com.ycandyz.master.model.mall.MallOrderVO;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.mall.goodsManage.MallShippingService;
@@ -59,7 +56,7 @@ public class MallShippingServiceImpl implements MallShippingService {
     */
     @Override
     @Transactional
-    public List<MallShippingDTO> addMallShipping(MallShippingVO mallShippingVO) {
+    public List<MallShippingDTO> insert(MallShippingVO mallShippingVO) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         String shippingNo = String.valueOf(IDGeneratorUtils.getLongId());
@@ -88,7 +85,7 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Version: V1.0
     */
     @Override
-    public List<MallShippingDTO> updateMallShipping(MallShippingVO mallShippingVO) {
+    public List<MallShippingDTO> update(MallShippingVO mallShippingVO) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         log.info("编辑模版入参:{};:{}",mallShippingVO,shopNo);
@@ -129,7 +126,7 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description: 根据shippingNo查询运费模版
     */
     @Override
-    public MallShippingDTO selMallShippingByShippingNo(String shippingNo) {
+    public MallShippingDTO select(String shippingNo) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         log.info("根据shippingNo查询运费模版入参:shopNo:{},shippingNo:{}",shopNo,shippingNo);
@@ -166,7 +163,7 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description: 根据关键字查询模版
     */
     @Override
-    public Page<MallShippingKwDTO>  selMallShippingByKeyWord(PageResult pageResult, String shippingName) {
+    public Page<MallShippingKwDTO>  selectByKeyWord(PageResult pageResult, String shippingName) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         log.info("根据关键字查询模版:shopNo:{};shippingName:{}",shopNo,shippingName);
@@ -244,7 +241,7 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @return
     */
     @Override
-    public List<MallShippingRegionProvinceDTO> selMallShippingRegionProvince() {
+    public List<MallShippingRegionProvinceDTO> selectRegion() {
         List<MallShippingRegionProvinceDTO> mallShippingRegionProvinceDTOS = new ArrayList<>();
         MallShippingRegionProvinceDTO mallShippingRegionProvinceDTO = null;
         for (RegionEnum re: RegionEnum.values()) {
@@ -261,7 +258,7 @@ public class MallShippingServiceImpl implements MallShippingService {
      * @Description: 根据shippingNo删除运费模版
     */
     @Override
-    public int delMallShippingByshippingNo(String shippingNo) {
+    public int delete(String shippingNo) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         int mp = mallShippingDao.delMallShippingByshippingNo(shopNo,shippingNo);

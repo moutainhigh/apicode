@@ -1,12 +1,12 @@
-package com.ycandyz.master.controller.mall.goodsManage;
+package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.auth.CurrentUser;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingKwDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallShippingRegionProvinceDTO;
+import com.ycandyz.master.dto.mall.MallShippingDTO;
+import com.ycandyz.master.dto.mall.MallShippingKwDTO;
+import com.ycandyz.master.dto.mall.MallShippingRegionProvinceDTO;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.goodsManage.MallShippingService;
 import com.ycandyz.master.vo.MallShippingVO;
@@ -30,9 +30,9 @@ public class MallShippingController {
 
     @ApiOperation(value = "添加运费模版",notes = "添加",httpMethod = "POST")
     @PostMapping("/shipping")
-    public ReturnResponse<List<MallShippingDTO>> addMallShipping(@RequestBody MallShippingVO mallShippingVO){
+    public ReturnResponse<List<MallShippingDTO>> insert(@RequestBody MallShippingVO mallShippingVO){
         log.info("添加运费模版请求:{}",mallShippingVO);
-        List<MallShippingDTO> mallShippingDTOS = mallShippingService.addMallShipping(mallShippingVO);
+        List<MallShippingDTO> mallShippingDTOS = mallShippingService.insert(mallShippingVO);
         return ReturnResponse.success(mallShippingDTOS);
     }
 
@@ -41,8 +41,8 @@ public class MallShippingController {
             @ApiImplicitParam(name="keyWord",value="关键字",required=true,dataType="String")
     })
     @GetMapping("/shipping")
-    public ReturnResponse<Object> selMallShippingByKeyWord(PageResult pageResult, @RequestParam(value = "keyWord") String keyWord){
-        Page<MallShippingKwDTO> mallShipping = mallShippingService.selMallShippingByKeyWord(pageResult,keyWord);
+    public ReturnResponse<Object> selectByKeyWord(PageResult pageResult, @RequestParam(value = "keyWord") String keyWord){
+        Page<MallShippingKwDTO> mallShipping = mallShippingService.selectByKeyWord(pageResult,keyWord);
         if (mallShipping != null){
             log.info("关键字:{}；查询运费模版结果{}",keyWord,mallShipping);
             return ReturnResponse.success(mallShipping);
@@ -52,16 +52,16 @@ public class MallShippingController {
 
     @ApiOperation(value = "查询配送区域",notes = "查询",httpMethod = "GET")
     @GetMapping("/shipping/region")
-    public ReturnResponse<List<MallShippingRegionProvinceDTO>> selMallShippingRegionProvince(){
-        List<MallShippingRegionProvinceDTO> mallShippingRegionProvince = mallShippingService.selMallShippingRegionProvince();
+    public ReturnResponse<List<MallShippingRegionProvinceDTO>> selectRegion(){
+        List<MallShippingRegionProvinceDTO> mallShippingRegionProvince = mallShippingService.selectRegion();
         log.info("查询配送区域结果:{}",mallShippingRegionProvince);
         return ReturnResponse.success(mallShippingRegionProvince);
     }
 
     @ApiOperation(value = "删除运费模版",notes = "删除",httpMethod = "DELETE")
     @DeleteMapping("/shipping/{shippingNo}")
-    public ReturnResponse delMallShippingByshippingNo(@PathVariable(value = "shippingNo") String shippingNo, @CurrentUser UserVO userVO){
-        int count = mallShippingService.delMallShippingByshippingNo(shippingNo);
+    public ReturnResponse delete(@PathVariable(value = "shippingNo") String shippingNo, @CurrentUser UserVO userVO){
+        int count = mallShippingService.delete(shippingNo);
         if (count > 0) {
             return ReturnResponse.success(null);
         }
@@ -70,8 +70,8 @@ public class MallShippingController {
 
     @ApiOperation(value = "查询单个运费模版",notes = "查询",httpMethod = "GET")
     @GetMapping("/shipping/{shippingNo}")
-    public ReturnResponse<Object> selMallShippingByShippingNo(@PathVariable(value = "shippingNo") String shippingNo,@CurrentUser UserVO userVO){
-        MallShippingDTO mallShippingDTO = mallShippingService.selMallShippingByShippingNo(shippingNo);
+    public ReturnResponse<Object> select(@PathVariable(value = "shippingNo") String shippingNo,@CurrentUser UserVO userVO){
+        MallShippingDTO mallShippingDTO = mallShippingService.select(shippingNo);
         if (mallShippingDTO != null){
             log.info("shippingNo:{}；根据shippingNo查询模版结果:{}",shippingNo,mallShippingDTO);
             return ReturnResponse.success(mallShippingDTO);
@@ -81,9 +81,9 @@ public class MallShippingController {
 
     @ApiOperation(value = "编辑运费模版",notes = "put",httpMethod = "PUT")
     @PutMapping("/shipping")
-    public ReturnResponse<List<MallShippingDTO>> updateMallShipping(@RequestBody MallShippingVO mallShippingVO, @CurrentUser UserVO userVO){
+    public ReturnResponse<List<MallShippingDTO>> update(@RequestBody MallShippingVO mallShippingVO, @CurrentUser UserVO userVO){
         log.info("修改运费模版请求参数:{}",mallShippingVO);
-        List<MallShippingDTO> mallShippingDTOS = mallShippingService.updateMallShipping(mallShippingVO);
+        List<MallShippingDTO> mallShippingDTOS = mallShippingService.update(mallShippingVO);
         return ReturnResponse.success(mallShippingDTOS);
     }
 }

@@ -1,4 +1,4 @@
-package com.ycandyz.master.dto.mall.goodsManage;
+package com.ycandyz.master.dto.mall;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import com.ycandyz.master.dao.mall.goodsManage.MallItemDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSkuDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallSkuSpecDao;
-import com.ycandyz.master.dto.mall.goodsManage.MallCategoryDTO;
-import com.ycandyz.master.dto.mall.goodsManage.MallItemDTO;
+import com.ycandyz.master.dto.mall.MallCategoryDTO;
+import com.ycandyz.master.dto.mall.MallItemDTO;
 import com.ycandyz.master.enums.SortValueEnum;
 import com.ycandyz.master.entities.PickupAddress;
 import com.ycandyz.master.entities.mall.goodsManage.MallItem;
@@ -62,7 +62,7 @@ public class MallItemServiceImpl implements MallItemService {
     */
     @Override
     @Transactional
-    public void addMallItem(MallItemVO mallItemVO) {
+    public void insert(MallItemVO mallItemVO) {
         UserVO userVO = UserRequest.getCurrentUser();
         log.info("添加商品入参::mallItemVO:{};userVO:{}",mallItemVO,userVO);
         String itemNo = String.valueOf(IDGeneratorUtils.getLongId());
@@ -124,7 +124,7 @@ public class MallItemServiceImpl implements MallItemService {
      * @Description: 查询商品详情
     */
     @Override
-    public MallItemDTO selMallItemByitemNo(String itemNo) {
+    public MallItemDTO select(String itemNo) {
         UserVO userVO = UserRequest.getCurrentUser();
        log.info("查询商品详情入参userVO:{};itemNo:{}",userVO,itemNo);
         MallItemDTO mallItemDTO = new MallItemDTO();
@@ -154,7 +154,7 @@ public class MallItemServiceImpl implements MallItemService {
                 mallSkuVOs.add(mallSkuVO);
             }
         }
-        MallCategoryDTO mallCategoryDTO = mallCategoryService.selCategoryByCategoryNo(mallItem.getCategoryNo());
+        MallCategoryDTO mallCategoryDTO = mallCategoryService.select(mallItem.getCategoryNo());
         if (mallCategoryDTO != null){
             mallItemDTO.setCategorNo(mallItem.getCategoryNo());
             mallItemDTO.setCategoryName(mallCategoryDTO.getCategoryName());
@@ -194,7 +194,7 @@ public class MallItemServiceImpl implements MallItemService {
      * @Description: 上下架商品
     */
     @Override
-    public int oprbyItemNo(MallItemOprVO mallItemOprVO) {
+    public int opr(MallItemOprVO mallItemOprVO) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         int i = 0;
@@ -209,7 +209,7 @@ public class MallItemServiceImpl implements MallItemService {
      * @Description: 删除商品
     */
     @Override
-    public int delMallItemByItemNo(String itemNo) {
+    public int delete(String itemNo) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         int r = mallItemDao.delMallItemByItemNo(shopNo,itemNo);
@@ -220,7 +220,7 @@ public class MallItemServiceImpl implements MallItemService {
      * @Description: 编辑商品
     */
     @Override
-    public void updateMallItem(MallItemVO mallItemVO) {
+    public void update(MallItemVO mallItemVO) {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
         log.info("编辑商品入参:{};:{}",mallItemVO,shopNo);

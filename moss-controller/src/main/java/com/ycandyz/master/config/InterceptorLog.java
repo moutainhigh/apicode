@@ -1,6 +1,6 @@
 package com.ycandyz.master.config;
 
-import com.ycandyz.master.constants.LogConstant;
+import com.ycandyz.master.constant.LogConstant;
 import com.ycandyz.master.utils.TraceIdUtil;
 import org.slf4j.MDC;
 import org.springframework.core.annotation.Order;

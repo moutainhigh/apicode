@@ -1,4 +1,4 @@
-package com.ycandyz.master.dto.mall.goodsManage;
+package com.ycandyz.master.dto.mall;
 
 import com.ycandyz.master.entities.PickupAddress;
 import com.ycandyz.master.vo.MallSkuVO;

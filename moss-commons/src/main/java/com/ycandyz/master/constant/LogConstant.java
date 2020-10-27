@@ -1,4 +1,4 @@
-package com.ycandyz.master.constants;
+package com.ycandyz.master.constant;
 
 /**
  * @author: WangYang

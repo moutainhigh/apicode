@@ -1,12 +1,13 @@
-package com.ycandyz.master.dto.mall.goodsManage;
+package com.ycandyz.master.dto.mall;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Data
-public class MallShippingDTO {
+public class MallShippingKwDTO {
+
+    @ApiModelProperty(value = "运费模版编号")
+    private String shippingNo;
 
     @ApiModelProperty(value = "运费模版名称")
     private String shippingName;
@@ -16,4 +17,10 @@ public class MallShippingDTO {
 
     @ApiModelProperty(value = "地区")
     private MallShippingRegionDTO[] regions;
+
+    @ApiModelProperty(value = "createdStr")
+    private String createdStr;
+
+    @ApiModelProperty(value = "updatedStr")
+    private String updatedStr;
 }

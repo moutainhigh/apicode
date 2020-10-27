@@ -1,13 +1,10 @@
-package com.ycandyz.master.dto.mall.goodsManage;
+package com.ycandyz.master.dto.mall;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class MallShippingKwDTO {
-
-    @ApiModelProperty(value = "运费模版编号")
-    private String shippingNo;
+public class MallShippingDTO {
 
     @ApiModelProperty(value = "运费模版名称")
     private String shippingName;
@@ -17,10 +14,4 @@ public class MallShippingKwDTO {
 
     @ApiModelProperty(value = "地区")
     private MallShippingRegionDTO[] regions;
-
-    @ApiModelProperty(value = "createdStr")
-    private String createdStr;
-
-    @ApiModelProperty(value = "updatedStr")
-    private String updatedStr;
 }
