@@ -100,7 +100,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     //订单列表显示商品名称数组
                     List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
 
-                    Map<String, String> itemMap = mallOrderDTO.getDetails().stream().collect(Collectors.toMap(MallOrderDetailDTO::getItemNo,MallOrderDetailDTO::getItemName));
+                    Map<String, String> itemMap = mallOrderDTO.getDetails().stream().collect(Collectors.toMap(k->k.getItemNo()+"#"+k.getSkuNo(),MallOrderDetailDTO::getItemName));
                     if (itemMap!=null){
                         List<MallItemByMallOrderVO> mallItemByMallOrderVOS = new ArrayList<>();
                         MallItemByMallOrderVO mallItemByMallOrderVO = null;
@@ -108,7 +108,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             mallItemByMallOrderVO = new MallItemByMallOrderVO();
                             String key = (String) entrySet.getKey();
                             String value = (String) entrySet.getValue();
-                            mallItemByMallOrderVO.setItemNo(key);
+                            mallItemByMallOrderVO.setItemNo(key.split("#")[0]);
+                            mallItemByMallOrderVO.setSkuNo(key.split("#")[1]);
                             mallItemByMallOrderVO.setItemName(value);
                             mallItemByMallOrderVOS.add(mallItemByMallOrderVO);
                         }
@@ -147,6 +148,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
         }catch (Exception e){
+            log.error(e.getMessage(),e);
             page = new Page<>(0,10,0);
         }
         page1.setPages(page.getPages());
@@ -235,6 +237,19 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 mallOrderDTO.getDetails().forEach(orderDetail->{
                     MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
                     BeanUtils.copyProperties(orderDetail,mallOrderDetailVO);
+
+                    //查询佣金流水表
+                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderDetailNo(mallOrderDetailVO.getOrderDetailNo());
+                    if (mallSocialShareFlowDTOs!=null && mallSocialShareFlowDTOs.size()>0){
+                        List<MallSocialShareFlowVO> flowList = new ArrayList<>();
+                        mallSocialShareFlowDTOs.forEach(dto->{
+                            MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
+                            BeanUtils.copyProperties(dto,mallSocialShareFlowVO);
+                            flowList.add(mallSocialShareFlowVO);
+                        });
+                        mallOrderDetailVO.setShareFlowInfo(flowList);
+                    }
+
                     detailVOList.add(mallOrderDetailVO);
                 });
                 mallOrderVO.setDetails(detailVOList);
@@ -351,17 +366,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
 
-            //查询佣金流水表
-            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderNo(mallOrderVO.getOrderNo());
-            if (mallSocialShareFlowDTOs!=null && mallSocialShareFlowDTOs.size()>0){
-                List<MallSocialShareFlowVO> flowList = new ArrayList<>();
-                mallSocialShareFlowDTOs.forEach(dto->{
-                    MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
-                    BeanUtils.copyProperties(dto,mallSocialShareFlowVO);
-                    flowList.add(mallSocialShareFlowVO);
-                });
-                mallOrderVO.setShareInfo(flowList);
-            }
         }
         return ReturnResponse.success(mallOrderVO);
     }

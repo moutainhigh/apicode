@@ -168,7 +168,7 @@
             order by mo.order_at DESC
     </select>
 
-    <select id="getTrendMallOrder" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
+    <select id="getTrendMallOrder" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultMap="BaseOrderListResultMap">
         SELECT
         mo.id,
         cart.order_sn,
@@ -455,7 +455,6 @@
         left join mall_order_detail modetail on mo.order_no=modetail.order_no
         left join mall_shop_shipping ship on mo.order_no=ship.order_no
         where mo.order_no = #{orderNo}
-        group by mo.id
     </select>
 
 

@@ -352,22 +352,45 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     public void exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO, HttpServletResponse response) {
         mallafterSalesQuery.setShopNo(userVO.getShopNo());
         List<MallAfterSalesDTO> list = mallAfterSalesDao.getTrendMallAfterSalesList(mallafterSalesQuery);
+
+        list.forEach(dto->{
+            //拼接state字段
+            Integer subStatus = dto.getSubStatus();
+            Integer state = null;
+            if (subStatus!=null){
+                if (subStatus==1010){
+                    state = 1;
+                }else if (subStatus==1030){
+                    state = 2;
+                }else if (subStatus==1050 || subStatus==2010){
+                    state = 3;
+                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030){
+                    state = 4;
+                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050){
+                    state = 6;
+                }else {
+                    state = 5;
+                }
+            }
+            dto.setState(state);
+        });
+
         // 通过工具类创建writer，默认创建xls格式
         ExcelWriter writer = ExcelUtil.getWriter();
         //自定义标题别名
-        writer.addHeaderAlias("cartOrderSn", "母订单编号");
+        writer.addHeaderAlias("afterSalesNo", "售后编号");
         writer.addHeaderAlias("orderNo", "订单编号");
         writer.addHeaderAlias("itemName", "商品名称");
-        writer.addHeaderAlias("allMoney", "总计金额");
-        writer.addHeaderAlias("payType", "支付方式");
-        writer.addHeaderAlias("status", "状态");
-        writer.addHeaderAlias("afterSalesStatus", "售后");
-        writer.addHeaderAlias("payuser", "购买用户");
-        writer.addHeaderAlias("receiverName", "收货人");
-        writer.addHeaderAlias("receiverAddress", "收货地址");
-        writer.addHeaderAlias("orderAt", "下单时间");
-        writer.addHeaderAlias("paymentTime", "支付时间");
-        writer.addHeaderAlias("receiveAt", "收货时间");
+        writer.addHeaderAlias("goodsNo", "货号");
+        writer.addHeaderAlias("payType", "售后类型");
+        writer.addHeaderAlias("status", "售后状态");
+        writer.addHeaderAlias("afterSalesStatus", "退款数量");
+        writer.addHeaderAlias("payuser", "退款金额（元）");
+        writer.addHeaderAlias("receiverName", "总计金额（元）");
+        writer.addHeaderAlias("receiverAddress", "支付方式");
+        writer.addHeaderAlias("orderAt", "购买数量");
+        writer.addHeaderAlias("paymentTime", "购买用户");
+        writer.addHeaderAlias("receiveAt", "售后申请时间");
         // 一次性写出内容，使用默认样式，强制输出标题
         writer.write(list, true);
         //out为OutputStream，需要写出到的目标流
