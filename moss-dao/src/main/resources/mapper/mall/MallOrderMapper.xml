@@ -24,6 +24,7 @@
         <result column="deliver_method" property="deliverMethod" />
         <result column="shippingMoney" property="shippingMoney" />
         <result column="order_type" property="orderType" />
+        <result column="all_money" property="allMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -48,6 +49,8 @@
             mo.real_money,
             mo.total_money,
             mo.payed_at,
+            mo.order_at,
+            mo.receive_at,
             mo.pay_type,
             mo.`status`,
             mo.`after_sales_status`,
@@ -59,6 +62,7 @@
             ship.receiver_address AS receiverAddress,
             mo.receive_at,
             mo.order_type,
+            mo.all_money,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,

@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.mall.impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
@@ -115,7 +116,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
                     mallOrderVo.setItemName(itemNames);
                     //订单列表显示商品货号数组
-                    List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).collect(Collectors.toList());
+                    List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).filter(x->x!=null && !"".equals(x)).collect(Collectors.toList());
                     mallOrderVo.setGoodsNo(goodsNos);
                     List<Integer> skuQuantity = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getSkuQuantity).collect(Collectors.toList());
                     if (skuQuantity!=null && skuQuantity.size()>0){
@@ -159,8 +160,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public void exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO, HttpServletResponse response){
         mallOrderQuery.setShopNo(userVO.getShopNo());
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
+//        List<Map<String, Object>> maps = list.
         // 通过工具类创建writer，默认创建xls格式
         ExcelWriter writer = ExcelUtil.getWriter();
+//        writer.merge(list1.size() - 1, "测试标题");
         //自定义标题别名
         writer.addHeaderAlias("cartOrderSn", "母订单编号");
         writer.addHeaderAlias("orderNo", "订单编号");
@@ -181,7 +184,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         //response为HttpServletResponse对象
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
         //test.xls是弹出下载对话框的文件名，不能为中文，中文请自行编码
-        String name = "Order-list";
+        String name = DateUtil.format(new Date(), "yyyy年MM月dd日") +"全部订单导出";
         response.setHeader("Content-Disposition","attachment;filename="+name+".xls");
         ServletOutputStream out= null;
         try {
@@ -415,5 +418,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         }
         return ReturnResponse.failed("未查询到待自提订单");
     }
+
 
 }
