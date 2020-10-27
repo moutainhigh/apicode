@@ -4,7 +4,7 @@
 
     <resultMap id="BaseOrderListResultMap" type="com.ycandyz.master.dto.mall.MallOrderDTO">
         <id column="id" jdbcType="BIGINT" property="id" />
-        <result column="order_sn" property="orderSn" />
+        <result column="order_sn" property="cartOrderSn" />
         <result column="order_no" property="orderNo" />
         <result column="shop_no" property="shopNo" />
         <result column="cart_order_id" property="cartOrderSn" />
