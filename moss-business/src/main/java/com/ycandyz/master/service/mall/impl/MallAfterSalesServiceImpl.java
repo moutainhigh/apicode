@@ -323,7 +323,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         boolean flag = false;
         MallAfterSales mallAfterSales = mallAfterSalesDao.selectById(mallafterSalesQuery.getId());
         if (mallAfterSales!=null){
-            if (StringUtil.isEmpty(mallAfterSales.getShopNo()) || userVO.getShopNo().equals(mallAfterSales.getShopNo())){  //鉴权用户
+            if (StringUtils.isEmpty(mallAfterSales.getShopNo()) || userVO.getShopNo().equals(mallAfterSales.getShopNo())){  //鉴权用户
                 if (mallAfterSales.getStatus()==10 && Objects.equals(mallAfterSales.getSubStatus(),1010)){
                     mallAfterSales.setSubStatus(mallafterSalesQuery.getSubStatus());
                     mallAfterSales.setAuditFirstAt(new Date().getTime());
