@@ -3,9 +3,8 @@ package com.ycandyz.master.service.mall.impl;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.util.StringUtil;
-import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
@@ -15,6 +14,7 @@ import com.ycandyz.master.dto.mall.*;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallAfterSalesLog;
 import com.ycandyz.master.entities.mall.MallOrder;
+import com.ycandyz.master.entities.mall.MallOrderDetail;
 import com.ycandyz.master.enums.SalesEnum;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
@@ -51,6 +51,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
     @Autowired
     private MallShopDao mallShopDao;
+
+    @Autowired
+    private MallOrderDetailDao mallOrderDetailDao;
 
     @Override
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
@@ -138,17 +141,38 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             BeanUtils.copyProperties(mallAfterSalesDTO,mallAfterSalesVO);
 
             MallOrderByAfterSalesDTO mallOrderByAfterSalesDTO = mallAfterSalesDTO.getOrder();
+            Integer orderType = null;   //订单的类型，用来区分是新老订单
             if (mallOrderByAfterSalesDTO!=null){
                 //关联订单
                 MallOrderByAfterSalesVO mallOrderByAfterSalesVO = new MallOrderByAfterSalesVO();
                 BeanUtils.copyProperties(mallOrderByAfterSalesDTO, mallOrderByAfterSalesVO);
                 mallAfterSalesVO.setOrder(mallOrderByAfterSalesVO);
+                orderType = mallOrderByAfterSalesDTO.getOrderType();
             }
+
+            //订单详情
             MallOrderDetailByAfterSalesDTO mallOrderDetailByAfterSalesDTO = mallAfterSalesDTO.getDetails();
-            if (mallOrderDetailByAfterSalesDTO!=null){
-                //关联订单详情
-                MallOrderDetailByAfterSalesVO mallOrderDetailByAfterSalesVO = new MallOrderDetailByAfterSalesVO();
-                BeanUtils.copyProperties(mallOrderDetailByAfterSalesDTO,mallOrderDetailByAfterSalesVO);
+            if (mallOrderDetailByAfterSalesDTO==null){
+                MallOrderDetailByAfterSalesVO mallOrderDetailByAfterSalesVO = null;
+                //售后订单的详情是空
+                if (orderType!=null && orderType==1){   //老订单
+                    MallOrderDetail mallOrderDetail = mallOrderDetailDao.selectOne(new QueryWrapper<MallOrderDetail>().eq("order_no",mallOrderByAfterSalesDTO.getOrderNo()));
+                    if (mallOrderDetail!=null){
+                        mallOrderDetailByAfterSalesVO = new MallOrderDetailByAfterSalesVO();
+                        mallOrderDetailByAfterSalesVO.setGoodsNo(mallOrderDetail.getGoodsNo());
+                        mallOrderDetailByAfterSalesVO.setItemCover(mallOrderDetail.getItemCover());
+                        mallOrderDetailByAfterSalesVO.setItemName(mallOrderDetail.getItemName());
+                        mallOrderDetailByAfterSalesVO.setItemNo(mallOrderDetail.getItemNo());
+                        mallOrderDetailByAfterSalesVO.setOrderDetailNo(mallOrderDetail.getOrderDetailNo());
+                        mallOrderDetailByAfterSalesVO.setOrderNo(mallOrderDetail.getOrderNo());
+                        mallOrderDetailByAfterSalesVO.setPrice(mallOrderDetail.getPrice());
+                        mallOrderDetailByAfterSalesVO.setQuantity(mallOrderDetail.getQuantity());
+                        mallOrderDetailByAfterSalesVO.setSkuNo(mallOrderDetail.getSkuNo());
+                    }
+                }else {     //新订单
+                    mallOrderDetailByAfterSalesVO = new MallOrderDetailByAfterSalesVO();
+                    BeanUtils.copyProperties(mallOrderDetailByAfterSalesDTO,mallOrderDetailByAfterSalesVO);
+                }
                 mallAfterSalesVO.setDetails(mallOrderDetailByAfterSalesVO);
 
                 //MallOrderDetail中的item信息拼接
