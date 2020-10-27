@@ -203,4 +203,6 @@ public class MallOrderDTO {
     private Integer asStatus;
     @ApiModelProperty(value = "运费")
     private BigDecimal shippingMoney;
+    @ApiModelProperty(value = "所属企业")
+    private String organizeName;
 }

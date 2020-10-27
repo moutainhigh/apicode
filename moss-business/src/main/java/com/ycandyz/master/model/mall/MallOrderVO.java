@@ -209,6 +209,8 @@ public class MallOrderVO {
     private BigDecimal shippingMoney;
     @ApiModelProperty(value = "关联订单详情商品信息表")
     private List<MallItemByMallOrderVO> itemInfoList;
+    @ApiModelProperty(value = "所属企业")
+    private String organizeName;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")

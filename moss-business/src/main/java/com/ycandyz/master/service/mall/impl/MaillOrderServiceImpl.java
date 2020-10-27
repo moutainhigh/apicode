@@ -15,6 +15,7 @@ import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
+import com.ycandyz.master.utils.MapUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,26 +161,47 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public void exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO, HttpServletResponse response){
         mallOrderQuery.setShopNo(userVO.getShopNo());
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
+        list.forEach(mall->{
+            if (mall.getAfterSalesStatus()==0){
+                mall.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+            }else {
+                if (mall.getAfterSalesEndAt()!=null && mall.getAfterSalesEndAt()>new Date().getTime()/1000){
+                    mall.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                }else {
+                    mall.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                }
+            }
+        });
 //        List<Map<String, Object>> maps = list.
         // 通过工具类创建writer，默认创建xls格式
         ExcelWriter writer = ExcelUtil.getWriter();
 //        writer.merge(list1.size() - 1, "测试标题");
         //自定义标题别名
         writer.addHeaderAlias("cartOrderSn", "母订单编号");
-        writer.addHeaderAlias("orderNo", "订单编号");
+        writer.addHeaderAlias("orderNo", "子订单编号");
+        writer.addHeaderAlias("organizeName", "所属企业");
         writer.addHeaderAlias("itemName", "商品名称");
-        writer.addHeaderAlias("allMoney", "总计金额");
+        writer.addHeaderAlias("goodsNo", "货号");
+        writer.addHeaderAlias("allMoney", "总计金额(¥)");
         writer.addHeaderAlias("payType", "支付方式");
+        writer.addHeaderAlias("quantity", "购买数量");
         writer.addHeaderAlias("status", "状态");
-        writer.addHeaderAlias("afterSalesStatus", "售后");
+        writer.addHeaderAlias("isEnableShare", "是否分销");
+        writer.addHeaderAlias("sellerUserName", "分销合伙人");
+        writer.addHeaderAlias("shareAmount", "分佣金额统计");
+        writer.addHeaderAlias("asStatus", "售后");
         writer.addHeaderAlias("payuser", "购买用户");
         writer.addHeaderAlias("receiverName", "收货人");
-        writer.addHeaderAlias("receiverAddress", "收货地址");
-        writer.addHeaderAlias("orderAt", "下单时间");
-        writer.addHeaderAlias("paymentTime", "支付时间");
-        writer.addHeaderAlias("receiveAt", "收货时间");
+        writer.addHeaderAlias("receiverAddress", "收货人地址");
+        writer.addHeaderAlias("orderAtStr", "下单时间");
+        writer.addHeaderAlias("payedAtStr", "支付时间");
+        writer.addHeaderAlias("receiveAtStr", "收货时间");
+        List<String> containsList = Arrays.asList("cartOrderSn","orderNo","organizeName","itemName","goodsNo","allMoney",
+                "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
+                "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
+        List<Map<String, Object>> result = MapUtil.beanToMap(list,containsList);
         // 一次性写出内容，使用默认样式，强制输出标题
-        writer.write(list, true);
+        writer.write(result, true);
         //out为OutputStream，需要写出到的目标流
         //response为HttpServletResponse对象
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
