@@ -4,6 +4,7 @@
 
     <resultMap id="BaseOrderListResultMap" type="com.ycandyz.master.dto.mall.MallOrderDTO">
         <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="order_sn" property="orderSn" />
         <result column="order_no" property="orderNo" />
         <result column="shop_no" property="shopNo" />
         <result column="cart_order_id" property="cartOrderSn" />
@@ -165,31 +166,42 @@
 
     <select id="getTrendMallOrder" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
         SELECT
-        mo.id as id,
-        cart.order_sn as cartOrderSn,
-        mo.order_no as orderNo,
-        group_concat(modetail.item_name) as	itemName,
-        /**货号*/
-        mo.all_money as allMoney,
-        mo.pay_type as payType,
-        /**数量*/
-        mo.`status` as status,
-        mo.after_sales_status as afterSalesStatus,
-        concat(u.`name`,' ',u.phone) as payuser,
-        concat(ship.receiver,' ',ship.receiver_phone) as receiverName,
-        ship.receiver_address as receiverAddress,
-        mo.order_at as orderAt,
-        cart.payment_time as paymentTime,
-        mo.receive_at as receiveAt
+        mo.id,
+        cart.order_sn,
+        mo.order_no,
+        mo.real_money,
+        mo.total_money,
+        mo.payed_at,
+        mo.pay_type,
+        mo.`status`,
+        mo.`after_sales_status`,
+        mo.`deliver_type`,
+        mo.`deliver_method`,
+        mo.all_money-mo.real_money as shippingMoney,
+        concat( u.`name`, ' ', u.phone ) AS payuser,
+        concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
+        ship.receiver_address AS receiverAddress,
+        mo.receive_at,
+        mo.order_type,
+        modetail.item_no,
+        modetail.item_name,
+        modetail.goods_no,
+        modetail.sku_no,
+        modetail.quantity AS skuQuantity,
+        modetail.item_cover,
+        modetail.is_enable_share,
+        modetail.share_user_id,
+        uu.`name` as sellerUserName,
+        uu.phone as sellerUserPhone,
+        s.amount as shareAmount
         FROM
-        mall_cart_order cart
-        LEFT JOIN mall_order mo ON cart.id = mo.cart_order_id
-        LEFT JOIN mall_order_detail modetail ON mo.order_no=modetail.order_no
-        LEFT JOIN user u ON mo.user_id=u.id
-        LEFT JOIN mall_shop_shipping ship ON ship.order_no=mo.order_no
-        <if test="p.socialPartner != null and p.socialPartner != ''">
-            LEFT JOIN (select modetail.order_no FROM mall_order_detail modetail LEFT JOIN user u ON modetail.share_user_id=u.id WHERE u.`name` like concat('%',#{p.socialPartner},'%') OR u.phone like concat('%',#{p.socialPartner},'%')) a ON mo.order_no=a.order_no /**合伙人*/
-        </if>
+        mall_order mo
+        LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
+        LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
+        LEFT JOIN user u ON mo.user_id = u.id
+        LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
+        left join mall_social_share_flow s on s.order_detail_no = modetail.order_detail_no and s.share_type = 1
+        left join user as uu on uu.id = s.user_id
         WHERE
         mo.shop_no=#{p.shopNo} and mo.is_del=0
         <if test="p.orderNo != null and p.orderNo != ''">
@@ -198,7 +210,7 @@
         </if>
         <if test="p.mallName != null and p.mallName != ''">
             and
-            (modetail.item_no like concat('%',#{p.mallName},'%') OR modetail.item_name like concat('%',#{p.mallName},'%')) /**商品名称或者编号*/
+            (modetail.goods_no like concat('%',#{p.mallName},'%') OR modetail.item_name like concat('%',#{p.mallName},'%')) /**商品名称或者编号*/
         </if>
         <if test="p.userMes != null and p.userMes != ''">
             and
@@ -208,7 +220,7 @@
             and
             (ship.receiver like concat('%',#{p.consignor},'%') OR u.phone like concat('%',#{p.consignor},'%'))	/**收货人名称或者手机号*/
         </if>
-        <if test="p.deliverType != null">
+        <if test="p.deliverType != null and p.deliverType != ''">
             and
             mo.deliver_type=#{p.deliverType}	/**发货方式:1-配送 2-自提*/
         </if>
@@ -246,7 +258,34 @@
             <if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
             <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>
         </if>
-        group by mo.id
+        <if test="p.status != null">
+            and mo.status=#{p.status}
+        </if>
+        <if test="p.socialPartner != null and p.socialPartner != ''">
+            and
+            (uu.`name` like concat('%',#{p.socialPartner},'%') OR uu.phone like concat('%',#{p.socialPartner},'%')) /**合伙人*/
+        </if>
+        <if test="p.sendAtForm != null">
+            and
+            from_unixtime(mo.send_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.sendAtForm} /**收货时间*/
+        </if>
+        <if test="p.sendAtTo != null">
+            and
+            from_unixtime(mo.send_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.sendAtTo} /**收货时间*/
+        </if>
+        <if test="p.cancelAtForm != null">
+            and
+            from_unixtime(mo.cancel_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.cancelAtForm} /**收货时间*/
+        </if>
+        <if test="p.cancelAtTo != null">
+            and
+            from_unixtime(mo.cancel_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.cancelAtTo} /**收货时间*/
+        </if>
+        <if test="p.cancelReason != null">
+            and mo.cancel_reason=#{p.cancelReason}
+        </if>
+        /**group by mo.id*/
+        order by mo.order_at DESC
     </select>
 
     <select id="queryDetailByOrderNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">

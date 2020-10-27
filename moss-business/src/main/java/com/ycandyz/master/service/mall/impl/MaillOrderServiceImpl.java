@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -78,7 +79,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             if (page.getRecords()!=null && page.getRecords().size()>0) {
                 for (MallOrderDTO mallOrderDTO : page.getRecords()) {
                     if (mallOrderDTO.getCartOrderSn()==null || "".equals(mallOrderDTO.getCartOrderSn())){
-                        mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());
+                        mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
                     }
                     if (mallOrderDTO.getAfterSalesStatus()!=null){
                         //修改售后返回值给前端
@@ -122,6 +123,25 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         mallOrderVo.setQuantity(quantity);
                     }
                     list.add(mallOrderVo);
+
+                    //订单列表显示分销合伙人，分销金额统计
+                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryByOrderNo(mallOrderVo.getOrderNo());
+                    Integer isEnableShare = 0;
+                    if (mallSocialShareFlowDTOS!=null && mallSocialShareFlowDTOS.size()>0){
+                        List<String> sellerUserList = new ArrayList<>();
+                        List<String> shareAmountList = new ArrayList<>();
+                        mallSocialShareFlowDTOS.forEach(dto->{
+                            String sellerUser = dto.getUserName()+" "+dto.getPhoneNo();
+                            sellerUserList.add(sellerUser); //分销合伙人
+
+                            String shareAmount = dto.getAmount().toString();
+                            shareAmountList.add(shareAmount);   //分销佣金
+                        });
+                        mallOrderVo.setShareAmount(shareAmountList);
+                        mallOrderVo.setSellerUserName(sellerUserList);
+                        isEnableShare = 1;  //是否分销
+                    }
+                    mallOrderVo.setIsEnableShare(isEnableShare);
                 }
             }
         }catch (Exception e){

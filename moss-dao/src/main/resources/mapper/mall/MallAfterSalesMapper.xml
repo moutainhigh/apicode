@@ -205,23 +205,49 @@
 
     <select id="getTrendMallAfterSalesList" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
         SELECT
-        sales.after_sales_no as afterSalesNo,
-        sales.order_no as orderNo,
-        sales.order_detail_no as orderDetailNo,
-        modetail.item_name as itemName,
-        modetail.goods_no as goodsNo,
-        sales.status as status,
-        sales.sub_status as subStatus,
+        sales.id as id,
+        sales.after_sales_no,
+        sales.order_no,
+        sales.order_detail_no,
+        sales.created_at,
+        sales.reason,
+        sales.remark,
+        sales.photos,
         sales.quantity as skuQuantity,
-        sales.money as money,
-        modetail.real_money as realMoney,
-        mo.pay_type as payType,
-        modetail.quantity as detailQuantity,
+        sales.price as skuPrice,
+        sales.money,
+        sales.send_at,
+        sales.receive_at,
+        sales.status,
+        sales.sub_status,
+        sales.close_at,
+        sales.apply_at,
+        sales.audit_first_at,
+        sales.audit_second_at,
         concat(u.`name`,' ',u.phone) as userName,
-        sales.apply_at as applyAt
+
+        mo.shop_no,
+        mo.order_no as moOrderNo,
+        mo.status as moStatus,
+        mo.total_money,
+        mo.real_money,
+        mo.deliver_method,
+        mo.pay_type,
+        mo.all_money-mo.real_money as shipping_money,
+
+        modetail.order_no as detailOrderNo,
+        modetail.order_detail_no as orderDetailNo,
+        modetail.item_no,
+        modetail.item_name,
+        modetail.item_cover,
+        modetail.goods_no,
+        modetail.sku_no,
+        modetail.quantity as detailQuantity,
+        modetail.price as detailPrice
         FROM
         mall_after_sales sales
         LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
+        left join mall_order mo on modetail.order_no=mo.order_no
         LEFT JOIN user u ON sales.user_id=u.id
         WHERE
         sales.shop_no=#{p.shopNo}
@@ -237,9 +263,31 @@
             and
             sales.status=#{p.status}
         </if>
-        <if test="p.subStatus != null">
-            and
-            sales.sub_status=#{p.subStatus}
+        <if test="p.state != null">
+            <if test="p.state==1">
+                and
+                sales.sub_status=1010
+            </if>
+            <if test="p.state==2">
+                and
+                sales.sub_status=1030
+            </if>
+            <if test="p.state==3">
+                and
+                (sales.sub_status=1050 or sales.sub_status=2010)
+            </if>
+            <if test="p.state==4">
+                and
+                (sales.sub_status=1080 or sales.sub_status=2020 or sales.sub_status=2030)
+            </if>
+            <if test="p.state==6">
+                and
+                (sales.sub_status=1020 or sales.sub_status=1040 or sales.sub_status=1060 or sales.sub_status=2050)
+            </if>
+            <if test="p.state==5">
+                and
+                sales.sub_status=1090
+            </if>
         </if>
         <if test="p.applyAtFrom != null">
             and
