@@ -25,6 +25,7 @@
             `level` as level
         from mall_social_share_flow
         where order_no=#{orderNo}
+        and `level`=1
     </select>
 
     <select id="queryByOrderDetailNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallSocialShareFlowDTO">

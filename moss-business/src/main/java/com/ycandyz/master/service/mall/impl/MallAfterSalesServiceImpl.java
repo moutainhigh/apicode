@@ -20,6 +20,7 @@ import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
+import com.ycandyz.master.utils.MapUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -389,10 +390,14 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         writer.addHeaderAlias("receiverName", "总计金额（元）");
         writer.addHeaderAlias("receiverAddress", "支付方式");
         writer.addHeaderAlias("orderAt", "购买数量");
-        writer.addHeaderAlias("paymentTime", "购买用户");
+        writer.addHeaderAlias("userName", "购买用户");
         writer.addHeaderAlias("receiveAt", "售后申请时间");
+        List<String> containList = Arrays.asList("afterSalesNo","orderNo","itemName","goodsNo",
+                "payType","status","afterSalesStatus","payuser","receiverName","receiverAddress","orderAt",
+                "userName","receiveAt");
+        List<Map<String, Object>> result = MapUtil.beanToMap(list,containList);
         // 一次性写出内容，使用默认样式，强制输出标题
-        writer.write(list, true);
+        writer.write(result, true);
         //out为OutputStream，需要写出到的目标流
         //response为HttpServletResponse对象
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
