@@ -64,6 +64,7 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
 
     @Override
     public ShipmentResponseDataVO shipmentCallBack(ShipmentParamQuery shipmentParamQuery) {
+        log.info("ShipmentParam: {}",shipmentParamQuery);
         if (shipmentParamQuery.getStatus().equals("abort")){
             //需要通知业务人员进行处理。该订单可能存在问题
             log.info("-----当前快递存在异常，请业务人员进行处理关注。");
