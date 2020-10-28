@@ -125,6 +125,8 @@ public class MallAfterSalesVO {
     private MallBuyerShippingVO buyerShipping;
     @ApiModelProperty(value = "关联买家寄出快递日志表")
     private List<MallBuyerShippingLogVO> buyerShippingLog;
+    @ApiModelProperty(value = "本次退款的金额")
+    private BigDecimal refundMoney;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")
