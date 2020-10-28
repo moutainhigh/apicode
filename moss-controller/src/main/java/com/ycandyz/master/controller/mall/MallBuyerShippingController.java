@@ -52,12 +52,12 @@ public class MallBuyerShippingController extends BaseController<MallBuyerShippin
 
     /**
      * 快递订阅回调接口
-     * @param shipmentParamQuery
+     * @param param
      * @return
      */
-    @PostMapping("/mallBuyer/shipment/callback")
+    @RequestMapping("/mallBuyer/shipment/callback")
     @ResponseBody
-    public ShipmentResponseDataVO shipmentCallBack(@RequestBody ShipmentParamQuery shipmentParamQuery){
-        return mallShopShippingService.shipmentCallBack(shipmentParamQuery);
+    public ShipmentResponseDataVO shipmentCallBack(@RequestParam("param") ShipmentParamQuery param){
+        return mallShopShippingService.shipmentCallBack(param);
     }
 }
