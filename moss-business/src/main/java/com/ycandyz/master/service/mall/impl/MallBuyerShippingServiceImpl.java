@@ -24,6 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,43 +84,45 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                 if (mallBuyerShippingLogDTO.getStatus()==3) {
                     return ShipmentResponseDataVO.success("当前状态已经签收，无需重复签收");
                 }
-                List<String> times = shipmentParamLastResultQuery.getData().stream().map(ShipmentParamLastResultDataQuery::getFtime).collect(Collectors.toList());
-                if(times.contains(mallBuyerShippingLogDTO.getLogAt())){
-                    return ShipmentResponseDataVO.success("与当前状态一致，无需更新");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date d = null;
+                try {
+                    d = format.parse(mallBuyerShippingLogDTO.getLogAt());
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-                MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
-                mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShippingLogDTO.getBuyerShippingNo());
-                mallBuyerShippingLog.setCompanyCode(shipmentParamLastResultQuery.getCom());
-                mallBuyerShippingLog.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
-                mallBuyerShippingLog.setNumber(shipmentParamLastResultQuery.getNu());
-                mallBuyerShippingLog.setContext(shipmentParamLastResultQuery.getData().get(0).getContext());
-                mallBuyerShippingLog.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
-                if (shipmentParamLastResultQuery.getState().equals("3")){
-                    //已经签收，需要修改is_check字段状态
-                    mallBuyerShippingLog.setIsCheck(1);
-                }else {
-                    mallBuyerShippingLog.setIsCheck(0);
-                }
-                mallBuyerShippingLog.setLogAt(shipmentParamLastResultQuery.getData().get(0).getFtime());
-                log.debug("MallBuyerShippingLog==> {}",mallBuyerShippingLog);
-                mallBuyerShippingLogDao.insert(mallBuyerShippingLog);     //更新卖家物流表
-            }else{
-                MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
-                mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShippingLogDTO.getBuyerShippingNo());
-                mallBuyerShippingLog.setCompanyCode(shipmentParamLastResultQuery.getCom());
-                mallBuyerShippingLog.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
-                mallBuyerShippingLog.setNumber(shipmentParamLastResultQuery.getNu());
-                mallBuyerShippingLog.setContext(shipmentParamLastResultQuery.getData().get(0).getContext());
-                mallBuyerShippingLog.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
-                if (shipmentParamLastResultQuery.getState().equals("3")){
-                    //已经签收，需要修改is_check字段状态
-                    mallBuyerShippingLog.setIsCheck(1);
-                }else {
-                    mallBuyerShippingLog.setIsCheck(0);
-                }
-                mallBuyerShippingLog.setLogAt(shipmentParamLastResultQuery.getData().get(0).getFtime());
-                log.debug("MallBuyerShippingLog==> {}",mallBuyerShippingLog);
-                mallBuyerShippingLogDao.insert(mallBuyerShippingLog);     //更新卖家物流表
+                Date finalD = d;
+                List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData().stream().filter(f ->{
+                    Date dd = null;
+                    try {
+                        dd = format.parse(f.getFtime());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if(finalD.before(dd)){
+                        return false;
+                    }
+                    return true;
+                }).collect(Collectors.toList());
+                list.forEach(f -> {
+                    MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
+                    mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShippingLogDTO.getBuyerShippingNo());
+                    mallBuyerShippingLog.setCompanyCode(shipmentParamLastResultQuery.getCom());
+                    mallBuyerShippingLog.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
+                    mallBuyerShippingLog.setNumber(shipmentParamLastResultQuery.getNu());
+                    mallBuyerShippingLog.setContext(f.getContext());
+                    mallBuyerShippingLog.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
+                    if (shipmentParamLastResultQuery.getState().equals("3")){
+                        //已经签收，需要修改is_check字段状态
+                        mallBuyerShippingLog.setIsCheck(1);
+                    }else {
+                        mallBuyerShippingLog.setIsCheck(0);
+                    }
+                    mallBuyerShippingLog.setLogAt(f.getFtime());
+                    log.debug("MallBuyerShippingLog==> {}",mallBuyerShippingLog);
+                    mallBuyerShippingLogDao.insert(mallBuyerShippingLog);     //更新卖家物流表
+                });
+
             }
         }
         return ShipmentResponseDataVO.success("更新成功");
