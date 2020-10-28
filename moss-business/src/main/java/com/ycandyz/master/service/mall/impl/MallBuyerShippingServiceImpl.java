@@ -65,7 +65,7 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
     @Override
     public ShipmentResponseDataVO shipmentCallBack(String param) {
         ShipmentParamQuery shipmentParamQuery = JSONUtil.toBean(param,ShipmentParamQuery.class);
-        log.info("ShipmentParam: {}",shipmentParamQuery);
+        log.debug("ShipmentParam: {}",shipmentParamQuery);
         if (shipmentParamQuery.getStatus().equals("abort")){
             //需要通知业务人员进行处理。该订单可能存在问题
             log.info("-----当前快递存在异常，请业务人员进行处理关注。");
@@ -91,6 +91,7 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                     mallBuyerShippingLog.setIsCheck(0);
                 }
                 mallBuyerShippingLog.setLogAt(shipmentParamLastResultQuery.getData().get(0).getFtime());
+                log.debug("MallBuyerShippingLog==> {}",mallBuyerShippingLog);
                 mallBuyerShippingLogDao.insert(mallBuyerShippingLog);     //更新卖家物流表
             }
         }
