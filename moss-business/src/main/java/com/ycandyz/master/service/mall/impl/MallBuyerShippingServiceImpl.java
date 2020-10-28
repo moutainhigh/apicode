@@ -82,7 +82,7 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                     return ShipmentResponseDataVO.success("当前状态已经签收，无需重复签收");
                 }
                 List<String> times = shipmentParamLastResultQuery.getData().stream().map(ShipmentParamLastResultDataQuery::getFtime).collect(Collectors.toList());
-                if(times.contains(mallBuyerShippingLogDTO.getContext())){
+                if(times.contains(mallBuyerShippingLogDTO.getLogAt())){
                     return ShipmentResponseDataVO.success("与当前状态一致，无需更新");
                 }
                 MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
