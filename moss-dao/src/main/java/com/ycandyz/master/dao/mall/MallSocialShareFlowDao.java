@@ -24,4 +24,11 @@ public interface MallSocialShareFlowDao extends BaseMapper<MallSocialShareFlow> 
      * @return
      */
     List<MallSocialShareFlowDTO> queryByOrderDetailNo(@Param("orderDetailNo") String orderDetailNo);
+
+    /**
+     * 根据订单编号获取所有分销人集合（一到三级）
+     * @param orderNo
+     * @return
+     */
+    List<MallSocialShareFlowDTO> queryAllShareByOrderNo(@Param("orderNo") String orderNo);
 }

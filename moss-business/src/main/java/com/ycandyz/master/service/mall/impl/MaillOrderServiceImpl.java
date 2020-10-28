@@ -238,19 +238,34 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
                     BeanUtils.copyProperties(orderDetail,mallOrderDetailVO);
 
-                    //查询佣金流水表
-                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderDetailNo(mallOrderDetailVO.getOrderDetailNo());
-                    if (mallSocialShareFlowDTOs!=null && mallSocialShareFlowDTOs.size()>0){
-                        List<MallSocialShareFlowVO> flowList = new ArrayList<>();
-                        mallSocialShareFlowDTOs.forEach(dto->{
-                            MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
-                            BeanUtils.copyProperties(dto,mallSocialShareFlowVO);
-                            flowList.add(mallSocialShareFlowVO);
-                        });
-                        mallOrderDetailVO.setShareFlowInfo(flowList);
+                    if (mallOrderDTO.getOrderType()!=null) {
+                        if (mallOrderDTO.getOrderType() == 2) { //新订单，神州通的
+                            //查询佣金流水表
+                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderDetailNo(mallOrderDetailVO.getOrderDetailNo());
+                            if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
+                                List<MallSocialShareFlowVO> flowList = new ArrayList<>();
+                                mallSocialShareFlowDTOs.forEach(dto -> {
+                                    MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
+                                    BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
+                                    flowList.add(mallSocialShareFlowVO);
+                                });
+                                mallOrderDetailVO.setShareFlowInfo(flowList);
+                            }
+                        }else if (mallOrderDTO.getOrderType() == 1){    //老订单，商城的
+                            //查询佣金流水表
+                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
+                            if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
+                                List<MallSocialShareFlowVO> flowList = new ArrayList<>();
+                                mallSocialShareFlowDTOs.forEach(dto -> {
+                                    MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
+                                    BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
+                                    flowList.add(mallSocialShareFlowVO);
+                                });
+                                mallOrderDetailVO.setShareFlowInfo(flowList);
+                            }
+                        }
+                        detailVOList.add(mallOrderDetailVO);
                     }
-
-                    detailVOList.add(mallOrderDetailVO);
                 });
                 mallOrderVO.setDetails(detailVOList);
             }

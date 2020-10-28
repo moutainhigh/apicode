@@ -388,6 +388,7 @@
         <result column="buyer_remark" property="buyerRemark" />
         <result column="order_at" property="orderAt" />
         <result column="pay_type" property="payType" />
+        <result column="order_type" property="orderType" />
         <result column="trade_no" property="tradeNo" />
         <result column="send_at" property="sendAt" />
         <result column="receive_at" property="receiveAt" />
@@ -430,6 +431,7 @@
             mo.buyer_remark,
             mo.order_at,
             mo.pay_type,
+            mo.order_type,
             mo.trade_no,
             mo.send_at,
             mo.receive_at,
