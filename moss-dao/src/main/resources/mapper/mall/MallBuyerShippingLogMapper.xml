@@ -39,4 +39,21 @@
             #{buyerShippingNo}
         </foreach>
     </select>
+
+    <select id="queryListByBuyerShippingNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO">
+        select
+        id as id,
+        buyer_shipping_no as buyerShippingNo,
+        company_code as companyCode,
+        `company` as company,
+        `number` as number,
+        context as context,
+        `status` as status,
+        is_check as isCheck,
+        log_at as logAt,
+        created_time as createdTime,
+        updated_time as updatedTime
+        from mall_buyer_shipping_log
+        where buyer_shipping_no=#{buyerShippingNo}
+    </select>
 </mapper>

@@ -156,6 +156,7 @@
                 and
                 (u.`name` LIKE concat('%',#{p.userName},'%') OR u.phone LIKE concat('%',#{p.userName},'%'))
             </if>
+            order by sales.after_sales_no
     </select>
 
     <select id="querySalesDetail" parameterType="java.lang.String" resultMap="BaseAfterSalesDetailResultMap">
@@ -179,6 +180,7 @@
             sales.apply_at,
             sales.audit_first_at,
             sales.audit_second_at,
+            sales.created_time,
 
             mo.shop_no,
             mo.order_no as moOrderNo,

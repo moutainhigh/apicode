@@ -11,10 +11,7 @@ import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
 import com.ycandyz.master.dto.mall.*;
-import com.ycandyz.master.entities.mall.MallAfterSales;
-import com.ycandyz.master.entities.mall.MallAfterSalesLog;
-import com.ycandyz.master.entities.mall.MallOrder;
-import com.ycandyz.master.entities.mall.MallOrderDetail;
+import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.enums.SalesEnum;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
@@ -55,6 +52,12 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
     @Autowired
     private MallOrderDetailDao mallOrderDetailDao;
+
+    @Autowired
+    private MallBuyerShippingDao mallBuyerShippingDao;
+
+    @Autowired
+    private MallBuyerShippingLogDao mallBuyerShippingLogDao;
 
     @Override
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
@@ -239,6 +242,26 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         mallShopShippingLogVOS.add(mallShopShippingLogVO);
                     });
                     mallAfterSalesVO.setShippinglog(mallShopShippingLogVOS);
+                }
+            }
+
+            //MallBuyerShipping表
+            MallBuyerShippingDTO mallBuyerShippingDTO = mallBuyerShippingDao.queryByAfterSalesNo(mallAfterSalesVO.getAfterSalesNo());
+            if (mallBuyerShippingDTO!=null){
+                MallBuyerShippingVO mallBuyerShippingVO = new MallBuyerShippingVO();
+                BeanUtils.copyProperties(mallBuyerShippingDTO,mallBuyerShippingVO);
+                mallAfterSalesVO.setBuyerShipping(mallBuyerShippingVO);
+
+                //MallBuyerShippingLog表
+                List<MallBuyerShippingLogDTO> mallBuyerShippingLogDTOS = mallBuyerShippingLogDao.queryListByBuyerShippingNo(mallBuyerShippingVO.getBuyerShippingNo());
+                if (mallBuyerShippingLogDTOS!=null && mallBuyerShippingLogDTOS.size()>0){
+                    List<MallBuyerShippingLogVO> mallBuyerShippingLogVOS = new ArrayList<>();
+                    mallBuyerShippingLogDTOS.forEach(dto->{
+                        MallBuyerShippingLogVO mallBuyerShippingLogVO = new MallBuyerShippingLogVO();
+                        BeanUtils.copyProperties(dto,mallBuyerShippingLogVO);
+                        mallBuyerShippingLogVOS.add(mallBuyerShippingLogVO);
+                    });
+                    mallAfterSalesVO.setBuyerShippingLog(mallBuyerShippingLogVOS);
                 }
             }
 
