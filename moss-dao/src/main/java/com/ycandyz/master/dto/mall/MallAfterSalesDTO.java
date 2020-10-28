@@ -111,4 +111,8 @@ public class MallAfterSalesDTO {
     private MallShopDTO shop;
     @ApiModelProperty(value = "总计金额")
     private Integer allMoney;
+    @ApiModelProperty(value = "关联买家快递表")
+    private MallBuyerShippingDTO buyerShipping;
+    @ApiModelProperty(value = "关联买家寄出快递日志表")
+    private List<MallBuyerShippingLogDTO> buyerShippingLog;
 }

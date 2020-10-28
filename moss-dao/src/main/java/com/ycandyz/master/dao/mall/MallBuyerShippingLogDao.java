@@ -14,6 +14,19 @@ import java.util.List;
 @Mapper
 public interface MallBuyerShippingLogDao extends BaseMapper<MallBuyerShippingLog> {
 
+    /**
+     * 通过买家退货快递表编号集合获取买家退货快递日志表集合
+     * @param buyerShippingNoList
+     * @return
+     */
     List<MallBuyerShippingLogDTO> queryListByBuyerShippingNoList(@Param("list") List<String> buyerShippingNoList);
+
     MallBuyerShippingLogDTO selectByShipNumberLast(@Param("number") String number);
+
+    /**
+     * 通过买家退货快递表集合获取买家退货快递日志表集合
+     * @param buyerShippingNo
+     * @return
+     */
+    List<MallBuyerShippingLogDTO> queryListByBuyerShippingNo(@Param("buyerShippingNo") String buyerShippingNo);
 }

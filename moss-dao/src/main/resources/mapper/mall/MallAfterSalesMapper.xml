@@ -179,6 +179,7 @@
             sales.apply_at,
             sales.audit_first_at,
             sales.audit_second_at,
+            sales.created_time,
 
             mo.shop_no,
             mo.order_no as moOrderNo,

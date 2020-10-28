@@ -1,6 +1,7 @@
 package com.ycandyz.master.model.mall;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO;
 import com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO;
 import com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO;
 import com.ycandyz.master.dto.mall.MallShopShippingDTO;
@@ -120,6 +121,10 @@ public class MallAfterSalesVO {
     private MallItemByMallOrderDetailVO itemInfo;
     @ApiModelProperty(value = "总计金额")
     private Integer allMoney;
+    @ApiModelProperty(value = "关联买家快递表")
+    private MallBuyerShippingVO buyerShipping;
+    @ApiModelProperty(value = "关联买家寄出快递日志表")
+    private List<MallBuyerShippingLogVO> buyerShippingLog;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")
