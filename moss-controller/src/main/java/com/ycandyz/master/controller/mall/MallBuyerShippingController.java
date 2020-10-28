@@ -57,7 +57,7 @@ public class MallBuyerShippingController extends BaseController<MallBuyerShippin
      */
     @PostMapping("/mallBuyer/shipment/callback")
     @ResponseBody
-    public ShipmentResponseDataVO shipmentCallBack(@RequestParam(value = "param",required = false) ShipmentParamQuery param){
+    public ShipmentResponseDataVO shipmentCallBack(@RequestParam(value = "param",required = false) String param){
         return mallShopShippingService.shipmentCallBack(param);
     }
 }

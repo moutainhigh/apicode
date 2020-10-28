@@ -63,7 +63,8 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
     }
 
     @Override
-    public ShipmentResponseDataVO shipmentCallBack(ShipmentParamQuery shipmentParamQuery) {
+    public ShipmentResponseDataVO shipmentCallBack(String param) {
+        ShipmentParamQuery shipmentParamQuery = JSONUtil.toBean(param,ShipmentParamQuery.class);
         log.info("ShipmentParam: {}",shipmentParamQuery);
         if (shipmentParamQuery.getStatus().equals("abort")){
             //需要通知业务人员进行处理。该订单可能存在问题

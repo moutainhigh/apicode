@@ -16,6 +16,6 @@ import com.ycandyz.master.entities.mall.MallBuyerShipping;
  * @version 2.0
  */
 public interface IMallBuyerShippingService extends IService<MallBuyerShipping>{
-    ShipmentResponseDataVO shipmentCallBack(ShipmentParamQuery shipmentParamQuery);
+    ShipmentResponseDataVO shipmentCallBack(String param);
     ReturnResponse verShipmentNo(String shipNumber);
 }
