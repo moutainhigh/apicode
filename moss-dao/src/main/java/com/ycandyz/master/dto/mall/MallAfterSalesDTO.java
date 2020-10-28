@@ -109,4 +109,6 @@ public class MallAfterSalesDTO {
     private List<MallShopShippingLogDTO> shippinglog;
     @ApiModelProperty(value = "关联商店表")
     private MallShopDTO shop;
+    @ApiModelProperty(value = "总计金额")
+    private Integer allMoney;
 }

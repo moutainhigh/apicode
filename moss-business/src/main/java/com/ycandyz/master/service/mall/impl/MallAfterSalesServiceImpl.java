@@ -101,6 +101,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
                         //支付方式拼接
                         mallAfterSalesVO.setPayType(mallOrderByAfterSalesVO.getPayType());
+
+                        //总计金额拼接
+                        mallAfterSalesVO.setAllMoney(mallOrderByAfterSalesVO.getAllMoney());
                     }
                     MallOrderDetailByAfterSalesDTO mallOrderDetailByAfterSalesDTO = mallAfterSalesDTO.getDetails();
                     if (mallOrderDetailByAfterSalesDTO!=null){
@@ -116,8 +119,6 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         //商品名称拼接
                         mallAfterSalesVO.setItemName(mallOrderDetailByAfterSalesVO.getItemName());
                     }
-
-
 
                     list.add(mallAfterSalesVO);
                 }
@@ -153,8 +154,8 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
             //订单详情
             MallOrderDetailByAfterSalesDTO mallOrderDetailByAfterSalesDTO = mallAfterSalesDTO.getDetails();
+            MallOrderDetailByAfterSalesVO mallOrderDetailByAfterSalesVO = null;
             if (mallOrderDetailByAfterSalesDTO==null){
-                MallOrderDetailByAfterSalesVO mallOrderDetailByAfterSalesVO = null;
                 //售后订单的详情是空
                 if (orderType!=null && orderType==1){   //老订单
                     MallOrderDetail mallOrderDetail = mallOrderDetailDao.selectOne(new QueryWrapper<MallOrderDetail>().eq("order_no",mallOrderByAfterSalesDTO.getOrderNo()));
@@ -170,12 +171,14 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         mallOrderDetailByAfterSalesVO.setQuantity(mallOrderDetail.getQuantity());
                         mallOrderDetailByAfterSalesVO.setSkuNo(mallOrderDetail.getSkuNo());
                     }
-                }else {     //新订单
-                    mallOrderDetailByAfterSalesVO = new MallOrderDetailByAfterSalesVO();
-                    BeanUtils.copyProperties(mallOrderDetailByAfterSalesDTO,mallOrderDetailByAfterSalesVO);
                 }
+            }else {
+                mallOrderDetailByAfterSalesVO = new MallOrderDetailByAfterSalesVO();
+                BeanUtils.copyProperties(mallOrderDetailByAfterSalesDTO,mallOrderDetailByAfterSalesVO);
                 mallAfterSalesVO.setDetails(mallOrderDetailByAfterSalesVO);
+            }
 
+            if (mallOrderDetailByAfterSalesVO!=null){
                 //MallOrderDetail中的item信息拼接
                 MallItemByMallOrderDetailVO mallItemByMallOrderDetailVO = new MallItemByMallOrderDetailVO();
                 mallItemByMallOrderDetailVO.setItemNo(mallOrderDetailByAfterSalesVO.getItemNo());
@@ -386,8 +389,8 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         writer.addHeaderAlias("payType", "售后类型");
         writer.addHeaderAlias("status", "售后状态");
         writer.addHeaderAlias("afterSalesStatus", "退款数量");
-        writer.addHeaderAlias("payuser", "退款金额（元）");
-        writer.addHeaderAlias("receiverName", "总计金额（元）");
+        writer.addHeaderAlias("money", "退款金额（元）");
+        writer.addHeaderAlias("allMoney", "总计金额（元）");
         writer.addHeaderAlias("receiverAddress", "支付方式");
         writer.addHeaderAlias("orderAt", "购买数量");
         writer.addHeaderAlias("userName", "购买用户");

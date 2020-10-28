@@ -118,6 +118,8 @@ public class MallAfterSalesVO {
     private List<MallShopShippingLogVO> shippinglog;
     @ApiModelProperty(value = "关联订单详情中商品信息表")
     private MallItemByMallOrderDetailVO itemInfo;
+    @ApiModelProperty(value = "总计金额")
+    private Integer allMoney;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")
@@ -172,13 +174,17 @@ public class MallAfterSalesVO {
 
     public String getCreatedAtStr(){
         try {
-            if(createdAt!=0) {
-                Long at = Long.valueOf(createdAt) * 1000;
-                Date date = new Date(at);
+//            if(createdAt!=0) {
+//                Long at = Long.valueOf(createdAt) * 1000;
+//                Date date = new Date(at);
+//                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                this.createdAtStr = sd.format(date);
+//            }else {
+//                this.createdAtStr = "-";
+//            }
+            if(createdTime!=null){
                 SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                this.createdAtStr = sd.format(date);
-            }else {
-                this.createdAtStr = "-";
+                this.createdAtStr = sd.format(createdTime);
             }
         }catch (Exception e){
             createdAtStr = "-";

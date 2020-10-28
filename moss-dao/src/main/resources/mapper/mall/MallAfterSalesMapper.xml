@@ -23,6 +23,7 @@
         <result column="audit_first_at" property="auditFirstAt" />
         <result column="audit_second_at" property="auditSecondAt" />
         <result column="userName" property="userName" />
+        <result column="created_time" property="createdTime" />
         <collection property="order" ofType="com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO">
             <result column="shop_no" property="shopNo" />
             <result column="moOrderNo" property="orderNo" />
@@ -31,6 +32,7 @@
             <result column="real_money" property="realMoney" />
             <result column="pay_type" property="payType" />
             <result column="order_type" property="orderType" />
+            <result column="all_money" property="allMoney" />
             <result column="deliver_method" property="deliverMethod" />
             <result column="shipping_money" property="shippingMoney" />
         </collection>
@@ -67,6 +69,7 @@
             sales.apply_at,
             sales.audit_first_at,
             sales.audit_second_at,
+            sales.created_time,
             concat(u.`name`,' ',u.phone) as userName,
 
             mo.shop_no,
@@ -76,6 +79,7 @@
             mo.real_money,
             mo.deliver_method,
             mo.pay_type,
+            mo.all_money,
             mo.all_money-mo.real_money as shipping_money,
 
             modetail.order_no as detailOrderNo,

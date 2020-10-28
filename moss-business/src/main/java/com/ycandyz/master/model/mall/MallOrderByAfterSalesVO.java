@@ -35,4 +35,6 @@ public class MallOrderByAfterSalesVO {
     private MallShopVO shop;
     @ApiModelProperty(value = "订单类型1->商城，2->神州通")
     private Integer orderType;
+    @ApiModelProperty(value = "总计金额")
+    private Integer allMoney;
 }
