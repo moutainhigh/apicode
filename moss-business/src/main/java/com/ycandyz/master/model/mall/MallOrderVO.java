@@ -249,7 +249,7 @@ public class MallOrderVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.payedAtStr = sd.format(date);
         }catch (Exception e){
-            payedAtStr = "";
+            payedAtStr = "-";
         }
         return payedAtStr;
     }
@@ -261,7 +261,7 @@ public class MallOrderVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.cancelAtStr = sd.format(date);
         }catch (Exception e){
-            cancelAtStr = "";
+            cancelAtStr = "-";
         }
         return cancelAtStr;
     }
@@ -273,7 +273,7 @@ public class MallOrderVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.afterSalesEndAtStr = sd.format(date);
         }catch (Exception e){
-            afterSalesEndAtStr = "";
+            afterSalesEndAtStr = "-";
         }
         return afterSalesEndAtStr;
     }
@@ -285,7 +285,7 @@ public class MallOrderVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.orderAtStr = sd.format(date);
         }catch (Exception e){
-            orderAtStr = "";
+            orderAtStr = "-";
         }
         return orderAtStr;
     }
@@ -297,7 +297,7 @@ public class MallOrderVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.sendAtStr = sd.format(date);
         }catch (Exception e){
-            sendAtStr = "";
+            sendAtStr = "-";
         }
         return sendAtStr;
     }
@@ -309,7 +309,7 @@ public class MallOrderVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.receiveAtStr = sd.format(date);
         }catch (Exception e){
-            receiveAtStr = "";
+            receiveAtStr = "-";
         }
         return receiveAtStr;
     }
@@ -321,7 +321,7 @@ public class MallOrderVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.closeAtStr = sd.format(date);
         }catch (Exception e){
-            closeAtStr = "";
+            closeAtStr = "-";
         }
         return closeAtStr;
     }

@@ -86,7 +86,7 @@
             mo.shop_no=#{p.shopNo} and mo.is_del=0
             <if test="p.orderNo != null and p.orderNo != ''">
                 and
-                mo.order_no  like concat('%',#{p.orderNo},'%')	/**订单编号*/
+                (mo.order_no  like concat('%',#{p.orderNo},'%') or mo.cart_order_sn like concat('%',#{p.orderNo},'%'))	/**子订单编号或母订单编号*/
             </if>
             <if test="p.mallName != null and p.mallName != ''">
                 and

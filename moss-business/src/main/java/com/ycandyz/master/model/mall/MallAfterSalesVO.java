@@ -161,7 +161,7 @@ public class MallAfterSalesVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.receiveAtStr = sd.format(date);
         }catch (Exception e){
-            receiveAtStr = "";
+            receiveAtStr = "-";
         }
         return receiveAtStr;
     }
@@ -173,7 +173,7 @@ public class MallAfterSalesVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.createdAtStr = sd.format(date);
         }catch (Exception e){
-            createdAtStr = "";
+            createdAtStr = "-";
         }
         return createdAtStr;
     }
@@ -185,7 +185,7 @@ public class MallAfterSalesVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.closeAtStr = sd.format(date);
         }catch (Exception e){
-            closeAtStr = "";
+            closeAtStr = "-";
         }
         return closeAtStr;
     }
@@ -197,7 +197,7 @@ public class MallAfterSalesVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.applyAtStr = sd.format(date);
         }catch (Exception e){
-            applyAtStr = "";
+            applyAtStr = "-";
         }
         return applyAtStr;
     }
@@ -209,7 +209,7 @@ public class MallAfterSalesVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.auditFirstAtStr = sd.format(date);
         }catch (Exception e){
-            auditFirstAtStr = "";
+            auditFirstAtStr = "-";
         }
         return auditFirstAtStr;
     }
@@ -221,7 +221,7 @@ public class MallAfterSalesVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.sendAtStr = sd.format(date);
         }catch (Exception e){
-            sendAtStr = "";
+            sendAtStr = "-";
         }
         return sendAtStr;
     }
@@ -233,7 +233,7 @@ public class MallAfterSalesVO {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             this.auditSecondAtStr = sd.format(date);
         }catch (Exception e){
-            auditSecondAtStr = "";
+            auditSecondAtStr = "-";
         }
         return auditSecondAtStr;
     }

@@ -146,6 +146,8 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         if (mallOrder!=null){
             mallOrder.setStatus(30);
             mallOrder.setSubStatus(3010);
+            Long timeAt = new Date().getTime()/1000;
+            mallOrder.setSendAt(timeAt.intValue()); //更新商家发货时间
             mallOrderDao.updateById(mallOrder);
         }
 

@@ -454,6 +454,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             mallOrder.setAfterSalesEndAt(time.intValue()+mallShopDTO.getAsHoldDays()*24*60*60);
             mallOrder.setStatus(40);
             mallOrder.setSubStatus(4060);
+            Long timeAt = new Date().getTime()/1000;
+            mallOrder.setReceiveAt(timeAt.intValue());  //更新收货时间
             mallOrderDao.updateById(mallOrder);
             return ReturnResponse.success("操作成功");
         }
