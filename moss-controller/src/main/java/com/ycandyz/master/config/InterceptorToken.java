@@ -4,7 +4,11 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import cn.hutool.system.UserInfo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ycandyz.master.constant.SecurityConstant;
 import com.ycandyz.master.entities.CommonResult;
+import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.model.user.UserVO;
@@ -12,6 +16,7 @@ import com.ycandyz.master.service.user.IUserService;
 import com.ycandyz.master.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -39,6 +44,9 @@ public class InterceptorToken implements HandlerInterceptor {
     @Resource
     private IUserService userService;
 
+    @Autowired
+    IgnoreUrlsConfig ignoreUrlsConfig;
+
     @Value(value = "${token.authConfigSecret}")
     private String authConfigSecret;
 
@@ -47,32 +55,18 @@ public class InterceptorToken implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-
         String path = httpServletRequest.getServletPath();
         log.info(path);
-
-        String[] excludeUrl = {"/instances",
-                "/actuator/**",
-                "/druid/**",
-                "/assets/**",
-                "/webjars/**",
-                "/configuration/ui",
-                "/swagger-resources",
-                "/configuration/security",
-                "/swagger-ui.html",
-                "/docs.html",
-                "/doc.html",
-                "/swagger-resources/**",
-                "/v2/api-docs"};
         AntPathMatcher antPathMatcher = new AntPathMatcher();
-        boolean flow = Arrays.stream(excludeUrl).anyMatch(p -> antPathMatcher.match(p,path));
-        if (excludePath.contains(path) || flow) {
+        String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
+        boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));
+        if (flow) {
             log.info("requestUrl: {}", path);
             // 请求放行
             return true;
         }
         String url = httpServletRequest.getRequestURI();
-        String token = httpServletRequest.getHeader("x-auth-token");
+        String token = httpServletRequest.getHeader(SecurityConstant.JWT_TOKEN);
         String method = httpServletRequest.getMethod();
         if (!method.equals("OPTIONS")){
             log.info(token);
@@ -85,12 +79,15 @@ public class InterceptorToken implements HandlerInterceptor {
             CommonResult result = null;
             Integer userId = 0;
             String shopNo = "";
+            String organizeId = null;
             if(StrUtil.isNotEmpty(token)){
                 try {
 //                    userId = TokenUtil.verifyToken(token, authConfigSecret);
                     JSONObject jsonObject = TokenUtil.verifyToken(token, authConfigSecret);
                     userId = jsonObject.getInt("user_id");
                     shopNo = jsonObject.getStr("shop_no");
+                    //获取企业ID
+                    organizeId = jsonObject.getStr("organize_id");
                 }catch (JSONException e){
                     log.error("token 解析失败");
                     result = new CommonResult(ResultEnum.TOKEN_ILLEGAL.getValue(),ResultEnum.TOKEN_ILLEGAL.getDesc(),null);
@@ -135,7 +132,7 @@ public class InterceptorToken implements HandlerInterceptor {
                         //查看shop_no
                         UserVO userVO = userToUserVO(ukeUser);
                         userVO.setShopNo(shopNo);
-                        httpServletRequest.getSession().setAttribute("currentUser", userVO);
+                        httpServletRequest.getSession().setAttribute(SecurityConstant.USER_TOKEN_HEADER, userVO);
                     }
                 }
             }else{
