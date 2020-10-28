@@ -31,7 +31,7 @@ logging:
   level:
     com.ycandyz.master.dao: debug
 exclude:
-  path: /login,/error,/swagger-ui.html,/mall/order/shipment/callback
+  path: /login,/error,/swagger-ui.html,/mall/order/shipment/callback,/mallBuyer/shipment/callback
 
 #快递100相关参数
 kuaidi:
