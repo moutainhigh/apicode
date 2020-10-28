@@ -15,7 +15,7 @@
             log_at as logAt,
             created_time as createdTime,
             updated_time as updatedTime
-        from mall_shop_shipping_log
+        from mall_buyer_shipping_log
         where `number`=#{number}
         order by createdTime desc
         limit 1
