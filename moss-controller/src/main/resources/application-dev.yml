@@ -5,8 +5,7 @@ server:
 
 spring:
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
-    driver-class-name: org.gjt.mm.mysql.Driver              # mysql驱动包
+    name: yc-dev
     url: jdbc:mysql://youchuan-test-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc-dev?useUnicode=true&characterEncoding=utf-8&useJDBCCompliantTimezoneShift=true&serverTimezone=Asia/Shanghai&useSSL=false
     username: project_dev
     password: p3BjALdQI4SjH0w5
