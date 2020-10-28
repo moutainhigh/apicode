@@ -76,6 +76,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
     @PostMapping("/order/shipment/callback")
     @ResponseBody
     public ShipmentResponseDataVO shipmentCallBack(@RequestParam(value = "sign",required = false) String sign, @RequestParam(value = "param",required = false) String param){
+        mallShopShippingService.shipmentCallBack(param);
         log.info("sign="+sign+",param="+param);
         return null;
     }

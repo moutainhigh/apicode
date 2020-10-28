@@ -155,11 +155,12 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
     }
 
     @Override
-    public ShipmentResponseDataVO shipmentCallBack(ShipmentParamQuery shipmentParamQuery) {
+    public ShipmentResponseDataVO shipmentCallBack(String param) {
+        ShipmentParamQuery shipmentParamQuery = JSONUtil.toBean(param,ShipmentParamQuery.class);
         if (shipmentParamQuery.getStatus().equals("abort")){
-            //需要通知业务人员进行处理。该订单可能存在问题
+            //当message为“3天查询无记录”或“60天无变化时”status= abort
             log.info("-----当前快递存在异常，请业务人员进行处理关注。");
-            return ShipmentResponseDataVO.failed("快递订单存在异常");
+            return ShipmentResponseDataVO.success("成功");
         }else {
             ShipmentParamLastResultQuery shipmentParamLastResultQuery = shipmentParamQuery.getLastResult();
             MallShopShippingLogDTO mallShopShippingLogDTO = mallShopShippingLogDao.selectByShipNumberLast(shipmentParamLastResultQuery.getNu());
