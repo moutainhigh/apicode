@@ -34,6 +34,7 @@
             <result column="order_type" property="orderType" />
             <result column="all_money" property="allMoney" />
             <result column="deliver_method" property="deliverMethod" />
+            <result column="deliver_type" property="deliverType" />
             <result column="shipping_money" property="shippingMoney" />
         </collection>
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO">
@@ -138,11 +139,11 @@
             </if>
             <if test="p.applyAtFrom != null">
                 and
-                from_unixtime(sales.apply_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.applyAtFrom}
+                sales.apply_at &gt;= #{p.applyAtFrom}
             </if>
             <if test="p.applyAtTo != null">
                 and
-                from_unixtime(sales.apply_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.applyAtTo}
+                sales.apply_at &lt;= #{p.applyAtTo}
             </if>
             <if test="p.orderNo != null and p.orderNo != ''">
                 and
@@ -156,7 +157,7 @@
                 and
                 (u.`name` LIKE concat('%',#{p.userName},'%') OR u.phone LIKE concat('%',#{p.userName},'%'))
             </if>
-            order by sales.after_sales_no
+            order by sales.created_time DESC
     </select>
 
     <select id="querySalesDetail" parameterType="java.lang.String" resultMap="BaseAfterSalesDetailResultMap">
@@ -188,6 +189,7 @@
             mo.total_money,
             mo.real_money,
             mo.deliver_method,
+            mo.deliver_type,
             mo.order_type,
             mo.all_money-mo.real_money as shipping_money,
 
@@ -297,11 +299,11 @@
         </if>
         <if test="p.applyAtFrom != null">
             and
-            from_unixtime(sales.apply_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.applyAtFrom}
+            sales.apply_at &gt;= #{p.applyAtFrom}
         </if>
         <if test="p.applyAtTo != null">
             and
-            from_unixtime(sales.apply_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.applyAtTo}
+            sales.apply_at &lt;= #{p.applyAtTo}
         </if>
         <if test="p.orderNo != null and p.orderNo != ''">
             and
@@ -315,6 +317,7 @@
             and
             (u.`name` LIKE concat('%',#{p.userName},'%') OR u.phone LIKE concat('%',#{p.userName},'%'))
         </if>
+        order by sales.created_time DESC
     </select>
 
     <select id="querySalesByOrderDetailNoList" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">

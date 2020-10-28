@@ -111,27 +111,27 @@
             </if>
             <if test="p.orderAtForm != null">
                 and
-                from_unixtime(mo.order_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.orderAtForm} /**下单时间*/
+                mo.order_at &gt;= #{p.orderAtForm} /**下单时间*/
             </if>
             <if test="p.orderAtTo != null">
                 and
-                from_unixtime(mo.order_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.orderAtTo} /**下单时间*/
+                mo.order_at &lt;= #{p.orderAtTo} /**下单时间*/
             </if>
             <if test="p.payedAtForm != null">
                 and
-                cart.payment_time &gt;= #{p.payedAtForm}	/**支付时间*/
+                cart.payment_time &gt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
             </if>
             <if test="p.payedAtTo != null">
                 and
-                cart.payment_time &lt;= #{p.payedAtTo}	/**支付时间*/
+                cart.payment_time &lt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
             </if>
             <if test="p.receiveAtForm != null">
                 and
-                from_unixtime(mo.receive_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.payedAtForm} /**收货时间*/
+                mo.receive_at &gt;= #{p.payedAtForm} /**收货时间*/
             </if>
             <if test="p.receiveAtTo != null">
                 and
-                from_unixtime(mo.receive_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.receiveAtTo} /**收货时间*/
+                mo.receive_at &lt;= #{p.receiveAtTo} /**收货时间*/
             </if>
             <if test="p.afterSalesStatus != null">
                 and
@@ -147,19 +147,19 @@
             </if>
             <if test="p.sendAtForm != null">
                 and
-                from_unixtime(mo.send_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.sendAtForm} /**收货时间*/
+                mo.send_at &gt;= #{p.sendAtForm} /**收货时间*/
             </if>
             <if test="p.sendAtTo != null">
                 and
-                from_unixtime(mo.send_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.sendAtTo} /**收货时间*/
+                mo.send_at &lt;= #{p.sendAtTo} /**收货时间*/
             </if>
             <if test="p.cancelAtForm != null">
                 and
-                from_unixtime(mo.cancel_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.cancelAtForm} /**收货时间*/
+                mo.cancel_at &gt;= #{p.cancelAtForm} /**收货时间*/
             </if>
             <if test="p.cancelAtTo != null">
                 and
-                from_unixtime(mo.cancel_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.cancelAtTo} /**收货时间*/
+                mo.cancel_at &lt;= #{p.cancelAtTo} /**收货时间*/
             </if>
             <if test="p.cancelReason != null">
                 and mo.cancel_reason=#{p.cancelReason}
@@ -210,7 +210,7 @@
         mo.shop_no=#{p.shopNo} and mo.is_del=0
         <if test="p.orderNo != null and p.orderNo != ''">
             and
-            mo.order_no  like concat('%',#{p.orderNo},'%')	/**订单编号*/
+            (mo.order_no  like concat('%',#{p.orderNo},'%') or mo.cart_order_sn like concat('%',#{p.orderNo},'%'))	/**子订单编号或母订单编号*/
         </if>
         <if test="p.mallName != null and p.mallName != ''">
             and
@@ -235,27 +235,27 @@
         </if>
         <if test="p.orderAtForm != null">
             and
-            from_unixtime(mo.order_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.orderAtForm} /**下单时间*/
+            mo.order_at &gt;= #{p.orderAtForm} /**下单时间*/
         </if>
         <if test="p.orderAtTo != null">
             and
-            from_unixtime(mo.order_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.orderAtTo} /**下单时间*/
+            mo.order_at &lt;= #{p.orderAtTo} /**下单时间*/
         </if>
         <if test="p.payedAtForm != null">
             and
-            cart.payment_time &gt;= #{p.payedAtForm}	/**支付时间*/
+            cart.payment_time &gt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
         </if>
         <if test="p.payedAtTo != null">
             and
-            cart.payment_time &lt;= #{p.payedAtTo}	/**支付时间*/
+            cart.payment_time &lt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
         </if>
         <if test="p.receiveAtForm != null">
             and
-            from_unixtime(mo.receive_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.payedAtForm} /**收货时间*/
+            mo.receive_at &gt;= #{p.payedAtForm} /**收货时间*/
         </if>
         <if test="p.receiveAtTo != null">
             and
-            from_unixtime(mo.receive_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.receiveAtTo} /**收货时间*/
+            mo.receive_at &lt;= #{p.receiveAtTo} /**收货时间*/
         </if>
         <if test="p.afterSalesStatus != null">
             and
@@ -271,19 +271,19 @@
         </if>
         <if test="p.sendAtForm != null">
             and
-            from_unixtime(mo.send_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.sendAtForm} /**收货时间*/
+            mo.send_at &gt;= #{p.sendAtForm} /**收货时间*/
         </if>
         <if test="p.sendAtTo != null">
             and
-            from_unixtime(mo.send_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.sendAtTo} /**收货时间*/
+            mo.send_at &lt;= #{p.sendAtTo} /**收货时间*/
         </if>
         <if test="p.cancelAtForm != null">
             and
-            from_unixtime(mo.cancel_at, '%Y-%m-%d %H:%i:%S') &gt;= #{p.cancelAtForm} /**收货时间*/
+            mo.cancel_at &gt;= #{p.cancelAtForm} /**收货时间*/
         </if>
         <if test="p.cancelAtTo != null">
             and
-            from_unixtime(mo.cancel_at, '%Y-%m-%d %H:%i:%S') &lt;= #{p.cancelAtTo} /**收货时间*/
+            mo.cancel_at &lt;= #{p.cancelAtTo} /**收货时间*/
         </if>
         <if test="p.cancelReason != null">
             and mo.cancel_reason=#{p.cancelReason}

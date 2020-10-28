@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -340,6 +341,8 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 }
             }
             mallAfterSalesVO.setState(state);
+            //计算本次退款记录的退款金额
+            mallAfterSalesVO.setRefundMoney(mallAfterSalesDTO.getSkuPrice().multiply(new BigDecimal(mallAfterSalesDTO.getSkuQuantity())));
         }
         return ReturnResponse.success(mallAfterSalesVO);
     }

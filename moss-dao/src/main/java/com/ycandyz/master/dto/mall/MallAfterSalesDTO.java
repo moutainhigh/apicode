@@ -115,4 +115,6 @@ public class MallAfterSalesDTO {
     private MallBuyerShippingDTO buyerShipping;
     @ApiModelProperty(value = "关联买家寄出快递日志表")
     private List<MallBuyerShippingLogDTO> buyerShippingLog;
+    @ApiModelProperty(value = "本次退款的金额")
+    private BigDecimal refundMoney;
 }
