@@ -50,9 +50,6 @@ public class InterceptorToken implements HandlerInterceptor {
     @Value(value = "${token.authConfigSecret}")
     private String authConfigSecret;
 
-    @Value("${exclude.path}")
-    private String excludePath;
-
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         String path = httpServletRequest.getServletPath();
