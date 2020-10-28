@@ -156,10 +156,14 @@ public class MallAfterSalesVO {
 
     public String getReceiveAtStr(){
         try {
-            Long at = Long.valueOf(receiveAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.receiveAtStr = sd.format(date);
+            if(receiveAt!=0) {
+                Long at = Long.valueOf(receiveAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.receiveAtStr = sd.format(date);
+            }else {
+                this.receiveAtStr = "-";
+            }
         }catch (Exception e){
             receiveAtStr = "-";
         }
@@ -168,10 +172,14 @@ public class MallAfterSalesVO {
 
     public String getCreatedAtStr(){
         try {
-            Long at = Long.valueOf(createdAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.createdAtStr = sd.format(date);
+            if(createdAt!=0) {
+                Long at = Long.valueOf(createdAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.createdAtStr = sd.format(date);
+            }else {
+                this.createdAtStr = "-";
+            }
         }catch (Exception e){
             createdAtStr = "-";
         }
@@ -180,10 +188,14 @@ public class MallAfterSalesVO {
 
     public String getCloseAtStr(){
         try {
-            Long at = Long.valueOf(closeAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.closeAtStr = sd.format(date);
+            if(closeAt!=0) {
+                Long at = Long.valueOf(closeAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.closeAtStr = sd.format(date);
+            }else {
+                this.closeAtStr = "-";
+            }
         }catch (Exception e){
             closeAtStr = "-";
         }
@@ -192,10 +204,14 @@ public class MallAfterSalesVO {
 
     public String getApplyAtStr(){
         try {
-            Long at = Long.valueOf(applyAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.applyAtStr = sd.format(date);
+            if(applyAt!=0) {
+                Long at = Long.valueOf(applyAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.applyAtStr = sd.format(date);
+            }else {
+                this.applyAtStr = "-";
+            }
         }catch (Exception e){
             applyAtStr = "-";
         }
@@ -204,10 +220,14 @@ public class MallAfterSalesVO {
 
     public String getAuditFirstAtStr(){
         try {
-            Long at = Long.valueOf(auditFirstAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.auditFirstAtStr = sd.format(date);
+            if(auditFirstAt!=0) {
+                Long at = Long.valueOf(auditFirstAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.auditFirstAtStr = sd.format(date);
+            }else {
+                this.auditFirstAtStr = "-";
+            }
         }catch (Exception e){
             auditFirstAtStr = "-";
         }
@@ -216,10 +236,14 @@ public class MallAfterSalesVO {
 
     public String getSendAtStr(){
         try {
-            Long at = Long.valueOf(sendAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.sendAtStr = sd.format(date);
+            if(sendAt!=0) {
+                Long at = Long.valueOf(sendAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.sendAtStr = sd.format(date);
+            }else {
+                this.sendAtStr = "-";
+            }
         }catch (Exception e){
             sendAtStr = "-";
         }
@@ -228,10 +252,14 @@ public class MallAfterSalesVO {
 
     public String getAuditSecondAtStr(){
         try {
-            Long at = Long.valueOf(auditSecondAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.auditSecondAtStr = sd.format(date);
+            if(auditSecondAt!=0) {
+                Long at = Long.valueOf(auditSecondAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.auditSecondAtStr = sd.format(date);
+            }else {
+                this.auditSecondAtStr = "-";
+            }
         }catch (Exception e){
             auditSecondAtStr = "-";
         }
