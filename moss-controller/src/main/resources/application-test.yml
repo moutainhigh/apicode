@@ -37,7 +37,7 @@ ignored:
     - /login
     - /error
     - /mall/order/shipment/callback
-    - /mallBuyer/shipment/callback
+    - /mall-buyer-shipping/mallBuyer/shipment/callback
 
 #快递100相关参数
 kuaidi:
