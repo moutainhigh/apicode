@@ -5,6 +5,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dao.mall.MallBuyerShippingLogDao;
+import com.ycandyz.master.domain.shipment.query.ShipmentParamLastResultDataQuery;
 import com.ycandyz.master.domain.shipment.query.ShipmentParamLastResultQuery;
 import com.ycandyz.master.domain.shipment.query.ShipmentParamQuery;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
@@ -22,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -77,7 +81,8 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                 if (mallBuyerShippingLogDTO.getStatus()==3) {
                     return ShipmentResponseDataVO.success("当前状态已经签收，无需重复签收");
                 }
-                if(mallBuyerShippingLogDTO.getContext().equals(shipmentParamLastResultQuery.getData().get(0).getContext())){
+                List<String> times = shipmentParamLastResultQuery.getData().stream().map(ShipmentParamLastResultDataQuery::getFtime).collect(Collectors.toList());
+                if(times.contains(mallBuyerShippingLogDTO.getContext())){
                     return ShipmentResponseDataVO.success("与当前状态一致，无需更新");
                 }
                 MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
