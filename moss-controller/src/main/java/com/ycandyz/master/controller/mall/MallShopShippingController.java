@@ -1,5 +1,6 @@
 package com.ycandyz.master.controller.mall;
 
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
@@ -74,11 +75,30 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
      */
     @PostMapping("/order/shipment/callback")
     @ResponseBody
-    public ShipmentResponseDataVO shipmentCallBack(Map<String, Object> params){
-        log.info(params.toString());
-        String sign = params.get("sign").toString();
-        String param = params.get("param").toString();
-        log.info("sign="+sign+",param="+param);
+    public ShipmentResponseDataVO shipmentCallBack(HttpServletRequest request){
+        try {
+            request.setCharacterEncoding("utf-8");
+            //处理应答乱码
+            //...
+
+            BufferedReader br = request.getReader();
+            String str, wholeStr = "";
+            while((str = br.readLine()) != null){
+                wholeStr += str;
+            }
+
+            JSONObject jsStr = JSONUtil.parseObj(wholeStr);
+//            JSONObject jsStr1 = jsStr.getJSONObject("data");
+            log.info(jsStr.toString());
+//            String username = jsStr1.get("username").toString();
+//            String password = jsStr1.get("password").toString();
+        }catch (Exception e){
+            System.out.println("错误信息");
+        }
+
+//        String sign = params.get("sign").toString();
+//        String param = params.get("param").toString();
+//        log.info("sign="+sign+",param="+param);
         return null;
     }
 }
