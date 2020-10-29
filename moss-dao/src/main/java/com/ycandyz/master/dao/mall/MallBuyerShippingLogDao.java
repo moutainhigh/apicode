@@ -29,4 +29,6 @@ public interface MallBuyerShippingLogDao extends BaseMapper<MallBuyerShippingLog
      * @return
      */
     List<MallBuyerShippingLogDTO> queryListByBuyerShippingNo(@Param("buyerShippingNo") String buyerShippingNo);
+
+    int deleteByNumber(MallBuyerShippingLog entity);
 }

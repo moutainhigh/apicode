@@ -56,4 +56,8 @@
         from mall_buyer_shipping_log
         where buyer_shipping_no=#{buyerShippingNo}
     </select>
+
+    <delete id="deleteByNumber" parameterType="java.lang.Long">
+             delete from mall_buyer_shipping_log where `number`=#{number} and id > #{id}
+    </delete>
 </mapper>

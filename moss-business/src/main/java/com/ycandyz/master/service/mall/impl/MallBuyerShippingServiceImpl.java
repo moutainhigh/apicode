@@ -86,10 +86,10 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                 if (mallBuyerShippingLogDTO.getStatus()==3) {
                     return ShipmentResponseDataVO.success("当前状态已经签收，无需重复签收");
                 }
-                LambdaQueryWrapper<MallBuyerShippingLog> deleteWrapper = new LambdaQueryWrapper<MallBuyerShippingLog>()
-                        .eq(MallBuyerShippingLog::getNumber, shipmentParamLastResultQuery.getNu())
-                        .gt(MallBuyerShippingLog::getId, mallBuyerShippingLogDTO.getId());
-                mallBuyerShippingLogDao.delete(deleteWrapper);
+                MallBuyerShippingLog deleteWrapper = new MallBuyerShippingLog();
+                deleteWrapper.setNumber(shipmentParamLastResultQuery.getNu());
+                deleteWrapper.setId(mallBuyerShippingLogDTO.getId());
+                mallBuyerShippingLogDao.deleteByNumber(deleteWrapper);
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
                 list.forEach(f -> {
                     MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
