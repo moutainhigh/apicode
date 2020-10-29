@@ -1,5 +1,7 @@
 package com.ycandyz.master.entities.mall;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +18,7 @@ import java.util.Date;
 @ApiModel(value="mall_buyer_shipping_log对象", description="买家寄出的快递物流日志表")
 public class MallBuyerShippingLog extends Model {
 
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "买家物流表编号")
