@@ -81,7 +81,7 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
             return ShipmentResponseDataVO.failed("快递订单存在异常");
         }else {
             ShipmentParamLastResultQuery shipmentParamLastResultQuery = shipmentParamQuery.getLastResult();
-            MallBuyerShippingLogDTO mallBuyerShippingLogDTO = mallBuyerShippingLogDao.selectByShipNumberLast(shipmentParamLastResultQuery.getNu());
+            MallBuyerShippingLogDTO mallBuyerShippingLogDTO = mallBuyerShippingLogDao.selectByShipNumberLast(shipmentParamLastResultQuery);
             if (null != mallBuyerShippingLogDTO){
                 if (mallBuyerShippingLogDTO.getStatus()==3) {
                     return ShipmentResponseDataVO.success("当前状态已经签收，无需重复签收");

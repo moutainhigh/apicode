@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ycandyz.master.dao.mall.MallBuyerShippingLogDao">
 
-    <select id="selectByShipNumberLast" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO">
+    <select id="selectByShipNumberLast" resultType="com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO">
         select
             id as id,
             buyer_shipping_no as buyerShippingNo,
@@ -16,7 +16,8 @@
             created_time as createdTime,
             updated_time as updatedTime
         from mall_buyer_shipping_log
-        where `number`=#{number}
+        where `number` = #{number}
+        and company_code = #{com}
         order by id asc
         limit 1
     </select>
