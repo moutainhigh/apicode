@@ -32,9 +32,9 @@ public class MallafterSalesQuery implements Serializable {
     @ApiModelProperty(value = "1010:一次审核中  1020:一次审核不通过  1030:一次审核通过/待用户退货  1040:超时未退货，系统关闭  1050:用户已退货/退款中  " +
             "1060:二次审核不通过/拒绝退款  1070:二次审核通过   1080:退款成功  1090:退款失败  2010:退款中  2020:审核通过  2030:退款成功  2040：退款失败  2050：退款拒绝")
     private Integer subStatus;
-    @ApiModelProperty(value = "退款时间开始")
+    @ApiModelProperty(value = "售后申请时间开始")
     private Integer applyAtFrom;
-    @ApiModelProperty(value = "退款时间结束")
+    @ApiModelProperty(value = "售后申请时间结束")
     private Integer applyAtTo;
     @ApiModelProperty(value = "商品信息 商品名或货号")
     @Getter(AccessLevel.NONE)

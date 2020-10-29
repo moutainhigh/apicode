@@ -150,7 +150,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     }
                     if (mallOrderVo.getAfterSalesStatus()!=null){
                         //修改售后返回值给前端
-                        if (mallOrderVo.getAfterSalesStatus()==0){
+                        if (mallOrderVo.getAfterSalesStatus()!=0){
                             mallOrderVo.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
                         }else {
                             if (mallOrderVo.getAfterSalesEndAt()!=null && mallOrderVo.getAfterSalesEndAt()>new Date().getTime()/1000){
@@ -180,16 +180,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         mallOrderQuery.setShopNo(userVO.getShopNo());
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
         list.forEach(mall->{
-            if (mall.getAfterSalesStatus()==0){
-                mall.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
-            }else {
-                if (mall.getAfterSalesEndAt()!=null && mall.getAfterSalesEndAt()>new Date().getTime()/1000){
-                    mall.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
-                }else {
-                    mall.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
-                }
-            }
-
             //拼接售后字段
             List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",mall.getOrderNo()));
             if (mallAfterSalesList!=null && mallAfterSalesList.size()>0){
@@ -202,6 +192,16 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }else {
                 mall.setAfterSalesStatus(0);
+            }
+
+            if (mall.getAfterSalesStatus()!=0){
+                mall.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+            }else {
+                if (mall.getAfterSalesEndAt()!=null && mall.getAfterSalesEndAt()>new Date().getTime()/1000){
+                    mall.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                }else {
+                    mall.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                }
             }
         });
 //        List<Map<String, Object>> maps = list.
