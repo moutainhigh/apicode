@@ -18,7 +18,7 @@
         from mall_buyer_shipping_log
         where `number` = #{nu}
         and company_code = #{com}
-        order by id asc
+        order by createdTime desc
         limit 1
     </select>
     <select id="queryListByBuyerShippingNoList" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO">
@@ -59,6 +59,6 @@
     </select>
 
     <delete id="deleteByNumber">
-             delete from mall_buyer_shipping_log where `number`=#{number} and id > #{id}
+        delete from mall_buyer_shipping_log where `number`=#{number} and company_code = #{companyCode}
     </delete>
 </mapper>

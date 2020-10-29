@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.mall.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,16 +90,22 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                 }
                 MallBuyerShippingLog deleteWrapper = new MallBuyerShippingLog();
                 deleteWrapper.setNumber(shipmentParamLastResultQuery.getNu());
-                deleteWrapper.setId(mallBuyerShippingLogDTO.getId());
+                deleteWrapper.setCompanyCode(shipmentParamLastResultQuery.getCom());
                 log.info("Number:{},id:{}",shipmentParamLastResultQuery.getNu(),mallBuyerShippingLogDTO.getId());
                 mallBuyerShippingLogDao.deleteByNumber(deleteWrapper);
+                //获取物流表编号
+                LambdaQueryWrapper<MallBuyerShipping> mallBuyerShippingWrapper = new LambdaQueryWrapper<MallBuyerShipping>()
+                        .eq(MallBuyerShipping::getNumber, shipmentParamLastResultQuery.getNu())
+                        .eq(MallBuyerShipping::getCompanyCode, shipmentParamLastResultQuery.getCom());
+                MallBuyerShipping mallBuyerShipping = baseMapper.selectOne(mallBuyerShippingWrapper);
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
+                Collections.reverse(list);
                 list.forEach(f -> {
                     MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
-                    mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShippingLogDTO.getBuyerShippingNo());
-                    mallBuyerShippingLog.setCompanyCode(shipmentParamLastResultQuery.getCom());
-                    mallBuyerShippingLog.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
-                    mallBuyerShippingLog.setNumber(shipmentParamLastResultQuery.getNu());
+                    mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShipping.getBuyerShippingNo());
+                    mallBuyerShippingLog.setCompanyCode(mallBuyerShipping.getCompanyCode());
+                    mallBuyerShippingLog.setCompany(mallBuyerShipping.getCompany());
+                    mallBuyerShippingLog.setNumber(mallBuyerShipping.getNumber());
                     mallBuyerShippingLog.setContext(f.getContext());
                     mallBuyerShippingLog.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
                     if (shipmentParamLastResultQuery.getState().equals("3")){
@@ -113,6 +121,7 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
 
             }else{
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
+                Collections.reverse(list);
                 list.forEach(f -> {
                     MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
                     mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShippingLogDTO.getBuyerShippingNo());
