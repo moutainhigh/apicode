@@ -18,7 +18,7 @@ import java.util.Date;
 public class MallTempOrderWaitReceive extends Model {
 
     /**id*/
-    @TableId(type = IdType.UUID)
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "id")
     private Long id;
     /**临时订单编号*/
