@@ -45,12 +45,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     /**
      * 订单列表导出
      * @param mallOrder
-     * @param response
      */
     @ApiOperation(value = "订单列表导出",notes = "订单列表导出",httpMethod = "POST")
     @PostMapping("/order/export")
-    public void exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO, HttpServletResponse response){
-        mallOrderService.exportEXT(mallOrder,userVO,response);
+    public void exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
+        mallOrderService.exportEXT(mallOrder,userVO);
     }
 
     /**
@@ -103,6 +102,5 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
         }
         return mallOrderService.verPickupNo(pickupNo,orderNo, userVO);
     }
-
 
 }

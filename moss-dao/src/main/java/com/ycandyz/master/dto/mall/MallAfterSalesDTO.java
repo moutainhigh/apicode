@@ -110,7 +110,7 @@ public class MallAfterSalesDTO {
     @ApiModelProperty(value = "关联商店表")
     private MallShopDTO shop;
     @ApiModelProperty(value = "总计金额")
-    private Integer allMoney;
+    private BigDecimal allMoney;
     @ApiModelProperty(value = "关联买家快递表")
     private MallBuyerShippingDTO buyerShipping;
     @ApiModelProperty(value = "关联买家寄出快递日志表")

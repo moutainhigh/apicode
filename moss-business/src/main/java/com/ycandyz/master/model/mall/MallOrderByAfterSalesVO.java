@@ -36,7 +36,7 @@ public class MallOrderByAfterSalesVO {
     @ApiModelProperty(value = "订单类型1->商城，2->神州通")
     private Integer orderType;
     @ApiModelProperty(value = "总计金额")
-    private Integer allMoney;
+    private BigDecimal allMoney;
     @ApiModelProperty(value = "发货方式:1-配送 2-自提")
     private Integer deliverType;
 }

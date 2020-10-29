@@ -22,9 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -176,82 +178,77 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return ReturnResponse.success(page1);
     }
 
-    public void exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO, HttpServletResponse response){
+    public void exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
         mallOrderQuery.setShopNo(userVO.getShopNo());
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
-        list.forEach(mall->{
-            //拼接售后字段
-            List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",mall.getOrderNo()));
-            if (mallAfterSalesList!=null && mallAfterSalesList.size()>0){
-                List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
-                if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)){
-                    //退款进行中
-                    mall.setAfterSalesStatus(1);
-                }else {
-                    mall.setAfterSalesStatus(2);
-                }
-            }else {
-                mall.setAfterSalesStatus(0);
-            }
+//        list.forEach(mall->{
+//            //拼接售后字段
+//            List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",mall.getOrderNo()));
+//            if (mallAfterSalesList!=null && mallAfterSalesList.size()>0){
+//                List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
+//                if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)){
+//                    //退款进行中
+//                    mall.setAfterSalesStatus(1);
+//                }else {
+//                    mall.setAfterSalesStatus(2);
+//                }
+//            }else {
+//                mall.setAfterSalesStatus(0);
+//            }
+//
+//            if (mall.getAfterSalesStatus()!=0){
+//                mall.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+//            }else {
+//                if (mall.getAfterSalesEndAt()!=null && mall.getAfterSalesEndAt()>new Date().getTime()/1000){
+//                    mall.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+//                }else {
+//                    mall.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+//                }
+//            }
+//        });
 
-            if (mall.getAfterSalesStatus()!=0){
-                mall.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
-            }else {
-                if (mall.getAfterSalesEndAt()!=null && mall.getAfterSalesEndAt()>new Date().getTime()/1000){
-                    mall.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
-                }else {
-                    mall.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
-                }
-            }
-        });
-//        List<Map<String, Object>> maps = list.
-        // 通过工具类创建writer，默认创建xls格式
-        ExcelWriter writer = ExcelUtil.getWriter();
+        try {
+//            String basePath = ResourceUtils.getURL("classpath:").getPath();
+            ExcelWriter writer = writer = ExcelUtil.getWriter("src/main/resources/static/writeTest1.xls");
 //        writer.merge(list1.size() - 1, "测试标题");
-        //自定义标题别名
-        writer.addHeaderAlias("cartOrderSn", "母订单编号");
-        writer.addHeaderAlias("orderNo", "子订单编号");
-        writer.addHeaderAlias("organizeName", "所属企业");
-        writer.addHeaderAlias("itemName", "商品名称");
-        writer.addHeaderAlias("goodsNo", "货号");
-        writer.addHeaderAlias("allMoney", "总计金额(¥)");
-        writer.addHeaderAlias("payType", "支付方式");
-        writer.addHeaderAlias("quantity", "购买数量");
-        writer.addHeaderAlias("status", "状态");
-        writer.addHeaderAlias("isEnableShare", "是否分销");
-        writer.addHeaderAlias("sellerUserName", "分销合伙人");
-        writer.addHeaderAlias("shareAmount", "分佣金额统计");
-        writer.addHeaderAlias("asStatus", "售后");
-        writer.addHeaderAlias("payuser", "购买用户");
-        writer.addHeaderAlias("receiverName", "收货人");
-        writer.addHeaderAlias("receiverAddress", "收货人地址");
-        writer.addHeaderAlias("orderAtStr", "下单时间");
-        writer.addHeaderAlias("payedAtStr", "支付时间");
-        writer.addHeaderAlias("receiveAtStr", "收货时间");
-        List<String> containsList = Arrays.asList("cartOrderSn","orderNo","organizeName","itemName","goodsNo","allMoney",
-                "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
-                "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
-        List<Map<String, Object>> result = MapUtil.beanToMap(list,containsList);
-        // 一次性写出内容，使用默认样式，强制输出标题
-        writer.write(result, true);
+            //自定义标题别名
+            writer.addHeaderAlias("cartOrderSn", "母订单编号");
+            writer.addHeaderAlias("orderNo", "子订单编号");
+            writer.addHeaderAlias("organizeName", "所属企业");
+            writer.addHeaderAlias("itemName", "商品名称");
+            writer.addHeaderAlias("goodsNo", "货号");
+            writer.addHeaderAlias("allMoney", "总计金额(¥)");
+            writer.addHeaderAlias("payType", "支付方式");
+            writer.addHeaderAlias("quantity", "购买数量");
+            writer.addHeaderAlias("status", "状态");
+            writer.addHeaderAlias("isEnableShare", "是否分销");
+            writer.addHeaderAlias("sellerUserName", "分销合伙人");
+            writer.addHeaderAlias("shareAmount", "分佣金额统计");
+            writer.addHeaderAlias("asStatus", "售后");
+            writer.addHeaderAlias("payuser", "购买用户");
+            writer.addHeaderAlias("receiverName", "收货人");
+            writer.addHeaderAlias("receiverAddress", "收货人地址");
+            writer.addHeaderAlias("orderAtStr", "下单时间");
+            writer.addHeaderAlias("payedAtStr", "支付时间");
+            writer.addHeaderAlias("receiveAtStr", "收货时间");
+            List<String> containsList = Arrays.asList("cartOrderSn","orderNo","organizeName","itemName","goodsNo","allMoney",
+                    "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
+                    "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
+            List<Map<String, Object>> result = MapUtil.beanToMap(list,containsList);
+            // 一次性写出内容，使用默认样式，强制输出标题
+            writer.write(result, true);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         //out为OutputStream，需要写出到的目标流
         //response为HttpServletResponse对象
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+//        response.setContentType("application/vnd.ms-excel;charset=utf-8");
         //test.xls是弹出下载对话框的文件名，不能为中文，中文请自行编码
-        String name = DateUtil.format(new Date(), "yyyy年MM月dd日") +"全部订单导出";
-        response.setHeader("Content-Disposition","attachment;filename="+name+".xls");
-        ServletOutputStream out= null;
-        try {
-            out = response.getOutputStream();
-            writer.flush(out, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-        // 关闭writer，释放内存ß
-            writer.close();
-        }
-        //此处记得关闭输出Servlet流
-        IoUtil.close(out);
+//        String name = DateUtil.format(new Date(), "yyyy年MM月dd日") +"全部订单导出";
+//        response.setHeader("Content-Disposition","attachment;filename="+name+".xls");
+        //输出流，输出文件到项目目录下
     }
 
     @Override
