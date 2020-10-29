@@ -92,6 +92,7 @@
     </dependencies>
 
     <build>
+        <finalName>uke-manager-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
