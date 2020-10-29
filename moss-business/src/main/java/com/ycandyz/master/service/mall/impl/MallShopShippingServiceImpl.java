@@ -1,6 +1,7 @@
 package com.ycandyz.master.service.mall.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -162,9 +163,9 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
 
             //更新卖家发货物流日志表
             MallShopShippingLog mallShopShippingLog = new MallShopShippingLog();
-            mallShopShippingLog.setLogAt(String.valueOf(new Date().getTime()/1000));
+            mallShopShippingLog.setLogAt(DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
             mallShopShippingLog.setIsCheck(0);
-            mallShopShippingLog.setShippingMoney(mallOrder.getAllMoney().subtract(mallOrder.getRealMoney()));
+            mallShopShippingLog.setShippingMoney(mallOrder.getAllMoney().subtract(mallOrder.getAllMoney().subtract(mallOrder.getRealMoney())));
             mallShopShippingLog.setContext("已发货");
             mallShopShippingLog.setNumber(mallShopShippingQuery.getNumber());
             mallShopShippingLog.setCompany(mallShopShippingQuery.getCompany());
@@ -226,6 +227,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                         mallShopShippingLogdto.setContext(data.getContext());
                         mallShopShippingLogdto.setShippingMoney(mallShopShippingLogDTO.getShippingMoney());
                         mallShopShippingLogdto.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
+                        mallShopShippingLogdto.setLogAt(data.getFtime());
                         if (shipmentParamLastResultQuery.getState().equals("3")){
                             //已经签收，需要修改is_check字段状态
                             mallShopShippingLogdto.setIsCheck(1);
