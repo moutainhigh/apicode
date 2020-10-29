@@ -62,17 +62,17 @@
         values
         <foreach collection="list" item="dto" separator=",">
             (
-            #{test.shopShippingNo},
-            #{test.companyCode},
-            #{test.company},
-            #{test.number},
-            #{test.context},
-            #{test.areaCode},
-            #{test.areaName},
-            #{test.shippingMoney},
-            #{test.status},
-            #{test.isCheck},
-            #{test.logAt}
+            #{dto.shopShippingNo},
+            #{dto.companyCode},
+            #{dto.company},
+            #{dto.number},
+            #{dto.context},
+            #{dto.areaCode},
+            #{dto.areaName},
+            #{dto.shippingMoney},
+            #{dto.status},
+            #{dto.isCheck},
+            #{dto.logAt}
             )
         </foreach>
     </insert>
