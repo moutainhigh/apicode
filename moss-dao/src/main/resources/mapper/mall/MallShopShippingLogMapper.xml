@@ -57,9 +57,7 @@
             shipping_money,
             status,
             is_check,
-            log_at,
-            created_time,
-            updated_time
+            log_at
         )
         values
         <foreach collection="list" item="dto" separator=",">
@@ -74,9 +72,7 @@
             #{test.shippingMoney},
             #{test.status},
             #{test.isCheck},
-            #{test.logAt},
-            now(),
-            now()
+            #{test.logAt}
             )
         </foreach>
     </insert>
