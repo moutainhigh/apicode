@@ -16,7 +16,7 @@
             created_time as createdTime,
             updated_time as updatedTime
         from mall_buyer_shipping_log
-        where `number` = #{number}
+        where `number` = #{nu}
         and company_code = #{com}
         order by id asc
         limit 1
