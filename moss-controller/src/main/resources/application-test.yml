@@ -16,6 +16,8 @@ spring:
     host: youchuan-test-redis.5fqnep.0001.cnn1.cache.amazonaws.com.cn
     port: 6379
     database: 1
+  resources:
+    static-locations: classpath:static/,file:static/
 
 mybatis:
   mapperLocations: classpath*:/mapper/**/*.xml
@@ -38,6 +40,7 @@ ignored:
     - /error
     - /mall/order/shipment/callback
     - /mall-buyer-shipping/mallBuyer/shipment/callback
+    - /writeTest.xls
 
 #快递100相关参数
 kuaidi:

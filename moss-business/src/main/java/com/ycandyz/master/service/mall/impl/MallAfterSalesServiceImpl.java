@@ -129,6 +129,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             }
         }catch (Exception e){
             page = new Page<>(0,10,0);
+            log.error(e.getMessage(),e);
         }
         mallPage.setTotal(page.getTotal());
         mallPage.setSize(page.getSize());
@@ -154,6 +155,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 BeanUtils.copyProperties(mallOrderByAfterSalesDTO, mallOrderByAfterSalesVO);
                 mallAfterSalesVO.setOrder(mallOrderByAfterSalesVO);
                 orderType = mallOrderByAfterSalesDTO.getOrderType();
+
+                //总计金额拼接
+                mallAfterSalesVO.setAllMoney(mallOrderByAfterSalesVO.getAllMoney());
             }
 
             //订单详情
@@ -379,7 +383,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     }
 
     @Override
-    public void exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO, HttpServletResponse response) {
+    public void exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO) {
         mallafterSalesQuery.setShopNo(userVO.getShopNo());
         List<MallAfterSalesDTO> list = mallAfterSalesDao.getTrendMallAfterSalesList(mallafterSalesQuery);
 
@@ -406,44 +410,33 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         });
 
         // 通过工具类创建writer，默认创建xls格式
-        ExcelWriter writer = ExcelUtil.getWriter();
-        //自定义标题别名
-        writer.addHeaderAlias("afterSalesNo", "售后编号");
-        writer.addHeaderAlias("orderNo", "订单编号");
-        writer.addHeaderAlias("itemName", "商品名称");
-        writer.addHeaderAlias("goodsNo", "货号");
-        writer.addHeaderAlias("payType", "售后类型");
-        writer.addHeaderAlias("status", "售后状态");
-        writer.addHeaderAlias("afterSalesStatus", "退款数量");
-        writer.addHeaderAlias("money", "退款金额（元）");
-        writer.addHeaderAlias("allMoney", "总计金额（元）");
-        writer.addHeaderAlias("receiverAddress", "支付方式");
-        writer.addHeaderAlias("orderAt", "购买数量");
-        writer.addHeaderAlias("userName", "购买用户");
-        writer.addHeaderAlias("receiveAt", "售后申请时间");
-        List<String> containList = Arrays.asList("afterSalesNo","orderNo","itemName","goodsNo",
-                "payType","status","afterSalesStatus","payuser","receiverName","receiverAddress","orderAt",
-                "userName","receiveAt");
-        List<Map<String, Object>> result = MapUtil.beanToMap(list,containList);
-        // 一次性写出内容，使用默认样式，强制输出标题
-        writer.write(result, true);
-        //out为OutputStream，需要写出到的目标流
-        //response为HttpServletResponse对象
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        //test.xls是弹出下载对话框的文件名，不能为中文，中文请自行编码
-        String name = "Order-list";
-        response.setHeader("Content-Disposition","attachment;filename="+name+".xls");
-        ServletOutputStream out= null;
         try {
-            out = response.getOutputStream();
-            writer.flush(out, true);
-        } catch (IOException e) {
+//            String basePath = ResourceUtils.getURL("classpath:").getPath();
+            ExcelWriter writer = writer = ExcelUtil.getWriter("src/main/resources/static/writeTest1.xls");
+//        writer.merge(list1.size() - 1, "测试标题");
+            //自定义标题别名
+            writer.addHeaderAlias("afterSalesNo", "售后编号");
+            writer.addHeaderAlias("orderNo", "订单编号");
+            writer.addHeaderAlias("itemName", "商品名称");
+            writer.addHeaderAlias("goodsNo", "货号");
+            writer.addHeaderAlias("payType", "售后类型");
+            writer.addHeaderAlias("status", "售后状态");
+            writer.addHeaderAlias("afterSalesStatus", "退款数量");
+            writer.addHeaderAlias("money", "退款金额（元）");
+            writer.addHeaderAlias("allMoney", "总计金额（元）");
+            writer.addHeaderAlias("receiverAddress", "支付方式");
+            writer.addHeaderAlias("orderAt", "购买数量");
+            writer.addHeaderAlias("userName", "购买用户");
+            writer.addHeaderAlias("receiveAt", "售后申请时间");
+            List<String> containList = Arrays.asList("afterSalesNo","orderNo","itemName","goodsNo",
+                    "payType","status","afterSalesStatus","payuser","receiverName","receiverAddress","orderAt",
+                    "userName","receiveAt");
+            List<Map<String, Object>> result = MapUtil.beanToMap(list,containList);
+            // 一次性写出内容，使用默认样式，强制输出标题
+            writer.write(result, true);
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            // 关闭writer，释放内存ß
-            writer.close();
         }
-        //此处记得关闭输出Servlet流
-        IoUtil.close(out);
+
     }
 }
