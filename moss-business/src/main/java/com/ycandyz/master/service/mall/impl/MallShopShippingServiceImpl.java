@@ -172,6 +172,8 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             mallShopShippingLog.setCompanyCode(mallShopShippingQuery.getCompanyCode());
             mallShopShippingLog.setStatus(0);
             mallShopShippingLog.setShopShippingNo(mallShopShipping.getShopShippingNo());
+            mallShopShippingLog.setAreaCode("");
+            mallShopShippingLog.setAreaName("");
             mallShopShippingLogDao.insert(mallShopShippingLog);
 
             //更新待收货临时表
@@ -228,6 +230,8 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                         mallShopShippingLogdto.setShippingMoney(mallShopShippingLogDTO.getShippingMoney());
                         mallShopShippingLogdto.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
                         mallShopShippingLogdto.setLogAt(data.getFtime());
+                        mallShopShippingLogdto.setAreaCode(data.getAreaCode());
+                        mallShopShippingLogdto.setAreaName(data.getAreaName());
                         if (shipmentParamLastResultQuery.getState().equals("3")){
                             //已经签收，需要修改is_check字段状态
                             mallShopShippingLogdto.setIsCheck(1);
