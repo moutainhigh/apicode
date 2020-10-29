@@ -16,7 +16,7 @@ import lombok.Setter;
 public class MallTempShipping extends Model {
 
     /**id*/
-    @TableId(type = IdType.UUID)
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "id")
     private Long id;
     /**快递公司编码*/
