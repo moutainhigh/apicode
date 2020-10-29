@@ -142,6 +142,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         }
         mallShopShippingDao.updateById(mallShopShipping);
 
+        //更新订单表
         MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",mallShopShippingQuery.getOrderNo()));
         if (mallOrder!=null){
             mallOrder.setStatus(30);
@@ -149,22 +150,19 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             Long timeAt = new Date().getTime()/1000;
             mallOrder.setSendAt(timeAt.intValue()); //更新商家发货时间
             mallOrderDao.updateById(mallOrder);
-
-            //更新卖家发货物流日志表
-            MallShopShippingLog mallShopShippingLog = new MallShopShippingLog();
-            mallShopShippingLog.setLogAt(String.valueOf(new Date().getTime()/1000));
-            mallShopShippingLog.setIsCheck(0);
-            mallShopShippingLog.setShippingMoney(mallOrder.getAllMoney().subtract(mallOrder.getRealMoney()));
-            mallShopShippingLog.setContext("已发货");
-            mallShopShippingLog.setNumber(mallShopShippingQuery.getNumber());
-            mallShopShippingLog.setCompany(mallShopShippingQuery.getCompany());
-            mallShopShippingLog.setCompanyCode(mallShopShippingQuery.getCompanyCode());
-            mallShopShippingLog.setStatus(0);
-            mallShopShippingLog.setCreatedTime(new Date());
-            mallShopShippingLog.setShopShippingNo(mallShopShipping.getShopShippingNo());
-            mallShopShippingLog.setUpdatedTime(new Date());
-            mallShopShippingLogDao.insert(mallShopShippingLog);
         }
+        //更新卖家发货物流日志表
+        MallShopShippingLog mallShopShippingLog = new MallShopShippingLog();
+        mallShopShippingLog.setLogAt(String.valueOf(new Date().getTime()/1000));
+        mallShopShippingLog.setIsCheck(0);
+        mallShopShippingLog.setShippingMoney(mallOrder.getAllMoney().subtract(mallOrder.getRealMoney()));
+        mallShopShippingLog.setContext("已发货");
+        mallShopShippingLog.setNumber(mallShopShippingQuery.getNumber());
+        mallShopShippingLog.setCompany(mallShopShippingQuery.getCompany());
+        mallShopShippingLog.setCompanyCode(mallShopShippingQuery.getCompanyCode());
+        mallShopShippingLog.setStatus(0);
+        mallShopShippingLog.setShopShippingNo(mallShopShipping.getShopShippingNo());
+        mallShopShippingLogDao.insert(mallShopShippingLog);
 
         return ReturnResponse.success("发货成功");
     }
