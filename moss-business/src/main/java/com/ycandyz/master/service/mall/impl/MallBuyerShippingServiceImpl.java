@@ -3,6 +3,7 @@ package com.ycandyz.master.service.mall.impl;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dao.mall.MallBuyerShippingLogDao;
 import com.ycandyz.master.domain.shipment.query.ShipmentParamLastResultDataQuery;
@@ -10,6 +11,7 @@ import com.ycandyz.master.domain.shipment.query.ShipmentParamLastResultQuery;
 import com.ycandyz.master.domain.shipment.query.ShipmentParamQuery;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO;
+import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallBuyerShipping;
 import com.ycandyz.master.domain.query.mall.MallBuyerShippingQuery;
 import com.ycandyz.master.dao.mall.MallBuyerShippingDao;
@@ -84,26 +86,11 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                 if (mallBuyerShippingLogDTO.getStatus()==3) {
                     return ShipmentResponseDataVO.success("当前状态已经签收，无需重复签收");
                 }
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date d = null;
-                try {
-                    d = format.parse(mallBuyerShippingLogDTO.getLogAt());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                Date finalD = d;
-                List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData().stream().filter(f ->{
-                    Date dd = null;
-                    try {
-                        dd = format.parse(f.getFtime());
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    if(finalD.before(dd)){
-                        return false;
-                    }
-                    return true;
-                }).collect(Collectors.toList());
+                LambdaQueryWrapper<MallBuyerShippingLog> deleteWrapper = new LambdaQueryWrapper<MallBuyerShippingLog>()
+                        .eq(MallBuyerShippingLog::getNumber, shipmentParamLastResultQuery.getNu())
+                        .gt(MallBuyerShippingLog::getId, mallBuyerShippingLogDTO.getId());
+                mallBuyerShippingLogDao.delete(deleteWrapper);
+                List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
                 list.forEach(f -> {
                     MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
                     mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShippingLogDTO.getBuyerShippingNo());
