@@ -17,7 +17,7 @@
             updated_time as updatedTime
         from mall_buyer_shipping_log
         where `number`=#{number}
-        order by createdTime desc
+        order by id asc
         limit 1
     </select>
     <select id="queryListByBuyerShippingNoList" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO">
