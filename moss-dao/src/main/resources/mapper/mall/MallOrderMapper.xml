@@ -53,7 +53,6 @@
             mo.receive_at,
             mo.pay_type,
             mo.`status`,
-            mo.`after_sales_status`,
             mo.`deliver_type`,
             mo.`deliver_method`,
             mo.all_money-mo.real_money as shippingMoney,
@@ -119,15 +118,15 @@
             </if>
             <if test="p.payedAtForm != null">
                 and
-                cart.payment_time &gt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
+                mo.payed_at &gt;= #{p.payedAtForm}	/**支付时间*/
             </if>
             <if test="p.payedAtTo != null">
                 and
-                cart.payment_time &lt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
+                mo.payed_at &lt;= #{p.payedAtTo}	/**支付时间*/
             </if>
             <if test="p.receiveAtForm != null">
                 and
-                mo.receive_at &gt;= #{p.payedAtForm} /**收货时间*/
+                mo.receive_at &gt;= #{p.receiveAtForm} /**收货时间*/
             </if>
             <if test="p.receiveAtTo != null">
                 and
@@ -243,11 +242,11 @@
         </if>
         <if test="p.payedAtForm != null">
             and
-            cart.payment_time &gt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
+            mo.payed_at &gt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
         </if>
         <if test="p.payedAtTo != null">
             and
-            cart.payment_time &lt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
+            mo.payed_at &lt;= from_unixtime(#{p.payedAtTo}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
         </if>
         <if test="p.receiveAtForm != null">
             and

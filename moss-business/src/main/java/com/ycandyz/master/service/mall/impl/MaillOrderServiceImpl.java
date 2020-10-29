@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
@@ -11,6 +12,7 @@ import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.dto.mall.*;
+import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
@@ -83,18 +85,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     if (mallOrderDTO.getCartOrderSn()==null || "".equals(mallOrderDTO.getCartOrderSn())){
                         mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
                     }
-                    if (mallOrderDTO.getAfterSalesStatus()!=null){
-                        //修改售后返回值给前端
-                        if (mallOrderDTO.getAfterSalesStatus()==0){
-                            mallOrderDTO.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
-                        }else {
-                            if (mallOrderDTO.getAfterSalesEndAt()!=null && mallOrderDTO.getAfterSalesEndAt()>new Date().getTime()/1000){
-                                mallOrderDTO.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
-                            }else {
-                                mallOrderDTO.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
-                            }
-                        }
-                    }
                     mallOrderVo = new MallOrderVO();
                     BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
                     //订单列表显示商品名称数组
@@ -125,7 +115,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         int quantity = skuQuantity.stream().reduce(Integer::sum).orElse(0);
                         mallOrderVo.setQuantity(quantity);
                     }
-                    list.add(mallOrderVo);
 
                     //订单列表显示分销合伙人，分销金额统计
                     List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryByOrderNo(mallOrderVo.getOrderNo());
@@ -145,6 +134,33 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         isEnableShare = 1;  //是否分销
                     }
                     mallOrderVo.setIsEnableShare(isEnableShare);
+
+                    //拼接售后字段
+                    List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",mallOrderVo.getOrderNo()));
+                    if (mallAfterSalesList!=null && mallAfterSalesList.size()>0){
+                        List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
+                        if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)){
+                            //退款进行中
+                            mallOrderVo.setAfterSalesStatus(1);
+                        }else {
+                            mallOrderVo.setAfterSalesStatus(2);
+                        }
+                    }else {
+                        mallOrderVo.setAfterSalesStatus(0);
+                    }
+                    if (mallOrderVo.getAfterSalesStatus()!=null){
+                        //修改售后返回值给前端
+                        if (mallOrderVo.getAfterSalesStatus()==0){
+                            mallOrderVo.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+                        }else {
+                            if (mallOrderVo.getAfterSalesEndAt()!=null && mallOrderVo.getAfterSalesEndAt()>new Date().getTime()/1000){
+                                mallOrderVo.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                            }else {
+                                mallOrderVo.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                            }
+                        }
+                    }
+                    list.add(mallOrderVo);
                 }
             }
         }catch (Exception e){
@@ -172,6 +188,20 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }else {
                     mall.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
                 }
+            }
+
+            //拼接售后字段
+            List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",mall.getOrderNo()));
+            if (mallAfterSalesList!=null && mallAfterSalesList.size()>0){
+                List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
+                if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)){
+                    //退款进行中
+                    mall.setAfterSalesStatus(1);
+                }else {
+                    mall.setAfterSalesStatus(2);
+                }
+            }else {
+                mall.setAfterSalesStatus(0);
             }
         });
 //        List<Map<String, Object>> maps = list.

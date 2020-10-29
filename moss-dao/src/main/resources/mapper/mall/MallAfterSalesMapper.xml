@@ -139,11 +139,11 @@
             </if>
             <if test="p.applyAtFrom != null">
                 and
-                sales.apply_at &gt;= #{p.applyAtFrom}
+                unix_timestamp(sales.created_time) &gt;= #{p.applyAtFrom}
             </if>
             <if test="p.applyAtTo != null">
                 and
-                sales.apply_at &lt;= #{p.applyAtTo}
+                unix_timestamp(sales.created_time) &lt;= #{p.applyAtTo}
             </if>
             <if test="p.orderNo != null and p.orderNo != ''">
                 and
