@@ -79,6 +79,9 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     })
     @GetMapping("/order/pickup/query")
     public ReturnResponse<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
+        if (pickupNo!=null){
+            pickupNo = pickupNo.trim();
+        }
         return mallOrderService.queryDetailByPickupNo(pickupNo, orderNo, userVO);
     }
 
@@ -95,6 +98,9 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     })
     @GetMapping("/order/pickup/verification")
     public ReturnResponse<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
+        if (pickupNo!=null){
+            pickupNo = pickupNo.trim();
+        }
         return mallOrderService.verPickupNo(pickupNo,orderNo, userVO);
     }
 
