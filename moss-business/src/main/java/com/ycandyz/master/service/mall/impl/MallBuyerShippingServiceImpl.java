@@ -107,10 +107,30 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                         mallBuyerShippingLog.setIsCheck(0);
                     }
                     mallBuyerShippingLog.setLogAt(f.getFtime());
-                    log.debug("MallBuyerShippingLog==> {}",mallBuyerShippingLog);
+                    log.debug("MallBuyerShippingLog exist==> {}",mallBuyerShippingLog);
                     mallBuyerShippingLogDao.insert(mallBuyerShippingLog);     //更新卖家物流表
                 });
 
+            }else{
+                List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
+                list.forEach(f -> {
+                    MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
+                    mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShippingLogDTO.getBuyerShippingNo());
+                    mallBuyerShippingLog.setCompanyCode(shipmentParamLastResultQuery.getCom());
+                    mallBuyerShippingLog.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
+                    mallBuyerShippingLog.setNumber(shipmentParamLastResultQuery.getNu());
+                    mallBuyerShippingLog.setContext(f.getContext());
+                    mallBuyerShippingLog.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
+                    if (shipmentParamLastResultQuery.getState().equals("3")){
+                        //已经签收，需要修改is_check字段状态
+                        mallBuyerShippingLog.setIsCheck(1);
+                    }else {
+                        mallBuyerShippingLog.setIsCheck(0);
+                    }
+                    mallBuyerShippingLog.setLogAt(f.getFtime());
+                    log.debug("MallBuyerShippingLog==> {}",mallBuyerShippingLog);
+                    mallBuyerShippingLogDao.insert(mallBuyerShippingLog);     //更新卖家物流表
+                });
             }
         }
         return ShipmentResponseDataVO.success("更新成功");
