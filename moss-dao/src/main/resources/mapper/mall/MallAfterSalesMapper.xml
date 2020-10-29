@@ -191,6 +191,7 @@
             mo.deliver_method,
             mo.deliver_type,
             mo.order_type,
+            mo.all_money,
             mo.all_money-mo.real_money as shipping_money,
 
             modetail.order_no as detailOrderNo,

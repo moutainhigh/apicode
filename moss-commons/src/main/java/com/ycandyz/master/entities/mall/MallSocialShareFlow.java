@@ -1,5 +1,7 @@
 package com.ycandyz.master.entities.mall;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +18,7 @@ public class MallSocialShareFlow extends Model {
 
     /**id*/
     @ApiModelProperty(value = "id")
+    @TableId(type = IdType.AUTO)
     private Long id;
     /**佣金流水号*/
     @ApiModelProperty(value = "佣金流水号")
