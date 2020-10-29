@@ -42,7 +42,7 @@
     </resultMap>
 
     <select id="getTrendMallOrderPage" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultMap="BaseOrderListResultMap">
-        SELECT
+        select a.* from(SELECT
             mo.id,
             cart.order_sn,
             mo.order_no,
@@ -50,7 +50,6 @@
             mo.total_money,
             mo.payed_at,
             mo.order_at,
-            mo.receive_at,
             mo.pay_type,
             mo.`status`,
             mo.`deliver_type`,
@@ -164,7 +163,7 @@
                 and mo.cancel_reason=#{p.cancelReason}
             </if>
             /**group by mo.id*/
-            order by mo.order_at DESC
+            order by mo.order_at DESC)a
     </select>
 
     <select id="getTrendMallOrder" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultMap="BaseOrderListResultMap">
