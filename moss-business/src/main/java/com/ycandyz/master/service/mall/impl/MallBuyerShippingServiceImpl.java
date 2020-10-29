@@ -89,6 +89,7 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                 MallBuyerShippingLog deleteWrapper = new MallBuyerShippingLog();
                 deleteWrapper.setNumber(shipmentParamLastResultQuery.getNu());
                 deleteWrapper.setId(mallBuyerShippingLogDTO.getId());
+                log.info("Number:{},id:{}",shipmentParamLastResultQuery.getNu(),mallBuyerShippingLogDTO.getId());
                 mallBuyerShippingLogDao.deleteByNumber(deleteWrapper);
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
                 list.forEach(f -> {
