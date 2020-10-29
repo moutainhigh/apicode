@@ -97,7 +97,7 @@
             </if>
             <if test="p.consignor != null and p.consignor != ''">
                 and
-                (ship.receiver like concat('%',#{p.consignor},'%') OR u.phone like concat('%',#{p.consignor},'%'))	/**收货人名称或者手机号*/
+                (ship.receiver like concat('%',#{p.consignor},'%') OR ship.receiver_phone like concat('%',#{p.consignor},'%'))	/**收货人名称或者手机号*/
             </if>
             <if test="p.deliverType != null and p.deliverType != ''">
                 and

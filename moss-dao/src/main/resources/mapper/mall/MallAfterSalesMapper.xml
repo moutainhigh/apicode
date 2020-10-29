@@ -101,11 +101,11 @@
             sales.shop_no=#{p.shopNo}
             <if test="p.refundNo != null and p.refundNo != ''">
                 and
-                modetail.refund_no=#{p.refundNo}
+                modetail.refund_no like concat('%',#{p.refundNo},'%')
             </if>
             <if test="p.afterSalesNo != null and p.afterSalesNo != ''">
                 and
-                sales.after_sales_no = #{p.afterSalesNo}
+                sales.after_sales_no like concat('%',#{p.afterSalesNo},'%')
             </if>
             <if test="p.status != null">
                 and
@@ -147,7 +147,7 @@
             </if>
             <if test="p.orderNo != null and p.orderNo != ''">
                 and
-                sales.order_no=#{p.orderNo}
+                sales.order_no like concat('%',#{p.orderNo},'%')
             </if>
             <if test="p.shopItem != null and p.shopItem != ''">
                 and
@@ -261,11 +261,11 @@
         sales.shop_no=#{p.shopNo}
         <if test="p.refundNo != null and p.refundNo != ''">
             and
-            modetail.refund_no=#{p.refundNo}
+            modetail.refund_no like concat('%',#{p.refundNo},'%')
         </if>
         <if test="p.afterSalesNo != null and p.afterSalesNo != ''">
             and
-            sales.after_sales_no = #{p.afterSalesNo}
+            sales.after_sales_no like concat('%',#{p.afterSalesNo},'%')
         </if>
         <if test="p.status != null">
             and
@@ -299,15 +299,15 @@
         </if>
         <if test="p.applyAtFrom != null">
             and
-            sales.apply_at &gt;= #{p.applyAtFrom}
+            unix_timestamp(sales.created_time) &gt;= #{p.applyAtFrom}
         </if>
         <if test="p.applyAtTo != null">
             and
-            sales.apply_at &lt;= #{p.applyAtTo}
+            unix_timestamp(sales.created_time) &lt;= #{p.applyAtTo}
         </if>
         <if test="p.orderNo != null and p.orderNo != ''">
             and
-            sales.order_no=#{p.orderNo}
+            sales.order_no like concat('%',#{p.orderNo},'%')
         </if>
         <if test="p.shopItem != null and p.shopItem != ''">
             and
