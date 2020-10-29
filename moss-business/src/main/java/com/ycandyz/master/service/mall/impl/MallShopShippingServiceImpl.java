@@ -1,14 +1,11 @@
 package com.ycandyz.master.service.mall.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteByMap;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
@@ -22,7 +19,6 @@ import com.ycandyz.master.enums.ExpressEnum;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
-import com.ycandyz.master.utils.QueryUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,18 +203,23 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             MallShopShippingLogDTO mallShopShippingLogDTO = mallShopShippingLogDao.selectByShipNumberLast(shipmentParamLastResultQuery.getNu(), shipmentParamLastResultQuery.getCom());
             if (mallShopShippingLogDTO!=null){
                 if (shipmentParamLastResultQuery.getData()!=null && shipmentParamLastResultQuery.getData().size()>0){
-                    //先删除
                     if (mallShopShippingLogDTO.getStatus()==3) {
                         return ShipmentResponseDataVO.success("当前状态已经签收，无需重复签收");
                     }
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("company_code",shipmentParamLastResultQuery.getCom());
-                    map.put("number",shipmentParamLastResultQuery.getNu());
-                    mallShopShippingLogDao.deleteByMap(map);
+
+                    if (!mallShopShippingLogDTO.getContext().equals("已发货")) {
+                        //先删除
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("company_code", shipmentParamLastResultQuery.getCom());
+                        map.put("number", shipmentParamLastResultQuery.getNu());
+                        mallShopShippingLogDao.deleteByMap(map);
+                    }
 
                     //后新增
                     List<MallShopShippingLogDTO> dataList = new ArrayList();
-                    shipmentParamLastResultQuery.getData().forEach(data->{
+                    List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
+                    Collections.reverse(list);
+                    list.forEach(data->{
                         MallShopShippingLogDTO mallShopShippingLogdto = new MallShopShippingLogDTO();
                         mallShopShippingLogdto.setShopShippingNo(mallShopShippingLogDTO.getShopShippingNo());
                         mallShopShippingLogdto.setCompanyCode(shipmentParamLastResultQuery.getCom());
