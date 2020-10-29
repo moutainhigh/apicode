@@ -19,7 +19,7 @@
             created_time as createdTime,
             updated_time as updatedTime
         from mall_shop_shipping_log
-        where `number`=#{number}
+        where `number`=#{number} and company_code=#{companyCode}
         order by createdTime desc
         limit 1
     </select>
@@ -43,4 +43,41 @@
         from mall_shop_shipping_log log
         where log.shop_shipping_no=#{shopShippingNo}
     </select>
+
+    <insert id="insertBatch" parameterType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
+        insert into mall_shop_shipping_log
+        (
+            shop_shipping_no,
+            company_code,
+            company,
+            `number`,
+            context,
+            area_code,
+            area_name,
+            shipping_money,
+            status,
+            is_check,
+            log_at,
+            created_time,
+            updated_time
+        )
+        values
+        <foreach collection="list" item="dto" separator=",">
+            (
+            #{test.shopShippingNo},
+            #{test.companyCode},
+            #{test.company},
+            #{test.number},
+            #{test.context},
+            #{test.areaCode},
+            #{test.areaName},
+            #{test.shippingMoney},
+            #{test.status},
+            #{test.isCheck},
+            #{test.logAt},
+            now(),
+            now()
+            )
+        </foreach>
+    </insert>
 </mapper>
