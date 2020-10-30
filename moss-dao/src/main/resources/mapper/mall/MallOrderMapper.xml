@@ -106,6 +106,10 @@
             <if test="p.distribution != null">
                 and
                 modetail.is_enable_share=#{distribution}    /**0没有分销，1有分销*/
+                <if test="p.distribution=1">
+                    and
+                    mo.status!=50   /**如果订单有分销，需要判断订单不能为取消订单。否则不展示*/
+                </if>
             </if>
             <if test="p.orderAtForm != null">
                 and
@@ -142,6 +146,8 @@
             <if test="p.socialPartner != null and p.socialPartner != ''">
                 and
                 (uu.`name` like concat('%',#{p.socialPartner},'%') OR uu.phone like concat('%',#{p.socialPartner},'%')) /**合伙人*/
+                and
+                mo.status!=50   /**如果订单有分销，需要判断订单不能为取消订单。否则不展示*/
             </if>
             <if test="p.sendAtForm != null">
                 and

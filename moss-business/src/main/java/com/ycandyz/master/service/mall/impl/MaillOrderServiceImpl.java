@@ -117,24 +117,26 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         mallOrderVo.setQuantity(quantity);
                     }
 
-                    //订单列表显示分销合伙人，分销金额统计
-                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryByOrderNo(mallOrderVo.getOrderNo());
-                    Integer isEnableShare = 0;
-                    if (mallSocialShareFlowDTOS!=null && mallSocialShareFlowDTOS.size()>0){
-                        List<String> sellerUserList = new ArrayList<>();
-                        List<String> shareAmountList = new ArrayList<>();
-                        mallSocialShareFlowDTOS.forEach(dto->{
-                            String sellerUser = dto.getUserName()+" "+dto.getPhoneNo();
-                            sellerUserList.add(sellerUser); //分销合伙人
+                    if (!mallOrderVo.getStatus().equals(50)){   //已取消订单不展示分销人相关信息
+                        //订单列表显示分销合伙人，分销金额统计
+                        List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryByOrderNo(mallOrderVo.getOrderNo());
+                        Integer isEnableShare = 0;
+                        if (mallSocialShareFlowDTOS!=null && mallSocialShareFlowDTOS.size()>0){
+                            List<String> sellerUserList = new ArrayList<>();
+                            List<String> shareAmountList = new ArrayList<>();
+                            mallSocialShareFlowDTOS.forEach(dto->{
+                                String sellerUser = dto.getUserName()+" "+dto.getPhoneNo();
+                                sellerUserList.add(sellerUser); //分销合伙人
 
-                            String shareAmount = dto.getAmount().toString();
-                            shareAmountList.add(shareAmount);   //分销佣金
-                        });
-                        mallOrderVo.setShareAmount(shareAmountList);
-                        mallOrderVo.setSellerUserName(sellerUserList);
-                        isEnableShare = 1;  //是否分销
+                                String shareAmount = dto.getAmount().toString();
+                                shareAmountList.add(shareAmount);   //分销佣金
+                            });
+                            mallOrderVo.setShareAmount(shareAmountList);
+                            mallOrderVo.setSellerUserName(sellerUserList);
+                            isEnableShare = 1;  //是否分销
+                        }
+                        mallOrderVo.setIsEnableShare(isEnableShare);
                     }
-                    mallOrderVo.setIsEnableShare(isEnableShare);
 
                     //拼接售后字段
                     List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",mallOrderVo.getOrderNo()));
