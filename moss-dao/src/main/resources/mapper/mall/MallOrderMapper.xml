@@ -105,8 +105,8 @@
             </if>
             <if test="p.distribution != null">
                 and
-                modetail.is_enable_share=#{distribution}    /**0没有分销，1有分销*/
-                <if test="p.distribution=1">
+                modetail.is_enable_share=#{p.distribution}    /**0没有分销，1有分销*/
+                <if test="p.distribution==1">
                     and
                     mo.status!=50   /**如果订单有分销，需要判断订单不能为取消订单。否则不展示*/
                 </if>
@@ -226,7 +226,7 @@
         </if>
         <if test="p.consignor != null and p.consignor != ''">
             and
-            (ship.receiver like concat('%',#{p.consignor},'%') OR u.phone like concat('%',#{p.consignor},'%'))	/**收货人名称或者手机号*/
+            (ship.receiver like concat('%',#{p.consignor},'%') OR ship.receiver_phone like concat('%',#{p.consignor},'%'))	/**收货人名称或者手机号*/
         </if>
         <if test="p.deliverType != null and p.deliverType != ''">
             and
@@ -234,7 +234,11 @@
         </if>
         <if test="p.distribution != null">
             and
-            modetail.is_enable_share=#{distribution}    /**0没有分销，1有分销*/
+            modetail.is_enable_share=#{p.distribution}    /**0没有分销，1有分销*/
+            <if test="p.distribution==1">
+                and
+                mo.status!=50   /**如果订单有分销，需要判断订单不能为取消订单。否则不展示*/
+            </if>
         </if>
         <if test="p.orderAtForm != null">
             and
@@ -246,15 +250,15 @@
         </if>
         <if test="p.payedAtForm != null">
             and
-            mo.payed_at &gt;= from_unixtime(#{p.payedAtForm}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
+            mo.payed_at &gt;= #{p.payedAtForm}	/**支付时间*/
         </if>
         <if test="p.payedAtTo != null">
             and
-            mo.payed_at &lt;= from_unixtime(#{p.payedAtTo}, '%Y-%m-%d %H:%i:%S')	/**支付时间*/
+            mo.payed_at &lt;= #{p.payedAtTo}	/**支付时间*/
         </if>
         <if test="p.receiveAtForm != null">
             and
-            mo.receive_at &gt;= #{p.payedAtForm} /**收货时间*/
+            mo.receive_at &gt;= #{p.receiveAtForm} /**收货时间*/
         </if>
         <if test="p.receiveAtTo != null">
             and
@@ -271,6 +275,8 @@
         <if test="p.socialPartner != null and p.socialPartner != ''">
             and
             (uu.`name` like concat('%',#{p.socialPartner},'%') OR uu.phone like concat('%',#{p.socialPartner},'%')) /**合伙人*/
+            and
+            mo.status!=50   /**如果订单有分销，需要判断订单不能为取消订单。否则不展示*/
         </if>
         <if test="p.sendAtForm != null">
             and

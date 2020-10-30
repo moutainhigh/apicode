@@ -20,7 +20,7 @@
             log.updated_time as updatedTime
         from mall_shop_shipping_log log
         where log.shop_shipping_no=#{shopShippingNo}
-        order by log.id
+        order by log.id desc
     </select>
 
     <insert id="insertBatch" parameterType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
