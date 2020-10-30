@@ -103,8 +103,8 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                     return ShipmentResponseDataVO.success("更新成功");
                 }
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
-                if(CollectionUtil.isNotEmpty(list)){
-                    return ShipmentResponseDataVO.success("更新成功");
+                if(CollectionUtil.isEmpty(list)){
+                    return ShipmentResponseDataVO.success("更新成功,未获取到物流数据");
                 }
                 Collections.reverse(list);
                 list.forEach(f -> {
@@ -136,8 +136,8 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                     return ShipmentResponseDataVO.success("更新成功");
                 }
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
-                if(CollectionUtil.isNotEmpty(list)){
-                    return ShipmentResponseDataVO.success("更新成功");
+                if(CollectionUtil.isEmpty(list)){
+                    return ShipmentResponseDataVO.success("更新成功,未获取到物流数据");
                 }
                 Collections.reverse(list);
                 list.forEach(f -> {
