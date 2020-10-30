@@ -1,7 +1,5 @@
 package com.ycandyz.master.service.mall.impl;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -22,15 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,11 +66,19 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 //        }
 //        Long organizeId = mallOrderQuery.getOrganizeId();
         mallOrderQuery.setShopNo(userVO.getShopNo());
+
         Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
         List<MallOrderVO> list = new ArrayList<>();
         Page<MallOrderVO> page1 = new Page<>();
         Page<MallOrderDTO> page = null;
         try {
+
+//            //获取总条数
+//            int count = mallOrderDao.getTrendMallOrderPageSize(mallOrderQuery);
+//            //分页
+//            List<MallOrderDTO> mallDTOList = mallOrderDao.getTrendMallOrderByPage((requestParams.getPage()-1)*requestParams.getPage_size(),requestParams.getPage_size(),mallOrderQuery);
+
+
             page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
             MallOrderVO mallOrderVo = null;
             if (page.getRecords()!=null && page.getRecords().size()>0) {
