@@ -155,7 +155,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             MallTempOrderWaitReceive mallTempOrderWaitReceive = new MallTempOrderWaitReceive();
             Long time = new Date().getTime() / 1000;
             mallTempOrderWaitReceive.setCloseAt(time + 7 * 24 * 60 * 60);
-            mallTempOrderWaitReceive.setOrderNo(mallOrder.getOrderNo());
+            mallTempOrderWaitReceive.setOrderNo(mallShopShippingQuery.getOrderNo());
             mallTempOrderWaitReceive.setShopNo(mallShopShippingDTO.getShopShippingNo());
             mallTempOrderWaitReceive.setTempOrderNo(String.valueOf(IDGeneratorUtils.getLongId()));
             mallTempOrderWaitReceiveDao.insert(mallTempOrderWaitReceive);
