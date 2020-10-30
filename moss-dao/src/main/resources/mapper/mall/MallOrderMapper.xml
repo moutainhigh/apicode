@@ -79,7 +79,7 @@
         LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
         LEFT JOIN user u ON mo.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
-        left join mall_social_share_flow s on s.order_detail_no = modetail.order_detail_no and s.share_type = 1
+        left join mall_social_share_flow s on (s.order_detail_no = modetail.order_detail_no or s.order_no=mo.order_no)  and s.share_type = 0
         left join user as uu on uu.id = s.user_id
         WHERE
             mo.shop_no=#{p.shopNo} and mo.is_del=0
@@ -105,8 +105,7 @@
             </if>
             <if test="p.distribution != null">
                 and
-                <if test="p.distribution==0">modetail.share_level_type=#{p.distribution} /**0没有分销，大于0有分销*/</if>
-                <if test="p.distribution==1">modetail.share_level_type&gt;0 /**0没有分销，大于0有分销*/</if>
+                modetail.is_enable_share=#{distribution}    /**0没有分销，1有分销*/
             </if>
             <if test="p.orderAtForm != null">
                 and
@@ -203,7 +202,7 @@
         LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
         LEFT JOIN user u ON mo.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
-        left join mall_social_share_flow s on s.order_detail_no = modetail.order_detail_no and s.share_type = 1
+        left join mall_social_share_flow s on (s.order_detail_no = modetail.order_detail_no or s.order_no=mo.order_no) and s.share_type = 0
         left join user as uu on uu.id = s.user_id
         WHERE
         mo.shop_no=#{p.shopNo} and mo.is_del=0
@@ -229,8 +228,7 @@
         </if>
         <if test="p.distribution != null">
             and
-            <if test="p.distribution==0">modetail.share_level_type=#{p.distribution} /**0没有分销，大于0有分销*/</if>
-            <if test="p.distribution==1">modetail.share_level_type&gt;0 /**0没有分销，大于0有分销*/</if>
+            modetail.is_enable_share=#{distribution}    /**0没有分销，1有分销*/
         </if>
         <if test="p.orderAtForm != null">
             and

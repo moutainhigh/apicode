@@ -223,33 +223,31 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                         List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
                         Collections.reverse(list);
                         //更新数据到MallShopShippingLog表
-                        mallShopShippingLogDTOS.forEach(dto->{
-                            MallShopShippingLogDTO mallShopShippingLogdto = null;
-                            int i = 0;
-                            for(ShipmentParamLastResultDataQuery data : list) {
-                                mallShopShippingLogdto = new MallShopShippingLogDTO();
-                                mallShopShippingLogdto.setShopShippingNo(dto.getShopShippingNo());
-                                mallShopShippingLogdto.setCompanyCode(shipmentParamLastResultQuery.getCom());
-                                mallShopShippingLogdto.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
-                                mallShopShippingLogdto.setNumber(shipmentParamLastResultQuery.getNu());
-                                mallShopShippingLogdto.setContext(data.getContext());
-                                mallShopShippingLogdto.setShippingMoney(dto.getShippingMoney());
-                                if (i == list.size()-1) {
-                                    mallShopShippingLogdto.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
-                                }else {
-                                    mallShopShippingLogdto.setStatus(0);
-                                }
-                                mallShopShippingLogdto.setLogAt(data.getFtime());
-                                if (shipmentParamLastResultQuery.getState().equals("3")){
-                                    //已经签收，需要修改is_check字段状态
-                                    mallShopShippingLogdto.setIsCheck(1);
-                                }else {
-                                    mallShopShippingLogdto.setIsCheck(0);
-                                }
-                                dataList.add(mallShopShippingLogdto);
-                                i++;
+                        MallShopShippingLogDTO mallShopShippingLogdto = null;
+                        int i = 0;
+                        for(ShipmentParamLastResultDataQuery data : list) {
+                            mallShopShippingLogdto = new MallShopShippingLogDTO();
+                            mallShopShippingLogdto.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
+                            mallShopShippingLogdto.setCompanyCode(shipmentParamLastResultQuery.getCom());
+                            mallShopShippingLogdto.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
+                            mallShopShippingLogdto.setNumber(shipmentParamLastResultQuery.getNu());
+                            mallShopShippingLogdto.setContext(data.getContext());
+                            mallShopShippingLogdto.setShippingMoney(mallShopShippingDTO.getShippingMoney());
+                            if (i == list.size()-1) {
+                                mallShopShippingLogdto.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
+                            }else {
+                                mallShopShippingLogdto.setStatus(0);
                             }
-                        });
+                            mallShopShippingLogdto.setLogAt(data.getFtime());
+                            if (shipmentParamLastResultQuery.getState().equals("3")){
+                                //已经签收，需要修改is_check字段状态
+                                mallShopShippingLogdto.setIsCheck(1);
+                            }else {
+                                mallShopShippingLogdto.setIsCheck(0);
+                            }
+                            dataList.add(mallShopShippingLogdto);
+                            i++;
+                        }
                         mallShopShippingLogDao.insertBatch(dataList);   //更新卖家物流表
                     }
                 }

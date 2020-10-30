@@ -39,6 +39,7 @@
         <foreach collection="list" item="buyerShippingNo" index="index" open="(" close=")" separator=",">
             #{buyerShippingNo}
         </foreach>
+        order by id desc
     </select>
 
     <select id="queryListByBuyerShippingNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO">
