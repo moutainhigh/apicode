@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,6 +74,7 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
         return ReturnResponse.failed("快递100未查询到快递记录");
     }
 
+    @Transactional
     @Override
     public ShipmentResponseDataVO shipmentCallBack(String param) {
         ShipmentParamQuery shipmentParamQuery = JSONUtil.toBean(param,ShipmentParamQuery.class);

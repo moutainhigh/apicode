@@ -1,6 +1,5 @@
 package com.ycandyz.master.service.mall.impl;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -24,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,6 +84,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         return ReturnResponse.failed("为查询到快递记录。");
     }
 
+    @Transactional
     @Override
     public ReturnResponse<String> enterShipping(MallShopShippingQuery mallShopShippingQuery) {
         MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(mallShopShippingQuery.getOrderNo());
@@ -184,6 +185,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         return ReturnResponse.success("发货成功");
     }
 
+    @Transactional
     @Override
     public ShipmentResponseDataVO shipmentCallBack(String param) {
         ShipmentParamQuery shipmentParamQuery = JSONUtil.toBean(param,ShipmentParamQuery.class);
@@ -195,7 +197,6 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             ShipmentParamLastResultQuery shipmentParamLastResultQuery = shipmentParamQuery.getLastResult();
             List<MallShopShippingDTO> mallShopShippingList = mallShopShippingDao.queryByCodeAndNum(shipmentParamLastResultQuery.getCom(),shipmentParamLastResultQuery.getNu());
             if (mallShopShippingList!=null && mallShopShippingList.size()>0){
-                List<MallShopShippingLogDTO> dataList = new ArrayList();
                 for (MallShopShippingDTO mallShopShippingDTO : mallShopShippingList){
                     List<MallShopShippingLogDTO> mallShopShippingLogDTOS = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShippingDTO.getShopShippingNo());
                     if (mallShopShippingLogDTOS!=null){
@@ -214,34 +215,35 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                         List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
                         Collections.reverse(list);
                         //更新数据到MallShopShippingLog表
-                        MallShopShippingLogDTO mallShopShippingLogdto = null;
+                        MallShopShippingLog mallShopShippingLog = null;
                         int i = 0;
                         for(ShipmentParamLastResultDataQuery data : list) {
-                            mallShopShippingLogdto = new MallShopShippingLogDTO();
-                            mallShopShippingLogdto.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
-                            mallShopShippingLogdto.setCompanyCode(shipmentParamLastResultQuery.getCom());
-                            mallShopShippingLogdto.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
-                            mallShopShippingLogdto.setNumber(shipmentParamLastResultQuery.getNu());
-                            mallShopShippingLogdto.setContext(data.getContext());
-                            mallShopShippingLogdto.setShippingMoney(mallShopShippingDTO.getShippingMoney());
+                            mallShopShippingLog = new MallShopShippingLog();
+                            mallShopShippingLog.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
+                            mallShopShippingLog.setCompanyCode(shipmentParamLastResultQuery.getCom());
+                            mallShopShippingLog.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
+                            mallShopShippingLog.setNumber(shipmentParamLastResultQuery.getNu());
+                            mallShopShippingLog.setContext(data.getContext());
+                            mallShopShippingLog.setShippingMoney(mallShopShippingDTO.getShippingMoney());
                             if (i == list.size()-1) {
-                                mallShopShippingLogdto.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
+                                mallShopShippingLog.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
                             }else {
-                                mallShopShippingLogdto.setStatus(0);
+                                mallShopShippingLog.setStatus(0);
                             }
-                            mallShopShippingLogdto.setLogAt(data.getFtime());
+                            mallShopShippingLog.setLogAt(data.getFtime());
                             if (shipmentParamLastResultQuery.getState().equals("3")){
                                 //已经签收，需要修改is_check字段状态
-                                mallShopShippingLogdto.setIsCheck(1);
+                                mallShopShippingLog.setIsCheck(1);
                             }else {
-                                mallShopShippingLogdto.setIsCheck(0);
+                                mallShopShippingLog.setIsCheck(0);
                             }
-                            dataList.add(mallShopShippingLogdto);
+//                            dataList.add(mallShopShippingLog);
+                            mallShopShippingLogDao.insert(mallShopShippingLog);
                             i++;
                         }
                     }
                 }
-                mallShopShippingLogDao.insertBatch(dataList);   //更新卖家物流表
+//                mallShopShippingLogDao.insertBatch(dataList);   //更新卖家物流表
             }
         }
         return ShipmentResponseDataVO.success("更新成功");
