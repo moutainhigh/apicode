@@ -219,7 +219,8 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                     List<MallShopShippingLogDTO> dataList = new ArrayList();
                     List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
                     Collections.reverse(list);
-                    list.forEach(data->{
+                    int i = 0;
+                    for(ShipmentParamLastResultDataQuery data : list){
                         MallShopShippingLogDTO mallShopShippingLogdto = new MallShopShippingLogDTO();
                         mallShopShippingLogdto.setShopShippingNo(mallShopShippingLogDTO.getShopShippingNo());
                         mallShopShippingLogdto.setCompanyCode(shipmentParamLastResultQuery.getCom());
@@ -227,7 +228,11 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                         mallShopShippingLogdto.setNumber(shipmentParamLastResultQuery.getNu());
                         mallShopShippingLogdto.setContext(data.getContext());
                         mallShopShippingLogdto.setShippingMoney(mallShopShippingLogDTO.getShippingMoney());
-                        mallShopShippingLogdto.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
+                        if (i == list.size()-1) {
+                            mallShopShippingLogdto.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
+                        }else {
+                            mallShopShippingLogdto.setStatus(0);
+                        }
                         mallShopShippingLogdto.setLogAt(data.getFtime());
                         if (shipmentParamLastResultQuery.getState().equals("3")){
                             //已经签收，需要修改is_check字段状态
@@ -237,7 +242,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                         }
                         mallShopShippingLogdto.setLogAt(shipmentParamLastResultQuery.getData().get(0).getFtime());
                         dataList.add(mallShopShippingLogdto);
-                    });
+                    }
                     mallShopShippingLogDao.insertBatch(dataList);   //更新卖家物流表
 
                 }
