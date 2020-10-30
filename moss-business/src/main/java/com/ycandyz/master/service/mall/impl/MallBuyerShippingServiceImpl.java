@@ -98,6 +98,9 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                         .eq(MallBuyerShipping::getNumber, shipmentParamLastResultQuery.getNu())
                         .eq(MallBuyerShipping::getCompanyCode, shipmentParamLastResultQuery.getCom());
                 MallBuyerShipping mallBuyerShipping = baseMapper.selectOne(mallBuyerShippingWrapper);
+                if(null == mallBuyerShipping){
+                    return ShipmentResponseDataVO.success("更新成功");
+                }
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
                 Collections.reverse(list);
                 list.forEach(f -> {
@@ -120,14 +123,22 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                 });
 
             }else{
+                //获取物流表编号
+                LambdaQueryWrapper<MallBuyerShipping> mallBuyerShippingWrapper = new LambdaQueryWrapper<MallBuyerShipping>()
+                        .eq(MallBuyerShipping::getNumber, shipmentParamLastResultQuery.getNu())
+                        .eq(MallBuyerShipping::getCompanyCode, shipmentParamLastResultQuery.getCom());
+                MallBuyerShipping mallBuyerShipping = baseMapper.selectOne(mallBuyerShippingWrapper);
+                if(null == mallBuyerShipping){
+                    return ShipmentResponseDataVO.success("更新成功");
+                }
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
                 Collections.reverse(list);
                 list.forEach(f -> {
                     MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
-                    mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShippingLogDTO.getBuyerShippingNo());
-                    mallBuyerShippingLog.setCompanyCode(shipmentParamLastResultQuery.getCom());
-                    mallBuyerShippingLog.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
-                    mallBuyerShippingLog.setNumber(shipmentParamLastResultQuery.getNu());
+                    mallBuyerShippingLog.setBuyerShippingNo(mallBuyerShipping.getBuyerShippingNo());
+                    mallBuyerShippingLog.setCompanyCode(mallBuyerShipping.getCompanyCode());
+                    mallBuyerShippingLog.setCompany(mallBuyerShipping.getCompany());
+                    mallBuyerShippingLog.setNumber(mallBuyerShipping.getNumber());
                     mallBuyerShippingLog.setContext(f.getContext());
                     mallBuyerShippingLog.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
                     if (shipmentParamLastResultQuery.getState().equals("3")){
