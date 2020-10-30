@@ -83,6 +83,7 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
             return ShipmentResponseDataVO.failed("快递订单存在异常");
         }else {
             ShipmentParamLastResultQuery shipmentParamLastResultQuery = shipmentParamQuery.getLastResult();
+            log.error("State ====================>",shipmentParamLastResultQuery.getState());
             MallBuyerShippingLogDTO mallBuyerShippingLogDTO = mallBuyerShippingLogDao.selectByShipNumberLast(shipmentParamLastResultQuery);
             if (null != mallBuyerShippingLogDTO){
                 if (mallBuyerShippingLogDTO.getStatus()==3) {
@@ -102,6 +103,9 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                     return ShipmentResponseDataVO.success("更新成功");
                 }
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
+                if(CollectionUtil.isNotEmpty(list)){
+                    return ShipmentResponseDataVO.success("更新成功");
+                }
                 Collections.reverse(list);
                 list.forEach(f -> {
                     MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
@@ -132,6 +136,9 @@ public class MallBuyerShippingServiceImpl extends BaseService<MallBuyerShippingD
                     return ShipmentResponseDataVO.success("更新成功");
                 }
                 List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
+                if(CollectionUtil.isNotEmpty(list)){
+                    return ShipmentResponseDataVO.success("更新成功");
+                }
                 Collections.reverse(list);
                 list.forEach(f -> {
                     MallBuyerShippingLog mallBuyerShippingLog = new MallBuyerShippingLog();
