@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.serializer.SerializerFeature.WriteNullStringAsEmpty;
 
@@ -158,17 +159,17 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             mallOrderDao.updateById(mallOrder);
 
             //更新卖家发货物流日志表
-            MallShopShippingLog mallShopShippingLog = new MallShopShippingLog();
-            mallShopShippingLog.setLogAt(DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
-            mallShopShippingLog.setIsCheck(0);
-            mallShopShippingLog.setShippingMoney(mallOrder.getAllMoney().subtract(mallOrder.getAllMoney().subtract(mallOrder.getRealMoney())));
-            mallShopShippingLog.setContext("已发货");
-            mallShopShippingLog.setNumber(mallShopShippingQuery.getNumber());
-            mallShopShippingLog.setCompany(mallShopShippingQuery.getCompany());
-            mallShopShippingLog.setCompanyCode(mallShopShippingQuery.getCompanyCode());
-            mallShopShippingLog.setStatus(0);
-            mallShopShippingLog.setShopShippingNo(mallShopShipping.getShopShippingNo());
-            mallShopShippingLogDao.insert(mallShopShippingLog);
+//            MallShopShippingLog mallShopShippingLog = new MallShopShippingLog();
+//            mallShopShippingLog.setLogAt(DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+//            mallShopShippingLog.setIsCheck(0);
+//            mallShopShippingLog.setShippingMoney(mallOrder.getAllMoney().subtract(mallOrder.getAllMoney().subtract(mallOrder.getRealMoney())));
+//            mallShopShippingLog.setContext("已发货");
+//            mallShopShippingLog.setNumber(mallShopShippingQuery.getNumber());
+//            mallShopShippingLog.setCompany(mallShopShippingQuery.getCompany());
+//            mallShopShippingLog.setCompanyCode(mallShopShippingQuery.getCompanyCode());
+//            mallShopShippingLog.setStatus(0);
+//            mallShopShippingLog.setShopShippingNo(mallShopShipping.getShopShippingNo());
+//            mallShopShippingLogDao.insert(mallShopShippingLog);
 
             //更新待收货临时表
             MallTempOrderWaitReceive mallTempOrderWaitReceive = new MallTempOrderWaitReceive();
@@ -200,51 +201,57 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             return ShipmentResponseDataVO.success("成功");
         }else {
             ShipmentParamLastResultQuery shipmentParamLastResultQuery = shipmentParamQuery.getLastResult();
-            MallShopShippingLogDTO mallShopShippingLogDTO = mallShopShippingLogDao.selectByShipNumberLast(shipmentParamLastResultQuery.getNu(), shipmentParamLastResultQuery.getCom());
-            if (mallShopShippingLogDTO!=null){
-                if (shipmentParamLastResultQuery.getData()!=null && shipmentParamLastResultQuery.getData().size()>0){
-                    if (mallShopShippingLogDTO.getStatus()==3) {
-                        return ShipmentResponseDataVO.success("当前状态已经签收，无需重复签收");
-                    }
+            List<MallShopShippingDTO> mallShopShippingList = mallShopShippingDao.queryByCodeAndNum(shipmentParamLastResultQuery.getCom(),shipmentParamLastResultQuery.getNu());
+            if (mallShopShippingList!=null && mallShopShippingList.size()>0){
 
-                    if (!mallShopShippingLogDTO.getContext().equals("已发货")) {
-                        //先删除
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("company_code", shipmentParamLastResultQuery.getCom());
-                        map.put("number", shipmentParamLastResultQuery.getNu());
-                        mallShopShippingLogDao.deleteByMap(map);
-                    }
-
-                    //后新增
-                    List<MallShopShippingLogDTO> dataList = new ArrayList();
-                    List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
-                    Collections.reverse(list);
-                    int i = 0;
-                    for(ShipmentParamLastResultDataQuery data : list){
-                        MallShopShippingLogDTO mallShopShippingLogdto = new MallShopShippingLogDTO();
-                        mallShopShippingLogdto.setShopShippingNo(mallShopShippingLogDTO.getShopShippingNo());
-                        mallShopShippingLogdto.setCompanyCode(shipmentParamLastResultQuery.getCom());
-                        mallShopShippingLogdto.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
-                        mallShopShippingLogdto.setNumber(shipmentParamLastResultQuery.getNu());
-                        mallShopShippingLogdto.setContext(data.getContext());
-                        mallShopShippingLogdto.setShippingMoney(mallShopShippingLogDTO.getShippingMoney());
-                        if (i == list.size()-1) {
-                            mallShopShippingLogdto.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
+                for (MallShopShippingDTO mallShopShippingDTO : mallShopShippingList){
+                    List<MallShopShippingLogDTO> mallShopShippingLogDTOS = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShippingDTO.getShopShippingNo());
+                    if (mallShopShippingLogDTOS!=null){
+                        List<Integer> statusList = mallShopShippingLogDTOS.stream().map(MallShopShippingLogDTO::getStatus).collect(Collectors.toList());
+                        if (statusList.contains(3)) {
+                            return ShipmentResponseDataVO.success("当前状态已经签收，无需重复签收");
                         }else {
-                            mallShopShippingLogdto.setStatus(0);
+                            //先删除
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("company_code", shipmentParamLastResultQuery.getCom());
+                            map.put("number", shipmentParamLastResultQuery.getNu());
+                            mallShopShippingLogDao.deleteByMap(map);
                         }
-                        mallShopShippingLogdto.setLogAt(data.getFtime());
-                        if (shipmentParamLastResultQuery.getState().equals("3")){
-                            //已经签收，需要修改is_check字段状态
-                            mallShopShippingLogdto.setIsCheck(1);
-                        }else {
-                            mallShopShippingLogdto.setIsCheck(0);
-                        }
-                        mallShopShippingLogdto.setLogAt(shipmentParamLastResultQuery.getData().get(0).getFtime());
-                        dataList.add(mallShopShippingLogdto);
-                    }
-                    mallShopShippingLogDao.insertBatch(dataList);   //更新卖家物流表
 
+                        //后新增
+                        List<MallShopShippingLogDTO> dataList = new ArrayList();
+                        List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
+                        Collections.reverse(list);
+                        //更新数据到MallShopShippingLog表
+                        mallShopShippingLogDTOS.forEach(dto->{
+                            MallShopShippingLogDTO mallShopShippingLogdto = null;
+                            int i = 0;
+                            for(ShipmentParamLastResultDataQuery data : list) {
+                                mallShopShippingLogdto = new MallShopShippingLogDTO();
+                                mallShopShippingLogdto.setShopShippingNo(dto.getShopShippingNo());
+                                mallShopShippingLogdto.setCompanyCode(shipmentParamLastResultQuery.getCom());
+                                mallShopShippingLogdto.setCompany(ExpressEnum.getValue(shipmentParamLastResultQuery.getCom()));
+                                mallShopShippingLogdto.setNumber(shipmentParamLastResultQuery.getNu());
+                                mallShopShippingLogdto.setContext(data.getContext());
+                                mallShopShippingLogdto.setShippingMoney(dto.getShippingMoney());
+                                if (i == list.size()-1) {
+                                    mallShopShippingLogdto.setStatus(Integer.parseInt(shipmentParamLastResultQuery.getState()));
+                                }else {
+                                    mallShopShippingLogdto.setStatus(0);
+                                }
+                                mallShopShippingLogdto.setLogAt(data.getFtime());
+                                if (shipmentParamLastResultQuery.getState().equals("3")){
+                                    //已经签收，需要修改is_check字段状态
+                                    mallShopShippingLogdto.setIsCheck(1);
+                                }else {
+                                    mallShopShippingLogdto.setIsCheck(0);
+                                }
+                                dataList.add(mallShopShippingLogdto);
+                                i++;
+                            }
+                        });
+                        mallShopShippingLogDao.insertBatch(dataList);   //更新卖家物流表
+                    }
                 }
 
             }
