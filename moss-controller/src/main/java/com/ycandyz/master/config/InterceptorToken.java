@@ -13,6 +13,7 @@ import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.user.IUserService;
+import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -47,6 +48,9 @@ public class InterceptorToken implements HandlerInterceptor {
     @Autowired
     IgnoreUrlsConfig ignoreUrlsConfig;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Value(value = "${token.authConfigSecret}")
     private String authConfigSecret;
 
@@ -78,6 +82,12 @@ public class InterceptorToken implements HandlerInterceptor {
             String shopNo = "";
             String organizeId = null;
             if(StrUtil.isNotEmpty(token)){
+
+                if (!redisUtil.hasKey(token)){
+                    //如果redis中不存在当前key，则返回key获取，重新登录
+                    return false;
+                }
+
                 try {
 //                    userId = TokenUtil.verifyToken(token, authConfigSecret);
                     JSONObject jsonObject = TokenUtil.verifyToken(token, authConfigSecret);
