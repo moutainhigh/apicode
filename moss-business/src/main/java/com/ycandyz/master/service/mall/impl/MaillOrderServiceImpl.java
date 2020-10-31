@@ -210,7 +210,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
         try {
 //            String basePath = ResourceUtils.getURL("classpath:").getPath();
-            ExcelWriter writer = writer = ExcelUtil.getWriter("src/main/resources/static/writeTest1.xls");
+            ExcelWriter writer = writer = ExcelUtil.getWriter(System.getProperty("user.dir")+"/static/writeTest1.xls");
 //        writer.merge(list1.size() - 1, "测试标题");
             //自定义标题别名
             writer.addHeaderAlias("cartOrderSn", "母订单编号");
