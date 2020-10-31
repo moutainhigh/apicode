@@ -209,6 +209,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                             Map<String, Object> map = new HashMap<>();
                             map.put("company_code", shipmentParamLastResultQuery.getCom());
                             map.put("number", shipmentParamLastResultQuery.getNu());
+                            map.put("shop_shipping_no",mallShopShippingDTO.getShopShippingNo());
                             mallShopShippingLogDao.deleteByMap(map);
                         }
 

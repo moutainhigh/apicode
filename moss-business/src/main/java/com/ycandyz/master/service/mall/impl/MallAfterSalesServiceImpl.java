@@ -142,7 +142,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     @Override
     public ReturnResponse<MallAfterSalesVO> querySalesDetail(String afterSalesNo, UserVO userVO) {
         MallAfterSalesVO mallAfterSalesVO = null;
-        MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(afterSalesNo);
+        MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(afterSalesNo,userVO.getShopNo());
         if (mallAfterSalesDTO!=null){
             mallAfterSalesVO = new MallAfterSalesVO();
             BeanUtils.copyProperties(mallAfterSalesDTO,mallAfterSalesVO);
