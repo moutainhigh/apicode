@@ -164,6 +164,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             //未签收的临时物流表
             MallTempShipping mallTempShipping = mallTempShippingDao.selectOne(new QueryWrapper<MallTempShipping>().eq("com_code", mallShopShippingQuery.getCompanyCode()).eq("number", mallShopShippingQuery.getNumber()));
             if (mallTempShipping == null) {
+                mallTempShipping = new MallTempShipping();
                 mallTempShipping.setComCode(mallShopShippingQuery.getCompanyCode());
                 mallTempShipping.setCompany(mallShopShippingQuery.getCompany());
                 mallTempShipping.setCreatedAt(time);
