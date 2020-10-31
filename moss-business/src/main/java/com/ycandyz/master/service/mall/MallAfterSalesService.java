@@ -21,4 +21,6 @@ public interface MallAfterSalesService extends IService<MallAfterSales> {
     boolean refundAuditFirst(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
 
     void exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
+
+    ReturnResponse<String> refundDetail(String orderNo, UserVO userVO);
 }

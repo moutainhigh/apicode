@@ -737,5 +737,6 @@
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
         LEFT JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = a.order_no )
+        ORDER BY a.order_at DESC
     </select>
 </mapper>

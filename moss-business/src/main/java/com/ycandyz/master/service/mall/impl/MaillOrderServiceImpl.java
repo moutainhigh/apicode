@@ -21,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -130,9 +131,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                                 });
                                 mallOrderVo.setShareAmount(shareAmountList);
                                 mallOrderVo.setSellerUserName(sellerUserList);
-                                isEnableShare = 1;  //是否分销
                             }
-                            mallOrderVo.setIsEnableShare(isEnableShare);
                         }
 
                         //拼接售后字段
@@ -484,6 +483,5 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         }
         return ReturnResponse.failed("未查询到待自提订单");
     }
-
 
 }

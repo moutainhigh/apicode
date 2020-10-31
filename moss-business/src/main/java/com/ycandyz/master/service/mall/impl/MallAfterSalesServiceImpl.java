@@ -60,6 +60,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     @Autowired
     private MallBuyerShippingLogDao mallBuyerShippingLogDao;
 
+    @Autowired
+    private MallOrderDao mallOrderDao;
+
     @Override
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
         Page<MallAfterSalesVO> mallPage = new Page<>();
@@ -438,5 +441,26 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public ReturnResponse<String> refundDetail(String orderNo, UserVO userVO) {
+        MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",orderNo).eq("shop_no",userVO.getShopNo()));
+        if (mallOrder!=null){
+            BigDecimal shippingMoney = mallOrder.getAllMoney().subtract(mallOrder.getRealMoney());  //运费
+            BigDecimal salesMoney = new BigDecimal(0);      //已经退掉的运费
+            List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",orderNo).eq("shop_no",userVO.getShopNo()));
+            if (mallAfterSalesList!=null) {
+                for (MallAfterSales sales : mallAfterSalesList){
+                    if (sales.getSubStatus()==1020 || sales.getSubStatus()==1040 || sales.getSubStatus()==1060 || sales.getSubStatus()==1090 || sales.getSubStatus()==2040 || sales.getSubStatus()==2050){
+                        continue;
+                    }
+                    BigDecimal salesShippingMoney = sales.getMoney().subtract(sales.getPrice().multiply(new BigDecimal(sales.getQuantity())));
+                    salesMoney.add(salesShippingMoney);
+                }
+            }
+            return ReturnResponse.success(shippingMoney.subtract(salesMoney).toString());
+        }
+        return ReturnResponse.failed("当前订单不存在");
     }
 }
