@@ -46,8 +46,9 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "订单列表导出",notes = "订单列表导出",httpMethod = "POST")
     @PostMapping("/order/export")
-    public void exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
-        mallOrderService.exportEXT(mallOrder,userVO);
+    public ReturnResponse<String> exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
+        String s = mallOrderService.exportEXT(mallOrder, userVO);
+        return ReturnResponse.success(s);
     }
 
     /**

@@ -13,7 +13,7 @@ public interface MallOrderService extends IService<MallOrder> {
 
     ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO);
 
-    void exportEXT(MallOrderQuery mallOrder, UserVO userVO);
+    String exportEXT(MallOrderQuery mallOrder, UserVO userVO);
 
     ReturnResponse<MallOrderVO> queryOrderDetail(String orderNo, UserVO userVO);
 

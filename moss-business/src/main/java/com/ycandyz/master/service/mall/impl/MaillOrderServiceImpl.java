@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
+import com.ycandyz.master.config.MyApplication;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.domain.UserVO;
@@ -22,9 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ClassUtils;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,6 +69,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
     @Value("${excel.sheet}")
     private int num;
+
+    @Autowired
+    private MyApplication myApplication;
 
     @Override
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
@@ -197,7 +205,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return ReturnResponse.success(page1);
     }
 
-    public void exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
+    public String exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
         mallOrderQuery.setShopNo(userVO.getShopNo());
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
         try {
@@ -205,7 +213,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             String today = DateUtil.formatDateForYMD(now.getTime());
             now.add(Calendar.DATE,-1);
             String yestoday = DateUtil.formatDateForYMD(now.getTime());
-            String pathpPefix = System.getProperty("user.dir")+"/static/";
+            String pathpPefix = "src/main/resources/static/";
             deleteFile(yestoday, pathpPefix);
             ExcelWriter writer = ExcelUtil.getWriter(pathpPefix + today + "/订单.xls","第1页");
             double size = list.size();
@@ -214,7 +222,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             log.info("需要{}个sheet，每个sheet{}条数据",ceil,num);
             log.info("正在导出第{}sheet",1);
             List<String> containsList = addHeader(writer);
-            List<MallOrderDTO> subList = list.subList(0, num);
+            int end = num>(int)size?(int)size:num;
+            List<MallOrderDTO> subList = list.subList(0, end);
             List<Map<String, Object>> result = MapUtil.beanToMap(subList,containsList);
             writer.write(result, true);
             log.info("第{}sheet导出完成",1);
@@ -233,9 +242,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
             log.info("全部导出完成");
             writer.close();
+            String url = myApplication.getUrl()+"/";
+            String path = url +  today + "/订单.xls";
+            log.info("文件路径{}",path);
+            return path;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     private List<String> addHeader(ExcelWriter writer) {
