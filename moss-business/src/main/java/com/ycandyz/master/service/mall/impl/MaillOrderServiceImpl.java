@@ -140,9 +140,17 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             }
                         }
 
-                        //拼接是否分佣字段 isEnableShare
-                        if (mallOrderVo.getDetails()!=null && mallOrderVo.getDetails().size()>0){
-                            List<Integer> isEnableShareList = mallOrderVo.getDetails().stream().map(MallOrderDetailVO::getIsEnableShare).collect(Collectors.toList());
+                        if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
+                            List<MallOrderDetailVO> detailVOList = new ArrayList<>();
+                            mallOrderDTO.getDetails().forEach(detailDto->{
+                                MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
+                                BeanUtils.copyProperties(detailDto,mallOrderDetailVO);
+                                detailVOList.add(mallOrderDetailVO);
+                            });
+                            mallOrderVo.setDetails(detailVOList);
+
+                            //拼接是否分佣字段 isEnableShare
+                            List<Integer> isEnableShareList = detailVOList.stream().map(MallOrderDetailVO::getIsEnableShare).collect(Collectors.toList());
                             if (isEnableShareList.contains(1)){ //有分佣
                                 mallOrderVo.setIsEnableShare(1);
                             }else { //无分佣
