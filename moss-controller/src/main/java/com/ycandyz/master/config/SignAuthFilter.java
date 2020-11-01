@@ -24,7 +24,7 @@ import java.util.SortedMap;
  */
 
 @Slf4j
-@Component
+//@Component
 public class SignAuthFilter implements Filter {
 
     @Value(value = "${sign.authConfigSecret}")
