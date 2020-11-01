@@ -83,10 +83,10 @@ public class InterceptorToken implements HandlerInterceptor {
             Long organizeId = null;
             if(StrUtil.isNotEmpty(token)){
 
-                if (!redisUtil.hasKey(token)){
+//                if (!redisUtil.hasKey(token)){
                     //如果redis中不存在当前key，则返回key获取，重新登录
-                    return false;
-                }
+//                    return false;
+//                }
 
                 try {
 //                    userId = TokenUtil.verifyToken(token, authConfigSecret);
