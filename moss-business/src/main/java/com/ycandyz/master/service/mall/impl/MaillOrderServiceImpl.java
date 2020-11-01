@@ -1,8 +1,8 @@
 package com.ycandyz.master.service.mall.impl;
 
-import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
@@ -10,20 +10,19 @@ import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.dto.mall.*;
+import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
+import com.ycandyz.master.utils.MapUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,119 +67,189 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 //        }
 //        Long organizeId = mallOrderQuery.getOrganizeId();
         mallOrderQuery.setShopNo(userVO.getShopNo());
-        Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
+
         List<MallOrderVO> list = new ArrayList<>();
         Page<MallOrderVO> page1 = new Page<>();
-        Page<MallOrderDTO> page = null;
         try {
-            page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
-            MallOrderVO mallOrderVo = null;
-            if (page.getRecords()!=null && page.getRecords().size()>0) {
-                for (MallOrderDTO mallOrderDTO : page.getRecords()) {
-                    if (mallOrderDTO.getCartOrderSn()==null || "".equals(mallOrderDTO.getCartOrderSn())){
-                        mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());
-                    }
-                    if (mallOrderDTO.getAfterSalesStatus()!=null){
-                        //修改售后返回值给前端
-                        if (mallOrderDTO.getAfterSalesStatus()==0){
-                            mallOrderDTO.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
-                        }else {
-                            if (mallOrderDTO.getAfterSalesEndAt()!=null && mallOrderDTO.getAfterSalesEndAt()>new Date().getTime()/1000){
-                                mallOrderDTO.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
-                            }else {
-                                mallOrderDTO.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+            //获取总条数
+            Integer count = mallOrderDao.getTrendMallOrderPageSize(mallOrderQuery);
+            page1.setTotal(count);
+            if (count!=null && count>0) {
+                //分页
+                List<MallOrderDTO> mallDTOList = mallOrderDao.getTrendMallOrderByPage((requestParams.getPage() - 1) * requestParams.getPage_size(), requestParams.getPage_size(), mallOrderQuery);
+                //page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
+                MallOrderVO mallOrderVo = null;
+                if (mallDTOList != null && mallDTOList.size() > 0) {
+                    for (MallOrderDTO mallOrderDTO : mallDTOList) {
+                        if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
+                            mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
+                        }
+                        mallOrderVo = new MallOrderVO();
+                        BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
+                        //订单列表显示商品名称数组
+                        List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
+
+                        Map<String, String> itemMap = mallOrderDTO.getDetails().stream().collect(Collectors.toMap(k -> k.getItemNo() + "#" + k.getSkuNo(), MallOrderDetailDTO::getItemName));
+                        if (itemMap != null) {
+                            List<MallItemByMallOrderVO> mallItemByMallOrderVOS = new ArrayList<>();
+                            MallItemByMallOrderVO mallItemByMallOrderVO = null;
+                            for (Map.Entry entrySet : itemMap.entrySet()) {
+                                mallItemByMallOrderVO = new MallItemByMallOrderVO();
+                                String key = (String) entrySet.getKey();
+                                String value = (String) entrySet.getValue();
+                                mallItemByMallOrderVO.setItemNo(key.split("#")[0]);
+                                mallItemByMallOrderVO.setSkuNo(key.split("#")[1]);
+                                mallItemByMallOrderVO.setItemName(value);
+                                mallItemByMallOrderVOS.add(mallItemByMallOrderVO);
+                            }
+                            mallOrderVo.setItemInfoList(mallItemByMallOrderVOS);
+                        }
+
+                        mallOrderVo.setItemName(itemNames);
+                        //订单列表显示商品货号数组
+                        List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).filter(x -> x != null && !"".equals(x)).collect(Collectors.toList());
+                        mallOrderVo.setGoodsNo(goodsNos);
+                        List<Integer> skuQuantity = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getSkuQuantity).collect(Collectors.toList());
+                        if (skuQuantity != null && skuQuantity.size() > 0) {
+                            int quantity = skuQuantity.stream().reduce(Integer::sum).orElse(0);
+                            mallOrderVo.setQuantity(quantity);
+                        }
+
+                        if (!mallOrderVo.getStatus().equals(50)) {   //已取消订单不展示分销人相关信息
+                            //订单列表显示分销合伙人，分销金额统计
+                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryByOrderNo(mallOrderVo.getOrderNo());
+                            Integer isEnableShare = 0;
+                            if (mallSocialShareFlowDTOS != null && mallSocialShareFlowDTOS.size() > 0) {
+                                List<String> sellerUserList = new ArrayList<>();
+                                List<String> shareAmountList = new ArrayList<>();
+                                mallSocialShareFlowDTOS.forEach(dto -> {
+                                    String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
+                                    sellerUserList.add(sellerUser); //分销合伙人
+
+                                    String shareAmount = dto.getAmount().toString();
+                                    shareAmountList.add(shareAmount);   //分销佣金
+                                });
+                                mallOrderVo.setShareAmount(shareAmountList);
+                                mallOrderVo.setSellerUserName(sellerUserList);
                             }
                         }
-                    }
-                    mallOrderVo = new MallOrderVO();
-                    BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
-                    //订单列表显示商品名称数组
-                    List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
 
-                    Map<String, String> itemMap = mallOrderDTO.getDetails().stream().collect(Collectors.toMap(MallOrderDetailDTO::getItemNo,MallOrderDetailDTO::getItemName));
-                    if (itemMap!=null){
-                        List<MallItemByMallOrderVO> mallItemByMallOrderVOS = new ArrayList<>();
-                        MallItemByMallOrderVO mallItemByMallOrderVO = null;
-                        for (Map.Entry entrySet : itemMap.entrySet()){
-                            mallItemByMallOrderVO = new MallItemByMallOrderVO();
-                            String key = (String) entrySet.getKey();
-                            String value = (String) entrySet.getValue();
-                            mallItemByMallOrderVO.setItemNo(key);
-                            mallItemByMallOrderVO.setItemName(value);
-                            mallItemByMallOrderVOS.add(mallItemByMallOrderVO);
+                        //拼接售后字段
+                        List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no", mallOrderVo.getOrderNo()));
+                        if (mallAfterSalesList != null && mallAfterSalesList.size() > 0) {
+                            List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
+                            if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)) {
+                                //退款进行中
+                                mallOrderVo.setAfterSalesStatus(1);
+                            } else {
+                                mallOrderVo.setAfterSalesStatus(2);
+                            }
+                        } else {
+                            mallOrderVo.setAfterSalesStatus(0);
                         }
-                        mallOrderVo.setItemInfoList(mallItemByMallOrderVOS);
+                        if (mallOrderVo.getAfterSalesStatus() != null) {
+                            //修改售后返回值给前端
+                            if (mallOrderVo.getAfterSalesStatus() != 0) {
+                                mallOrderVo.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+                            } else {
+                                if (mallOrderVo.getAfterSalesEndAt() != null && mallOrderVo.getAfterSalesEndAt() > new Date().getTime() / 1000) {
+                                    mallOrderVo.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                                } else {
+                                    mallOrderVo.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                                }
+                            }
+                        }
+                        list.add(mallOrderVo);
                     }
-
-                    mallOrderVo.setItemName(itemNames);
-                    //订单列表显示商品货号数组
-                    List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).collect(Collectors.toList());
-                    mallOrderVo.setGoodsNo(goodsNos);
-                    List<Integer> skuQuantity = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getSkuQuantity).collect(Collectors.toList());
-                    if (skuQuantity!=null && skuQuantity.size()>0){
-                        int quantity = skuQuantity.stream().reduce(Integer::sum).orElse(0);
-                        mallOrderVo.setQuantity(quantity);
-                    }
-                    list.add(mallOrderVo);
                 }
             }
         }catch (Exception e){
-            page = new Page<>(0,10,0);
+            log.error(e.getMessage(),e);
         }
-        page1.setPages(page.getPages());
-        page1.setCurrent(page.getCurrent());
-        page1.setOrders(page.getOrders());
+        page1.setPages(requestParams.getPage());
+        page1.setCurrent(requestParams.getPage());
         page1.setRecords(list);
-        page1.setSize(page.getSize());
-        page1.setTotal(page.getTotal());
+        page1.setSize(requestParams.getPage_size());
         return ReturnResponse.success(page1);
     }
 
-    public void exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO, HttpServletResponse response){
+    public void exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
         mallOrderQuery.setShopNo(userVO.getShopNo());
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
-        // 通过工具类创建writer，默认创建xls格式
-        ExcelWriter writer = ExcelUtil.getWriter();
-        //自定义标题别名
-        writer.addHeaderAlias("cartOrderSn", "母订单编号");
-        writer.addHeaderAlias("orderNo", "订单编号");
-        writer.addHeaderAlias("itemName", "商品名称");
-        writer.addHeaderAlias("allMoney", "总计金额");
-        writer.addHeaderAlias("payType", "支付方式");
-        writer.addHeaderAlias("status", "状态");
-        writer.addHeaderAlias("afterSalesStatus", "售后");
-        writer.addHeaderAlias("payuser", "购买用户");
-        writer.addHeaderAlias("receiverName", "收货人");
-        writer.addHeaderAlias("receiverAddress", "收货地址");
-        writer.addHeaderAlias("orderAt", "下单时间");
-        writer.addHeaderAlias("paymentTime", "支付时间");
-        writer.addHeaderAlias("receiveAt", "收货时间");
-        // 一次性写出内容，使用默认样式，强制输出标题
-        writer.write(list, true);
+//        list.forEach(mall->{
+//            //拼接售后字段
+//            List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",mall.getOrderNo()));
+//            if (mallAfterSalesList!=null && mallAfterSalesList.size()>0){
+//                List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
+//                if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)){
+//                    //退款进行中
+//                    mall.setAfterSalesStatus(1);
+//                }else {
+//                    mall.setAfterSalesStatus(2);
+//                }
+//            }else {
+//                mall.setAfterSalesStatus(0);
+//            }
+//
+//            if (mall.getAfterSalesStatus()!=0){
+//                mall.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+//            }else {
+//                if (mall.getAfterSalesEndAt()!=null && mall.getAfterSalesEndAt()>new Date().getTime()/1000){
+//                    mall.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+//                }else {
+//                    mall.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+//                }
+//            }
+//        });
+
+        try {
+//            String basePath = ResourceUtils.getURL("classpath:").getPath();
+            ExcelWriter writer = writer = ExcelUtil.getWriter(System.getProperty("user.dir")+"/static/writeTest1.xls");
+//        writer.merge(list1.size() - 1, "测试标题");
+            //自定义标题别名
+            writer.addHeaderAlias("cartOrderSn", "母订单编号");
+            writer.addHeaderAlias("orderNo", "子订单编号");
+            writer.addHeaderAlias("organizeName", "所属企业");
+            writer.addHeaderAlias("itemName", "商品名称");
+            writer.addHeaderAlias("goodsNo", "货号");
+            writer.addHeaderAlias("allMoney", "总计金额(¥)");
+            writer.addHeaderAlias("payType", "支付方式");
+            writer.addHeaderAlias("quantity", "购买数量");
+            writer.addHeaderAlias("status", "状态");
+            writer.addHeaderAlias("isEnableShare", "是否分销");
+            writer.addHeaderAlias("sellerUserName", "分销合伙人");
+            writer.addHeaderAlias("shareAmount", "分佣金额统计");
+            writer.addHeaderAlias("asStatus", "售后");
+            writer.addHeaderAlias("payuser", "购买用户");
+            writer.addHeaderAlias("receiverName", "收货人");
+            writer.addHeaderAlias("receiverAddress", "收货人地址");
+            writer.addHeaderAlias("orderAtStr", "下单时间");
+            writer.addHeaderAlias("payedAtStr", "支付时间");
+            writer.addHeaderAlias("receiveAtStr", "收货时间");
+            List<String> containsList = Arrays.asList("cartOrderSn","orderNo","organizeName","itemName","goodsNo","allMoney",
+                    "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
+                    "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
+            List<Map<String, Object>> result = MapUtil.beanToMap(list,containsList);
+            // 一次性写出内容，使用默认样式，强制输出标题
+            writer.write(result, true);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         //out为OutputStream，需要写出到的目标流
         //response为HttpServletResponse对象
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+//        response.setContentType("application/vnd.ms-excel;charset=utf-8");
         //test.xls是弹出下载对话框的文件名，不能为中文，中文请自行编码
-        String name = "Order-list";
-        response.setHeader("Content-Disposition","attachment;filename="+name+".xls");
-        ServletOutputStream out= null;
-        try {
-            out = response.getOutputStream();
-            writer.flush(out, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-        // 关闭writer，释放内存ß
-            writer.close();
-        }
-        //此处记得关闭输出Servlet流
-        IoUtil.close(out);
+//        String name = DateUtil.format(new Date(), "yyyy年MM月dd日") +"全部订单导出";
+//        response.setHeader("Content-Disposition","attachment;filename="+name+".xls");
+        //输出流，输出文件到项目目录下
     }
 
     @Override
     public ReturnResponse<MallOrderVO> queryOrderDetail(String orderNo, UserVO userVO) {
         MallOrderVO mallOrderVO = null;
-        MallOrderDTO mallOrderDTO = mallOrderDao.queryOrderDetail(orderNo);
+        MallOrderDTO mallOrderDTO = mallOrderDao.queryOrderDetail(orderNo,userVO.getShopNo());
         if (mallOrderDTO != null){
             mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
@@ -190,7 +259,35 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 mallOrderDTO.getDetails().forEach(orderDetail->{
                     MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
                     BeanUtils.copyProperties(orderDetail,mallOrderDetailVO);
-                    detailVOList.add(mallOrderDetailVO);
+
+                    if (mallOrderDTO.getOrderType()!=null) {
+                        if (mallOrderDTO.getOrderType() == 2) { //新订单，神州通的
+                            //查询佣金流水表
+                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderDetailNo(mallOrderDetailVO.getOrderDetailNo());
+                            if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
+                                List<MallSocialShareFlowVO> flowList = new ArrayList<>();
+                                mallSocialShareFlowDTOs.forEach(dto -> {
+                                    MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
+                                    BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
+                                    flowList.add(mallSocialShareFlowVO);
+                                });
+                                mallOrderDetailVO.setShareFlowInfo(flowList);
+                            }
+                        }else if (mallOrderDTO.getOrderType() == 1){    //老订单，商城的
+                            //查询佣金流水表
+                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
+                            if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
+                                List<MallSocialShareFlowVO> flowList = new ArrayList<>();
+                                mallSocialShareFlowDTOs.forEach(dto -> {
+                                    MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
+                                    BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
+                                    flowList.add(mallSocialShareFlowVO);
+                                });
+                                mallOrderDetailVO.setShareFlowInfo(flowList);
+                            }
+                        }
+                        detailVOList.add(mallOrderDetailVO);
+                    }
                 });
                 mallOrderVO.setDetails(detailVOList);
             }
@@ -306,17 +403,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
 
-            //查询佣金流水表
-            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderNo(mallOrderVO.getOrderNo());
-            if (mallSocialShareFlowDTOs!=null && mallSocialShareFlowDTOs.size()>0){
-                List<MallSocialShareFlowVO> flowList = new ArrayList<>();
-                mallSocialShareFlowDTOs.forEach(dto->{
-                    MallSocialShareFlowVO mallSocialShareFlowVO = new MallSocialShareFlowVO();
-                    BeanUtils.copyProperties(dto,mallSocialShareFlowVO);
-                    flowList.add(mallSocialShareFlowVO);
-                });
-                mallOrderVO.setShareInfo(flowList);
-            }
         }
         return ReturnResponse.success(mallOrderVO);
     }
@@ -390,6 +476,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             mallOrder.setAfterSalesEndAt(time.intValue()+mallShopDTO.getAsHoldDays()*24*60*60);
             mallOrder.setStatus(40);
             mallOrder.setSubStatus(4060);
+            Long timeAt = new Date().getTime()/1000;
+            mallOrder.setReceiveAt(timeAt.intValue());  //更新收货时间
             mallOrderDao.updateById(mallOrder);
             return ReturnResponse.success("操作成功");
         }

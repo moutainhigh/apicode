@@ -1,5 +1,6 @@
 package com.ycandyz.master.controller.mall;
 
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
@@ -69,16 +70,15 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
 
     /**
      * 快递订阅回调接口
-     * @param request
+     * @param sign
+     * @param param
      * @return
      */
     @PostMapping("/order/shipment/callback")
     @ResponseBody
-    public ShipmentResponseDataVO shipmentCallBack(Map<String, Object> params){
-        log.info(params.toString());
-        String sign = params.get("sign").toString();
-        String param = params.get("param").toString();
+    public ShipmentResponseDataVO shipmentCallBack(@RequestParam(value = "sign",required = false) String sign, @RequestParam(value = "param",required = false) String param){
         log.info("sign="+sign+",param="+param);
-        return null;
+        ShipmentResponseDataVO shipmentResponseDataVO = mallShopShippingService.shipmentCallBack(param);
+        return shipmentResponseDataVO;
     }
 }

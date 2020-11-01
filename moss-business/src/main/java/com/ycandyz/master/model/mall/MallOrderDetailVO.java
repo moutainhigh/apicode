@@ -89,6 +89,9 @@ public class MallOrderDetailVO {
     /**一层分销合伙人用户id*/
     @ApiModelProperty(value = "一层分销合伙人用户id")
     private Integer shareUserId;
+    /**所有分销人集合*/
+    @ApiModelProperty(value = "所有分销人集合")
+    private List<MallSocialShareFlowVO> shareFlowInfo;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")

@@ -1,5 +1,7 @@
 package com.ycandyz.master.entities.mall;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.annotations.ApiModel;
@@ -17,6 +19,7 @@ import java.util.Date;
 public class MallOrderDetailSpec extends Model {
 
     @ApiModelProperty(value = "id")
+    @TableId(type = IdType.AUTO)
     private Long id;
     @ApiModelProperty(value = "商品详情编号")
     private String orderDetailNo;

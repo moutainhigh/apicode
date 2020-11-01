@@ -20,4 +20,6 @@ public class MallItemByMallOrderVO {
     private String itemNo;
     @ApiModelProperty(value = "商品名称")
     private String itemName;
+    @ApiModelProperty(value = "sku编号")
+    private String skuNo;
 }

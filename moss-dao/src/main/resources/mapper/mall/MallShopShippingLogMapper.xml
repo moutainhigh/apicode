@@ -2,28 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ycandyz.master.dao.mall.MallShopShippingLogDao">
 
-    <select id="selectByShipNumberLast" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
-        select
-            id as id,
-            shop_shipping_no as shopShippingNo,
-            company_code as companyCode,
-            company as company,
-            `number` as number,
-            context as context,
-            area_code as areaCode,
-            area_name as areaName,
-            shipping_money as shippingMoney,
-            status as status,
-            is_check as isCheck,
-            log_at as logAt,
-            created_time as createdTime,
-            updated_time as updatedTime
-        from mall_shop_shipping_log
-        where `number`=#{number}
-        order by createdTime desc
-        limit 1
-    </select>
-
     <select id="selectListByShopShippingNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
         select
             log.id as id,
@@ -42,5 +20,35 @@
             log.updated_time as updatedTime
         from mall_shop_shipping_log log
         where log.shop_shipping_no=#{shopShippingNo}
+        order by log.id desc
     </select>
+
+    <insert id="insertBatch" parameterType="com.ycandyz.master.dto.mall.MallShopShippingLogDTO">
+        insert into mall_shop_shipping_log
+        (
+            shop_shipping_no,
+            company_code,
+            company,
+            `number`,
+            context,
+            shipping_money,
+            status,
+            is_check,
+            log_at
+        )
+        values
+        <foreach collection="list" item="dto" separator=",">
+            (
+            #{dto.shopShippingNo},
+            #{dto.companyCode},
+            #{dto.company},
+            #{dto.number},
+            #{dto.context},
+            #{dto.shippingMoney},
+            #{dto.status},
+            #{dto.isCheck},
+            #{dto.logAt}
+            )
+        </foreach>
+    </insert>
 </mapper>

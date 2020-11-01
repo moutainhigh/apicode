@@ -27,21 +27,23 @@ public class ResponseReturnConfiguration implements ResponseBodyAdvice {
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        log.info("begin----" + body.toString());
-        if (body instanceof ReturnResponse) {
-            ReturnResponse returnResponse = (ReturnResponse) body;
-            Object data = returnResponse.getData();
-            if (data instanceof Page) {
-                Page page = (Page) data;
-                PageResult pageResult = new PageResult();
-                pageResult.setPage(page.getCurrent());
-                pageResult.setPage_size(page.getSize());
-                pageResult.setResult(page.getRecords());
-                pageResult.setTotal(page.getTotal());
-                returnResponse.setData(pageResult);
+        if (body!=null){
+            log.info("begin----" + body.toString());
+            if (body instanceof ReturnResponse) {
+                ReturnResponse returnResponse = (ReturnResponse) body;
+                Object data = returnResponse.getData();
+                if (data instanceof Page) {
+                    Page page = (Page) data;
+                    PageResult pageResult = new PageResult();
+                    pageResult.setPage(page.getCurrent());
+                    pageResult.setPage_size(page.getSize());
+                    pageResult.setResult(page.getRecords());
+                    pageResult.setTotal(page.getTotal());
+                    returnResponse.setData(pageResult);
+                }
+                log.info("after----" + returnResponse.toString());
+                return returnResponse;
             }
-            log.info("after----" + returnResponse.toString());
-            return returnResponse;
         }
         return body;
     }

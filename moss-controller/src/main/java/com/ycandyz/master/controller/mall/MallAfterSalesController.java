@@ -85,8 +85,22 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
      */
     @ApiOperation(value = "售后订单导出",notes = "售后订单导出",httpMethod = "POST")
     @PostMapping("/sales/export")
-    public void exportEXT(@RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO userVO, HttpServletResponse response){
-        mallAfterSalesService.exportEXT(mallafterSalesQuery, userVO,response);
+    public void exportEXT(@RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO userVO){
+        mallAfterSalesService.exportEXT(mallafterSalesQuery, userVO);
+    }
+
+    /**
+     * 售后详情点击确认退款按钮，显示运费
+     * @param orderNo
+     * @param userVO
+     * @return
+     */
+    @GetMapping("/order/refund/detail")
+    public ReturnResponse<String> refundDetail(@RequestParam("orderNo") String orderNo, @CurrentUser UserVO userVO){
+        if (orderNo==null || "".equals(orderNo)){
+            return ReturnResponse.failed("传入参数为空");
+        }
+        return mallAfterSalesService.refundDetail(orderNo,userVO);
     }
 
     /**

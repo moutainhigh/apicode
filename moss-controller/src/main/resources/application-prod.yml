@@ -5,8 +5,7 @@ server:
 
 spring:
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
-    driver-class-name: org.gjt.mm.mysql.Driver              # mysql驱动包
+    name: yc
     url: jdbc:mysql://youchuan-prod-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
     username: datav
     password: eovkug3821GyXgKB
@@ -23,8 +22,13 @@ mybatis:
 token:
   authConfigSecret: c1f5d2f3f9f818c1a2c03da10c81e542          #token密钥
 
-exclude:
-  path: /login,/error,/swagger-ui.html,/mall/order/shipment/callback
+ignored:
+  urls:
+    - /
+    - /login
+    - /error
+    - /mall/order/shipment/callback
+    - /mall-buyer-shipping/mallBuyer/shipment/callback
 
 #快递100相关参数
 kuaidi:

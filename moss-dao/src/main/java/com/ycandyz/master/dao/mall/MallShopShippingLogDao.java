@@ -17,10 +17,11 @@ public interface MallShopShippingLogDao extends BaseMapper<MallShopShippingLog> 
      */
     List<MallShopShippingLogDTO> selectListByShopShippingNo(@Param("shopShippingNo") String shopShippingNo);
 
+
     /**
-     * 通过物流单号查询当前最新的一条记录
-     * @param number
+     * 批量插入功能
+     * @param list
      * @return
      */
-    MallShopShippingLogDTO selectByShipNumberLast(@Param("number") String number);
+    Integer insertBatch(@Param("list") List<MallShopShippingLogDTO> list);
 }

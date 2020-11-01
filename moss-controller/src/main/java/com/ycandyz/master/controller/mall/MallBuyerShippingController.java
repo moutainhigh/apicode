@@ -34,7 +34,7 @@ import com.ycandyz.master.controller.base.BaseController;
 public class MallBuyerShippingController extends BaseController<MallBuyerShippingServiceImpl,MallBuyerShipping,MallBuyerShippingQuery> {
 
     @Autowired
-    private IMallBuyerShippingService mallShopShippingService;
+    private MallBuyerShippingServiceImpl mallBuyerShippingService;
 
     /**
      * 订单发货校验物流单号，调用三方接口，查看物流单号所属物流公司，返回快递公司名和编号
@@ -47,17 +47,17 @@ public class MallBuyerShippingController extends BaseController<MallBuyerShippin
     })
     @GetMapping("/mallBuyer/shipment/verification")
     public ReturnResponse<MallBuyerShippingVO> verShipmentNo(@RequestParam("shipNumber") String shipNumber){
-        return mallShopShippingService.verShipmentNo(shipNumber);
+        return mallBuyerShippingService.verShipmentNo(shipNumber);
     }
 
     /**
      * 快递订阅回调接口
-     * @param shipmentParamQuery
+     * @param param
      * @return
      */
     @PostMapping("/mallBuyer/shipment/callback")
     @ResponseBody
-    public ShipmentResponseDataVO shipmentCallBack(@RequestBody ShipmentParamQuery shipmentParamQuery){
-        return mallShopShippingService.shipmentCallBack(shipmentParamQuery);
+    public ShipmentResponseDataVO shipmentCallBack(@RequestParam(value = "param",required = false) String param){
+        return mallBuyerShippingService.shipmentCallBack(param);
     }
 }

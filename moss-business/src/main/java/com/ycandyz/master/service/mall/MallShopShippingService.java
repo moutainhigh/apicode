@@ -16,5 +16,5 @@ public interface MallShopShippingService extends IService<MallShopShipping> {
 
     ReturnResponse<String> enterShipping(MallShopShippingQuery mallShopShippingQuery);
 
-    ShipmentResponseDataVO shipmentCallBack(ShipmentParamQuery shipmentParamQuery);
+    ShipmentResponseDataVO shipmentCallBack(String param);
 }

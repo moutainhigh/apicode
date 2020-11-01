@@ -11,5 +11,17 @@ import java.util.List;
 @Mapper
 public interface MallBuyerShippingDao extends BaseMapper<MallBuyerShipping> {
 
+    /**
+     * 根据售后订单编号列表查询
+     * @param afterSalesNoList
+     * @return
+     */
     List<MallBuyerShippingDTO> queryByAfterSalesNoList(@Param("list") List<String> afterSalesNoList);
+
+    /**
+     * 根据售后订单编号查询
+     * @param afterSalesNo
+     * @return
+     */
+    MallBuyerShippingDTO queryByAfterSalesNo(@Param("afterSalesNo") String afterSalesNo);
 }

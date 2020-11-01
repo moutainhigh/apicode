@@ -1,6 +1,7 @@
 package com.ycandyz.master.model.mall;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ycandyz.master.dto.mall.MallBuyerShippingLogDTO;
 import com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO;
 import com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO;
 import com.ycandyz.master.dto.mall.MallShopShippingDTO;
@@ -118,6 +119,14 @@ public class MallAfterSalesVO {
     private List<MallShopShippingLogVO> shippinglog;
     @ApiModelProperty(value = "关联订单详情中商品信息表")
     private MallItemByMallOrderDetailVO itemInfo;
+    @ApiModelProperty(value = "总计金额")
+    private BigDecimal allMoney;
+    @ApiModelProperty(value = "关联买家快递表")
+    private MallBuyerShippingVO buyerShipping;
+    @ApiModelProperty(value = "关联买家寄出快递日志表")
+    private List<MallBuyerShippingLogVO> buyerShippingLog;
+    @ApiModelProperty(value = "本次退款的金额")
+    private BigDecimal refundMoney;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")
@@ -156,84 +165,116 @@ public class MallAfterSalesVO {
 
     public String getReceiveAtStr(){
         try {
-            Long at = Long.valueOf(receiveAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.receiveAtStr = sd.format(date);
+            if(receiveAt!=0) {
+                Long at = Long.valueOf(receiveAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.receiveAtStr = sd.format(date);
+            }else {
+                this.receiveAtStr = "-";
+            }
         }catch (Exception e){
-            receiveAtStr = "";
+            receiveAtStr = "-";
         }
         return receiveAtStr;
     }
 
     public String getCreatedAtStr(){
         try {
-            Long at = Long.valueOf(createdAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.createdAtStr = sd.format(date);
+//            if(createdAt!=0) {
+//                Long at = Long.valueOf(createdAt) * 1000;
+//                Date date = new Date(at);
+//                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                this.createdAtStr = sd.format(date);
+//            }else {
+//                this.createdAtStr = "-";
+//            }
+            if(createdTime!=null){
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.createdAtStr = sd.format(createdTime);
+            }
         }catch (Exception e){
-            createdAtStr = "";
+            createdAtStr = "-";
         }
         return createdAtStr;
     }
 
     public String getCloseAtStr(){
         try {
-            Long at = Long.valueOf(closeAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.closeAtStr = sd.format(date);
+            if(closeAt!=0) {
+                Long at = Long.valueOf(closeAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.closeAtStr = sd.format(date);
+            }else {
+                this.closeAtStr = "-";
+            }
         }catch (Exception e){
-            closeAtStr = "";
+            closeAtStr = "-";
         }
         return closeAtStr;
     }
 
     public String getApplyAtStr(){
         try {
-            Long at = Long.valueOf(applyAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.applyAtStr = sd.format(date);
+            if(applyAt!=0) {
+                Long at = Long.valueOf(applyAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.applyAtStr = sd.format(date);
+            }else {
+                this.applyAtStr = "-";
+            }
         }catch (Exception e){
-            applyAtStr = "";
+            applyAtStr = "-";
         }
         return applyAtStr;
     }
 
     public String getAuditFirstAtStr(){
         try {
-            Long at = Long.valueOf(auditFirstAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.auditFirstAtStr = sd.format(date);
+            if(auditFirstAt!=0) {
+                Long at = Long.valueOf(auditFirstAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.auditFirstAtStr = sd.format(date);
+            }else {
+                this.auditFirstAtStr = "-";
+            }
         }catch (Exception e){
-            auditFirstAtStr = "";
+            auditFirstAtStr = "-";
         }
         return auditFirstAtStr;
     }
 
     public String getSendAtStr(){
         try {
-            Long at = Long.valueOf(sendAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.sendAtStr = sd.format(date);
+            if(sendAt!=0) {
+                Long at = Long.valueOf(sendAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.sendAtStr = sd.format(date);
+            }else {
+                this.sendAtStr = "-";
+            }
         }catch (Exception e){
-            sendAtStr = "";
+            sendAtStr = "-";
         }
         return sendAtStr;
     }
 
     public String getAuditSecondAtStr(){
         try {
-            Long at = Long.valueOf(auditSecondAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.auditSecondAtStr = sd.format(date);
+            if(auditSecondAt!=0) {
+                Long at = Long.valueOf(auditSecondAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.auditSecondAtStr = sd.format(date);
+            }else {
+                this.auditSecondAtStr = "-";
+            }
         }catch (Exception e){
-            auditSecondAtStr = "";
+            auditSecondAtStr = "-";
         }
         return auditSecondAtStr;
     }

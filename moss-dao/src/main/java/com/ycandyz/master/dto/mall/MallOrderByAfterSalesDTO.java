@@ -31,4 +31,10 @@ public class MallOrderByAfterSalesDTO {
     private String shippingMoney;
     @ApiModelProperty(value = "支付方式：0-未知  1-支付宝 2-微信  3-银联")
     private Integer payType;
+    @ApiModelProperty(value = "订单类型1->商城，2->神州通")
+    private Integer orderType;
+    @ApiModelProperty(value = "总计金额")
+    private BigDecimal allMoney;
+    @ApiModelProperty(value = "发货方式:1-配送 2-自提")
+    private Integer deliverType;
 }

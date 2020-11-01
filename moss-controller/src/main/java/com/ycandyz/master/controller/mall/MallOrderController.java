@@ -45,12 +45,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     /**
      * 订单列表导出
      * @param mallOrder
-     * @param response
      */
     @ApiOperation(value = "订单列表导出",notes = "订单列表导出",httpMethod = "POST")
     @PostMapping("/order/export")
-    public void exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO, HttpServletResponse response){
-        mallOrderService.exportEXT(mallOrder,userVO,response);
+    public void exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
+        mallOrderService.exportEXT(mallOrder,userVO);
     }
 
     /**
@@ -77,9 +76,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     @ApiImplicitParams({
             @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
     })
-    @Deprecated
     @GetMapping("/order/pickup/query")
     public ReturnResponse<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
+        if (pickupNo!=null){
+            pickupNo = pickupNo.trim();
+        }
         return mallOrderService.queryDetailByPickupNo(pickupNo, orderNo, userVO);
     }
 
@@ -96,8 +97,10 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     })
     @GetMapping("/order/pickup/verification")
     public ReturnResponse<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
+        if (pickupNo!=null){
+            pickupNo = pickupNo.trim();
+        }
         return mallOrderService.verPickupNo(pickupNo,orderNo, userVO);
     }
-
 
 }

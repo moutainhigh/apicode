@@ -25,6 +25,56 @@
             `level` as level
         from mall_social_share_flow
         where order_no=#{orderNo}
+        and `level`=1
     </select>
 
+    <select id="queryByOrderDetailNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallSocialShareFlowDTO">
+        select
+            id as id,
+            share_bill_no as shareBillNo,
+            user_id as userId,
+            `user_name` as userName,
+            phone_no as phoneNo,
+            organize_id as organizeId,
+            `organize_name` as organizeName,
+            amount as amount,
+            relation_info as relationInfo,
+            bank_bill_no as bankBillNo,
+            bank_bill_time as bankBillTime,
+            order_no as orderNo,
+            order_detail_no as orderDetailNo,
+            order_create_time as orderCreateTime,
+            status as status,
+            created_time as createdTime,
+            updated_time as updatedTime,
+            share_type as shareType,
+            `level` as level
+        from mall_social_share_flow
+        where order_detail_no=#{orderDetailNo}
+    </select>
+
+    <select id="queryAllShareByOrderNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallSocialShareFlowDTO">
+        select
+            id as id,
+            share_bill_no as shareBillNo,
+            user_id as userId,
+            `user_name` as userName,
+            phone_no as phoneNo,
+            organize_id as organizeId,
+            `organize_name` as organizeName,
+            amount as amount,
+            relation_info as relationInfo,
+            bank_bill_no as bankBillNo,
+            bank_bill_time as bankBillTime,
+            order_no as orderNo,
+            order_detail_no as orderDetailNo,
+            order_create_time as orderCreateTime,
+            status as status,
+            created_time as createdTime,
+            updated_time as updatedTime,
+            share_type as shareType,
+            `level` as level
+        from mall_social_share_flow
+        where order_no=#{orderNo}
+    </select>
 </mapper>

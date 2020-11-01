@@ -117,13 +117,13 @@ public class MallOrderVO {
     private String sellerUserPhone;
     /**合伙人信息 分销用户名称*/
     @ApiModelProperty(value = "合伙人信息 分销用户名称")
-    private String sellerUserName;
+    private List<String> sellerUserName;
     /**是否开启分销 0没有/1开启*/
     @ApiModelProperty(value = "是否开启分销 0没有/1开启")
-    private String isEnableShare;
+    private Integer isEnableShare;
     /**合伙人信息 分销用户名称*/
     @ApiModelProperty(value = "分佣金额")
-    private String shareAmount;
+    private List<String> shareAmount;
     /**0-未删除  1-由用户删除  2-由商家删除*/
     @ApiModelProperty(value = "0-未删除  1-由用户删除  2-由商家删除")
     private java.lang.Integer isDel;
@@ -209,6 +209,8 @@ public class MallOrderVO {
     private BigDecimal shippingMoney;
     @ApiModelProperty(value = "关联订单详情商品信息表")
     private List<MallItemByMallOrderVO> itemInfoList;
+    @ApiModelProperty(value = "所属企业")
+    private String organizeName;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")
@@ -242,84 +244,112 @@ public class MallOrderVO {
 
     public String getPayedAtStr(){
         try {
-            Long at = Long.valueOf(payedAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.payedAtStr = sd.format(date);
+            if(payedAt!=0) {
+                Long at = Long.valueOf(payedAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.payedAtStr = sd.format(date);
+            }else {
+                this.payedAtStr = "-";
+            }
         }catch (Exception e){
-            payedAtStr = "";
+            payedAtStr = "-";
         }
         return payedAtStr;
     }
 
     public String getCancelAtStr(){
         try {
-            Long at = Long.valueOf(cancelAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.cancelAtStr = sd.format(date);
+            if(cancelAt!=0) {
+                Long at = Long.valueOf(cancelAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.cancelAtStr = sd.format(date);
+            }else {
+                this.cancelAtStr = "-";
+            }
         }catch (Exception e){
-            cancelAtStr = "";
+            cancelAtStr = "-";
         }
         return cancelAtStr;
     }
 
     public String getAfterSalesEndAtStr(){
         try {
-            Long at = Long.valueOf(afterSalesEndAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.afterSalesEndAtStr = sd.format(date);
+            if(afterSalesEndAt!=0) {
+                Long at = Long.valueOf(afterSalesEndAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.afterSalesEndAtStr = sd.format(date);
+            }else {
+                this.afterSalesEndAtStr = "-";
+            }
         }catch (Exception e){
-            afterSalesEndAtStr = "";
+            afterSalesEndAtStr = "-";
         }
         return afterSalesEndAtStr;
     }
 
     public String getOrderAtStr(){
         try {
-            Long at = Long.valueOf(orderAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.orderAtStr = sd.format(date);
+            if(orderAt!=0) {
+                Long at = Long.valueOf(orderAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.orderAtStr = sd.format(date);
+            }else {
+                this.orderAtStr = "-";
+            }
         }catch (Exception e){
-            orderAtStr = "";
+            orderAtStr = "-";
         }
         return orderAtStr;
     }
 
     public String getSendAtStr(){
         try {
-            Long at = Long.valueOf(sendAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.sendAtStr = sd.format(date);
+            if(sendAt!=0) {
+                Long at = Long.valueOf(sendAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.sendAtStr = sd.format(date);
+            }else {
+                this.sendAtStr = "-";
+            }
         }catch (Exception e){
-            sendAtStr = "";
+            sendAtStr = "-";
         }
         return sendAtStr;
     }
 
     public String getReceiveAtStr(){
         try {
-            Long at = Long.valueOf(receiveAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.receiveAtStr = sd.format(date);
+            if(receiveAt!=0) {
+                Long at = Long.valueOf(receiveAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.receiveAtStr = sd.format(date);
+            }else {
+                this.receiveAtStr = "-";
+            }
         }catch (Exception e){
-            receiveAtStr = "";
+            receiveAtStr = "-";
         }
         return receiveAtStr;
     }
 
     public String getCloseAtStr(){
         try {
-            Long at = Long.valueOf(closeAt) * 1000;
-            Date date = new Date(at);
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.closeAtStr = sd.format(date);
+            if(closeAt!=0) {
+                Long at = Long.valueOf(closeAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.closeAtStr = sd.format(date);
+            }else {
+                this.closeAtStr = "-";
+            }
         }catch (Exception e){
-            closeAtStr = "";
+            closeAtStr = "-";
         }
         return closeAtStr;
     }
