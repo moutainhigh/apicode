@@ -93,7 +93,7 @@ public class InterceptorAuth implements HandlerInterceptor {
                     .eq(UserRole::getOrganizeId,user.getOrganizeId())
                     .eq(UserRole::getPlatform,4)
                     .eq(UserRole::getStatus,0)
-                    .eq(UserRole::getIsBoss,0);
+                    .eq(UserRole::getRoleId,0);
             UserRole userRole = UserRoleService.getOne(queryWrapper);
             if(null != userRole){
                 return true;
