@@ -102,18 +102,4 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
         }
         return mallAfterSalesService.refundDetail(orderNo,userVO);
     }
-
-    /**
-     * 售后详情点击确认退款按钮，显示运费
-     * @param orderNo
-     * @param userVO
-     * @return
-     */
-    @GetMapping("/order/refund/detail")
-    public ReturnResponse<String> refundDetail(@RequestParam("orderNo") String orderNo, @CurrentUser UserVO userVO){
-        if (orderNo==null || "".equals(orderNo)){
-            return ReturnResponse.failed("传入参数为空");
-        }
-        return mallAfterSalesService.refundDetail(orderNo,userVO);
-    }
 }
