@@ -1,7 +1,11 @@
 package com.ycandyz.master.service.user;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.domain.query.user.UserNodeQuery;
+import com.ycandyz.master.domain.response.user.UserNodeResp;
 import com.ycandyz.master.entities.user.User;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,5 +17,7 @@ import com.ycandyz.master.entities.user.User;
  * @version 2.0
  */
 public interface IUserService extends IService<User>{
+
+    List<UserNodeResp> selectUserNode(UserNodeQuery query);
 	
 }

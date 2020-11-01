@@ -46,7 +46,7 @@ public class User extends Model {
    private String nickname;
 
    @ApiModelProperty(value = "性别 0-未知 1-男 2-女")
-   private Boolean sex;
+   private Integer sex;
 
    @ApiModelProperty(value = "手机号码")
    private String phone;

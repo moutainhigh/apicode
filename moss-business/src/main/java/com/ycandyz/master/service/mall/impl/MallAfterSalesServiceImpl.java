@@ -1,6 +1,5 @@
 package com.ycandyz.master.service.mall.impl;
 
-import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -9,12 +8,12 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
+import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
 import com.ycandyz.master.dto.mall.*;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.enums.SalesEnum;
 import com.ycandyz.master.model.mall.*;
-import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import com.ycandyz.master.utils.MapUtil;
@@ -24,9 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 

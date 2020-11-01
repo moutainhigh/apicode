@@ -2,13 +2,13 @@ package com.ycandyz.master.service.mall.goodsManage.impl;
 
 
 import com.google.common.collect.Lists;
+import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.dto.mall.MallCategoryDTO;
 import com.ycandyz.master.enums.LayerEnum;
 import com.ycandyz.master.enums.SortValueEnum;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.entities.mall.goodsManage.MallParentCategory;
-import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
 import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;

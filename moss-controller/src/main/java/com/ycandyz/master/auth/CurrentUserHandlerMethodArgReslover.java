@@ -1,6 +1,6 @@
 package com.ycandyz.master.auth;
 
-import com.ycandyz.master.model.user.UserVO;
+import com.ycandyz.master.domain.UserVO;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;

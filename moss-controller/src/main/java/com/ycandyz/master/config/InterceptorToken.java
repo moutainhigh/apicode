@@ -7,11 +7,11 @@ import cn.hutool.json.JSONUtil;
 import cn.hutool.system.UserInfo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ycandyz.master.constant.SecurityConstant;
+import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.enums.ResultEnum;
-import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.user.IUserService;
 import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.TokenUtil;
@@ -80,13 +80,13 @@ public class InterceptorToken implements HandlerInterceptor {
             CommonResult result = null;
             Integer userId = 0;
             String shopNo = "";
-            String organizeId = null;
+            Long organizeId = null;
             if(StrUtil.isNotEmpty(token)){
 
-//                if (!redisUtil.hasKey(token)){
-//                    //如果redis中不存在当前key，则返回key获取，重新登录
-//                    return false;
-//                }
+                if (!redisUtil.hasKey(token)){
+                    //如果redis中不存在当前key，则返回key获取，重新登录
+                    return false;
+                }
 
                 try {
 //                    userId = TokenUtil.verifyToken(token, authConfigSecret);
@@ -94,7 +94,7 @@ public class InterceptorToken implements HandlerInterceptor {
                     userId = jsonObject.getInt("user_id");
                     shopNo = jsonObject.getStr("shop_no");
                     //获取企业ID
-                    organizeId = jsonObject.getStr("organize_id");
+                    organizeId = jsonObject.getLong("organize_id");
                 }catch (JSONException e){
                     log.error("token 解析失败");
                     result = new CommonResult(ResultEnum.TOKEN_ILLEGAL.getValue(),ResultEnum.TOKEN_ILLEGAL.getDesc(),null);
@@ -139,6 +139,7 @@ public class InterceptorToken implements HandlerInterceptor {
                         //查看shop_no
                         UserVO userVO = userToUserVO(ukeUser);
                         userVO.setShopNo(shopNo);
+                        userVO.setOrganizeId(organizeId);
                         httpServletRequest.getSession().setAttribute(SecurityConstant.USER_TOKEN_HEADER, userVO);
                     }
                 }

@@ -68,6 +68,11 @@ public interface SecurityConstant {
     String JWT_TOKEN = "x-auth-token";
 
     /**
+     * MENU_ID 按钮ID
+     */
+    String MENU_ID = "menu_id";
+
+    /**
      * author的token有效期
      */
     public static final Integer OAUTH_OFFSET_DAY = 1;
