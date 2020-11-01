@@ -219,8 +219,8 @@ public class InterceptorToken implements HandlerInterceptor {
         try {
             writer = response.getWriter();
             Map<String, Object> result = new HashMap<>();
-            result.put("code",401);
-            result.put("mes","登录令牌过期");
+            result.put("code",1100);
+            result.put("msg","登录令牌过期");
             JSONObject jsonObject = JSONUtil.parseObj(result);
             writer.print(jsonObject);
         } catch (IOException e){
