@@ -1,6 +1,7 @@
 package com.ycandyz.master.config;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ycandyz.master.constant.SecurityConstant;
@@ -68,7 +69,12 @@ public class InterceptorAuth implements HandlerInterceptor {
             return true;
         }
         UserVO user = (UserVO)httpServletRequest.getSession().getAttribute(SecurityConstant.USER_TOKEN_HEADER);
-
+        String menuIdStr = httpServletRequest.getHeader(SecurityConstant.MENU_ID);
+        if(StrUtil.isEmpty(menuIdStr)){
+            AssertUtils.notNull(null, "menu_id不能为空");
+        }
+        Long menuId = Long.parseLong(menuIdStr);
+        user.setMenuId(menuId);
         //需要做权限的接口
         boolean authFlow = false;
 

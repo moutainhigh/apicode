@@ -70,11 +70,6 @@ public class InterceptorToken implements HandlerInterceptor {
         String url = httpServletRequest.getRequestURI();
         String token = httpServletRequest.getHeader(SecurityConstant.JWT_TOKEN);
         String method = httpServletRequest.getMethod();
-        String menuIdStr = httpServletRequest.getHeader(SecurityConstant.MENU_ID);
-        if(StrUtil.isEmpty(menuIdStr)){
-            AssertUtils.notNull(null, "menu_id不能为空");
-        }
-        Long menuId = Long.parseLong(menuIdStr);
         if (!method.equals("OPTIONS")){
             log.info(token);
             log.info(url);
@@ -149,7 +144,6 @@ public class InterceptorToken implements HandlerInterceptor {
                         UserVO userVO = userToUserVO(ukeUser);
                         userVO.setShopNo(shopNo);
                         userVO.setOrganizeId(organizeId);
-                        userVO.setMenuId(menuId);
                         httpServletRequest.getSession().setAttribute(SecurityConstant.USER_TOKEN_HEADER, userVO);
                     }
                 }
