@@ -125,7 +125,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         if (!mallOrderVo.getStatus().equals(50)) {   //已取消订单不展示分销人相关信息
                             //订单列表显示分销合伙人，分销金额统计
                             List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryByOrderNo(mallOrderVo.getOrderNo());
-                            Integer isEnableShare = 0;
                             if (mallSocialShareFlowDTOS != null && mallSocialShareFlowDTOS.size() > 0) {
                                 List<String> sellerUserList = new ArrayList<>();
                                 List<String> shareAmountList = new ArrayList<>();
@@ -138,6 +137,16 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                                 });
                                 mallOrderVo.setShareAmount(shareAmountList);
                                 mallOrderVo.setSellerUserName(sellerUserList);
+                            }
+                        }
+
+                        //拼接是否分佣字段 isEnableShare
+                        if (mallOrderVo.getDetails()!=null && mallOrderVo.getDetails().size()>0){
+                            List<Integer> isEnableShareList = mallOrderVo.getDetails().stream().map(MallOrderDetailVO::getIsEnableShare).collect(Collectors.toList());
+                            if (isEnableShareList.contains(1)){ //有分佣
+                                mallOrderVo.setIsEnableShare(1);
+                            }else { //无分佣
+                                mallOrderVo.setIsEnableShare(0);
                             }
                         }
 
