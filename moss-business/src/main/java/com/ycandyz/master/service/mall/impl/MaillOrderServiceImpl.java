@@ -15,16 +15,21 @@ import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallOrderService;
+import com.ycandyz.master.utils.DateUtil;
 import com.ycandyz.master.utils.MapUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, MallOrderQuery> implements MallOrderService {
 
     @Autowired
@@ -56,6 +61,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
     @Autowired
     private MallSocialShareFlowDao mallSocialShareFlowDao;
+
+    @Value("${excel.sheet}")
+    private int num;
 
     @Override
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
@@ -182,62 +190,39 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public void exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
         mallOrderQuery.setShopNo(userVO.getShopNo());
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
-//        list.forEach(mall->{
-//            //拼接售后字段
-//            List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",mall.getOrderNo()));
-//            if (mallAfterSalesList!=null && mallAfterSalesList.size()>0){
-//                List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
-//                if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)){
-//                    //退款进行中
-//                    mall.setAfterSalesStatus(1);
-//                }else {
-//                    mall.setAfterSalesStatus(2);
-//                }
-//            }else {
-//                mall.setAfterSalesStatus(0);
-//            }
-//
-//            if (mall.getAfterSalesStatus()!=0){
-//                mall.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
-//            }else {
-//                if (mall.getAfterSalesEndAt()!=null && mall.getAfterSalesEndAt()>new Date().getTime()/1000){
-//                    mall.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
-//                }else {
-//                    mall.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
-//                }
-//            }
-//        });
-
         try {
-//            String basePath = ResourceUtils.getURL("classpath:").getPath();
-            ExcelWriter writer = writer = ExcelUtil.getWriter(System.getProperty("user.dir")+"/static/writeTest1.xls");
-//        writer.merge(list1.size() - 1, "测试标题");
-            //自定义标题别名
-            writer.addHeaderAlias("cartOrderSn", "母订单编号");
-            writer.addHeaderAlias("orderNo", "子订单编号");
-            writer.addHeaderAlias("organizeName", "所属企业");
-            writer.addHeaderAlias("itemName", "商品名称");
-            writer.addHeaderAlias("goodsNo", "货号");
-            writer.addHeaderAlias("allMoney", "总计金额(¥)");
-            writer.addHeaderAlias("payType", "支付方式");
-            writer.addHeaderAlias("quantity", "购买数量");
-            writer.addHeaderAlias("status", "状态");
-            writer.addHeaderAlias("isEnableShare", "是否分销");
-            writer.addHeaderAlias("sellerUserName", "分销合伙人");
-            writer.addHeaderAlias("shareAmount", "分佣金额统计");
-            writer.addHeaderAlias("asStatus", "售后");
-            writer.addHeaderAlias("payuser", "购买用户");
-            writer.addHeaderAlias("receiverName", "收货人");
-            writer.addHeaderAlias("receiverAddress", "收货人地址");
-            writer.addHeaderAlias("orderAtStr", "下单时间");
-            writer.addHeaderAlias("payedAtStr", "支付时间");
-            writer.addHeaderAlias("receiveAtStr", "收货时间");
-            List<String> containsList = Arrays.asList("cartOrderSn","orderNo","organizeName","itemName","goodsNo","allMoney",
-                    "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
-                    "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
-            List<Map<String, Object>> result = MapUtil.beanToMap(list,containsList);
-            // 一次性写出内容，使用默认样式，强制输出标题
+            Calendar now = Calendar.getInstance();
+            String today = DateUtil.formatDateForYMD(now.getTime());
+            now.add(Calendar.DATE,-1);
+            String yestoday = DateUtil.formatDateForYMD(now.getTime());
+            String pathpPefix = System.getProperty("user.dir")+"/static/";
+            deleteFile(yestoday, pathpPefix);
+            ExcelWriter writer = ExcelUtil.getWriter(pathpPefix + today + "/订单.xls","第1页");
+            double size = list.size();
+            log.info("总共{}条数据",(int)size);
+            int ceil = (int)Math.ceil(size / num);
+            log.info("需要{}个sheet，每个sheet{}条数据",ceil,num);
+            log.info("正在导出第{}sheet",1);
+            List<String> containsList = addHeader(writer);
+            List<MallOrderDTO> subList = list.subList(0, num);
+            List<Map<String, Object>> result = MapUtil.beanToMap(subList,containsList);
             writer.write(result, true);
+            log.info("第{}sheet导出完成",1);
+
+            int beginIndex = num;
+            int endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
+            for (int i = 2; i <= ceil; i++) {
+                log.info("正在导出第{}sheet",i);
+                writer.setSheet("第"+i+"页");
+                List<String> containsList2 = addHeader(writer);
+                List<MallOrderDTO> subList2 = list.subList(beginIndex, endIndex);
+                List<Map<String, Object>> result2 = MapUtil.beanToMap(subList2,containsList2);
+                writer.write(result2, true);
+                beginIndex = endIndex;
+                endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
+                log.info("第{}sheet导出完成",i);
+            }
+            log.info("全部导出完成");
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -250,6 +235,43 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 //        String name = DateUtil.format(new Date(), "yyyy年MM月dd日") +"全部订单导出";
 //        response.setHeader("Content-Disposition","attachment;filename="+name+".xls");
         //输出流，输出文件到项目目录下
+    }
+
+    private List<String> addHeader(ExcelWriter writer) {
+        writer.addHeaderAlias("cartOrderSn", "母订单编号");
+        writer.addHeaderAlias("orderNo", "子订单编号");
+        writer.addHeaderAlias("organizeName", "所属企业");
+        writer.addHeaderAlias("itemName", "商品名称");
+        writer.addHeaderAlias("goodsNo", "货号");
+        writer.addHeaderAlias("allMoney", "总计金额(¥)");
+        writer.addHeaderAlias("payType", "支付方式");
+        writer.addHeaderAlias("quantity", "购买数量");
+        writer.addHeaderAlias("status", "状态");
+        writer.addHeaderAlias("isEnableShare", "是否分销");
+        writer.addHeaderAlias("sellerUserName", "分销合伙人");
+        writer.addHeaderAlias("shareAmount", "分佣金额统计");
+        writer.addHeaderAlias("asStatus", "售后");
+        writer.addHeaderAlias("payuser", "购买用户");
+        writer.addHeaderAlias("receiverName", "收货人");
+        writer.addHeaderAlias("receiverAddress", "收货人地址");
+        writer.addHeaderAlias("orderAtStr", "下单时间");
+        writer.addHeaderAlias("payedAtStr", "支付时间");
+        writer.addHeaderAlias("receiveAtStr", "收货时间");
+        List<String> containsList = Arrays.asList("cartOrderSn","orderNo","organizeName","itemName","goodsNo","allMoney",
+                "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
+                "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
+        return containsList;
+    }
+
+    private void deleteFile(String yestoday, String pathpPefix) {
+        File file = new File(pathpPefix + yestoday);
+        if (file.exists()){
+            File[] filePaths = file.listFiles();
+            if (filePaths != null && filePaths.length > 0){
+                Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
+            }
+            file.delete();
+        }
     }
 
     @Override
