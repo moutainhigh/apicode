@@ -198,6 +198,8 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             ShipmentParamLastResultQuery shipmentParamLastResultQuery = shipmentParamQuery.getLastResult();
             List<MallShopShippingDTO> mallShopShippingList = mallShopShippingDao.queryByCodeAndNum(shipmentParamLastResultQuery.getCom(),shipmentParamLastResultQuery.getNu());
             if (mallShopShippingList!=null && mallShopShippingList.size()>0){
+                List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
+                Collections.reverse(list);
                 for (MallShopShippingDTO mallShopShippingDTO : mallShopShippingList){
                     List<MallShopShippingLogDTO> mallShopShippingLogDTOS = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShippingDTO.getShopShippingNo());
                     if (mallShopShippingLogDTOS!=null){
@@ -214,8 +216,6 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                         }
 
                         //后新增
-                        List<ShipmentParamLastResultDataQuery> list = shipmentParamLastResultQuery.getData();
-                        Collections.reverse(list);
                         //更新数据到MallShopShippingLog表
                         MallShopShippingLog mallShopShippingLog = null;
                         int i = 0;

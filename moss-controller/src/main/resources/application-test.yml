@@ -15,7 +15,7 @@ spring:
   redis:
     host: youchuan-test-redis.5fqnep.0001.cnn1.cache.amazonaws.com.cn
     port: 6379
-    database: 1
+    database: 0
   resources:
     static-locations: classpath:static/,file:static/
 
@@ -55,3 +55,7 @@ kuaidi:
   customer: FDED135A3EEE3F24749F3FB244D0A03B
   secret: 0aa5dd906ba7404db4ac569ca8da20a6
   userid: 7edbc3841b3a4bb9b4443d4a2ee654ff
+
+#每个sheet条数
+excel:
+  sheet: 50

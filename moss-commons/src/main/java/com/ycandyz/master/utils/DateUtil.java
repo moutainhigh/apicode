@@ -11,7 +11,7 @@ import java.util.Date;
 public class DateUtil {
 
     public static final String DEFAULT_DAY_PATTERN = "yyyy-MM-dd HH:mm:ss";
-
+    public static final String DEFAULT_YMD_PATTERN = "yyyyMMdd";
     /**
      * @Description: String to date
      * @Author li Zhuo
@@ -43,6 +43,14 @@ public class DateUtil {
             return null;
         }
         SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DAY_PATTERN);
+        return sdf.format(date);
+    }
+
+    public static String formatDateForYMD(Date date) {
+        if (date == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_YMD_PATTERN);
         return sdf.format(date);
     }
 
