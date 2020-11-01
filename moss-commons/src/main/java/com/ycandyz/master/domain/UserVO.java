@@ -82,6 +82,9 @@ public class UserVO extends User {
     @ApiModelProperty(value = "企业ID")
     private Long organizeId;
 
+    @ApiModelProperty(value = "前段按钮ID")
+    private Long menuId;
+
     @ApiModelProperty(value = "商店号")
     private String shopNo;
 }

@@ -67,9 +67,6 @@ public class InterceptorAuth implements HandlerInterceptor {
         if (method.equals("OPTIONS")){
             return true;
         }
-        String menuIdStr = httpServletRequest.getHeader(SecurityConstant.MENU_ID);
-        AssertUtils.notNull(menuIdStr, "menuId不能为空");
-        Long menuId = Long.parseLong(menuIdStr);
         UserVO user = (UserVO)httpServletRequest.getSession().getAttribute(SecurityConstant.USER_TOKEN_HEADER);
 
         //需要做权限的接口
@@ -97,7 +94,7 @@ public class InterceptorAuth implements HandlerInterceptor {
             }
             //校验接口权限
             UserNodeQuery query = new UserNodeQuery();
-            query.setMenuId(menuId);
+            query.setMenuId(user.getMenuId());
             query.setUserId(user.getId());
             query.setOrganizeId(user.getOrganizeId());
             List<UserNodeResp> list = userService.selectUserNode(query);
