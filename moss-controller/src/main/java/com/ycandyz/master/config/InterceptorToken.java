@@ -29,8 +29,11 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author: WangYang
@@ -84,10 +87,11 @@ public class InterceptorToken implements HandlerInterceptor {
             Long organizeId = null;
             if(StrUtil.isNotEmpty(token)){
 
-                /*if (!redisUtil.hasKey(token)){
+                if (!redisUtil.hasKey(token)){
                     //如果redis中不存在当前key，则返回key获取，重新登录
+                    returnJson(httpServletResponse);
                     return false;
-                }*/
+                }
 
                 //更新redis中token的过期时间
                 redisUtil.set(token,"1",60*60); //token过期时间为一小时
@@ -202,5 +206,29 @@ public class InterceptorToken implements HandlerInterceptor {
         userVO.setWxUnionId(user.getWxUnionId());
         userVO.setBlockChainId(user.getBlockChainId());
         return userVO;
+    }
+
+    /**
+     * 返回给前端指定错误码
+     * @param response
+     */
+    private void returnJson(HttpServletResponse response){
+        PrintWriter writer = null;
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=utf-8");
+        try {
+            writer = response.getWriter();
+            Map<String, Object> result = new HashMap<>();
+            result.put("code",401);
+            result.put("mes","登录令牌过期");
+            JSONObject jsonObject = JSONUtil.parseObj(result);
+            writer.print(jsonObject);
+        } catch (IOException e){
+            log.error("拦截器输出流异常"+e);
+        } finally {
+            if(writer != null){
+                writer.close();
+            }
+        }
     }
 }
