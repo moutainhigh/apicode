@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.ad.AdvertisingDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.ad.Advertising">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="img" property="img" />
+        <result column="sort" property="sort" />
+        <result column="type" property="type" />
+        <result column="shop_no" property="shopNo" />
+        <result column="category_no" property="categoryNo" />
+        <result column="address" property="address" />
+        <result column="enabled" property="enabled" />
+        <result column="deleted" property="deleted" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, img, sort, type, shop_no, category_no,address,enabled, deleted, created_time, updated_time
+    </sql>
+
+</mapper>

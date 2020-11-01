@@ -1,8 +1,12 @@
 package com.ycandyz.master.dao.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ycandyz.master.domain.query.user.UserNodeQuery;
+import com.ycandyz.master.domain.response.user.UserNodeResp;
 import com.ycandyz.master.entities.user.User;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +18,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserDao extends BaseMapper<User> {
+
+    List<UserNodeResp> selectUserNode(UserNodeQuery query);
 
 }

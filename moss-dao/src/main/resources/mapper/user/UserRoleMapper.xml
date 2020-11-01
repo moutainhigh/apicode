@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.user.UserRoleDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.user.UserRole">
+        <id column="id" property="id" />
+        <result column="platform" property="platform" />
+        <result column="organize_id" property="organizeId" />
+        <result column="user_id" property="userId" />
+        <result column="user_type" property="userType" />
+        <result column="role_id" property="roleId" />
+        <result column="role_type" property="roleType" />
+        <result column="is_boss" property="isBoss" />
+        <result column="status" property="status" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="created_at" property="createdAt" />
+        <result column="view_department_ids" property="viewDepartmentIds" />
+        <result column="invite_record_id" property="inviteRecordId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, platform, organize_id, user_id, user_type, role_id, role_type, is_boss, status, updated_at, created_at, view_department_ids, invite_record_id
+    </sql>
+
+</mapper>

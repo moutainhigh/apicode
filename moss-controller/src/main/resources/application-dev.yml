@@ -16,7 +16,7 @@ spring:
 
 mybatis:
   mapperLocations: classpath*:/mapper/**/*.xml
-  type-aliases-package: com.ycandyz.master.domain.entity.*
+  type-aliases-package: com.ycandyz.master.domain.entities.*
     # spring boot集成mybatis的方式打印sql
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -38,6 +38,8 @@ ignored:
     - /error
     - /mall/order/shipment/callback
     - /mall-buyer-shipping/mallBuyer/shipment/callback
+
+DEFAULT_TOKEN: eyJhZ2VudF9pZCI6ICIwIiwgImVtcGxveWVlX2lkIjogMzk0LCAiZW52IjogImRldiIsICJleHAiOiAxNjAyNzYyNzAxLCAiaWF0IjogMTYwMjc1NTUwMSwgImlzX2Jvc3MiOiAxLCAib3JnYW5pemVfaWQiOiAiNDQ4IiwgInBsYXRmb3JtIjogNSwgInJvbGUiOiAiMCIsICJzaG9wX25vIjogImJlaXF1YW5fc3RvcmUiLCAidXNlcl9pZCI6ICIxMDQwMSIsICJ3eG1pbmlfb3Blbl9pZCI6ICIiLCAianRpIjogIjkzZWU5NWFjMzdiZjBmZTE2MjRhZmE2N2FiODI5OWQ0In0
 
 #快递100相关参数
 kuaidi:

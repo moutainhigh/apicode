@@ -1,4 +1,4 @@
-package com.ycandyz.master.model.user;
+package com.ycandyz.master.domain;
 
 import com.ycandyz.master.entities.user.User;
 import io.swagger.annotations.ApiModel;
@@ -29,7 +29,7 @@ public class UserVO extends User {
     private String nickname;
 
     @ApiModelProperty(value = "性别 0-未知 1-男 2-女")
-    private Boolean sex;
+    private Integer sex;
 
     @ApiModelProperty(value = "手机号码")
     private String phone;

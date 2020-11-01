@@ -1,15 +1,14 @@
 package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.auth.CurrentUser;
+import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.model.mall.MallAfterSalesVO;
-import com.ycandyz.master.model.user.UserVO;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
 import com.ycandyz.master.service.mall.impl.MaillOrderServiceImpl;
 import io.swagger.annotations.Api;
@@ -18,8 +17,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/mall")

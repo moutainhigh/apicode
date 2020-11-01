@@ -11,6 +11,9 @@ public enum ResultEnum {
 
     SUCCESS(200, "操作成功"),
     FAILED(500, "操作失败"),
+    VALIDATE_FAILED(400, "参数检验失败"),
+    UNAUTHORIZED(401, "暂未登录或token已经过期"),
+    FORBIDDEN(403, "没有操作权限,请联系管理员"),
     /**
      * 登陆注册返回code
      */

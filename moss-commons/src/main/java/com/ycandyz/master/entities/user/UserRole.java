@@ -31,13 +31,13 @@ public class UserRole extends Model {
     @ApiModelProperty(value = "角色类型 0企业后台/ 1u客app")
     private Integer roleType;
     @ApiModelProperty(value = "app是否超管 0否/1是")
-    private Integer is_boss;
+    private Integer isBoss;
     @ApiModelProperty(value = "0启用/1停用/2拒绝/3注销/4删除")
     private Integer status;
     @ApiModelProperty(value = "更新时间")
     private Integer updatedAt;
     @ApiModelProperty(value = "创建时间")
-    private Integer created_at;
+    private Integer createdAt;
     @ApiModelProperty(value = "勾选部门集合")
     private String viewDepartmentIds;
     @ApiModelProperty(value = "邀请记录id")

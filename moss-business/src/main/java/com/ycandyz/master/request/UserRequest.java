@@ -1,6 +1,6 @@
 package com.ycandyz.master.request;
 
-import com.ycandyz.master.model.user.UserVO;
+import com.ycandyz.master.domain.UserVO;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 

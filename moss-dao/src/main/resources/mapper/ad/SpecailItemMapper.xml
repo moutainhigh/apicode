@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.ad.SpecailItemDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.ad.SpecailItem">
+        <id column="id" property="id" />
+        <result column="shop_no" property="shopNo" />
+        <result column="special_no" property="specialNo" />
+        <result column="item_no" property="itemNo" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_no, special_no, item_no, created_time, updated_time
+    </sql>
+    <sql id="MallItem_Column_List">
+        t.id id, t.item_no item_no, t.item_name item_name, t.status status,t.item_cover item_cover, t.price price ,t.lowest_sale_price,t.base_sales,t.real_sales
+    </sql>
+
+    <select id="selectHomePage" resultType="com.ycandyz.master.entities.mall.MallItem">
+        SELECT <include refid="MallItem_Column_List"/>
+        FROM ad_specail_item s left join mall_item t on s.item_no = t.item_no
+        WHERE 1=1
+        AND s.shop_no = #{query.shopNo}
+        AND s.special_no = #{query.specialNo}
+        AND t.status in (10,30)
+    </select>
+
+    <select id="selectItemNoList" resultType="java.lang.String">
+        SELECT t.item_no
+        FROM ad_specail_item t
+        WHERE 1=1
+        AND t.shop_no = #{query.shopNo}
+        AND t.special_no = #{query.specialNo}
+        order by id desc
+    </select>
+
+    <select id="selectList" resultType="com.ycandyz.master.entities.mall.MallItem">
+        SELECT t.id, t.item_no, t.item_name
+        FROM ad_specail_item s left join mall_item t on s.item_no = t.item_no
+        WHERE 1=1
+        AND s.shop_no = #{query.shopNo}
+        AND s.special_no = #{query.specialNo}
+        AND t.status in (10,30)
+        order by id desc
+    </select>
+
+</mapper>

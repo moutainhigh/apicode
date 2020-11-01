@@ -40,4 +40,27 @@
         id, regist_platfrom, regist_device, name_pinyin, name, nickname, sex, phone, headimg, invite_code, invite_user_id, invite_status, password_hash, appstore_id, email, wx_id, wx_mini_open_id, wx_open_id, wx_union_id, wx_gzh_open_id, is_auth, is_disable, disable_reason, is_del, created_at, updated_at, block_chain_id, block_chain_private_key, block_chain_public_key
     </sql>
 
+    <select id="selectUserNode" resultType="com.ycandyz.master.domain.response.user.UserNodeResp">
+        SELECT
+        ngn.menu_id,
+        CONCAT_WS( '|', n.method_type, n.uri ) uri
+        FROM
+        user_role AS ur
+        LEFT JOIN role_menu_node_group AS rmng ON rmng.role_id = ur.role_id
+        AND rmng.is_del = 0
+        AND rmng.menu_id = #{menuId}
+        LEFT JOIN node_group_node AS ngn ON ngn.menu_id = rmng.menu_id
+        AND ngn.node_group_id = rmng.node_group_id
+        AND ngn.is_del = 0
+        LEFT JOIN node AS n ON n.id = ngn.node_id
+        AND n.`status` = 0
+        AND n.`type` = 1
+        WHERE 1=1
+        AND ur.`user_id` = #{userId}
+        AND ur.`platform` = 4
+        AND ur.`organize_id` = #{organizeId}
+        AND ur.`status` = 0
+        AND ur.role_id > 0
+    </select>
+
 </mapper>
