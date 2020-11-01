@@ -16,6 +16,8 @@ import java.util.List;
 public class IgnoreUrlsConfig {
 
     private String[] urls;
+
+    private String[] authUrls;
     
     private List<String> ips = new ArrayList<>();
     

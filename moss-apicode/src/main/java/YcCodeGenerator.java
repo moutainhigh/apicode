@@ -26,7 +26,7 @@ public class YcCodeGenerator {
 
 
 	//表名
-	private static final String tableName = "user_role";
+	private static final String tableName = "node";
 	//生成文件所在目录层级
 	private static final String moduleName = "user";
 	private static final String daoName = "moss-dao";

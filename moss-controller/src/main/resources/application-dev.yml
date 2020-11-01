@@ -7,8 +7,8 @@ spring:
   datasource:
     name: yc-dev
     url: jdbc:mysql://youchuan-test-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc-dev?useUnicode=true&characterEncoding=utf-8&useJDBCCompliantTimezoneShift=true&serverTimezone=Asia/Shanghai&useSSL=false
-    username: project_dev
-    password: p3BjALdQI4SjH0w5
+    username: root
+    password: 9HzyhWj6Gcnijbki
   redis:
     host: youchuan-test-redis.5fqnep.0001.cnn1.cache.amazonaws.com.cn
     port: 6379

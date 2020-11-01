@@ -25,6 +25,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Autowired
     private InterceptorLog logInterceptor;
     @Autowired
+    private InterceptorAuth authInterceptor;
+    @Autowired
     private com.ycandyz.master.auth.CurrentUserHandlerMethodArgReslover CurrentUserHandlerMethodArgReslover;
 
     @Bean
@@ -48,6 +50,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         // 注册 token 验证拦截器
          registry.addInterceptor(tokenInterceptor).addPathPatterns("/**").excludePathPatterns("/META-INF/**/**","/swagger-ui.html/**","/swagger-resources");
         registry.addInterceptor(logInterceptor);
+        registry.addInterceptor(authInterceptor);
     }
 
     /**
