@@ -15,7 +15,7 @@ spring:
   redis:
     host: youchuan-test-redis.5fqnep.0001.cnn1.cache.amazonaws.com.cn
     port: 6379
-    database: 1
+    database: 0
   resources:
     static-locations: classpath:static/,file:static/
 
