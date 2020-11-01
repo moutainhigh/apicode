@@ -208,7 +208,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             List<Map<String, Object>> result = MapUtil.beanToMap(subList,containsList);
             writer.write(result, true);
             log.info("第{}sheet导出完成",1);
-
             int beginIndex = num;
             int endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
             for (int i = 2; i <= ceil; i++) {
@@ -227,14 +226,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //out为OutputStream，需要写出到的目标流
-        //response为HttpServletResponse对象
-//        response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        //test.xls是弹出下载对话框的文件名，不能为中文，中文请自行编码
-//        String name = DateUtil.format(new Date(), "yyyy年MM月dd日") +"全部订单导出";
-//        response.setHeader("Content-Disposition","attachment;filename="+name+".xls");
-        //输出流，输出文件到项目目录下
     }
 
     private List<String> addHeader(ExcelWriter writer) {
