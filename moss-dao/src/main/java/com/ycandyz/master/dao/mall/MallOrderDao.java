@@ -19,11 +19,25 @@ public interface MallOrderDao extends BaseMapper<MallOrder> {
      * @param mallOrderQuery
      * @return
      */
+    Integer getTrendMallOrderPageSize(@Param("p") MallOrderQuery mallOrderQuery);
+
+    /**
+     * 订单量趋势统计
+     * @param mallOrderQuery
+     * @return
+     */
+    List<MallOrderDTO> getTrendMallOrderByPage(@Param("page") long page, @Param("size") long size, @Param("p") MallOrderQuery mallOrderQuery);
+
+    /**
+     * 订单量趋势统计
+     * @param mallOrderQuery
+     * @return
+     */
     Page<MallOrderDTO> getTrendMallOrderPage(Page page, @Param("p") MallOrderQuery mallOrderQuery);
 
     List<MallOrderDTO> getTrendMallOrder(@Param("p") MallOrderQuery mallOrderQuery);
 
-    MallOrderDTO queryOrderDetail(@Param("orderNo") String orderNo);
+    MallOrderDTO queryOrderDetail(@Param("orderNo") String orderNo, @Param("shopNo") String shopNo);
 
     MallOrderDTO queryDetailByPickupNo(@Param("pickupNo") String pickupNo, @Param("shopNo") String shopNo);
 

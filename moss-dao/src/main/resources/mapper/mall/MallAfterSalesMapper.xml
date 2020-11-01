@@ -199,6 +199,7 @@
             LEFT JOIN mall_order mo ON sales.order_no=mo.order_no
             WHERE
             sales.after_sales_no=#{afterSalesNo}
+            and sales.shop_no=#{shopNo}
     </select>
 
     <select id="getTrendMallAfterSalesList" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">

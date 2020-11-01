@@ -15,7 +15,7 @@ public interface MallAfterSalesDao extends BaseMapper<MallAfterSales> {
 
     Page<MallAfterSalesDTO> getTrendMallAfterSalesPage(Page page, @Param("p") MallafterSalesQuery mallafterSalesQuery);
 
-    MallAfterSalesDTO querySalesDetail(@Param("afterSalesNo") String afterSalesNo);
+    MallAfterSalesDTO querySalesDetail(@Param("afterSalesNo") String afterSalesNo, @Param("shopNo") String shopNo);
 
     List<MallAfterSalesDTO> getTrendMallAfterSalesList(@Param("p") MallafterSalesQuery mallafterSalesQuery);
 
