@@ -33,7 +33,7 @@ public class MallAfterSalesQuartz extends BaseQuartz{
 	 * @since 2020-11-02
 	 * @version 2.0
 	 */
-	@Scheduled(cron="0 0/01 * * * ?")
+	@Scheduled(cron="0 0/10 * * * ?")
 	public void getVideoCountryGroup() {
 		log.info("===========售后定时任务==============");
 		mallAfterSalesService.processSubStatus();
