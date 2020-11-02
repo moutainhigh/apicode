@@ -361,4 +361,9 @@
                 </otherwise>
             </choose>
     </select>
+
+    <update id="updateCloseAtByAfterSalesNo">
+		update mall_after_sales set sub_status = #{subStatus},close_at = #{closeAt} where after_sales_no = #{afterSalesNo}
+	</update>
+
 </mapper>
