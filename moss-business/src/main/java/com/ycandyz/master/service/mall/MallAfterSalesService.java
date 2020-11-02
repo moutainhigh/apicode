@@ -20,4 +20,8 @@ public interface MallAfterSalesService extends IService<MallAfterSales> {
     void exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
 
     ReturnResponse<String> refundDetail(String orderNo, UserVO userVO);
+
+    void processSubStatus();
+
+
 }
