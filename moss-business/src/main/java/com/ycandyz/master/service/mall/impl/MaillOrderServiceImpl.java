@@ -30,6 +30,7 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -134,18 +135,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
                         if (!mallOrderVo.getStatus().equals(50)) {   //已取消订单不展示分销人相关信息
                             //订单列表显示分销合伙人，分销金额统计
-                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryByOrderNo(mallOrderVo.getOrderNo());
+                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderVo.getOrderNo());
                             if (mallSocialShareFlowDTOS != null && mallSocialShareFlowDTOS.size() > 0) {
                                 List<String> sellerUserList = new ArrayList<>();
-                                List<String> shareAmountList = new ArrayList<>();
-                                mallSocialShareFlowDTOS.forEach(dto -> {
-                                    String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
-                                    sellerUserList.add(sellerUser); //分销合伙人
-
-                                    String shareAmount = dto.getAmount().toString();
-                                    shareAmountList.add(shareAmount);   //分销佣金
-                                });
-                                mallOrderVo.setShareAmount(shareAmountList);
+                                BigDecimal shareAmount = new BigDecimal(0);
+                                for (MallSocialShareFlowDTO dto : mallSocialShareFlowDTOS) {
+                                    if (dto.getShareType()==0) {
+                                        String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
+                                        sellerUserList.add(sellerUser); //分销合伙人
+                                    }
+                                    shareAmount.add(dto.getAmount());   //分销佣金
+                                }
+                                mallOrderVo.setShareAmount(shareAmount);
                                 mallOrderVo.setSellerUserName(sellerUserList);
                             }
                         }
