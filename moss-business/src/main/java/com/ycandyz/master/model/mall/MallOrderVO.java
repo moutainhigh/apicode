@@ -123,7 +123,7 @@ public class MallOrderVO {
     private Integer isEnableShare;
     /**合伙人信息 分销用户名称*/
     @ApiModelProperty(value = "分佣金额")
-    private List<String> shareAmount;
+    private BigDecimal shareAmount;
     /**0-未删除  1-由用户删除  2-由商家删除*/
     @ApiModelProperty(value = "0-未删除  1-由用户删除  2-由商家删除")
     private java.lang.Integer isDel;
