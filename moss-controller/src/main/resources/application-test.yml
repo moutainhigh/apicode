@@ -17,7 +17,9 @@ spring:
     port: 6379
     database: 0
   resources:
-    static-locations: classpath:static/,file:static/
+    static-locations: classpath:static/,file:static/,classpath:/resources/
+  mvc:
+    static-path-pattern: static/**
 
 mybatis:
   mapperLocations: classpath*:/mapper/**/*.xml
@@ -58,4 +60,4 @@ kuaidi:
 
 #每个sheet条数
 excel:
-  sheet: 50
+  sheet: 40000

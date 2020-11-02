@@ -26,8 +26,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -206,16 +208,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     public String exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
-        mallOrderQuery.setShopNo(userVO.getShopNo());
+        String shopNo = userVO.getShopNo();
+        mallOrderQuery.setShopNo(shopNo);
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
         try {
             Calendar now = Calendar.getInstance();
             String today = DateUtil.formatDateForYMD(now.getTime());
             now.add(Calendar.DATE,-1);
             String yestoday = DateUtil.formatDateForYMD(now.getTime());
-            String pathpPefix = "src/main/resources/static/";
-            deleteFile(yestoday, pathpPefix);
-            ExcelWriter writer = ExcelUtil.getWriter(pathpPefix + today + "/订单.xls","第1页");
+            //String pathpPefix = "src/main/resources/static/";
+            String pathpPefix = "static/";
+            deleteFile(yestoday, today, shopNo ,pathpPefix);
+            ExcelWriter writer = ExcelUtil.getWriter(pathpPefix + today +"/"+shopNo+ "/订单.xls","第1页");
             double size = list.size();
             log.info("总共{}条数据",(int)size);
             int ceil = (int)Math.ceil(size / num);
@@ -242,9 +246,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
             log.info("全部导出完成");
             writer.close();
-            String url = myApplication.getUrl()+"/";
-            String path = url +  today + "/订单.xls";
-            log.info("文件路径{}",path);
+            String url = myApplication.getUrl()+"/static/";
+            String path = url +  today +"/"+shopNo+ "/订单.xls";
+            log.info("文件下载路径:{}",path);
             return path;
         } catch (Exception e) {
             e.printStackTrace();
@@ -278,14 +282,27 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return containsList;
     }
 
-    private void deleteFile(String yestoday, String pathpPefix) {
-        File file = new File(pathpPefix + yestoday);
-        if (file.exists()){
-            File[] filePaths = file.listFiles();
-            if (filePaths != null && filePaths.length > 0){
-                Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
+    //删除昨天的全部文件和今天同一shopNo下的文件
+    private void deleteFile(String yestoday,String today,String shopNo, String pathpPefix) {
+        try {
+            String path = ResourceUtils.getURL("classpath:").getPath();
+            File yestodayfile = new File(path + pathpPefix + yestoday);
+            if (yestodayfile.exists()){
+                File[] filePaths = yestodayfile.listFiles();
+                if (filePaths != null && filePaths.length > 0){
+                    Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
+                }
+                yestodayfile.delete();
             }
-            file.delete();
+            File todayfile = new File(path + pathpPefix + today + "/" + shopNo);
+            if (todayfile.exists()){
+                File[] filePaths = todayfile.listFiles();
+                if (filePaths != null && filePaths.length > 0){
+                    Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
