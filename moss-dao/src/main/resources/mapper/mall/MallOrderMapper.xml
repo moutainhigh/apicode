@@ -366,6 +366,7 @@
             mo.`after_sales_status`,
             mo.`deliver_type`,
             mo.total_money-mo.real_money as shippingMoney,
+            modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
             modetail.sku_no,
