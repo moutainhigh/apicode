@@ -36,6 +36,7 @@ public class MyApplication implements ApplicationListener<WebServerInitializedEv
         WebServerApplicationContext context = event.getApplicationContext();
         Environment env = context.getEnvironment();
         String ip = InetAddress.getLocalHost().getHostAddress();
+        String hostName = InetAddress.getLocalHost().getHostName();
         int port = server.getPort();
         String contextPath = env.getProperty("server.servlet.context-path");
         if (contextPath == null) {
@@ -46,6 +47,6 @@ public class MyApplication implements ApplicationListener<WebServerInitializedEv
                 "\tLocal:\t\thttp://localhost:{}" +
                 "\n\tExternal:\thttp://{}:{}{}" +
                 "\n---------------------------------------------------------\n", port, ip, port, contextPath);
-        this.url = "http://"+ip+":"+port+contextPath;
+        this.url = "http://"+hostName+":"+port+contextPath;
     }
 }
