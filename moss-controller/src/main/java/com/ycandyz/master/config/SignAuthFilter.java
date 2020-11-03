@@ -48,7 +48,6 @@ public class SignAuthFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         // 防止流读取一次后就没有了, 所以需要将流继续写出去
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletRequest requestWrapper = new BodyReaderHttpServletRequestWrapper(request);
         String path = request.getServletPath();
         //获取图标不需要验证签名
         AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -57,6 +56,7 @@ public class SignAuthFilter implements Filter {
         if (flow) {
             filterChain.doFilter(request, response);
         } else {
+            HttpServletRequest requestWrapper = new BodyReaderHttpServletRequestWrapper(request);
             //获取全部参数(包括URL和body上的)
             SortedMap<String, Object> allParams = HttpUtils.getAllParams(requestWrapper);
             //对参数进行签名验证
