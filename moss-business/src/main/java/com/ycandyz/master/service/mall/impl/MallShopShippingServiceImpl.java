@@ -132,6 +132,20 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             if (StringUtils.isNotEmpty(result)) {
                 JSONObject resultObject = JSONUtil.parseObj(result);
                 if (!resultObject.getBool("result")) {
+                    if (resultObject.getStr("returnCode").equals("501")){
+                        //重复订阅，需要额外处理
+                        List<MallShopShippingLogDTO> mallShopShippingLogs = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShipping.getShopShippingNo());
+                        if (mallShopShippingLogs!=null && mallShopShippingLogs.size()>0){
+                            //如果存在物流信息，无法重复订阅，需要认为的主动把该物流订单同步到新的订单物流中
+                            mallShopShippingLogs.forEach(shippinglog->{
+                                shippinglog.setId(null);
+                                shippinglog.setShippingMoney(mallShopShipping.getShippingMoney());
+                                shippinglog.setShopShippingNo(mallShopShipping.getShopShippingNo());
+                            });
+                            mallShopShippingLogDao.insertBatch(mallShopShippingLogs);
+                        }
+                    }
+
                     //订阅失败
                     //更新快递推送表poll_state字段
                     mallShopShipping.setPollState(2);
