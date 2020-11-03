@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +66,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
     @Autowired
     private MallOrderDao mallOrderDao;
+
+    @Value("${after-sales-days:7}")
+    private Integer afterSalesDays;
 
     @Override
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
@@ -475,7 +479,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         List<MallAfterSales> list = baseMapper.selectList(advertisingWrapper);
         list.forEach(entity -> {
             Date date = getCurrentDate(entity.getAuditFirstAt());
-            Date endDate= DateUtils.getAddDay(date,7);
+            Date endDate= DateUtils.getAddDay(date,afterSalesDays);
             //如果截止时间在当前时间之前,返回true
             boolean bl =endDate.before(new Date());
             if(bl){
