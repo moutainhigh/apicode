@@ -545,8 +545,4 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return ReturnResponse.failed("未查询到待自提订单");
     }
 
-    public static void main(String[] args) {
-        BigDecimal g = new BigDecimal(0);
-        System.out.println(g.add(new BigDecimal("0.12")).toString());
-    }
 }
