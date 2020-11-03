@@ -101,7 +101,8 @@ public interface SecurityConstant {
             "/docs.html",
             "/doc.html",
             "/swagger-resources/**",
-            "/v2/api-docs"
+            "/v2/api-docs",
+            "/favicon.ico"
     };
 
 }
