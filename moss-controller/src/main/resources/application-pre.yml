@@ -20,6 +20,12 @@ mybatis:
 
 token:
   authConfigSecret: c1f5d2f3f9f818c1a2c03da10c81e542          #token密钥
+sign:
+  authConfigSecret: b1f5d2f3f9f818c1a2c03da10c81e542          #验签密钥
+
+logging:
+  level:
+    com.ycandyz.master.dao: debug
 
 ignored:
   urls:
@@ -40,3 +46,10 @@ kuaidi:
   customer: FDED135A3EEE3F24749F3FB244D0A03B
   secret: 0aa5dd906ba7404db4ac569ca8da20a6
   userid: 7edbc3841b3a4bb9b4443d4a2ee654ff
+
+#售后一次审核通过退货有效期
+after-sales-days: 1
+
+#每个sheet条数
+excel:
+  sheet: 400
