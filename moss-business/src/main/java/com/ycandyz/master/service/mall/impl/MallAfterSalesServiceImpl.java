@@ -463,7 +463,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         continue;
                     }
                     BigDecimal salesShippingMoney = sales.getMoney().subtract(sales.getPrice().multiply(new BigDecimal(sales.getQuantity())));
-                    salesMoney.add(salesShippingMoney);
+                    salesMoney = salesMoney.add(salesShippingMoney);
                 }
             }
             return ReturnResponse.success(shippingMoney.subtract(salesMoney).toString());
