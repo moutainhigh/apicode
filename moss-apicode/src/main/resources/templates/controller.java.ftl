@@ -65,40 +65,40 @@ public class ${table.controllerName} {
 	}
 	
 	@ApiOperation(value = "通过ID更新")
-    @PutMapping(value = "update/{id}")
+    @PutMapping(value = "{id}")
 	public ReturnResponse<Object> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) ${entity} entity) {
         entity.setId(id);
         return ReturnResponse.success("更改成功!");
 	}
 	
 	@ApiOperation(value = "查询根据ID")
-    @GetMapping(value = "select/{id}")
+    @GetMapping(value = "{id}")
 	public ReturnResponse<Object> getById(@PathVariable Long id) {
         return ReturnResponse.success(service.getById(id));
     }
     
 	@ApiOperation(value = "查询分页")
-    @GetMapping(value = "select/page")
+    @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public ReturnResponse<Page<Object>> selectPage(Page page, ${entity}${cfg.querySuffix} query) {
         return ReturnResponse.success(service.page(page,query));
     }
     
     @ApiOperation(value = "查询全部")
-    @GetMapping(value = "select/list")
+    @GetMapping(value = "list")
     public ReturnResponse<Object> selectList(${entity}${cfg.querySuffix} query) {
         return ReturnResponse.success(service.list(query));
     }
     
     @ApiOperation(value = "通过ID删除")
-    @DeleteMapping(value = "delete/{id}")
+    @DeleteMapping(value = "{id}")
 	public ReturnResponse<Object> deleteById(@PathVariable Long id) {
         return ReturnResponse.success("删除成功!");
 	}
 
     @ApiImplicitParam(name="ids",value="ID集合(1,2,3)",required=true,allowMultiple=true,dataType="int")
    	@ApiOperation(value = "通过ids批量删除")
-    @DeleteMapping(value = "deleteBatch")
+    @DeleteMapping(value = "delete")
 	public ReturnResponse<Object> deleteBatch(String ids) {
         return ReturnResponse.success("删除成功!");
 	}

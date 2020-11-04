@@ -65,8 +65,8 @@ public class YcCodeGenerator {
 		dsc.setDriverName("com.mysql.cj.jdbc.Driver");
 		//dsc.setUsername("root");
 		//dsc.setPassword("root");
-		dsc.setUsername("project_dev");
-		dsc.setPassword("p3BjALdQI4SjH0w5");
+		dsc.setUsername("root");
+		dsc.setPassword("9HzyhWj6Gcnijbki");
 		return dsc;
 	}
 
