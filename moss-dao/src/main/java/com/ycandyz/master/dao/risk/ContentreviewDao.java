@@ -13,7 +13,6 @@ public interface ContentreviewDao {
     List<ContentReviewDTO> listMallItem(@Param("con") ContentReviewQuery c);
     void insert(ContentReview contentReview);
     ContentReviewDTO selectByContentId(Long contentId,int type);
-//    List<ContentReviewDTO> queryMallItem(@Param("con") ContentReviewQuery contentReviewQuery);
     List<ContentReviewDTO> queryFootprint(@Param("con") ContentReviewQuery contentReviewQuery);
     List<ContentReviewDTO> queryOrganizeNews(@Param("con") ContentReviewQuery contentReviewQuery);
 

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/TaboowordsCheck")
+@RequestMapping("/taboowordsCheck")
 @Api(value="敏感词检测",tags={"敏感词检测-动态接口"})
 public class TaboowordsCheckController {
 

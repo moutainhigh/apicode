@@ -25,7 +25,7 @@ public class BaseTabooWordsVO {
     @ApiModelProperty(value = "敏感词")
     private String[] tabooWords;
 
-    @ApiModelProperty(value = "处理方式")
+    @ApiModelProperty(value = "处理方式 [0:发布屏蔽]")
     private Integer treatmentMethod;
 
 }

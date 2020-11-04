@@ -28,5 +28,5 @@ public class TabooCheckParams {
     private String itemText;
 
     @ApiModelProperty(value = "所属模块")
-    private Integer contentMoudle;
+    private Integer type;
 }

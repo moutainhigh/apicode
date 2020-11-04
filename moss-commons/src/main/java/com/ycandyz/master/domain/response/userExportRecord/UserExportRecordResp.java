@@ -25,7 +25,7 @@ import java.util.Date;
 public class UserExportRecordResp extends UserExportRecord {
 
     @ApiModelProperty(value = "操作终端:1-U客企业后台 2-有传运营后台")
-    private Boolean terminal;
+    private Integer terminal;
 
     @ApiModelProperty(value = "企业名称")
     private String organizeName;

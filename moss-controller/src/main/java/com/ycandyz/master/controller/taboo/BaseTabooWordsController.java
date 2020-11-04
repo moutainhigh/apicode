@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("base-taboo-words")
-@Api(tags="taboo-敏感词管理")
+@Api(tags="敏感词管理")
 public class BaseTabooWordsController extends BaseController<BaseTabooWordsServiceImpl, BaseTabooWords, BaseTabooWordsQuery> {
 
     @Autowired
