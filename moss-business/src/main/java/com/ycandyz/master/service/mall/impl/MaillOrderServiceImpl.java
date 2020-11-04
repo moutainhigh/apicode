@@ -42,6 +42,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileNotFoundException;
+<<<<<<< HEAD
+=======
+import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+>>>>>>> 634593c7901f86c52b3440df02fd3e3bf338427e
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -148,20 +154,20 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             mallOrderVo.setQuantity(quantity);
                         }
 
-                        if (!mallOrderVo.getStatus().equals(50)) {   //已取消订单不展示分销人相关信息
+                        if (mallOrderVo.getStatus()!=50 && mallOrderVo.getStatus()!=10) {   //已取消订单不展示分销人相关信息
                             //订单列表显示分销合伙人，分销金额统计
-                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryByOrderNo(mallOrderVo.getOrderNo());
+                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderVo.getOrderNo());
                             if (mallSocialShareFlowDTOS != null && mallSocialShareFlowDTOS.size() > 0) {
                                 List<String> sellerUserList = new ArrayList<>();
-                                List<String> shareAmountList = new ArrayList<>();
-                                mallSocialShareFlowDTOS.forEach(dto -> {
-                                    String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
-                                    sellerUserList.add(sellerUser); //分销合伙人
-
-                                    String shareAmount = dto.getAmount().toString();
-                                    shareAmountList.add(shareAmount);   //分销佣金
-                                });
-                                mallOrderVo.setShareAmount(shareAmountList);
+                                BigDecimal shareAmount = new BigDecimal(0);
+                                for (MallSocialShareFlowDTO dto : mallSocialShareFlowDTOS) {
+                                    if (dto.getShareType()==0) {
+                                        String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
+                                        sellerUserList.add(sellerUser); //分销合伙人
+                                    }
+                                    shareAmount = shareAmount.add(dto.getAmount());   //分销佣金
+                                }
+                                mallOrderVo.setShareAmount(shareAmount);
                                 mallOrderVo.setSellerUserName(sellerUserList);
                             }
                         }
@@ -177,7 +183,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
                             //拼接是否分佣字段 isEnableShare
                             List<Integer> isEnableShareList = detailVOList.stream().map(MallOrderDetailVO::getIsEnableShare).collect(Collectors.toList());
-                            if (isEnableShareList.contains(1)){ //有分佣
+                            if (isEnableShareList.contains(1) && mallOrderVo.getStatus()!=50 && mallOrderVo.getStatus()!=10){ //有分佣
                                 mallOrderVo.setIsEnableShare(1);
                             }else { //无分佣
                                 mallOrderVo.setIsEnableShare(0);

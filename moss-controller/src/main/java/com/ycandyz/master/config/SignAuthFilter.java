@@ -2,19 +2,24 @@ package com.ycandyz.master.config;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.ycandyz.master.constant.SecurityConstant;
 import com.ycandyz.master.domain.BodyReaderHttpServletRequestWrapper;
 import com.ycandyz.master.utils.SignUtil;
 import com.ycandyz.master.utils.HttpUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.SortedMap;
 
 /**
@@ -24,13 +29,14 @@ import java.util.SortedMap;
  */
 
 @Slf4j
-//@Component
+@Component
 public class SignAuthFilter implements Filter {
+
+    @Autowired
+    private IgnoreUrlsConfig ignoreUrlsConfig;
 
     @Value(value = "${sign.authConfigSecret}")
     private String authConfigSecret;
-
-    static final String FAVICON = "/favicon.ico";
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -42,11 +48,15 @@ public class SignAuthFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         // 防止流读取一次后就没有了, 所以需要将流继续写出去
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletRequest requestWrapper = new BodyReaderHttpServletRequestWrapper(request);
+        String path = request.getServletPath();
         //获取图标不需要验证签名
-        if (FAVICON.equals(requestWrapper.getRequestURI())) {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
+        boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));
+        if (flow) {
             filterChain.doFilter(request, response);
         } else {
+            HttpServletRequest requestWrapper = new BodyReaderHttpServletRequestWrapper(request);
             //获取全部参数(包括URL和body上的)
             SortedMap<String, Object> allParams = HttpUtils.getAllParams(requestWrapper);
             //对参数进行签名验证

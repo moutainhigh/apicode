@@ -4,6 +4,7 @@ import com.ycandyz.master.constant.SecurityConstant;
 import com.ycandyz.master.utils.ConfigUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Configuration
 @EnableSwagger2
+@Profile({"dev","local","test"})
 public class SwaggerConfig {
 
     private ApiInfo apiInfo() {

@@ -6,20 +6,26 @@ server:
 spring:
   datasource:
     name: yc
-    url: jdbc:mysql://youchuan-uat-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
-    username: datav
-    password: eovkug3821GyXgKB
+    url: jdbc:mysql://youchuan-uat-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useJDBCCompliantTimezoneShift=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+    username: project_uat
+    password: LL0Nq6BWuYZRLrHY
   redis:
     host: youchuan-uat-redis-1.5fqnep.0001.cnn1.cache.amazonaws.com.cn
     port: 6379
-    database: 3
+    database: 0
 
 mybatis:
-  mapperLocations: classpath:mapper/*.xml
-  type-aliases-package: com.atguigu.springcloud.entities    # 所有Entity别名类所在包
+  mapperLocations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.ycandyz.master.domain.entity.*
 
 token:
   authConfigSecret: c1f5d2f3f9f818c1a2c03da10c81e542          #token密钥
+sign:
+  authConfigSecret: b1f5d2f3f9f818c1a2c03da10c81e542          #验签密钥
+
+logging:
+  level:
+    com.ycandyz.master.dao: debug
 
 ignored:
   urls:
@@ -40,3 +46,10 @@ kuaidi:
   customer: FDED135A3EEE3F24749F3FB244D0A03B
   secret: 0aa5dd906ba7404db4ac569ca8da20a6
   userid: 7edbc3841b3a4bb9b4443d4a2ee654ff
+
+#售后一次审核通过退货有效期
+after-sales-days: 1
+
+#每个sheet条数
+excel:
+  sheet: 400

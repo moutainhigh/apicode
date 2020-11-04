@@ -25,3 +25,5 @@ spring:
 
 logging:
   config: classpath:logback-spring.xml
+
+after-sales-days: 7

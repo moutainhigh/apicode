@@ -2,30 +2,38 @@ package com.ycandyz.master.service.mall.impl;
 
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
-import com.ycandyz.master.controller.base.BaseService;
+import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.domain.UserVO;
+import com.ycandyz.master.domain.enums.mall.MallAfterSalesEnum;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
 import com.ycandyz.master.dto.mall.*;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.enums.SalesEnum;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
+import com.ycandyz.master.utils.DateUtils;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import com.ycandyz.master.utils.MapUtil;
+import com.ycandyz.master.utils.Parser;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Slf4j
 @Service
 public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, MallAfterSales, MallafterSalesQuery> implements MallAfterSalesService {
 
@@ -58,6 +66,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
     @Autowired
     private MallOrderDao mallOrderDao;
+
+    @Value("${after-sales-days:7}")
+    private Integer afterSalesDays;
 
     @Override
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
@@ -452,11 +463,47 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         continue;
                     }
                     BigDecimal salesShippingMoney = sales.getMoney().subtract(sales.getPrice().multiply(new BigDecimal(sales.getQuantity())));
-                    salesMoney.add(salesShippingMoney);
+                    salesMoney = salesMoney.add(salesShippingMoney);
                 }
             }
             return ReturnResponse.success(shippingMoney.subtract(salesMoney).toString());
         }
         return ReturnResponse.failed("当前订单不存在");
+    }
+
+    @Override
+    public void processSubStatus() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        LambdaQueryWrapper<MallAfterSales> advertisingWrapper = new LambdaQueryWrapper<MallAfterSales>()
+                .eq(MallAfterSales::getSubStatus, MallAfterSalesEnum.SUB_STATUS.SUB_STATUS_1030.getCode());
+        List<MallAfterSales> list = baseMapper.selectList(advertisingWrapper);
+        list.forEach(entity -> {
+            Date date = getCurrentDate(entity.getAuditFirstAt());
+            Date endDate= DateUtils.getAddDay(date,afterSalesDays);
+            //如果截止时间在当前时间之前,返回true
+            boolean bl =endDate.before(new Date());
+            if(bl){
+                //更新售后状态
+                MallAfterSales mallAfterSales = new MallAfterSales();
+                mallAfterSales.setSubStatus(MallAfterSalesEnum.SUB_STATUS.SUB_STATUS_1040.getCode());
+                mallAfterSales.setAfterSalesNo(entity.getAfterSalesNo());
+                mallAfterSales.setCloseAt(getCurrentSeconds());
+                baseMapper.updateCloseAtByAfterSalesNo(mallAfterSales);
+                //添加超时售后记录
+                MallAfterSalesLog mallAfterSalesLog = new MallAfterSalesLog();
+                mallAfterSalesLog.setAfterSalesNo(entity.getAfterSalesNo());
+                mallAfterSalesLog.setShopNo(entity.getShopNo());
+                mallAfterSalesLog.setUserId(entity.getUserId());
+                mallAfterSalesLog.setLogNo(IDGeneratorUtils.getLongId()+"");
+                mallAfterSalesLog.setContextBuyer(Parser.parse(SalesEnum.ORDER_AFTER_SALES_LOG_THTK_BUYER_ANGLE_SYS_CLOSE.description()));
+                mallAfterSalesLog.setContextShop(Parser.parse(SalesEnum.ORDER_AFTER_SALES_LOG_THTK_SHOP_ANGLE_SYS_CLOSE.description()));
+                mallAfterSalesLogDao.insert(mallAfterSalesLog);
+                String endDateStr = sdf.format(endDate);
+                String currentDateStr = sdf.format(new Date());
+                log.info(currentDateStr+" | "+endDateStr);
+                log.info("已超出退货时间 currentDateStr:{} endDateStr:{} MallAfterSales:{}",currentDateStr,endDateStr,mallAfterSales);
+            }
+        });
+
     }
 }
