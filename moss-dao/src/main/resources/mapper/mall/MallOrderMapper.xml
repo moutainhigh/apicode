@@ -174,42 +174,52 @@
 
     <select id="getTrendMallOrder" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultMap="BaseOrderListResultMap">
         SELECT
-        mo.id,
-        cart.order_sn,
-        mo.order_no,
-        mo.real_money,
-        mo.total_money,
-        mo.payed_at,
-        mo.pay_type,
-        mo.`status`,
-        mo.`after_sales_status`,
-        mo.`deliver_type`,
-        mo.`deliver_method`,
-        mo.all_money-mo.real_money as shippingMoney,
-        concat( u.`name`, ' ', u.phone ) AS payuser,
-        concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
-        ship.receiver_address AS receiverAddress,
-        mo.receive_at,
-        mo.order_type,
-        modetail.item_no,
-        modetail.item_name,
-        modetail.goods_no,
-        modetail.sku_no,
-        modetail.quantity AS skuQuantity,
-        modetail.item_cover,
-        modetail.is_enable_share,
-        modetail.share_user_id,
-        uu.`name` as sellerUserName,
-        uu.phone as sellerUserPhone,
-        s.amount as shareAmount
+            mo.id,
+            cart.order_sn,
+            mo.order_no,
+            mo.real_money,
+            mo.total_money,
+            mo.payed_at,
+            mo.pay_type,
+            mo.`status`,
+            mo.`after_sales_status`,
+            mo.`deliver_type`,
+            mo.`deliver_method`,
+            mo.all_money-mo.real_money as shippingMoney,
+            concat( u.`name`, ' ', u.phone ) AS payuser,
+            concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
+            ship.receiver_address AS receiverAddress,
+            mo.receive_at,
+            mo.order_type,
+            modetail.item_no,
+            modetail.item_name,
+            modetail.goods_no,
+            modetail.sku_no,
+            modetail.quantity AS skuQuantity,
+            modetail.item_cover,
+            modetail.is_enable_share,
+            modetail.share_user_id,
+            uu.`name` as sellerUserName,
+            uu.phone as sellerUserPhone,
+            s.amount as shareAmount
         FROM
         mall_order mo
         LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
         LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
-        LEFT JOIN user u ON mo.user_id = u.id
+        LEFT JOIN user	u ON mo.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
-        left join mall_social_share_flow s on (s.order_detail_no = modetail.order_detail_no or s.order_no=mo.order_no) and s.share_type = 0
-        left join user as uu on uu.id = s.user_id
+        LEFT JOIN mall_social_share_flow s ON ( s.order_detail_no = modetail.order_detail_no OR s.order_no = mo.order_no )
+        AND s.share_type = 0
+        LEFT JOIN user AS uu ON uu.id = s.user_id
+        <if test="p.afterSalesStatus != null">
+            <if test="p.afterSalesStatus == 111">    <!--111: 是：申请了售后就是，跟有效期无关-->
+                JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+                and sales.sub_status not in (1020,1040,1060,1090,2040)
+            </if>
+            <if test="p.afterSalesStatus==100 or p.afterSalesStatus==110"> <!--100: 暂无：还在有效期内，目前还没有申请售后   110: 否：超过有效期，但是没有申请售后-->
+                left outer join mall_after_sales sales on ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+            </if>
+        </if>
         WHERE
         mo.shop_no=#{p.shopNo} and mo.is_del=0
         <if test="p.orderNo != null and p.orderNo != ''">
@@ -265,9 +275,17 @@
             mo.receive_at &lt;= #{p.receiveAtTo} /**收货时间*/
         </if>
         <if test="p.afterSalesStatus != null">
-            and
-            <if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
-            <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>
+            <!--<if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
+            <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>-->
+
+            <if test="p.afterSalesStatus==100">    <!--100: 暂无：还在有效期内，目前还没有申请售后-->
+                and
+                sales.id is null and mo.after_sales_end_at &gt;= unix_timestamp(now())
+            </if>
+            <if test="p.afterSalesStatus==110">    <!--110: 否：超过有效期，但是没有申请售后-->
+                and
+                sales.id is null and mo.after_sales_end_at &lt; unix_timestamp(now())
+            </if>
         </if>
         <if test="p.status != null">
             and mo.status=#{p.status}
@@ -298,7 +316,8 @@
             and mo.cancel_reason=#{p.cancelReason}
         </if>
         /**group by mo.id*/
-        order by mo.order_at DESC
+        /*order by mo.order_at DESC*/
+        ORDER BY mo.order_at DESC
     </select>
 
     <select id="queryDetailByOrderNo" parameterType="java.lang.String" resultType="com.ycandyz.master.dto.mall.MallOrderDTO">
