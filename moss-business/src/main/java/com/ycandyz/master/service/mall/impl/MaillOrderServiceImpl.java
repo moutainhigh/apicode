@@ -94,6 +94,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 //            return ReturnResponse.failed("传入企业id参数为空");
 //        }
 //        Long organizeId = mallOrderQuery.getOrganizeId();
+
+//        if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
+//            mallOrderQuery.setShopNo(userVO.getShopNo());
+//        }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
+//
+//        }
+
         mallOrderQuery.setShopNo(userVO.getShopNo());
 
         List<MallOrderVO> list = new ArrayList<>();
