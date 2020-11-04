@@ -2,19 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ycandyz.master.dao.user.UserExportRecordDao">
 
-    <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.user.UserExportRecord" />
-
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-
-    </sql>
-    <insert id="insert">
-        insert into
-        user_export_record(terminal,organize_id,organize_name,operator_id,operator_name,operator_phone,operator_ip,opertor_system,opertor_browser,
-        export_file_name,export_file_url,created_at,created_time)
-        values(#{terminal},#{organizeId},#{organizeName},#{operatorId},#{operatorName},#{operatorPhone},#{operatorIp},#{opertorSystem},#{opertorBrowser},
-        #{exportFileName},#{exportFileUrl},#{created_at},now());
-    </insert>
-
 </mapper>

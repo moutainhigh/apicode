@@ -1,5 +1,7 @@
 package com.ycandyz.master.dao.user;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.entities.user.UserExportRecord;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,8 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2020-10-13
  */
 @Mapper
-public interface UserExportRecordDao{
-
-    void insert(UserExportRecord userExportRecord);
+public interface UserExportRecordDao extends BaseMapper<UserExportRecord> {
 
 }

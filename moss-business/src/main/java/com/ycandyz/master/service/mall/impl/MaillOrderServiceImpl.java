@@ -22,6 +22,7 @@ import com.ycandyz.master.entities.user.UserExportRecord;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.service.mall.MallOrderService;
+import com.ycandyz.master.service.user.IUserExportRecordService;
 import com.ycandyz.master.utils.*;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
@@ -80,10 +81,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private S3UploadFile s3UploadFile;
 
     @Autowired
-    private UserExportRecordDao userExportRecordDao;
-
-    @Autowired
-    private OrganizeDao organizeDao;
+    private IUserExportRecordService iUserExportRecordService;
 
     @Value("${excel.sheet}")
     private int num;
@@ -302,41 +300,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             mallOrderExportResp.setFielUrl(url);
             log.info("导出excel响应:{}",mallOrderExportResp);
             //导出记录表
-            insertExportRecord(mallOrderExportResp,userVO);
+            iUserExportRecordService.insertExportRecord(mallOrderExportResp,userVO);
 
             return mallOrderExportResp;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private void insertExportRecord(MallOrderExportResp mallOrderExportResp, UserVO userVO) {
-        log.info("导入用户记录表入参:{};{}",mallOrderExportResp,userVO);
-        String organizeName = null;
-        if (userVO != null){
-            OrganizeDTO organizeDTO = organizeDao.queryName(userVO.getOrganizeId());
-            if (organizeDTO != null){
-                organizeName = organizeDTO.getFullNname();
-            }
-        }
-        Browser browser = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getBrowser();
-        OperatingSystem operatingSystem = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getOperatingSystem();
-        UserExportRecord userExportRecord = new UserExportRecord();
-        userExportRecord.setTerminal(1);
-        userExportRecord.setOrganizeId(userVO.getOrganizeId());
-        userExportRecord.setOrganizeName(organizeName);
-        userExportRecord.setOpertorBrowser(browser.getName());
-        userExportRecord.setOperatorId(userVO.getId());
-        userExportRecord.setOperatorName(userVO.getName());
-        userExportRecord.setOperatorPhone(userVO.getPhone());
-        userExportRecord.setOperatorIp(getIpAddr(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()));
-        userExportRecord.setOpertorSystem(operatingSystem.getName());
-        userExportRecord.setCreated_at(System.currentTimeMillis());
-        userExportRecord.setExportFileName(mallOrderExportResp.getFileName());
-        userExportRecord.setExportFileUrl(mallOrderExportResp.getFielUrl());
-        userExportRecordDao.insert(userExportRecord);
-        log.info("导入用户记录表完成");
     }
 
     private List<String> addHeader(ExcelWriter writer) {
@@ -385,20 +355,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public String getIpAddr(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
     }
 
     @Override

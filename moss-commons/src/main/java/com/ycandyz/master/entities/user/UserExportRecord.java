@@ -3,6 +3,7 @@ package com.ycandyz.master.entities.user;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.Date;
 @Setter
 @TableName("user_export_record")
 @ApiModel(description="用户导出记录表")
-public class UserExportRecord {
+public class UserExportRecord extends Model {
 
     @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)

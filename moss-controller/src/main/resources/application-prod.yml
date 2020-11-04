@@ -16,19 +16,21 @@ spring:
     password: 1MVFIWVUS!@VX%qx
 
 mybatis:
-  mapperLocations: classpath:mapper/*.xml
-  type-aliases-package: com.atguigu.springcloud.entities    # 所有Entity别名类所在包
+  mapperLocations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.ycandyz.master.domain.entity.*
 
 token:
   authConfigSecret: c1f5d2f3f9f818c1a2c03da10c81e542          #token密钥
+sign:
+  authConfigSecret: b1f5d2f3f9f818c1a2c03da10c81e542          #验签密钥
 
 ignored:
   urls:
-    - /
     - /login
     - /error
     - /mall/order/shipment/callback
     - /mall-buyer-shipping/mallBuyer/shipment/callback
+    - /**/订单.xls
 
 #快递100相关参数
 kuaidi:
@@ -41,3 +43,17 @@ kuaidi:
   customer: FDED135A3EEE3F24749F3FB244D0A03B
   secret: 0aa5dd906ba7404db4ac569ca8da20a6
   userid: 7edbc3841b3a4bb9b4443d4a2ee654ff
+
+#售后一次审核通过退货有效期
+after-sales-days: 1
+
+#每个sheet条数
+excel:
+  sheet: 5000
+
+s3:
+  downFileUrlPefix: https://file.ycandyz.com/
+  bucketName: pan.ycandyz.com
+  accessKey: AKIAVEJEAKGYZUSB2HUG
+  secretKey: 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
+  keyPefix: xls/

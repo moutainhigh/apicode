@@ -64,7 +64,7 @@ after-sales-days: 1
 
 #每个sheet条数
 excel:
-  sheet: 400
+  sheet: 5000
 
 s3:
   downFileUrlPefix: https://test-file.ycandyz.com/

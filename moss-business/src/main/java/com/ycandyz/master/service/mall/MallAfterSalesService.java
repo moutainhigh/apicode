@@ -6,6 +6,7 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
+import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.model.mall.MallAfterSalesVO;
 
@@ -17,7 +18,7 @@ public interface MallAfterSalesService extends IService<MallAfterSales> {
 
     boolean refundAuditFirst(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
 
-    void exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
+    MallOrderExportResp exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
 
     ReturnResponse<String> refundDetail(String orderNo, UserVO userVO);
 

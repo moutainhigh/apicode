@@ -8,27 +8,30 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.constant.CommonConstant;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.enums.mall.MallAfterSalesEnum;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
+import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.dto.mall.*;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.enums.SalesEnum;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
-import com.ycandyz.master.utils.DateUtils;
-import com.ycandyz.master.utils.IDGeneratorUtils;
-import com.ycandyz.master.utils.MapUtil;
-import com.ycandyz.master.utils.Parser;
+import com.ycandyz.master.service.user.IUserExportRecordService;
+import com.ycandyz.master.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -67,8 +70,17 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     @Autowired
     private MallOrderDao mallOrderDao;
 
+    @Autowired
+    private S3UploadFile s3UploadFile;
+
+    @Autowired
+    private IUserExportRecordService iUserExportRecordService;
+
     @Value("${after-sales-days:7}")
     private Integer afterSalesDays;
+
+    @Value("${excel.sheet}")
+    private int num;
 
     @Override
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
@@ -393,7 +405,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     }
 
     @Override
-    public void exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO) {
+    public MallOrderExportResp exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO) {
         mallafterSalesQuery.setShopNo(userVO.getShopNo());
         List<MallAfterSalesDTO> list = mallAfterSalesDao.getTrendMallAfterSalesList(mallafterSalesQuery);
 
@@ -422,32 +434,107 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         // 通过工具类创建writer，默认创建xls格式
         try {
 //            String basePath = ResourceUtils.getURL("classpath:").getPath();
-            ExcelWriter writer = writer = ExcelUtil.getWriter("src/main/resources/static/writeTest1.xls");
-//        writer.merge(list1.size() - 1, "测试标题");
-            //自定义标题别名
-            writer.addHeaderAlias("afterSalesNo", "售后编号");
-            writer.addHeaderAlias("orderNo", "订单编号");
-            writer.addHeaderAlias("itemName", "商品名称");
-            writer.addHeaderAlias("goodsNo", "货号");
-            writer.addHeaderAlias("payType", "售后类型");
-            writer.addHeaderAlias("status", "售后状态");
-            writer.addHeaderAlias("afterSalesStatus", "退款数量");
-            writer.addHeaderAlias("money", "退款金额（元）");
-            writer.addHeaderAlias("allMoney", "总计金额（元）");
-            writer.addHeaderAlias("receiverAddress", "支付方式");
-            writer.addHeaderAlias("orderAt", "购买数量");
-            writer.addHeaderAlias("userName", "购买用户");
-            writer.addHeaderAlias("receiveAt", "售后申请时间");
-            List<String> containList = Arrays.asList("afterSalesNo","orderNo","itemName","goodsNo",
-                    "payType","status","afterSalesStatus","payuser","receiverName","receiverAddress","orderAt",
-                    "userName","receiveAt");
-            List<Map<String, Object>> result = MapUtil.beanToMap(list,containList);
-            // 一次性写出内容，使用默认样式，强制输出标题
-            writer.write(result, true);
+            Calendar now = Calendar.getInstance();
+            String today = DateUtil.formatDateForYMD(now.getTime());
+            now.add(Calendar.DATE,-1);
+            String yestoday = DateUtil.formatDateForYMD(now.getTime());
+            String randomnum = String.valueOf(IDGeneratorUtils.getLongId());
+            String pathpPefix = System.getProperty("user.dir") + "/xls/";
+            String fileName =today + "售后订单.xls";
+            String suffix = today + CommonConstant.SLASH + randomnum + CommonConstant.SLASH + userVO.getShopNo() + CommonConstant.SLASH +fileName;
+            String path = pathpPefix + suffix;
+            deleteFile(yestoday,pathpPefix);
+            ExcelWriter writer = ExcelUtil.getWriter(path,"第1页");
+
+            //设置单元格格式
+            writer.getStyleSet().setAlign(HorizontalAlignment.LEFT, VerticalAlignment.CENTER); //水平左对齐，垂直中间对齐
+            writer.setColumnWidth(0, 40); //第1列40px宽
+
+            double size = list.size();
+            log.info("总共{}条数据",(int)size);
+            int ceil = (int)Math.ceil(size / num);
+            log.info("需要{}个sheet，每个sheet{}条数据",ceil,num);
+            log.info("正在导出第{}sheet",1);
+            List<String> containsList = addHeader(writer);
+            int end = num>(int)size?(int)size:num;
+            List<Map<String, Object>> result = MapUtil.beanToMap(list,containsList);
+
+            log.info("第{}sheet导出完成",1);
+            int beginIndex = num;
+            int endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
+            for (int i = 2; i <= ceil; i++) {
+                log.info("正在导出第{}sheet",i);
+                writer.setSheet("第"+i+"页");
+                List<String> containsList2 = addHeader(writer);
+                List<MallAfterSalesDTO> subList2 = list.subList(beginIndex, endIndex);
+                List<Map<String, Object>> result2 = MapUtil.beanToMap(subList2,containsList2);
+                writer.write(result2, true);
+                beginIndex = endIndex;
+                endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
+                log.info("第{}sheet导出完成",i);
+            }
+            log.info("全部导出完成");
+
+            writer.close();
+            log.info("文件本地存储路径:{}",path);
+            File file = new File(path);
+            String url = s3UploadFile.uploadFile(file, suffix);
+            MallOrderExportResp mallOrderExportResp = new MallOrderExportResp();
+            mallOrderExportResp.setFileName(fileName);
+            mallOrderExportResp.setFielUrl(url);
+            log.info("导出excel响应:{}",mallOrderExportResp);
+            //导出记录表
+            iUserExportRecordService.insertExportRecord(mallOrderExportResp,userVO);
+
+            return mallOrderExportResp;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
 
+    private List<String> addHeader(ExcelWriter writer) {
+        //自定义标题别名
+        writer.addHeaderAlias("afterSalesNo", "售后编号");
+        writer.addHeaderAlias("orderNo", "订单编号");
+        writer.addHeaderAlias("itemName", "商品名称");
+        writer.addHeaderAlias("goodsNo", "货号");
+        writer.addHeaderAlias("payType", "售后类型");
+        writer.addHeaderAlias("status", "售后状态");
+        writer.addHeaderAlias("afterSalesStatus", "退款数量");
+        writer.addHeaderAlias("money", "退款金额（元）");
+        writer.addHeaderAlias("allMoney", "总计金额（元）");
+        writer.addHeaderAlias("receiverAddress", "支付方式");
+        writer.addHeaderAlias("orderAt", "购买数量");
+        writer.addHeaderAlias("userName", "购买用户");
+        writer.addHeaderAlias("receiveAt", "售后申请时间");
+        List<String> containList = Arrays.asList("afterSalesNo","orderNo","itemName","goodsNo",
+                "payType","status","afterSalesStatus","payuser","receiverName","receiverAddress","orderAt",
+                "userName","receiveAt");
+        return containList;
+    }
+
+    //删除昨天的全部文件和今天同一shopNo下的文件
+    private void deleteFile(String yestoday,String pathpPefix) {
+        try {
+            File yestodayfile = new File(pathpPefix + yestoday);
+            if (yestodayfile.exists()){
+                File[] filePaths = yestodayfile.listFiles();
+                if (filePaths != null && filePaths.length > 0){
+                    Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
+                }
+                yestodayfile.delete();
+            }
+//            File todayfile = new File(pathpPefix + today + "/" + shopNo);
+//            if (todayfile.exists()){
+//                File[] filePaths = todayfile.listFiles();
+//                if (filePaths != null && filePaths.length > 0){
+//                    Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
+//                }
+//            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -29,11 +29,11 @@ logging:
 
 ignored:
   urls:
-    - /
     - /login
     - /error
     - /mall/order/shipment/callback
     - /mall-buyer-shipping/mallBuyer/shipment/callback
+    - /**/订单.xls
 
 #快递100相关参数
 kuaidi:
@@ -52,11 +52,11 @@ after-sales-days: 1
 
 #每个sheet条数
 excel:
-  sheet: 400
+  sheet: 5000
 
 s3:
-  downFileUrlPefix: https://dev-file.ycandyz.com/
-  bucketName: dev-pan.ycandyz.com
+  downFileUrlPefix: https://uat-file.ycandyz.com/
+  bucketName: uat-pan.ycandyz.com
   accessKey: AKIAVEJEAKGYZUSB2HUG
   secretKey: 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
   keyPefix: xls/

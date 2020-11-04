@@ -7,6 +7,7 @@ import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
+import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.model.mall.MallAfterSalesVO;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
@@ -82,8 +83,9 @@ public class MallAfterSalesController extends BaseController<MaillOrderServiceIm
      */
     @ApiOperation(value = "售后订单导出",notes = "售后订单导出",httpMethod = "POST")
     @PostMapping("/sales/export")
-    public void exportEXT(@RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO userVO){
-        mallAfterSalesService.exportEXT(mallafterSalesQuery, userVO);
+    public ReturnResponse<MallOrderExportResp> exportEXT(@RequestBody MallafterSalesQuery mallafterSalesQuery, @CurrentUser UserVO userVO){
+        MallOrderExportResp s = mallAfterSalesService.exportEXT(mallafterSalesQuery, userVO);
+        return ReturnResponse.success(s);
     }
 
     /**
