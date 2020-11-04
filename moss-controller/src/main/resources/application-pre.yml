@@ -53,3 +53,10 @@ after-sales-days: 1
 #每个sheet条数
 excel:
   sheet: 400
+
+s3:
+  downFileUrlPefix: https://dev-file.ycandyz.com/
+  bucketName: dev-pan.ycandyz.com
+  accessKey: AKIAVEJEAKGYZUSB2HUG
+  secretKey: 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
+  keyPefix: xls/
