@@ -481,7 +481,15 @@
         LEFT JOIN mall_social_share_flow s ON ( s.order_detail_no = modetail.order_detail_no OR s.order_no = mo.order_no )
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
-        LEFT JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+        <if test="p.afterSalesStatus != null">
+            <if test="p.afterSalesStatus == 111">    <!--111: 是：申请了售后就是，跟有效期无关-->
+                JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+                and sales.sub_status not in (1020,1040,1060,1090,2040)
+            </if>
+            <if test="p.afterSalesStatus==100 or p.afterSalesStatus==110"> <!--100: 暂无：还在有效期内，目前还没有申请售后   110: 否：超过有效期，但是没有申请售后-->
+                left outer join mall_after_sales sales on ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+            </if>
+        </if>
         WHERE
         mo.shop_no=#{p.shopNo} and mo.is_del=0
         <if test="p.orderNo != null and p.orderNo != ''">
@@ -537,9 +545,17 @@
             mo.receive_at &lt;= #{p.receiveAtTo} /**收货时间*/
         </if>
         <if test="p.afterSalesStatus != null">
-            and
-            <if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
-            <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>
+            <!--<if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
+            <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>-->
+
+            <if test="p.afterSalesStatus==100">    <!--100: 暂无：还在有效期内，目前还没有申请售后-->
+                and
+                sales.id is null and mo.after_sales_end_at &gt;= unix_timestamp(now())
+            </if>
+            <if test="p.afterSalesStatus==110">    <!--110: 否：超过有效期，但是没有申请售后-->
+                and
+                sales.id is null and mo.after_sales_end_at &lt; unix_timestamp(now())
+            </if>
         </if>
         <if test="p.status != null">
             and mo.status=#{p.status}
@@ -637,7 +653,15 @@
         LEFT JOIN mall_social_share_flow s ON ( s.order_detail_no = modetail.order_detail_no OR s.order_no = mo.order_no )
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
-        LEFT JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+        <if test="p.afterSalesStatus != null">
+            <if test="p.afterSalesStatus == 111">    <!--111: 是：申请了售后就是，跟有效期无关-->
+                JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+                and sales.sub_status not in (1020,1040,1060,1090,2040)
+            </if>
+            <if test="p.afterSalesStatus==100 or p.afterSalesStatus==110"> <!--100: 暂无：还在有效期内，目前还没有申请售后   110: 否：超过有效期，但是没有申请售后-->
+                left outer join mall_after_sales sales on ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+            </if>
+        </if>
         WHERE
         mo.shop_no=#{p.shopNo} and mo.is_del=0
         <if test="p.orderNo != null and p.orderNo != ''">
@@ -693,9 +717,17 @@
             mo.receive_at &lt;= #{p.receiveAtTo} /**收货时间*/
         </if>
         <if test="p.afterSalesStatus != null">
-            and
-            <if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
-            <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>
+            <!--<if test="p.afterSalesStatus==0">mo.after_sales_status=#{p.afterSalesStatus} /**售后状态：0-否  1-处理中  2-已完成*/</if>
+            <if test="p.afterSalesStatus==1">mo.after_sales_status&gt;0 /**售后状态：0-否  1-处理中  2-已完成*/</if>-->
+
+            <if test="p.afterSalesStatus==100">    <!--100: 暂无：还在有效期内，目前还没有申请售后-->
+                and
+                sales.id is null and mo.after_sales_end_at &gt;= unix_timestamp(now())
+            </if>
+            <if test="p.afterSalesStatus==110">    <!--110: 否：超过有效期，但是没有申请售后-->
+                and
+                sales.id is null and mo.after_sales_end_at &lt; unix_timestamp(now())
+            </if>
         </if>
         <if test="p.status != null">
             and mo.status=#{p.status}
