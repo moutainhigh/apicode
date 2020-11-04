@@ -214,4 +214,6 @@ public interface CommonConstant {
 	 * 小程序的accesstoken
 	 */
 	String MINI_ACCESS_TOKEN = "accessToken";
+
+	String SLASH = "/";
 }

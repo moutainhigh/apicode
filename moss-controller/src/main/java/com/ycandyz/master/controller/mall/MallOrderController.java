@@ -7,6 +7,7 @@ import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
+import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.MallOrderVO;
 import com.ycandyz.master.service.mall.MallOrderService;
@@ -46,8 +47,8 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "订单列表导出",notes = "订单列表导出",httpMethod = "POST")
     @PostMapping("/order/export")
-    public ReturnResponse<String> exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
-        String s = mallOrderService.exportEXT(mallOrder, userVO);
+    public ReturnResponse<MallOrderExportResp> exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
+        MallOrderExportResp s = mallOrderService.exportEXT(mallOrder, userVO);
         return ReturnResponse.success(s);
     }
 

@@ -6,6 +6,7 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
+import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.MallOrderVO;
 
@@ -13,7 +14,7 @@ public interface MallOrderService extends IService<MallOrder> {
 
     ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO);
 
-    String exportEXT(MallOrderQuery mallOrder, UserVO userVO);
+    MallOrderExportResp exportEXT(MallOrderQuery mallOrder, UserVO userVO);
 
     ReturnResponse<MallOrderVO> queryOrderDetail(String orderNo, UserVO userVO);
 

@@ -6,32 +6,42 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
-import com.ycandyz.master.config.MyApplication;
+import com.ycandyz.master.constant.CommonConstant;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
+import com.ycandyz.master.dao.organize.OrganizeDao;
+import com.ycandyz.master.dao.user.UserExportRecordDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
+import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.dto.mall.*;
+import com.ycandyz.master.dto.organize.OrganizeDTO;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallOrder;
+import com.ycandyz.master.entities.user.UserExportRecord;
+import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.model.mall.*;
+import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.mall.MallOrderService;
-import com.ycandyz.master.utils.DateUtil;
-import com.ycandyz.master.utils.MapUtil;
+import com.ycandyz.master.utils.*;
+import com.ycandyz.master.utils.id.SnowflakeIdHelper;
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ClassUtils;
+import org.springframework.util.IdGenerator;
 import org.springframework.util.ResourceUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,11 +79,17 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Autowired
     private MallSocialShareFlowDao mallSocialShareFlowDao;
 
-    @Value("${excel.sheet}")
-    private int num;
+    @Autowired
+    private S3UploadFile s3UploadFile;
 
     @Autowired
-    private MyApplication myApplication;
+    private UserExportRecordDao userExportRecordDao;
+
+    @Autowired
+    private OrganizeDao organizeDao;
+
+    @Value("${excel.sheet}")
+    private int num;
 
     @Override
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
@@ -207,19 +223,28 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return ReturnResponse.success(page1);
     }
 
-    public String exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
+    public MallOrderExportResp exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
         String shopNo = userVO.getShopNo();
         mallOrderQuery.setShopNo(shopNo);
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
+        String status = null;
+        if (mallOrderQuery != null && mallOrderQuery.getStatus() != null){
+            status = EnumUtil.getByCode(StatusEnum.class,mallOrderQuery.getStatus()).getDesc();
+        }else {
+            status = EnumUtil.getByCode(StatusEnum.class,9).getDesc(); //全部包含已取消
+        }
         try {
             Calendar now = Calendar.getInstance();
             String today = DateUtil.formatDateForYMD(now.getTime());
             now.add(Calendar.DATE,-1);
             String yestoday = DateUtil.formatDateForYMD(now.getTime());
-            //String pathpPefix = "src/main/resources/static/";
-            String pathpPefix = "static/";
-            deleteFile(yestoday, today, shopNo ,pathpPefix);
-            ExcelWriter writer = ExcelUtil.getWriter(pathpPefix + today +"/"+shopNo+ "/订单.xls","第1页");
+            String randomnum = String.valueOf(IDGeneratorUtils.getLongId());
+            String pathpPefix = System.getProperty("user.dir") + "/xls/";
+            String fileName =today + status + "订单.xls";
+            String suffix = today + CommonConstant.SLASH + randomnum + CommonConstant.SLASH + shopNo + CommonConstant.SLASH +fileName;
+            String path = pathpPefix + suffix;
+            deleteFile(yestoday,pathpPefix);
+            ExcelWriter writer = ExcelUtil.getWriter(path,"第1页");
             double size = list.size();
             log.info("总共{}条数据",(int)size);
             int ceil = (int)Math.ceil(size / num);
@@ -246,14 +271,49 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
             log.info("全部导出完成");
             writer.close();
-            String url = myApplication.getUrl()+"/static/";
-            String path = url +  today +"/"+shopNo+ "/订单.xls";
-            log.info("文件下载路径:{}",path);
-            return path;
+            log.info("文件本地存储路径:{}",path);
+            File file = new File(path);
+            String url = s3UploadFile.uploadFile(file, suffix);
+            MallOrderExportResp mallOrderExportResp = new MallOrderExportResp();
+            mallOrderExportResp.setFileName(fileName);
+            mallOrderExportResp.setFielUrl(url);
+            log.info("导出excel响应:{}",mallOrderExportResp);
+            //导出记录表
+            insertExportRecord(mallOrderExportResp,userVO);
+
+            return mallOrderExportResp;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void insertExportRecord(MallOrderExportResp mallOrderExportResp, UserVO userVO) {
+        log.info("导入用户记录表入参:{};{}",mallOrderExportResp,userVO);
+        String organizeName = null;
+        if (userVO != null){
+            OrganizeDTO organizeDTO = organizeDao.queryName(userVO.getOrganizeId());
+            if (organizeDTO != null){
+                organizeName = organizeDTO.getFullNname();
+            }
+        }
+        Browser browser = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getBrowser();
+        OperatingSystem operatingSystem = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getOperatingSystem();
+        UserExportRecord userExportRecord = new UserExportRecord();
+        userExportRecord.setTerminal(1);
+        userExportRecord.setOrganizeId(userVO.getOrganizeId());
+        userExportRecord.setOrganizeName(organizeName);
+        userExportRecord.setOpertorBrowser(browser.getName());
+        userExportRecord.setOperatorId(userVO.getId());
+        userExportRecord.setOperatorName(userVO.getName());
+        userExportRecord.setOperatorPhone(userVO.getPhone());
+        userExportRecord.setOperatorIp(getIpAddr(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()));
+        userExportRecord.setOpertorSystem(operatingSystem.getName());
+        userExportRecord.setCreated_at(System.currentTimeMillis());
+        userExportRecord.setExportFileName(mallOrderExportResp.getFileName());
+        userExportRecord.setExportFileUrl(mallOrderExportResp.getFielUrl());
+        userExportRecordDao.insert(userExportRecord);
+        log.info("导入用户记录表完成");
     }
 
     private List<String> addHeader(ExcelWriter writer) {
@@ -283,10 +343,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     //删除昨天的全部文件和今天同一shopNo下的文件
-    private void deleteFile(String yestoday,String today,String shopNo, String pathpPefix) {
+    private void deleteFile(String yestoday,String pathpPefix) {
         try {
-            String path = ResourceUtils.getURL("classpath:").getPath();
-            File yestodayfile = new File(path + pathpPefix + yestoday);
+            File yestodayfile = new File(pathpPefix + yestoday);
             if (yestodayfile.exists()){
                 File[] filePaths = yestodayfile.listFiles();
                 if (filePaths != null && filePaths.length > 0){
@@ -294,16 +353,30 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
                 yestodayfile.delete();
             }
-            File todayfile = new File(path + pathpPefix + today + "/" + shopNo);
-            if (todayfile.exists()){
-                File[] filePaths = todayfile.listFiles();
-                if (filePaths != null && filePaths.length > 0){
-                    Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
-                }
-            }
-        } catch (FileNotFoundException e) {
+//            File todayfile = new File(pathpPefix + today + "/" + shopNo);
+//            if (todayfile.exists()){
+//                File[] filePaths = todayfile.listFiles();
+//                if (filePaths != null && filePaths.length > 0){
+//                    Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
+//                }
+//            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
     @Override

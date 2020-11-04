@@ -22,9 +22,9 @@ import java.net.InetAddress;
  * @create: 2020-11-01 18:23
  **/
 
-@Getter
-@Slf4j
-@SpringBootApplication
+//@Getter
+//@Slf4j
+//@SpringBootApplication
 public class MyApplication implements ApplicationListener<WebServerInitializedEvent> {
 
     private String url = "";
@@ -42,11 +42,6 @@ public class MyApplication implements ApplicationListener<WebServerInitializedEv
         if (contextPath == null) {
             contextPath = "";
         }
-        log.info("\n---------------------------------------------------------\n" +
-                "\tApplication is running! Access address:\n" +
-                "\tLocal:\t\thttp://localhost:{}" +
-                "\n\tExternal:\thttp://{}:{}{}" +
-                "\n---------------------------------------------------------\n", port, ip, port, contextPath);
         this.url = "http://"+hostName+":"+port+contextPath;
     }
 }
