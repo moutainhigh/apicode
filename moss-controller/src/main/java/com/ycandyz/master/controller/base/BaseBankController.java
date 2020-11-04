@@ -38,7 +38,7 @@ import com.ycandyz.master.controller.base.BaseController;
 @Slf4j
 @RestController
 @RequestMapping("base-bank")
-@Api(tags="base-base-银行")
+@Api(tags="base-银行")
 public class BaseBankController extends BaseController<BaseBankServiceImpl,BaseBank,BaseBankQuery> {
 	
 	@ApiOperation(value="新增")
