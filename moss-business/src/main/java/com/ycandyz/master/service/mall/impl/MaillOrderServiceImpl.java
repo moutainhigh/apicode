@@ -21,10 +21,8 @@ import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.entities.user.UserExportRecord;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.model.mall.*;
-import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.utils.*;
-import com.ycandyz.master.utils.id.SnowflakeIdHelper;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;
@@ -34,20 +32,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.IdGenerator;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.FileNotFoundException;
-<<<<<<< HEAD
-=======
 import java.math.BigDecimal;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
->>>>>>> 634593c7901f86c52b3440df02fd3e3bf338427e
 import java.util.*;
 import java.util.stream.Collectors;
 
