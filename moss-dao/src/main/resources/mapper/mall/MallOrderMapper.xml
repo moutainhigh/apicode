@@ -424,6 +424,7 @@
         <result column="cancel_reason" property="cancelReason" />
         <result column="deliver_type" property="deliverType" />
         <result column="shippingMoney" property="shippingMoney" />
+        <result column="all_money" property="allMoney" />
         <result column="pick_up_address_name" property="pickUpAddressName" />
         <result column="pick_up_address_detail" property="pickUpAddressDetail" />
         <result column="pre_phone" property="prePhone" />
@@ -470,6 +471,7 @@
             mo.pick_up_address_detail,
             mo.pre_phone,
             mo.all_money-mo.real_money as shippingMoney,
+            mo.all_money,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
