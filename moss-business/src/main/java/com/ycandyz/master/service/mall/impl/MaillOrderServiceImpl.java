@@ -28,6 +28,8 @@ import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -229,6 +231,20 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         String shopNo = userVO.getShopNo();
         mallOrderQuery.setShopNo(shopNo);
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
+
+
+        if (list!=null && list.size()>0) {
+            for (MallOrderDTO mallOrderDTO : list) {
+                //订单列表显示商品名称数组
+                List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
+                mallOrderDTO.setItemName(itemNames);
+                //订单列表显示商品货号数组
+                List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).filter(x -> x != null && !"".equals(x)).collect(Collectors.toList());
+                mallOrderDTO.setGoodsNo(goodsNos);
+
+            }
+        }
+
         String status = null;
         if (mallOrderQuery != null && mallOrderQuery.getStatus() != null){
             status = EnumUtil.getByCode(StatusEnum.class,mallOrderQuery.getStatus()).getDesc();
@@ -247,6 +263,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             String path = pathpPefix + suffix;
             deleteFile(yestoday,pathpPefix);
             ExcelWriter writer = ExcelUtil.getWriter(path,"第1页");
+
+            //设置单元格格式
+            writer.getStyleSet().setAlign(HorizontalAlignment.LEFT, VerticalAlignment.CENTER); //水平左对齐，垂直中间对齐
+            writer.setColumnWidth(0, 40); //第1列40px宽
+
             double size = list.size();
             log.info("总共{}条数据",(int)size);
             int ceil = (int)Math.ceil(size / num);
@@ -321,7 +342,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private List<String> addHeader(ExcelWriter writer) {
         writer.addHeaderAlias("cartOrderSn", "母订单编号");
         writer.addHeaderAlias("orderNo", "子订单编号");
-        writer.addHeaderAlias("organizeName", "所属企业");
         writer.addHeaderAlias("itemName", "商品名称");
         writer.addHeaderAlias("goodsNo", "货号");
         writer.addHeaderAlias("allMoney", "总计金额(¥)");
@@ -338,7 +358,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         writer.addHeaderAlias("orderAtStr", "下单时间");
         writer.addHeaderAlias("payedAtStr", "支付时间");
         writer.addHeaderAlias("receiveAtStr", "收货时间");
-        List<String> containsList = Arrays.asList("cartOrderSn","orderNo","organizeName","itemName","goodsNo","allMoney",
+        List<String> containsList = Arrays.asList("cartOrderSn","orderNo","itemName","goodsNo","allMoney",
                 "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
                 "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
         return containsList;

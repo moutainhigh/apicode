@@ -6,7 +6,12 @@
     <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.organize.OrganizeDTO" />
 
     <select id="queryName" parameterType="java.lang.Long" resultType="com.ycandyz.master.dto.organize.OrganizeDTO">
-        select id,short_name,full_name from organize where id = #{organizeId};
+        select
+            id,
+            short_name as shortName,
+            full_name as fullNname
+        from organize
+        where id = #{organizeId};
     </select>
 
 

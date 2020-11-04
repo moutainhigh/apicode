@@ -469,7 +469,7 @@
             mo.pick_up_address_name,
             mo.pick_up_address_detail,
             mo.pre_phone,
-            mo.total_money-mo.real_money as shippingMoney,
+            mo.all_money-mo.real_money as shippingMoney,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
