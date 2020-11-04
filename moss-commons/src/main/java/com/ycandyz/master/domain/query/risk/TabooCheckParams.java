@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 public class TabooCheckParams {
 
+
+
     @ApiModelProperty(value = "商品详情Id")
     private String itemNo;
 
