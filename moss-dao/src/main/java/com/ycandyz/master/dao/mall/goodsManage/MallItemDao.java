@@ -19,4 +19,6 @@ public interface MallItemDao {
     int oprbyItemNo(@Param("shopNo") String shopNo, @Param("itemNoList") List<String> itemNoList, @Param("status") Integer status);
 
     int updateMallItem(@Param("mallItem") MallItem mallItem, @Param("shopNo") String shopNo);
+
+    int updateOneMallItem(String itemNo);
 }

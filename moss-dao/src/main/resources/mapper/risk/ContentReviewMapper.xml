@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.risk.ContentreviewDao">
+
+    <resultMap id="BaseResultMallItem1" type="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        <result column="type" property="type" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updateTime" />
+        <result column="auditor" property="auditor" />
+        <result column="audit_time" property="auditTime" />
+        <result column="audit_result" property="auditResult" />
+        <association property="content" javaType="com.ycandyz.master.dto.mall.MallItemForReviewDTO"
+                     column="item_no">
+            <result column="item_name" property="itemName" />
+            <result column="item_text" property="itemText" />
+        </association>
+    </resultMap>
+
+    <resultMap id="BaseResultMallItem" type="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        <result column="type" property="type" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updateTime" />
+        <result column="auditor" property="auditor" />
+        <result column="audit_time" property="auditTime" />
+        <result column="audit_result" property="auditResult" />
+        <association property="content" javaType="com.ycandyz.master.dto.mall.MallItemForReviewDTO"
+                     column="item_no">
+            <result column="item_name" property="itemName" />
+            <result column="item_text" property="itemText" />
+            <result column="banners" property="banners" />
+            <result column="share_descr" property="shareDescr" />
+            <result column="share_img" property="shareImg" />
+        </association>
+    </resultMap>
+    <resultMap id="BaseResultFootprint" type="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        <result column="type" property="type" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updateTime" />
+        <result column="auditor" property="auditor" />
+        <result column="audit_time" property="auditTime" />
+        <result column="audit_result" property="auditResult" />
+        <association property="content" javaType="com.ycandyz.master.dto.footprint.FootprintForReviewDTO"
+                     column="id">
+            <result column="content" property="content" />
+        </association>
+    </resultMap>
+
+    <resultMap id="BaseResultOrganizeNews" type="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        <result column="type" property="type" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updateTime" />
+        <result column="auditor" property="auditor" />
+        <result column="audit_time" property="auditTime" />
+        <result column="audit_result" property="auditResult" />
+        <association property="content" javaType="com.ycandyz.master.dto.organize.OrganizeNewsForReviewDTO"
+                     column="id">
+            <result column="abstract" property="abstracts" />
+            <result column="title" property="title" />
+        </association>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.ycandyz.master.entities.risk.ContentReview" >
+        insert into content_review(content_id,`type`,created_time,updated_time,auditor)
+        values(#{contentId},#{type},now(),now(),#{auditor});
+    </insert>
+    <update id="update">
+        update
+    </update>
+    <update id="updateAuditResult">
+        update content_review set auditor = #{auditor} ,audit_result = 2 where content_id = #{contentId} and `type` = #{type};
+    </update>
+
+
+    <!--    <select id="listMallItem" resultType="com.ycandyz.operation.dto.risk.ContentReviewDTO" >-->
+
+<!--        seelct m.-->
+<!--        left join mall_item m-->
+<!--        on m.item_no = c.content_id-->
+<!--        where c.type = 0-->
+<!--        select CONCAT(m.item_name,m.item_text) as content,c.content_moudle as contentMoudle,c.created_time as createTime,-->
+<!--        c.updated_time as updateTime,c.auditor as auditor,c.audit_time as auditTime,c.audit_result as auditResult-->
+<!--        from  content_review c-->
+<!--        inner join mall_item m-->
+<!--        on m.item_no = c.item_no-->
+<!--    union-->
+<!--        select CONCAT(f.content,f.) as content,c.content_moudle as contentMoudle,c.created_time as createTime,-->
+<!--        c.updated_time as updateTime,c.auditor as auditor,c.audit_time as auditTime,c.audit_result as auditResult-->
+<!--        from  content_review c-->
+<!--        inner join footprint f-->
+<!--        on f.id = c.footprint_id-->
+<!--    union-->
+<!--        select CONCAT(o.abstract,o.title) as content,c.content_moudle as contentMoudle,c.created_time as createTime,-->
+<!--        c.updated_time as updateTime,c.auditor as auditor,c.audit_time as auditTime,c.audit_result as auditResult-->
+<!--        from  content_review c-->
+<!--        inner join organize_news o-->
+<!--        on o.id = c.organize_news_id-->
+<!--    where-->
+<!--        <if test="con.contentMoudle != null">-->
+<!--            c.content_moudle = #{con.contentMoudle}-->
+<!--        </if>-->
+<!--        <if test="con.auditResult != null">-->
+<!--            and c.audit_result = #{con.auditResult}-->
+<!--        </if>-->
+<!--        <if test="con.auditor != null and con.auditor != ''">-->
+<!--            and  c.auditor = #{con.auditor}-->
+<!--        </if>-->
+<!--        <if test="con.updateTimeStart != null">-->
+<!--            <![CDATA[-->
+<!--                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')-->
+<!--             ]]>-->
+<!--        </if>-->
+<!--        <if test="con.updateTimeEnd != null">-->
+<!--            <![CDATA[-->
+<!--                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')-->
+<!--            ]]>-->
+<!--        </if>-->
+<!--        <if test="con.auditTimeStart != null">-->
+<!--            <![CDATA[-->
+<!--                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')-->
+<!--             ]]>-->
+<!--        </if>-->
+<!--        <if test="con.auditTimeEnd != null">-->
+<!--            <![CDATA[-->
+<!--                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')-->
+<!--            ]]>-->
+<!--        </if>-->
+<!--        <if test="con.auditResult != null">-->
+<!--            <![CDATA[-->
+<!--                and c.audit_result = #{con.auditResult}-->
+<!--            ]]>-->
+<!--        </if>-->
+<!--        and  c.audit_result in (1,1010,1020);-->
+<!--    </select>-->
+
+    <select id="listMallItem" resultMap="BaseResultMallItem" parameterType="com.ycandyz.master.domain.query.risk.ContentReviewQuery">
+        select m.item_name,m.item_text,m.banners,m.share_descr,m.share_img,
+        c.type,c.created_time,c.updated_time,c.auditor,c.audit_time,m.status
+        from  content_review c
+        inner join mall_item m
+        on m.item_no = c.content_id
+        where
+            c.type = 0
+            and c.audit_result = #{con.auditResult}
+        <if test="con.auditor != null and con.auditor != ''">
+           and  c.auditor = #{con.auditor}
+        </if>
+        <if test="con.updateTimeStart != null">
+            <![CDATA[
+                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con.updateTimeEnd != null">
+            <![CDATA[
+                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con.auditTimeStart != null">
+            <![CDATA[
+                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con.auditTimeEnd != null">
+            <![CDATA[
+                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+
+    </select>
+    <select id="queryFootprint" resultMap="BaseResultFootprint">
+        select f.content,c.content_moudle,c.created_time,c.updated_time,c.auditor,c.audit_time,c.audit_result
+        from  content_review c
+        inner join footprint f
+        on f.id = c.footprint_id
+        where
+        <if test="con.contentMoudle != null">
+            c.content_moudle = #{con.contentMoudle}
+        </if>
+        <if test="con.auditResult != null">
+            and c.audit_result = #{con.auditResult}
+        </if>
+        <if test="con.auditor != null and  con.auditor != ''">
+            and  c.auditor = #{con.auditor}
+        </if>
+        <if test="con.updateTimeStart != null">
+            <![CDATA[
+                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con.updateTimeEnd != null">
+            <![CDATA[
+                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con.auditTimeStart != null">
+            <![CDATA[
+                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con.auditTimeEnd != null">
+            <![CDATA[
+                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con.auditResult != null">
+            <![CDATA[
+                and c.audit_result = #{con.auditResult}
+            ]]>
+        </if>
+        and  c.audit_result in (1,1010,1020);
+    </select>
+    <select id="queryOrganizeNews" resultMap="BaseResultOrganizeNews">
+        select o.abstract,o.title,c.content_moudle,c.created_time,c.updated_time,c.auditor,c.audit_time,c.audit_result
+        from  content_review c
+        inner join organize_news o
+        on o.id = c.footprint_id
+        where
+        <if test="con.contentMoudle != null">
+            c.content_moudle = #{con.contentMoudle}
+        </if>
+        <if test="con.auditResult != null">
+            and c.audit_result = #{con.auditResult}
+        </if>
+        <if test="con.auditor != null and con.auditor != ''">
+            and  c.auditor = #{con.auditor}
+        </if>
+        <if test="con.updateTimeStart != null">
+            <![CDATA[
+                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con.updateTimeEnd != null">
+            <![CDATA[
+                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con.auditTimeStart != null">
+            <![CDATA[
+                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con.auditTimeEnd != null">
+            <![CDATA[
+                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con.auditResult != null">
+            <![CDATA[
+                and c.audit_result = #{con.auditResult}
+            ]]>
+        </if>
+        and  c.audit_result in (1,1010,1020);
+    </select>
+    <select id="selectByContentId" resultType="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        select content_id,`type`,created_time,updated_time,auditor,audit_time,audit_result
+        where content_id = #{content_id} and `type` = #{type};
+    </select>
+
+</mapper>

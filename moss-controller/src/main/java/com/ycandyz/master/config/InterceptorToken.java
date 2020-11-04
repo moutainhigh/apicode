@@ -87,14 +87,15 @@ public class InterceptorToken implements HandlerInterceptor {
             Long organizeId = null;
             if(StrUtil.isNotEmpty(token)){
 
-                if (!redisUtil.hasKey(token)){
-                    //如果redis中不存在当前key，则返回key获取，重新登录
-                    returnJson(httpServletResponse);
-                    return false;
-                }
-
-                //更新redis中token的过期时间
-                redisUtil.set(token,"1",60*60); //token过期时间为一小时
+                //dev没有上redis，tets有，放开
+//                if (!redisUtil.hasKey(token)){
+//                    //如果redis中不存在当前key，则返回key获取，重新登录
+//                    returnJson(httpServletResponse);
+//                    return false;
+//                }
+//
+//                //更新redis中token的过期时间
+//                redisUtil.set(token,"1",60*60); //token过期时间为一小时
 
                 try {
 //                    userId = TokenUtil.verifyToken(token, authConfigSecret);
