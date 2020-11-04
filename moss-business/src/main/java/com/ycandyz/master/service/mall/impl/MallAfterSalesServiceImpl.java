@@ -429,6 +429,21 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 }
             }
             dto.setState(state);
+
+            if (dto.getOrder()!=null) {
+                //支付方式拼接
+                dto.setPayType(dto.getOrder().getPayType());
+                //总计金额拼接
+                dto.setAllMoney(dto.getOrder().getAllMoney());
+            }
+            if (dto.getDetails()!=null) {
+                //购买数量拼接
+                dto.setOrderQuantity(dto.getDetails().getQuantity());
+                //货号拼接
+                dto.setGoodsNo(dto.getDetails().getGoodsNo());
+                //商品名称拼接
+                dto.setItemName(dto.getDetails().getItemName());
+            }
         });
 
         // 通过工具类创建writer，默认创建xls格式
@@ -457,11 +472,13 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             log.info("正在导出第{}sheet",1);
             List<String> containsList = addHeader(writer);
             int end = num>(int)size?(int)size:num;
-            List<Map<String, Object>> result = MapUtil.beanToMap(list,containsList);
-
+            List<MallAfterSalesDTO> subList = list.subList(0, end);
+            List<Map<String, Object>> result = MapUtil.beanToMap(subList,containsList);
+            writer.write(result, true);
             log.info("第{}sheet导出完成",1);
             int beginIndex = num;
             int endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
+
             for (int i = 2; i <= ceil; i++) {
                 log.info("正在导出第{}sheet",i);
                 writer.setSheet("第"+i+"页");
@@ -499,18 +516,18 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         writer.addHeaderAlias("orderNo", "订单编号");
         writer.addHeaderAlias("itemName", "商品名称");
         writer.addHeaderAlias("goodsNo", "货号");
-        writer.addHeaderAlias("payType", "售后类型");
+        writer.addHeaderAlias("state", "售后类型");
         writer.addHeaderAlias("status", "售后状态");
-        writer.addHeaderAlias("afterSalesStatus", "退款数量");
+        writer.addHeaderAlias("skuQuantity", "退款数量");
         writer.addHeaderAlias("money", "退款金额（元）");
         writer.addHeaderAlias("allMoney", "总计金额（元）");
         writer.addHeaderAlias("receiverAddress", "支付方式");
         writer.addHeaderAlias("orderAt", "购买数量");
         writer.addHeaderAlias("userName", "购买用户");
-        writer.addHeaderAlias("receiveAt", "售后申请时间");
+        writer.addHeaderAlias("createdAtStr", "售后申请时间");
         List<String> containList = Arrays.asList("afterSalesNo","orderNo","itemName","goodsNo",
-                "payType","status","afterSalesStatus","payuser","receiverName","receiverAddress","orderAt",
-                "userName","receiveAt");
+                "state","status","skuQuantity","payuser","receiverName","receiverAddress","orderAt",
+                "userName","createdAtStr");
         return containList;
     }
 

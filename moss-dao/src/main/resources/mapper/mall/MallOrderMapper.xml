@@ -499,12 +499,12 @@
         LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
         LEFT JOIN user	u ON mo.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
-        LEFT JOIN mall_social_share_flow s ON ( s.order_detail_no = modetail.order_detail_no OR s.order_no = mo.order_no )
+        LEFT JOIN mall_social_share_flow s ON IF(mo.order_type=2, s.order_detail_no = modetail.order_detail_no , s.order_no = mo.order_no )
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
         <if test="p.afterSalesStatus != null">
             <if test="p.afterSalesStatus == 111">    <!--111: 是：申请了售后就是，跟有效期无关-->
-                JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+                JOIN mall_after_sales sales ON IF(mo.order_type=2, sales.order_detail_no = modetail.order_detail_no , sales.order_no = mo.order_no )
                 and sales.sub_status not in (1020,1040,1060,1090,2040)
             </if>
             <if test="p.afterSalesStatus==100 or p.afterSalesStatus==110"> <!--100: 暂无：还在有效期内，目前还没有申请售后   110: 否：超过有效期，但是没有申请售后-->
@@ -606,6 +606,8 @@
         <if test="p.cancelReason != null">
             and mo.cancel_reason=#{p.cancelReason}
         </if>
+        /**group by mo.id*/
+        /*order by mo.order_at DESC*/
         GROUP BY mo.order_no) total
     </select>
 
@@ -671,12 +673,12 @@
         LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
         LEFT JOIN user	u ON mo.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
-        LEFT JOIN mall_social_share_flow s ON ( s.order_detail_no = modetail.order_detail_no OR s.order_no = mo.order_no )
+        LEFT JOIN mall_social_share_flow s ON IF(mo.order_type=2, s.order_detail_no = modetail.order_detail_no , s.order_no = mo.order_no )
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
         <if test="p.afterSalesStatus != null">
             <if test="p.afterSalesStatus == 111">    <!--111: 是：申请了售后就是，跟有效期无关-->
-                JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
+                JOIN mall_after_sales sales ON IF(mo.order_type=2, sales.order_detail_no = modetail.order_detail_no , sales.order_no = mo.order_no )
                 and sales.sub_status not in (1020,1040,1060,1090,2040)
             </if>
             <if test="p.afterSalesStatus==100 or p.afterSalesStatus==110"> <!--100: 暂无：还在有效期内，目前还没有申请售后   110: 否：超过有效期，但是没有申请售后-->
@@ -787,10 +789,10 @@
         LEFT JOIN mall_order_detail modetail ON a.order_no = modetail.order_no
         LEFT JOIN user u ON a.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = a.order_no
-        LEFT JOIN mall_social_share_flow s ON ( s.order_detail_no = modetail.order_detail_no OR s.order_no = a.order_no )
+        LEFT JOIN mall_social_share_flow s ON IF(a.order_type=2, s.order_detail_no = modetail.order_detail_no , s.order_no = a.order_no )
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
-        LEFT JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = a.order_no )
+        LEFT JOIN mall_after_sales sales ON IF(a.order_type=2, sales.order_detail_no = modetail.order_detail_no , sales.order_no = a.order_no )
         ORDER BY a.order_at DESC
     </select>
 </mapper>
