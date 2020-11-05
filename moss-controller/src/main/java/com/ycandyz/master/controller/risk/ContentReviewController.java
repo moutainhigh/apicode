@@ -63,4 +63,7 @@ public class ContentReviewController {
         ReturnResponse response = contentReviewService.updateStatus(reviewParam);
         return ReturnResponse.success(response);
     }
+
+
+
 }

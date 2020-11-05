@@ -43,7 +43,7 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
 	
 	@ApiOperation(value = "查询根据ID")
     @GetMapping(value = "/select/{id}")
-	public ReturnResponse<Object> getById(@PathVariable Long id) {
+	public ReturnResponse<BaseTabooWords> getById(@PathVariable Long id) {
         BaseTabooWords baseTabooWords = baseTabooWordsServicel.selById(id);
         return ReturnResponse.success(baseTabooWords);
     }
@@ -63,7 +63,7 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
 
     @ApiOperation(value = "查询全部")
     @PostMapping(value = "/select/list")
-    public ReturnResponse<Object> selectList(RequestParams<BaseTabooWordsQuery> query) {
+    public ReturnResponse<Page<BaseTabooWords>> selectList(RequestParams<BaseTabooWordsQuery> query) {
         Page<BaseTabooWords> page = baseTabooWordsServicel.selectList(query);
         return ReturnResponse.success(page);
     }
