@@ -26,19 +26,20 @@
         export_file_name, export_file_url, created_at, created_time
     </sql>
     <select id="selectPages"  resultMap="BaseResultMap" parameterType="com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery">
-        select Base_Column_List
+        select
+        <include refid="Base_Column_List" />
         from user_export_record
         where
         1=1
         <if test="u != null and u.terminal != null">
-            terminal  = #{terminal}
+           and  terminal  = #{u.terminal}
         </if>
         <if test="u != null and u.organizeName != null">
             and
             organize_name like concat('%',{u.organizeName},'%')
         </if>
         <if test="u != null and u.operatorId != null">
-            operator_id  = #{operatorId}
+            operator_id  = #{u.operatorId}
         </if>
         <if test="u != null and u.createdAtStart != null">
             <![CDATA[-->

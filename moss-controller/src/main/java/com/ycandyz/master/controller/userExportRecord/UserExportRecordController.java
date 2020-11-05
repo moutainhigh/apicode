@@ -13,9 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -29,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("user-export-record")
+@RequestMapping("userExportRecord")
 @Api(tags="导出记录-用户导出记录")
 public class UserExportRecordController extends BaseController<UserExportRecordServiceImpl, UserExportRecord, UserExportRecordQuery> {
 	
@@ -37,10 +35,9 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
     @Autowired
     private IUserExportRecordService userExportRecordService;
 
-	@ApiOperation(value = "查询分页")
-    @GetMapping(value = "select/page")
-    @SuppressWarnings("unchecked")
-    public ReturnResponse<Page<UserExportRecordResp>> selectPage(RequestParams<UserExportRecordQuery> requestParams) {
+	@ApiOperation(value = "导出记录查询分页")
+    @PostMapping(value = "/selectPage")
+    public ReturnResponse<Page<UserExportRecordResp>> selectPage(@RequestBody RequestParams<UserExportRecordQuery> requestParams) {
         Page<UserExportRecordResp> userExportRecordRespPage = userExportRecordService.selectPages(requestParams);
         return ReturnResponse.success(userExportRecordRespPage);
     }
