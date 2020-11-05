@@ -78,12 +78,5 @@ public class BaseBankController extends BaseController<BaseBankServiceImpl,BaseB
 	public ReturnResponse<BaseBank> deleteById(@PathVariable Long id) {
         return returnResponse(service.removeById(id),null,"删除失败!");
 	}
-
-    @ApiImplicitParam(name="ids",value="ID集合(1,2,3)",required=true,allowMultiple=true,dataType="int")
-   	@ApiOperation(value = "通过ids批量删除")
-    @DeleteMapping(value = "delete")
-	public ReturnResponse<BaseBank> deleteBatch(String ids) {
-        return returnResponse(service.deleteByIds(Convert.toLongArray(ids)),null,"删除失败!");
-	}
     
 }
