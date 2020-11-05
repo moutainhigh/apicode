@@ -181,6 +181,7 @@
             mo.total_money,
             mo.payed_at,
             mo.pay_type,
+            mo.order_at,
             mo.`status`,
             mo.`after_sales_status`,
             mo.`deliver_type`,
