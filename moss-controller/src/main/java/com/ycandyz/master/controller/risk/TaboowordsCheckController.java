@@ -1,6 +1,5 @@
 package com.ycandyz.master.controller.risk;
 
-import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.risk.TabooCheckParams;
 import com.ycandyz.master.service.risk.TaboowordsCheckService;

@@ -6,6 +6,7 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.risk.ContentReviewQuery;
 import com.ycandyz.master.domain.query.risk.ReviewParam;
+import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
 import com.ycandyz.master.service.risk.ContentReviewService;
 import io.swagger.annotations.Api;
@@ -24,6 +25,18 @@ public class ContentReviewController {
     @Autowired
     private ContentReviewService contentReviewService;
 
+    /**
+     * @Description: 内容审核展示
+     * @Author li Zhuo
+     * @Date 2020/10/28
+     * @Version: V1.0
+     */
+    @ApiOperation(value = "内容审核展示",notes = "内容审核",httpMethod = "POST")
+    @PostMapping("/content/list")
+    public ReturnResponse<Page<ContentReviewRep>> list(@RequestBody RequestParams<ContentReviewQuery> requestParams) {
+        ReturnResponse<Page<ContentReviewRep>> contentReviewReps = contentReviewService.list(requestParams);
+        return contentReviewReps;
+    }
 
     /**
      * @Description: 商品详情内容审核展示

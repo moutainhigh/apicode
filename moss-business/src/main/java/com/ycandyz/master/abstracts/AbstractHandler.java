@@ -4,6 +4,7 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dao.risk.ContentreviewDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.risk.ReviewParam;
+import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
 import com.ycandyz.master.entities.risk.ContentReview;
 import com.ycandyz.master.request.UserRequest;
@@ -16,6 +17,8 @@ public abstract class AbstractHandler implements InitializingBean {
     protected ContentreviewDao contentreviewDao;
 
     abstract public ReturnResponse handle( ReviewParam reviewParam);
+
+    abstract public void handleContentreview(ContentReviewDTO contentReviewDTO, ContentReviewRep contentReviewRep);
 
     protected void updateOrInsert(Long contentId, int type) {
         UserVO user = UserRequest.getCurrentUser();

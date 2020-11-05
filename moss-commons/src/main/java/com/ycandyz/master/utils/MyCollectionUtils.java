@@ -24,7 +24,7 @@ public class MyCollectionUtils {
             return null;
         }
         List<String> ids = Lists.newArrayList();
-        Arrays.stream(s.split(",")).forEach(s1 -> ids.add(s1));
+        Arrays.stream(s.split(",")).forEach(s1 -> ids.add(s1.trim()));
         return ids;
     }
 }

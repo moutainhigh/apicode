@@ -5,6 +5,7 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.risk.ContentReviewQuery;
 import com.ycandyz.master.domain.query.risk.ReviewParam;
+import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ContentReviewService {
     ReturnResponse updateStatus(ReviewParam reviewParam);
 
     Page<List<ContentReviewDTO>> listFootprint(RequestParams<ContentReviewQuery> requestParams);
+
+    ReturnResponse<Page<ContentReviewRep>> list(RequestParams<ContentReviewQuery> requestParams);
 }

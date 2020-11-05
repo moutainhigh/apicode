@@ -18,7 +18,6 @@ public class TabooCheck {
     public static void addKeywords(List<String> keywords) {
         for (int i = 0; i < keywords.size(); i++) {
             String key = keywords.get(i).trim();
-            System.out.println("key--"+key);
             HashMap nowhash = keysMap;//初始从最外层遍历
             for (int j = 0; j < key.length(); j++) {
                 char word = key.charAt(j);
@@ -29,9 +28,7 @@ public class TabooCheck {
                     HashMap<String, String> newWordHash = new HashMap<String, String>();
                     newWordHash.put("isEnd", "0");
                     nowhash.put(word, newWordHash);
-                    System.out.println("nowhash:"+"word--"+word+";newWordHash--"+newWordHash);
                     nowhash = newWordHash;
-                    System.out.println("nowhash2:"+nowhash);
                 }
                 if (j == key.length() - 1) {
                     nowhash.put("isEnd", "1");
