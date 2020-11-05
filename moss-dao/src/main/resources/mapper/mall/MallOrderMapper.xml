@@ -25,6 +25,9 @@
         <result column="shippingMoney" property="shippingMoney" />
         <result column="order_type" property="orderType" />
         <result column="all_money" property="allMoney" />
+        <result column="payedAtStr" property="payedAtStr" />
+        <result column="orderAtStr" property="orderAtStr" />
+        <result column="receiveAtStr" property="receiveAtStr" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -62,6 +65,9 @@
             mo.receive_at,
             mo.order_type,
             mo.all_money,
+            FROM_UNIXTIME(mo.order_at,'%Y-%m-%d %H:%m:%s') as orderAtStr,
+            FROM_UNIXTIME(mo.payed_at,'%Y-%m-%d %H:%m:%s') as payedAtStr,
+            FROM_UNIXTIME(mo.receive_at,'%Y-%m-%d %H:%m:%s') as receiveAtStr,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
@@ -193,6 +199,9 @@
             ship.receiver_address AS receiverAddress,
             mo.receive_at,
             mo.order_type,
+            FROM_UNIXTIME(mo.order_at,'%Y-%m-%d %H:%m:%s') as orderAtStr,
+            FROM_UNIXTIME(mo.payed_at,'%Y-%m-%d %H:%m:%s') as payedAtStr,
+            FROM_UNIXTIME(mo.receive_at,'%Y-%m-%d %H:%m:%s') as receiveAtStr,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
@@ -355,6 +364,9 @@
         <result column="deliver_method" property="deliverMethod" />
         <result column="deliver_type" property="deliverType" />
         <result column="shippingMoney" property="shippingMoney" />
+        <result column="payedAtStr" property="payedAtStr" />
+        <result column="orderAtStr" property="orderAtStr" />
+        <result column="receiveAtStr" property="receiveAtStr" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -430,6 +442,9 @@
         <result column="pick_up_address_name" property="pickUpAddressName" />
         <result column="pick_up_address_detail" property="pickUpAddressDetail" />
         <result column="pre_phone" property="prePhone" />
+        <result column="payedAtStr" property="payedAtStr" />
+        <result column="orderAtStr" property="orderAtStr" />
+        <result column="receiveAtStr" property="receiveAtStr" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -474,6 +489,9 @@
             mo.pre_phone,
             mo.all_money-mo.real_money as shippingMoney,
             mo.all_money,
+            FROM_UNIXTIME(mo.order_at,'%Y-%m-%d %H:%m:%s') as orderAtStr,
+            FROM_UNIXTIME(mo.payed_at,'%Y-%m-%d %H:%m:%s') as payedAtStr,
+            FROM_UNIXTIME(mo.receive_at,'%Y-%m-%d %H:%m:%s') as receiveAtStr,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
@@ -628,6 +646,9 @@
         a.`deliver_method`,
         a.`after_sales_end_at`,
         a.shippingMoney,
+        FROM_UNIXTIME(a.order_at,'%Y-%m-%d %H:%m:%s') as orderAtStr,
+        FROM_UNIXTIME(a.payed_at,'%Y-%m-%d %H:%m:%s') as payedAtStr,
+        FROM_UNIXTIME(a.receive_at,'%Y-%m-%d %H:%m:%s') as receiveAtStr,
         concat( u.`name`, ' ', u.phone ) AS payuser,
         concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
         ship.receiver_address AS receiverAddress,

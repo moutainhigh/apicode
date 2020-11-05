@@ -335,7 +335,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             List<String> containsList = addHeader(writer);
             int end = num>(int)size?(int)size:num;
             List<MallOrderDTO> subList = list.subList(0, end);
-            List<Map<String, Object>> result = MapUtil.beanToMap(subList,containsList);
+            MapUtil mapUtil = new MapUtil();
+            List<Map<String, Object>> result = mapUtil.beanToMap(subList,containsList);
             salesStateCodeToString(result);
             writer.write(result, true);
             log.info("第{}sheet导出完成",1);
@@ -346,7 +347,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 writer.setSheet("第"+i+"页");
                 List<String> containsList2 = addHeader(writer);
                 List<MallOrderDTO> subList2 = list.subList(beginIndex, endIndex);
-                List<Map<String, Object>> result2 = MapUtil.beanToMap(subList2,containsList2);
+                List<Map<String, Object>> result2 = mapUtil.beanToMap(subList2,containsList2);
                 salesStateCodeToString(result2);
                 writer.write(result2, true);
                 beginIndex = endIndex;

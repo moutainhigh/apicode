@@ -24,6 +24,7 @@
         <result column="audit_second_at" property="auditSecondAt" />
         <result column="userName" property="userName" />
         <result column="created_time" property="createdTime" />
+        <result column="createdAtStr" property="createdAtStr" />
         <collection property="order" ofType="com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO">
             <result column="shop_no" property="shopNo" />
             <result column="moOrderNo" property="orderNo" />
@@ -71,6 +72,7 @@
             sales.audit_first_at,
             sales.audit_second_at,
             sales.created_time,
+            DATE_FORMAT(sales.created_time,'%Y-%m-%d %H:%m:%s') as createdAtStr,
             concat(u.`name`,' ',u.phone) as userName,
 
             mo.shop_no,
@@ -182,6 +184,7 @@
             sales.audit_first_at,
             sales.audit_second_at,
             sales.created_time,
+            DATE_FORMAT(sales.created_time,'%Y-%m-%d %H:%m:%s') as createdAtStr,
 
             mo.shop_no,
             mo.order_no as moOrderNo,
@@ -235,6 +238,7 @@
         sales.audit_first_at,
         sales.audit_second_at,
         sales.created_time,
+        DATE_FORMAT(sales.created_time,'%Y-%m-%d %H:%m:%s') as createdAtStr,
         concat(u.`name`,' ',u.phone) as userName,
 
         mo.shop_no,
@@ -343,6 +347,7 @@
             sales.created_at as createdAt,
             sales.close_at as closeAt,
             sales.reason as reason
+            DATE_FORMAT(sales.created_time,'%Y-%m-%d %H:%m:%s') as createdAtStr,
         FROM
             mall_after_sales sales
         where

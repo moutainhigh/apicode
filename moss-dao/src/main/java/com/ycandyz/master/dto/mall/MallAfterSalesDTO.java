@@ -124,7 +124,6 @@ public class MallAfterSalesDTO {
     @Getter(AccessLevel.NONE)
     private String receiveAtStr;
     @ApiModelProperty(value = "售后申请时间字符串")
-    @Getter(AccessLevel.NONE)
     private String createdAtStr;
     /**售后关闭时间（退款成功时间）*/
     @ApiModelProperty(value = "售后关闭时间（退款成功时间）字符串")
@@ -168,26 +167,6 @@ public class MallAfterSalesDTO {
             receiveAtStr = "-";
         }
         return receiveAtStr;
-    }
-
-    public String getCreatedAtStr(){
-        try {
-//            if(createdAt!=0) {
-//                Long at = Long.valueOf(createdAt) * 1000;
-//                Date date = new Date(at);
-//                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//                this.createdAtStr = sd.format(date);
-//            }else {
-//                this.createdAtStr = "-";
-//            }
-            if(createdTime!=null){
-                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                this.createdAtStr = sd.format(createdTime);
-            }
-        }catch (Exception e){
-            createdAtStr = "-";
-        }
-        return createdAtStr;
     }
 
     public String getCloseAtStr(){
