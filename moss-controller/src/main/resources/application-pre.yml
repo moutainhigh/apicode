@@ -47,8 +47,6 @@ kuaidi:
   secret: 0aa5dd906ba7404db4ac569ca8da20a6
   userid: 7edbc3841b3a4bb9b4443d4a2ee654ff
 
-#售后一次审核通过退货有效期
-after-sales-days: 1
 
 #每个sheet条数
 excel:
