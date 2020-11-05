@@ -186,6 +186,7 @@
             mo.`deliver_type`,
             mo.`deliver_method`,
             mo.all_money-mo.real_money as shippingMoney,
+            mo.all_money,
             concat( u.`name`, ' ', u.phone ) AS payuser,
             concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
             ship.receiver_address AS receiverAddress,

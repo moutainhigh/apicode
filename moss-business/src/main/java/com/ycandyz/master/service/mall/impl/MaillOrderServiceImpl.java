@@ -237,6 +237,12 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     //订单列表显示商品名称数组
                     List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
                     mallOrderDTO.setItemName(itemNames);
+                    //订单中的购买商品数量
+                    List<Integer> skuQuantity = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getSkuQuantity).collect(Collectors.toList());
+                    if (skuQuantity != null && skuQuantity.size() > 0) {
+                        int quantity = skuQuantity.stream().reduce(Integer::sum).orElse(0);
+                        mallOrderDTO.setQuantity(quantity);
+                    }
                     //订单列表显示商品货号数组
                     List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).filter(x -> x != null && !"".equals(x)).collect(Collectors.toList());
                     mallOrderDTO.setGoodsNo(goodsNos);
@@ -263,6 +269,32 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         }
                         mallOrderDTO.setShareAmount(shareAmount);
                         mallOrderDTO.setSellerUserName(sellerUserList);
+                    }
+                }
+
+                //拼接售后字段
+                List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no", mallOrderDTO.getOrderNo()));
+                if (mallAfterSalesList != null && mallAfterSalesList.size() > 0) {
+                    List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
+                    if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)) {
+                        //退款进行中
+                        mallOrderDTO.setAfterSalesStatus(1);
+                    } else {
+                        mallOrderDTO.setAfterSalesStatus(2);
+                    }
+                } else {
+                    mallOrderDTO.setAfterSalesStatus(0);
+                }
+                if (mallOrderDTO.getAfterSalesStatus() != null) {
+                    //修改售后返回值给前端
+                    if (mallOrderDTO.getAfterSalesStatus() != 0) {
+                        mallOrderDTO.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+                    } else {
+                        if (mallOrderDTO.getAfterSalesEndAt() != null && mallOrderDTO.getAfterSalesEndAt() > new Date().getTime() / 1000) {
+                            mallOrderDTO.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                        } else {
+                            mallOrderDTO.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                        }
                     }
                 }
             }
@@ -300,6 +332,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             int end = num>(int)size?(int)size:num;
             List<MallOrderDTO> subList = list.subList(0, end);
             List<Map<String, Object>> result = MapUtil.beanToMap(subList,containsList);
+            salesStateCodeToString(result);
             writer.write(result, true);
             log.info("第{}sheet导出完成",1);
             int beginIndex = num;
@@ -310,6 +343,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 List<String> containsList2 = addHeader(writer);
                 List<MallOrderDTO> subList2 = list.subList(beginIndex, endIndex);
                 List<Map<String, Object>> result2 = MapUtil.beanToMap(subList2,containsList2);
+                salesStateCodeToString(result2);
                 writer.write(result2, true);
                 beginIndex = endIndex;
                 endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
@@ -621,4 +655,56 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return ReturnResponse.failed("未查询到待自提订单");
     }
 
+    /**
+     * 导出excel中的状态码转中文
+     * @param list
+     */
+    private static void salesStateCodeToString(List<Map<String, Object>> list) {
+        if (list != null && list.size() > 0) {
+            list.forEach(map -> {
+                //payType
+                if (Objects.equals(map.get("payType"), 1)) {
+                    map.put("payType", "支付宝");
+                } else if (Objects.equals(map.get("payType"), 2)) {
+                    map.put("payType", "微信");
+                } else {
+                    map.put("payType", "未知");
+                }
+                //status
+                if (Objects.equals(map.get("status"), 10)) {
+                    map.put("status", "待支付");
+                } else if (Objects.equals(map.get("status"), 20)) {
+                    map.put("status", "待发货");
+                } else if (Objects.equals(map.get("status"), 30)) {
+                    map.put("status", "待收货");
+                } else if (Objects.equals(map.get("status"), 40)) {
+                    map.put("status", "已收货");
+                } else if (Objects.equals(map.get("status"), 50)) {
+                    map.put("status", "已取消");
+                } else if (Objects.equals(map.get("status"), 60)) {
+                    map.put("status", "完成");
+                }
+                //isEnableShare
+                if (Objects.equals(map.get("isEnableShare"), 0)) {
+                    map.put("isEnableShare", "否");
+                } else if (Objects.equals(map.get("isEnableShare"), 1)) {
+                    map.put("isEnableShare", "是");
+                }
+                //asStatus
+                if (Objects.equals(map.get("asStatus"), 100)) {
+                    map.put("asStatus", "暂无");
+                } else if (Objects.equals(map.get("asStatus"), 110)) {
+                    map.put("asStatus", "否");
+                } else if (Objects.equals(map.get("asStatus"), 111)) {
+                    map.put("asStatus", "是");
+                }
+                //deliverType
+                if (Objects.equals(map.get("deliverType"), 1)) {
+                    map.put("deliverType", "配送");
+                } else if (Objects.equals(map.get("deliverType"), 2)) {
+                    map.put("deliverType", "自提");
+                }
+            });
+        }
+    }
 }

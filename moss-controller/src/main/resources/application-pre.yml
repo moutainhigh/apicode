@@ -29,6 +29,7 @@ logging:
 
 ignored:
   urls:
+    - /
     - /login
     - /error
     - /mall/order/shipment/callback

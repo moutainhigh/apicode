@@ -213,7 +213,7 @@
             and sales.shop_no=#{shopNo}
     </select>
 
-    <select id="getTrendMallAfterSalesList" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
+    <select id="getTrendMallAfterSalesList" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultMap="BaseAfterSalesDetailResultMap">
         SELECT
         sales.id as id,
         sales.after_sales_no,
@@ -243,6 +243,7 @@
         mo.real_money,
         mo.deliver_method,
         mo.pay_type,
+        mo.all_money,
         mo.all_money-mo.real_money as shipping_money,
 
         modetail.order_no as detailOrderNo,
