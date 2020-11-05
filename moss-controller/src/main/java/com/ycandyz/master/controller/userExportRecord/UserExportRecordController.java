@@ -45,11 +45,11 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
         return ReturnResponse.success(userExportRecordRespPage);
     }
     
-    @ApiOperation(value = "查询全部")
-    @GetMapping(value = "select/list")
-    public ReturnResponse<Object> selectList(UserExportRecordQuery query) {
-        return ReturnResponse.success(service.list(query));
-    }
+//    //@ApiOperation(value = "查询全部")
+//    @GetMapping(value = "select/list")
+//    public ReturnResponse<Object> selectList(UserExportRecordQuery query) {
+//        return ReturnResponse.success(service.list(query));
+//    }
     
 
 }

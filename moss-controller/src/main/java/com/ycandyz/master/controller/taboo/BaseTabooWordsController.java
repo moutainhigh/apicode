@@ -49,7 +49,7 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
     }
 
 
-    @ApiOperation(value="新增敏感字")
+    @ApiOperation(value="编辑敏感字")
     @PutMapping(value = "/updateBaseTabooWords")
     public ReturnResponse<Object> updateBaseTabooWords(@RequestBody BaseTabooWordsVO baseTabooWordsVO) {
         int i = baseTabooWordsServicel.updateBaseTabooWords(baseTabooWordsVO);
