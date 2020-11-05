@@ -233,6 +233,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
         if (list!=null && list.size()>0) {
             for (MallOrderDTO mallOrderDTO : list) {
+                if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
+                    mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
+                }
+
                 if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0) {
                     //订单列表显示商品名称数组
                     List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());

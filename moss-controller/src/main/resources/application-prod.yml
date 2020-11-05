@@ -5,10 +5,20 @@ server:
 
 spring:
   datasource:
-    name: yc
-    url: jdbc:mysql://youchuan-prod-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
-    username: datav
-    password: eovkug3821GyXgKB
+    driver-class-name: com.mysql.jdbc.Driver           # mysql驱动包
+    url: jdbc:mysql://youchuan-prod-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useJDBCCompliantTimezoneShift=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+    username: project_prod
+    password: B4rtxWFtmv7bePQH
+    type: com.zaxxer.hikari.HikariDataSource           # 当前数据源操作类型
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 30
+      auto-commit: true
+      idle-timeout: 120000
+      pool-name: ukeHikariCP
+      max-lifetime: 180000
+      connection-timeout: 60000
+      connection-test-query: SELECT 1
   redis:
     host: youchuan-prod-redis-1.5fqnep.ng.0001.cnn1.cache.amazonaws.com.cn
     port: 6379

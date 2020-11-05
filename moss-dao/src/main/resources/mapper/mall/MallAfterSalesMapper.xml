@@ -234,6 +234,7 @@
         sales.apply_at,
         sales.audit_first_at,
         sales.audit_second_at,
+        sales.created_time,
         concat(u.`name`,' ',u.phone) as userName,
 
         mo.shop_no,
