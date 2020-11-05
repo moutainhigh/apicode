@@ -32,7 +32,7 @@ public class BaseBankServiceImpl extends BaseService<BaseBankDao,BaseBank,BaseBa
         LambdaQueryWrapper<BaseBank> queryWrapper = new LambdaQueryWrapper<BaseBank>()
                 .eq(StrUtil.isNotEmpty(query.getCode()),BaseBank::getCode, query.getCode())
                 .like(StrUtil.isNotEmpty(query.getName()),BaseBank::getName, query.getName())
-                .orderByDesc(BaseBank::getSort,BaseBank::getId);
+                .orderByDesc(BaseBank::getSort);
         return (Page<BaseBank>) baseMapper.selectPage(page, queryWrapper);
     }
 
@@ -41,7 +41,7 @@ public class BaseBankServiceImpl extends BaseService<BaseBankDao,BaseBank,BaseBa
         LambdaQueryWrapper<BaseBank> queryWrapper = new LambdaQueryWrapper<BaseBank>()
                 .eq(StrUtil.isNotEmpty(query.getCode()),BaseBank::getCode, query.getCode())
                 .like(StrUtil.isNotEmpty(query.getName()),BaseBank::getName, query.getName())
-                .orderByDesc(BaseBank::getSort,BaseBank::getId);
+                .orderByDesc(BaseBank::getSort);
         return baseMapper.selectList(queryWrapper);
     }
     
