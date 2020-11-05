@@ -233,13 +233,38 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
         if (list!=null && list.size()>0) {
             for (MallOrderDTO mallOrderDTO : list) {
-                //订单列表显示商品名称数组
-                List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
-                mallOrderDTO.setItemName(itemNames);
-                //订单列表显示商品货号数组
-                List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).filter(x -> x != null && !"".equals(x)).collect(Collectors.toList());
-                mallOrderDTO.setGoodsNo(goodsNos);
-
+                if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0) {
+                    //订单列表显示商品名称数组
+                    List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
+                    mallOrderDTO.setItemName(itemNames);
+                    //订单列表显示商品货号数组
+                    List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).filter(x -> x != null && !"".equals(x)).collect(Collectors.toList());
+                    mallOrderDTO.setGoodsNo(goodsNos);
+                    //拼接是否分佣字段 isEnableShare
+                    List<Integer> isEnableShareList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getIsEnableShare).collect(Collectors.toList());
+                    if (isEnableShareList.contains(1) && mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10) { //有分佣
+                        mallOrderDTO.setIsEnableShare(1);
+                    } else { //无分佣
+                        mallOrderDTO.setIsEnableShare(0);
+                    }
+                }
+                if (mallOrderDTO.getStatus()!=50 && mallOrderDTO.getStatus()!=10) {   //已取消订单不展示分销人相关信息
+                    //订单列表显示分销合伙人，分销金额统计
+                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
+                    if (mallSocialShareFlowDTOS != null && mallSocialShareFlowDTOS.size() > 0) {
+                        List<String> sellerUserList = new ArrayList<>();
+                        BigDecimal shareAmount = new BigDecimal(0);
+                        for (MallSocialShareFlowDTO dto : mallSocialShareFlowDTOS) {
+                            if (dto.getShareType()==0) {
+                                String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
+                                sellerUserList.add(sellerUser); //分销合伙人
+                            }
+                            shareAmount = shareAmount.add(dto.getAmount());   //分销佣金
+                        }
+                        mallOrderDTO.setShareAmount(shareAmount);
+                        mallOrderDTO.setSellerUserName(sellerUserList);
+                    }
+                }
             }
         }
 
@@ -325,12 +350,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         writer.addHeaderAlias("payuser", "购买用户");
         writer.addHeaderAlias("receiverName", "收货人");
         writer.addHeaderAlias("receiverAddress", "收货人地址");
+        writer.addHeaderAlias("deliverType", "发货方式");
         writer.addHeaderAlias("orderAtStr", "下单时间");
         writer.addHeaderAlias("payedAtStr", "支付时间");
         writer.addHeaderAlias("receiveAtStr", "收货时间");
         List<String> containsList = Arrays.asList("cartOrderSn","orderNo","itemName","goodsNo","allMoney",
                 "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
-                "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
+                "payuser","receiverName","receiverAddress","deliverType","orderAtStr","payedAtStr","receiveAtStr");
         return containsList;
     }
 
