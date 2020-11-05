@@ -50,8 +50,8 @@ public class    TaboowordsCheckServiceImpl implements TaboowordsCheckService {
         lists.stream().forEach(s->txt.append(s));
         List<String> result = tabooCheckService.check(txt.toString());
         if (result != null && result.size() >0 ){
-            contentReview.setAuditResult(0);
-            contentreviewDao.insert(contentReview);
+//            contentReview.setAuditResult(0);
+//            contentreviewDao.insert(contentReview);
             return ReturnResponse.failed("检测到提交信息涉嫌违规提交后系统会自动屏蔽，其他人不可见");
         }
         contentReview.setAuditResult(1);
