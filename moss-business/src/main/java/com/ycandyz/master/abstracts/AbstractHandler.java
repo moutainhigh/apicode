@@ -19,15 +19,14 @@ public abstract class AbstractHandler implements InitializingBean {
 
     protected void updateOrInsert(Long contentId, int type) {
         UserVO user = UserRequest.getCurrentUser();
-        String userPhone = user.getName() +"\t"+ user.getPhone();
         ContentReviewDTO contentReviewDTO = contentreviewDao.selectByContentId(contentId, type);
         if (contentReviewDTO != null){
-            contentreviewDao.updateAuditResult(userPhone, contentId, type);
+            contentreviewDao.updateAuditResult(String.valueOf(user.getId()), contentId, type);
         }else {
             ContentReview contentReview = new ContentReview();
             contentReview.setType(type);
             contentReview.setAuditResult(2);
-            contentReview.setAuditor(userPhone);
+            contentReview.setAuditor(user.getId());
             contentReview.setContentId(contentId);
             contentreviewDao.insert(contentReview);
         }

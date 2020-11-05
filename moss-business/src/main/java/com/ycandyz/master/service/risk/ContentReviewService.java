@@ -13,4 +13,6 @@ public interface ContentReviewService {
     Page<List<ContentReviewDTO>> listMallItem(RequestParams<ContentReviewQuery> requestParams);
 
     ReturnResponse updateStatus(ReviewParam reviewParam);
+
+    Page<List<ContentReviewDTO>> listFootprint(RequestParams<ContentReviewQuery> requestParams);
 }

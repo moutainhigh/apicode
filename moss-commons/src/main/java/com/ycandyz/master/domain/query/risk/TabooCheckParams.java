@@ -28,7 +28,7 @@ public class TabooCheckParams {
     @ApiModelProperty(value = "商品分享描述")
     private String shareDescr;
 
-    @ApiModelProperty(value = "所属模块")
+    @ApiModelProperty(value = "内容模块[0:商品详情(表:mall_item);1:商友圈(表:footprint);2:企业动态(表:organize_news)]")
     private Integer type;
 
 }

@@ -196,12 +196,7 @@
                 and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
-        <if test="con.auditResult != null">
-            <![CDATA[
-                and c.audit_result = #{con.auditResult}
-            ]]>
-        </if>
-        and  c.audit_result in (1,1010,1020);
+
     </select>
     <select id="listOrganizeNews" resultMap="BaseResultOrganizeNews">
         select o.abstract,o.title,c.content_moudle,c.created_time,c.updated_time,c.auditor,c.audit_time,c.audit_result

@@ -54,4 +54,12 @@ public class ContentReviewServiceImpl implements ContentReviewService {
         return returnResponse;
     }
 
+    @Override
+    public Page<List<ContentReviewDTO>> listFootprint(RequestParams<ContentReviewQuery> requestParams) {
+        ContentReviewQuery contentReviewQuery = requestParams.getT();
+        Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
+        Page<List<ContentReviewDTO>> listPage = contentreviewDao.listFootprint(pageQuery, contentReviewQuery);
+        return null;
+    }
+
 }

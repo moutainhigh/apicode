@@ -10,7 +10,6 @@ import com.ycandyz.master.dto.risk.ContentReviewDTO;
 import com.ycandyz.master.service.risk.ContentReviewService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,9 +32,22 @@ public class ContentReviewController {
      * @Version: V1.0
     */
     @ApiOperation(value = "商品详情内容审核展示",notes = "内容审核",httpMethod = "POST")
-    @PostMapping("/content/list")
+    @PostMapping("/content/listMallItem")
     public ReturnResponse<Page<List<ContentReviewDTO>>> listMallItem(@RequestBody RequestParams<ContentReviewQuery> requestParams) {
         Page<List<ContentReviewDTO>> contentReviewReps = contentReviewService.listMallItem(requestParams);
+        return ReturnResponse.success(contentReviewReps);
+    }
+
+    /**
+     * @Description: 商友圈内容审核展示
+     * @Author li Zhuo
+     * @Date 2020/10/28
+     * @Version: V1.0©
+     */
+    @ApiOperation(value = "商友圈内容审核展示",notes = "内容审核",httpMethod = "POST")
+    @PostMapping("/content/listFootprint")
+    public ReturnResponse<Page<List<ContentReviewDTO>>> listFootpring(@RequestBody RequestParams<ContentReviewQuery> requestParams) {
+        Page<List<ContentReviewDTO>> contentReviewReps = contentReviewService.listFootprint(requestParams);
         return ReturnResponse.success(contentReviewReps);
     }
 

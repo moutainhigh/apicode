@@ -36,7 +36,7 @@ public class ContentReview {
     private Date updatedTime;
 
     @ApiModelProperty(value = "审核人")
-    private String auditor;
+    private Long auditor;
 
     @ApiModelProperty(value = "审核时间")
     private Date auditTime;
