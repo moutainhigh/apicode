@@ -200,6 +200,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         mallOrderDetailByAfterSalesVO.setPrice(mallOrderDetail.getPrice());
                         mallOrderDetailByAfterSalesVO.setQuantity(mallOrderDetail.getQuantity());
                         mallOrderDetailByAfterSalesVO.setSkuNo(mallOrderDetail.getSkuNo());
+                        mallAfterSalesVO.setDetails(mallOrderDetailByAfterSalesVO);
                     }
                 }
             }else {
