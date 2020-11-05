@@ -6,5 +6,5 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.risk.TabooCheckParams;
 
 public interface TaboowordsCheckService {
-    ReturnResponse check(RequestParams<TabooCheckParams> requestParams);
+    ReturnResponse check(TabooCheckParams tabooCheckParams);
 }

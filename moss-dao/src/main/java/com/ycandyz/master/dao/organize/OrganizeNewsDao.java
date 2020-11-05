@@ -19,5 +19,5 @@ import java.util.List;
 @Mapper
 public interface OrganizeNewsDao extends BaseMapper<OrganizeNews> {
     List<OrganizeNewsQuery> selectFootprintQuery(@Param("pageOffset") int pageOffset, @Param("pageSize") int pageSize);
-    int updateOneOrganizeNews(Long contentId);
+    int updateOneOrganizeNews(@Param("contentId") Long contentId ,@Param("oper") Integer oper);
 }

@@ -19,5 +19,5 @@ import java.util.List;
 @Mapper
 public interface FootprintDao extends BaseMapper<Footprint> {
     List<FootprintQuery> selectFootprint(@Param("pageOffset") int pageOffset, @Param("pageSize") int pageSize);
-    int updateOneFootprint(Long contentId);
+    int updateOneFootprint(@Param("contentId") Long contentId ,@Param("oper") Integer oper);
 }

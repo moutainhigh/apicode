@@ -10,7 +10,7 @@ import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
 import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.taboo.IBaseTabooWordsService;
 import com.ycandyz.master.dao.taboo.BaseTabooWordsDao;
-import com.ycandyz.master.utils.CollectionUtils;
+import com.ycandyz.master.utils.MyCollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     public void addBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO) {
         UserVO currentUser = UserRequest.getCurrentUser();
         BaseTabooWords baseTabooWords = new BaseTabooWords();
-        String tabooWords = CollectionUtils.PraseArraytoString(baseTabooWordsVO.getTabooWords());
+        String tabooWords = MyCollectionUtils.PraseArraytoString(baseTabooWordsVO.getTabooWords());
         BeanUtils.copyProperties(baseTabooWordsVO,baseTabooWords);
         baseTabooWords.setTabooWords(tabooWords);
         baseTabooWords.setOperator(currentUser.getPhone());
@@ -87,7 +87,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     public int updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO) {
         UserVO currentUser = UserRequest.getCurrentUser();
         BaseTabooWords baseTabooWords = new BaseTabooWords();
-        String tabooWords = CollectionUtils.PraseArraytoString(baseTabooWordsVO.getTabooWords());
+        String tabooWords = MyCollectionUtils.PraseArraytoString(baseTabooWordsVO.getTabooWords());
         BeanUtils.copyProperties(baseTabooWordsVO,baseTabooWords);
         baseTabooWords.setTabooWords(tabooWords);
         baseTabooWords.setOperator(currentUser.getPhone());

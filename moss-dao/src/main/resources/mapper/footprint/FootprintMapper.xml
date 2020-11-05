@@ -20,7 +20,7 @@
         id, user_id, content, read_num, longitude, latitude, is_del, created_at, updated_at
     </sql>
     <update id="updateOneFootprint">
-        update footprint set is_del = 2 where id = #{contentId};
+        update footprint set is_del = #{oper} where id = #{contentId};
     </update>
     <select id="selectFootprint" resultType="com.ycandyz.master.domain.query.footprint.FootprintQuery" parameterType="java.lang.Integer">
         select id,user_id,content from footprint limit  #{pageOffset},#{pageSize};

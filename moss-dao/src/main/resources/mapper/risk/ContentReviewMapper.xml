@@ -60,14 +60,11 @@
     </resultMap>
 
     <insert id="insert" parameterType="com.ycandyz.master.entities.risk.ContentReview" >
-        insert into content_review(content_id,`type`,created_time,updated_time,auditor)
-        values(#{contentId},#{type},now(),now(),#{auditor});
+        insert into content_review(content_id,`type`,created_time,updated_time,audit_result)
+        values(#{contentId},#{type},now(),now(),#{auditResult});
     </insert>
-    <update id="update">
-        update
-    </update>
     <update id="updateAuditResult">
-        update content_review set auditor = #{auditor} ,audit_result = 2 where content_id = #{contentId} and `type` = #{type};
+        update content_review set auditor = #{auditor} ,audit_result = 2,audit_time = now() where content_id = #{contentId} and `type` = #{type};
     </update>
 
 
@@ -166,15 +163,13 @@
         </if>
 
     </select>
-    <select id="queryFootprint" resultMap="BaseResultFootprint">
-        select f.content,c.content_moudle,c.created_time,c.updated_time,c.auditor,c.audit_time,c.audit_result
+    <select id="listFootprint" resultMap="BaseResultFootprint">
+        select f.content,c.type,c.created_time,c.updated_time,c.auditor,c.audit_time,c.audit_result
         from  content_review c
         inner join footprint f
-        on f.id = c.footprint_id
+        on f.id = c.content_id
         where
-        <if test="con.contentMoudle != null">
-            c.content_moudle = #{con.contentMoudle}
-        </if>
+            c.type = 1
         <if test="con.auditResult != null">
             and c.audit_result = #{con.auditResult}
         </if>
@@ -208,7 +203,7 @@
         </if>
         and  c.audit_result in (1,1010,1020);
     </select>
-    <select id="queryOrganizeNews" resultMap="BaseResultOrganizeNews">
+    <select id="listOrganizeNews" resultMap="BaseResultOrganizeNews">
         select o.abstract,o.title,c.content_moudle,c.created_time,c.updated_time,c.auditor,c.audit_time,c.audit_result
         from  content_review c
         inner join organize_news o
@@ -252,7 +247,8 @@
     </select>
     <select id="selectByContentId" resultType="com.ycandyz.master.dto.risk.ContentReviewDTO">
         select content_id,`type`,created_time,updated_time,auditor,audit_time,audit_result
-        where content_id = #{content_id} and `type` = #{type};
+        from content_review
+        where content_id = #{contentId} and `type` = #{type};
     </select>
 
 </mapper>

@@ -32,7 +32,7 @@
         published_at, disabled_at, disable_reason, is_del, del_reason, deleted_at, created_at, updated_at, origin_user_id
     </sql>
     <update id="updateOneOrganizeNews">
-        update organize_news set is_del = 2 where id = #{contentId};
+        update organize_news set is_del = #{oper} where id = #{contentId};
     </update>
     <select id="selectFootprintQuery" resultType="com.ycandyz.master.domain.query.organize.OrganizeNewsQuery" parameterType="java.lang.Integer">
         select id,organizeId,title,`abstract` from organize_news limit #{pageOffset},#{pageSize};

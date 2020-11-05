@@ -88,6 +88,9 @@
         highest_sale_price = #{mallItem.highestSalePrice,jdbcType=DECIMAL}
         where shop_no = #{shopNo,jdbcType=VARCHAR} and item_no = #{mallItem.itemNo,jdbcType=VARCHAR};
     </update>
+    <update id="updateOneMallItem">
+        update mall_item set status = #{oper} where item_no = #{contentId};
+    </update>
 
 </mapper>
 

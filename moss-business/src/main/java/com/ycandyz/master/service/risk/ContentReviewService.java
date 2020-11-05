@@ -1,15 +1,16 @@
 package com.ycandyz.master.service.risk;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.risk.ContentReviewQuery;
+import com.ycandyz.master.domain.query.risk.ReviewParam;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
 
 import java.util.List;
 
 public interface ContentReviewService {
-    List<ContentReviewDTO> listMallItem(RequestParams<ContentReviewQuery> requestParams);
+    Page<List<ContentReviewDTO>> listMallItem(RequestParams<ContentReviewQuery> requestParams);
 
-    int updateOneMallItem(Long contentId);
-    void updateOneFootprint(Long contentId);
-    void updateOneOrganizeNews(Long contentId);
+    ReturnResponse updateStatus(ReviewParam reviewParam);
 }

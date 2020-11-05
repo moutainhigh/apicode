@@ -22,8 +22,8 @@ public class TaboowordsCheckController {
 
     @ApiOperation(value = "敏感词检测",notes = "敏感词检测",httpMethod = "POST")
     @PostMapping("/check")
-    public ReturnResponse check(@RequestBody RequestParams<TabooCheckParams> requestParams) {
-        return taboowordsCheckService.check(requestParams);
+    public ReturnResponse check(@RequestBody TabooCheckParams tabooCheckParams) {
+        return taboowordsCheckService.check(tabooCheckParams);
     }
 
 }

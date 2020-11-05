@@ -7,20 +7,16 @@ import lombok.Data;
 public class TabooCheckParams {
 
 
+    @ApiModelProperty(value = "审核模块id")
+    private Long contentId;
 
-    @ApiModelProperty(value = "商品详情Id")
-    private String itemNo;
+    @ApiModelProperty(value = "企业动态标题")
+    private String title;
 
-    @ApiModelProperty(value = "商友圈Id")
-    private Integer footprintId;
-
-    @ApiModelProperty(value = "企业动态Id")
-    private Integer organizeNewsId;
-
-    @ApiModelProperty(value = "摘要")
+    @ApiModelProperty(value = "企业动态摘要")
     private String abstracts;
 
-    @ApiModelProperty(value = "内容")
+    @ApiModelProperty(value = "商友圈内容")
     private String content;
 
     @ApiModelProperty(value = "商品名称")
@@ -29,6 +25,10 @@ public class TabooCheckParams {
     @ApiModelProperty(value = "商品描述")
     private String itemText;
 
+    @ApiModelProperty(value = "商品分享描述")
+    private String shareDescr;
+
     @ApiModelProperty(value = "所属模块")
     private Integer type;
+
 }
