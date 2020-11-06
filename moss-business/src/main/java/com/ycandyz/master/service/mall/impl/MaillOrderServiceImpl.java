@@ -121,6 +121,25 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         }
                         mallOrderVo = new MallOrderVO();
                         BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
+
+                        //order_at;payed_at;receive_at时间转换为字符串
+                        if (mallOrderVo.getOrderAt()!=null) {
+                            long time = mallOrderVo.getOrderAt()*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                            mallOrderVo.setOrderAtStr(orderAtStr);
+                        }
+                        if (mallOrderVo.getPayedAt()!=null) {
+                            long time = mallOrderVo.getPayedAt()*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                            mallOrderVo.setOrderAtStr(orderAtStr);
+                        }
+                        if (mallOrderVo.getReceiveAt()!=null) {
+                            long time = mallOrderVo.getReceiveAt()*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                            mallOrderVo.setOrderAtStr(orderAtStr);
+                        }
+
+
                         //订单列表显示商品名称数组
                         List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
 
@@ -233,6 +252,24 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
         if (list!=null && list.size()>0) {
             for (MallOrderDTO mallOrderDTO : list) {
+
+                //order_at;payed_at;receive_at时间转换为字符串
+                if (mallOrderDTO.getOrderAt()!=null) {
+                    long time = mallOrderDTO.getOrderAt()*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                    mallOrderDTO.setOrderAtStr(orderAtStr);
+                }
+                if (mallOrderDTO.getPayedAt()!=null) {
+                    long time = mallOrderDTO.getPayedAt()*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                    mallOrderDTO.setOrderAtStr(orderAtStr);
+                }
+                if (mallOrderDTO.getReceiveAt()!=null) {
+                    long time = mallOrderDTO.getReceiveAt()*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                    mallOrderDTO.setOrderAtStr(orderAtStr);
+                }
+
                 if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
                     mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
                 }
@@ -430,6 +467,27 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
 
+            //order_at;payed_at;receive_at时间转换为字符串
+            if (mallOrderVO.getOrderAt()!=null) {
+                long time = mallOrderVO.getOrderAt()*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getPayedAt()!=null) {
+                long time = mallOrderVO.getPayedAt()*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getReceiveAt()!=null) {
+                long time = mallOrderVO.getReceiveAt()*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+
+            if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
+                mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
+            }
+
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<MallOrderDetailVO> detailVOList = new ArrayList<>();
                 mallOrderDTO.getDetails().forEach(orderDetail->{
@@ -494,6 +552,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallAfterSalesDTOs.forEach(dto -> {
                         MallAfterSalesVO mallAfterSalesVO = new MallAfterSalesVO();
                         BeanUtils.copyProperties(dto, mallAfterSalesVO);
+                        //更新createdTime时间展示
+                        if (mallAfterSalesVO.getCreatedTime()!=null) {
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
+                            mallAfterSalesVO.setCreatedAtStr(orderAtStr);
+                        }
                         voList.add(mallAfterSalesVO);
                         afterSalesNoList.add(dto.getAfterSalesNo());
                     });
@@ -596,6 +659,24 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
             MallOrderVO mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+
+            //order_at;payed_at;receive_at时间转换为字符串
+            if (mallOrderVO.getOrderAt()!=null) {
+                long time = mallOrderVO.getOrderAt()*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getPayedAt()!=null) {
+                long time = mallOrderVO.getPayedAt()*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getReceiveAt()!=null) {
+                long time = mallOrderVO.getReceiveAt()*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<String> orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
                 List<MallOrderDetailSpecDTO> specList = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);     //查询订单详情规格值表

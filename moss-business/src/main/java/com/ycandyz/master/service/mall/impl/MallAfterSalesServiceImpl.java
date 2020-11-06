@@ -118,6 +118,13 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     mallAfterSalesDTO.setState(state);
                     mallAfterSalesVO = new MallAfterSalesVO();
                     BeanUtils.copyProperties(mallAfterSalesDTO, mallAfterSalesVO);
+
+                    //更新createdTime时间展示
+                    if (mallAfterSalesVO.getCreatedTime()!=null) {
+                        String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
+                        mallAfterSalesVO.setCreatedAtStr(orderAtStr);
+                    }
+
                     MallOrderByAfterSalesDTO mallOrderByAfterSalesDTO = mallAfterSalesDTO.getOrder();
                     if (mallOrderByAfterSalesDTO!=null){
                         //关联订单
@@ -168,6 +175,12 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         if (mallAfterSalesDTO!=null){
             mallAfterSalesVO = new MallAfterSalesVO();
             BeanUtils.copyProperties(mallAfterSalesDTO,mallAfterSalesVO);
+
+            //更新createdTime时间展示
+            if (mallAfterSalesVO.getCreatedTime()!=null) {
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
+                mallAfterSalesVO.setCreatedAtStr(orderAtStr);
+            }
 
             MallOrderByAfterSalesDTO mallOrderByAfterSalesDTO = mallAfterSalesDTO.getOrder();
             Integer orderType = null;   //订单的类型，用来区分是新老订单
@@ -411,6 +424,13 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         List<MallAfterSalesDTO> list = mallAfterSalesDao.getTrendMallAfterSalesList(mallafterSalesQuery);
 
         list.forEach(dto->{
+
+            //更新createdTime时间展示
+            if (dto.getCreatedTime()!=null) {
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(dto.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
+                dto.setCreatedAtStr(orderAtStr);
+            }
+
             //拼接state字段
             Integer subStatus = dto.getSubStatus();
             Integer state = null;
