@@ -24,6 +24,7 @@
         <result column="audit_second_at" property="auditSecondAt" />
         <result column="userName" property="userName" />
         <result column="created_time" property="createdTime" />
+        <result column="createdAtStr" property="createdAtStr" />
         <collection property="order" ofType="com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO">
             <result column="shop_no" property="shopNo" />
             <result column="moOrderNo" property="orderNo" />
@@ -213,7 +214,7 @@
             and sales.shop_no=#{shopNo}
     </select>
 
-    <select id="getTrendMallAfterSalesList" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultType="com.ycandyz.master.dto.mall.MallAfterSalesDTO">
+    <select id="getTrendMallAfterSalesList" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultMap="BaseAfterSalesDetailResultMap">
         SELECT
         sales.id as id,
         sales.after_sales_no,
@@ -234,6 +235,7 @@
         sales.apply_at,
         sales.audit_first_at,
         sales.audit_second_at,
+        sales.created_time,
         concat(u.`name`,' ',u.phone) as userName,
 
         mo.shop_no,
@@ -243,6 +245,7 @@
         mo.real_money,
         mo.deliver_method,
         mo.pay_type,
+        mo.all_money,
         mo.all_money-mo.real_money as shipping_money,
 
         modetail.order_no as detailOrderNo,

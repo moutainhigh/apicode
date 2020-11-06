@@ -57,6 +57,7 @@
         updated_time as updatedTime
         from mall_buyer_shipping_log
         where buyer_shipping_no=#{buyerShippingNo}
+        order by id desc
     </select>
 
     <delete id="deleteByNumber">

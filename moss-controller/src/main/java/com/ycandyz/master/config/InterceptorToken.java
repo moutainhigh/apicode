@@ -12,6 +12,7 @@ import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.enums.ResultEnum;
+import com.ycandyz.master.service.mall.impl.MallShopServiceImpl;
 import com.ycandyz.master.service.user.IUserService;
 import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.RedisUtil;
@@ -48,6 +49,8 @@ public class InterceptorToken implements HandlerInterceptor {
 
     @Resource
     private IUserService userService;
+    @Resource
+    private MallShopServiceImpl mallShopService;
 
     @Autowired
     IgnoreUrlsConfig ignoreUrlsConfig;
@@ -146,8 +149,15 @@ public class InterceptorToken implements HandlerInterceptor {
                         //获取到用户信息
                         //查看shop_no
                         UserVO userVO = userToUserVO(ukeUser);
-                        userVO.setShopNo(shopNo);
                         userVO.setOrganizeId(organizeId);
+                        if(organizeId != null){
+                            LambdaQueryWrapper<MallShop> queryWrapper = new LambdaQueryWrapper<MallShop>()
+                                    .eq(MallShop::getOrganizeId, organizeId);
+                            MallShop mallShop = mallShopService.getOne(queryWrapper);
+                            if(null != mallShop){
+                                userVO.setShopNo(mallShop.getShopNo());
+                            }
+                        }
                         httpServletRequest.getSession().setAttribute(SecurityConstant.USER_TOKEN_HEADER, userVO);
                     }
                 }

@@ -25,6 +25,9 @@
         <result column="shippingMoney" property="shippingMoney" />
         <result column="order_type" property="orderType" />
         <result column="all_money" property="allMoney" />
+        <result column="payedAtStr" property="payedAtStr" />
+        <result column="orderAtStr" property="orderAtStr" />
+        <result column="receiveAtStr" property="receiveAtStr" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -181,11 +184,13 @@
             mo.total_money,
             mo.payed_at,
             mo.pay_type,
+            mo.order_at,
             mo.`status`,
             mo.`after_sales_status`,
             mo.`deliver_type`,
             mo.`deliver_method`,
             mo.all_money-mo.real_money as shippingMoney,
+            mo.all_money,
             concat( u.`name`, ' ', u.phone ) AS payuser,
             concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
             ship.receiver_address AS receiverAddress,
@@ -353,6 +358,9 @@
         <result column="deliver_method" property="deliverMethod" />
         <result column="deliver_type" property="deliverType" />
         <result column="shippingMoney" property="shippingMoney" />
+        <result column="payedAtStr" property="payedAtStr" />
+        <result column="orderAtStr" property="orderAtStr" />
+        <result column="receiveAtStr" property="receiveAtStr" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -428,6 +436,9 @@
         <result column="pick_up_address_name" property="pickUpAddressName" />
         <result column="pick_up_address_detail" property="pickUpAddressDetail" />
         <result column="pre_phone" property="prePhone" />
+        <result column="payedAtStr" property="payedAtStr" />
+        <result column="orderAtStr" property="orderAtStr" />
+        <result column="receiveAtStr" property="receiveAtStr" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />

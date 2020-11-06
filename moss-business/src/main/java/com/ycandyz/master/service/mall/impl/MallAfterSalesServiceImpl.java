@@ -118,6 +118,13 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     mallAfterSalesDTO.setState(state);
                     mallAfterSalesVO = new MallAfterSalesVO();
                     BeanUtils.copyProperties(mallAfterSalesDTO, mallAfterSalesVO);
+
+                    //更新createdTime时间展示
+                    if (mallAfterSalesVO.getCreatedTime()!=null) {
+                        String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
+                        mallAfterSalesVO.setCreatedAtStr(orderAtStr);
+                    }
+
                     MallOrderByAfterSalesDTO mallOrderByAfterSalesDTO = mallAfterSalesDTO.getOrder();
                     if (mallOrderByAfterSalesDTO!=null){
                         //关联订单
@@ -169,6 +176,12 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             mallAfterSalesVO = new MallAfterSalesVO();
             BeanUtils.copyProperties(mallAfterSalesDTO,mallAfterSalesVO);
 
+            //更新createdTime时间展示
+            if (mallAfterSalesVO.getCreatedTime()!=null) {
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
+                mallAfterSalesVO.setCreatedAtStr(orderAtStr);
+            }
+
             MallOrderByAfterSalesDTO mallOrderByAfterSalesDTO = mallAfterSalesDTO.getOrder();
             Integer orderType = null;   //订单的类型，用来区分是新老订单
             if (mallOrderByAfterSalesDTO!=null){
@@ -200,6 +213,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         mallOrderDetailByAfterSalesVO.setPrice(mallOrderDetail.getPrice());
                         mallOrderDetailByAfterSalesVO.setQuantity(mallOrderDetail.getQuantity());
                         mallOrderDetailByAfterSalesVO.setSkuNo(mallOrderDetail.getSkuNo());
+                        mallAfterSalesVO.setDetails(mallOrderDetailByAfterSalesVO);
                     }
                 }
             }else {
@@ -410,6 +424,13 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         List<MallAfterSalesDTO> list = mallAfterSalesDao.getTrendMallAfterSalesList(mallafterSalesQuery);
 
         list.forEach(dto->{
+
+            //更新createdTime时间展示
+            if (dto.getCreatedTime()!=null) {
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(dto.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
+                dto.setCreatedAtStr(orderAtStr);
+            }
+
             //拼接state字段
             Integer subStatus = dto.getSubStatus();
             Integer state = null;
@@ -473,7 +494,10 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             List<String> containsList = addHeader(writer);
             int end = num>(int)size?(int)size:num;
             List<MallAfterSalesDTO> subList = list.subList(0, end);
-            List<Map<String, Object>> result = MapUtil.beanToMap(subList,containsList);
+            MapUtil mapUtil = new MapUtil();
+            List<Map<String, Object>> result = mapUtil.beanToMap(subList,containsList);
+            salesStateCodeToString(result);
+
             writer.write(result, true);
             log.info("第{}sheet导出完成",1);
             int beginIndex = num;
@@ -484,7 +508,8 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 writer.setSheet("第"+i+"页");
                 List<String> containsList2 = addHeader(writer);
                 List<MallAfterSalesDTO> subList2 = list.subList(beginIndex, endIndex);
-                List<Map<String, Object>> result2 = MapUtil.beanToMap(subList2,containsList2);
+                List<Map<String, Object>> result2 = mapUtil.beanToMap(subList2,containsList2);
+                salesStateCodeToString(result2);
                 writer.write(result2, true);
                 beginIndex = endIndex;
                 endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
@@ -516,17 +541,17 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         writer.addHeaderAlias("orderNo", "订单编号");
         writer.addHeaderAlias("itemName", "商品名称");
         writer.addHeaderAlias("goodsNo", "货号");
-        writer.addHeaderAlias("state", "售后类型");
-        writer.addHeaderAlias("status", "售后状态");
+        writer.addHeaderAlias("status", "售后类型");
+        writer.addHeaderAlias("state", "售后状态");
         writer.addHeaderAlias("skuQuantity", "退款数量");
         writer.addHeaderAlias("money", "退款金额（元）");
         writer.addHeaderAlias("allMoney", "总计金额（元）");
-        writer.addHeaderAlias("receiverAddress", "支付方式");
-        writer.addHeaderAlias("orderAt", "购买数量");
+        writer.addHeaderAlias("payType", "支付方式");
+        writer.addHeaderAlias("orderQuantity", "购买数量");
         writer.addHeaderAlias("userName", "购买用户");
         writer.addHeaderAlias("createdAtStr", "售后申请时间");
         List<String> containList = Arrays.asList("afterSalesNo","orderNo","itemName","goodsNo",
-                "state","status","skuQuantity","payuser","receiverName","receiverAddress","orderAt",
+                "status","state","skuQuantity","money","allMoney","payType","orderQuantity",
                 "userName","createdAtStr");
         return containList;
     }
@@ -542,13 +567,6 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 }
                 yestodayfile.delete();
             }
-//            File todayfile = new File(pathpPefix + today + "/" + shopNo);
-//            if (todayfile.exists()){
-//                File[] filePaths = todayfile.listFiles();
-//                if (filePaths != null && filePaths.length > 0){
-//                    Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
-//                }
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -609,5 +627,44 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             }
         });
 
+    }
+
+    /**
+     * 导出excel中的状态码转中文
+     * @param list
+     */
+    private static void salesStateCodeToString(List<Map<String, Object>> list){
+        if (list!=null && list.size()>0){
+            list.forEach(map->{
+                //status
+                if (Objects.equals(map.get("status"),10)){
+                    map.put("status","退货退款");
+                }else if (Objects.equals(map.get("status"),20)){
+                    map.put("status","仅退款");
+                }
+                //state
+                if (Objects.equals(map.get("state"),1)){
+                    map.put("state","待审核");
+                }else if (Objects.equals(map.get("state"),2)){
+                    map.put("state","待买家退货");
+                }else if (Objects.equals(map.get("state"),3)){
+                    map.put("state","待确认退款");
+                }else if (Objects.equals(map.get("state"),4)){
+                    map.put("state","退款成功");
+                }else if (Objects.equals(map.get("state"),5)){
+                    map.put("state","退款失败");
+                }else if (Objects.equals(map.get("state"),6)){
+                    map.put("state","退款关闭");
+                }
+                //payType
+                if (Objects.equals(map.get("payType"),1)){
+                    map.put("payType","支付宝");
+                }else if (Objects.equals(map.get("payType"),2)){
+                    map.put("payType","微信");
+                }else {
+                    map.put("payType","-");
+                }
+            });
+        }
     }
 }

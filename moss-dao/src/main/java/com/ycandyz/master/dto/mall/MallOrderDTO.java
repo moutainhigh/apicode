@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -205,4 +207,94 @@ public class MallOrderDTO {
     private BigDecimal shippingMoney;
     @ApiModelProperty(value = "所属企业")
     private String organizeName;
+
+    /**支付时间字符串*/
+    @ApiModelProperty(value = "支付时间字符串")
+    private String payedAtStr;
+    /**取消订单时间字符串*/
+    @ApiModelProperty(value = "取消订单时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String cancelAtStr;
+    /**该笔订单售后结束时间字符串*/
+    @ApiModelProperty(value = "该笔订单售后结束时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String afterSalesEndAtStr;
+    /**下单时间字符串*/
+    @ApiModelProperty(value = "下单时间字符串")
+    private String orderAtStr;
+    /**商家发货时间字符串*/
+    @ApiModelProperty(value = "商家发货时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String sendAtStr;
+    /**收货时间字符串*/
+    @ApiModelProperty(value = "收货时间字符串")
+    private String receiveAtStr;
+    /**订单关闭时间字符串*/
+    @ApiModelProperty(value = "订单关闭时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String closeAtStr;
+
+    public String getCancelAtStr(){
+        try {
+            if(cancelAt!=0) {
+                Long at = Long.valueOf(cancelAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.cancelAtStr = sd.format(date);
+            }else {
+                this.cancelAtStr = "-";
+            }
+        }catch (Exception e){
+            cancelAtStr = "-";
+        }
+        return cancelAtStr;
+    }
+
+    public String getAfterSalesEndAtStr(){
+        try {
+            if(afterSalesEndAt!=0) {
+                Long at = Long.valueOf(afterSalesEndAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.afterSalesEndAtStr = sd.format(date);
+            }else {
+                this.afterSalesEndAtStr = "-";
+            }
+        }catch (Exception e){
+            afterSalesEndAtStr = "-";
+        }
+        return afterSalesEndAtStr;
+    }
+
+    public String getSendAtStr(){
+        try {
+            if(sendAt!=0) {
+                Long at = Long.valueOf(sendAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.sendAtStr = sd.format(date);
+            }else {
+                this.sendAtStr = "-";
+            }
+        }catch (Exception e){
+            sendAtStr = "-";
+        }
+        return sendAtStr;
+    }
+
+    public String getCloseAtStr(){
+        try {
+            if(closeAt!=0) {
+                Long at = Long.valueOf(closeAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.closeAtStr = sd.format(date);
+            }else {
+                this.closeAtStr = "-";
+            }
+        }catch (Exception e){
+            closeAtStr = "-";
+        }
+        return closeAtStr;
+    }
 }

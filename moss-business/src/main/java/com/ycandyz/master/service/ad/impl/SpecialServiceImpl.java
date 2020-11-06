@@ -144,7 +144,8 @@ public class SpecialServiceImpl extends BaseService<SpecialDao,Special,SpecialQu
     
     @Override
     public Page<Special> page(Page page, SpecialQuery query) {
-        AssertUtils.notNull(query.getShopNo(), "商店编号不能为空");
+        AssertUtils.notNull(getShopNo(), "商店编号不能为空");
+        query.setShopNo(getShopNo());
         if (null != query.getCreatedTimeS() && null != query.getCreatedTimeE() && query.getCreatedTimeS().equals(query.getCreatedTimeE())){
             query.setCreatedTime(query.getCreatedTimeS());
             query.setCreatedTimeS(null);

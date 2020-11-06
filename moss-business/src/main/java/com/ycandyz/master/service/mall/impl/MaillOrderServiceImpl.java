@@ -121,6 +121,25 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         }
                         mallOrderVo = new MallOrderVO();
                         BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
+
+                        //order_at;payed_at;receive_at时间转换为字符串
+                        if (mallOrderVo.getOrderAt()!=null && mallOrderVo.getOrderAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getOrderAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                            mallOrderVo.setOrderAtStr(orderAtStr);
+                        }
+                        if (mallOrderVo.getPayedAt()!=null && mallOrderVo.getPayedAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getPayedAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                            mallOrderVo.setPayedAtStr(orderAtStr);
+                        }
+                        if (mallOrderVo.getReceiveAt()!=null && mallOrderVo.getReceiveAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getReceiveAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                            mallOrderVo.setReceiveAtStr(orderAtStr);
+                        }
+
+
                         //订单列表显示商品名称数组
                         List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
 
@@ -233,13 +252,92 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
         if (list!=null && list.size()>0) {
             for (MallOrderDTO mallOrderDTO : list) {
-                //订单列表显示商品名称数组
-                List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
-                mallOrderDTO.setItemName(itemNames);
-                //订单列表显示商品货号数组
-                List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).filter(x -> x != null && !"".equals(x)).collect(Collectors.toList());
-                mallOrderDTO.setGoodsNo(goodsNos);
 
+                //order_at;payed_at;receive_at时间转换为字符串
+                if (mallOrderDTO.getOrderAt()!=null && mallOrderDTO.getOrderAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getOrderAt())*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                    mallOrderDTO.setOrderAtStr(orderAtStr);
+                }
+                if (mallOrderDTO.getPayedAt()!=null && mallOrderDTO.getPayedAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getPayedAt())*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                    mallOrderDTO.setPayedAtStr(orderAtStr);
+                }
+                if (mallOrderDTO.getReceiveAt()!=null && mallOrderDTO.getReceiveAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getReceiveAt())*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                    mallOrderDTO.setReceiveAtStr(orderAtStr);
+                }
+
+                if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
+                    mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
+                }
+
+                if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0) {
+                    //订单列表显示商品名称数组
+                    List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
+                    mallOrderDTO.setItemName(itemNames);
+                    //订单中的购买商品数量
+                    List<Integer> skuQuantity = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getSkuQuantity).collect(Collectors.toList());
+                    if (skuQuantity != null && skuQuantity.size() > 0) {
+                        int quantity = skuQuantity.stream().reduce(Integer::sum).orElse(0);
+                        mallOrderDTO.setQuantity(quantity);
+                    }
+                    //订单列表显示商品货号数组
+                    List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).filter(x -> x != null && !"".equals(x)).collect(Collectors.toList());
+                    mallOrderDTO.setGoodsNo(goodsNos);
+                    //拼接是否分佣字段 isEnableShare
+                    List<Integer> isEnableShareList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getIsEnableShare).collect(Collectors.toList());
+                    if (isEnableShareList.contains(1) && mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10) { //有分佣
+                        mallOrderDTO.setIsEnableShare(1);
+                    } else { //无分佣
+                        mallOrderDTO.setIsEnableShare(0);
+                    }
+                }
+                if (mallOrderDTO.getStatus()!=50 && mallOrderDTO.getStatus()!=10) {   //已取消订单不展示分销人相关信息
+                    //订单列表显示分销合伙人，分销金额统计
+                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
+                    if (mallSocialShareFlowDTOS != null && mallSocialShareFlowDTOS.size() > 0) {
+                        List<String> sellerUserList = new ArrayList<>();
+                        BigDecimal shareAmount = new BigDecimal(0);
+                        for (MallSocialShareFlowDTO dto : mallSocialShareFlowDTOS) {
+                            if (dto.getShareType()==0) {
+                                String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
+                                sellerUserList.add(sellerUser); //分销合伙人
+                            }
+                            shareAmount = shareAmount.add(dto.getAmount());   //分销佣金
+                        }
+                        mallOrderDTO.setShareAmount(shareAmount);
+                        mallOrderDTO.setSellerUserName(sellerUserList);
+                    }
+                }
+
+                //拼接售后字段
+                List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no", mallOrderDTO.getOrderNo()));
+                if (mallAfterSalesList != null && mallAfterSalesList.size() > 0) {
+                    List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
+                    if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)) {
+                        //退款进行中
+                        mallOrderDTO.setAfterSalesStatus(1);
+                    } else {
+                        mallOrderDTO.setAfterSalesStatus(2);
+                    }
+                } else {
+                    mallOrderDTO.setAfterSalesStatus(0);
+                }
+                if (mallOrderDTO.getAfterSalesStatus() != null) {
+                    //修改售后返回值给前端
+                    if (mallOrderDTO.getAfterSalesStatus() != 0) {
+                        mallOrderDTO.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+                    } else {
+                        if (mallOrderDTO.getAfterSalesEndAt() != null && mallOrderDTO.getAfterSalesEndAt() > new Date().getTime() / 1000) {
+                            mallOrderDTO.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                        } else {
+                            mallOrderDTO.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                        }
+                    }
+                }
             }
         }
 
@@ -274,7 +372,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             List<String> containsList = addHeader(writer);
             int end = num>(int)size?(int)size:num;
             List<MallOrderDTO> subList = list.subList(0, end);
-            List<Map<String, Object>> result = MapUtil.beanToMap(subList,containsList);
+            MapUtil mapUtil = new MapUtil();
+            List<Map<String, Object>> result = mapUtil.beanToMap(subList,containsList);
+            salesStateCodeToString(result);
             writer.write(result, true);
             log.info("第{}sheet导出完成",1);
             int beginIndex = num;
@@ -284,7 +384,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 writer.setSheet("第"+i+"页");
                 List<String> containsList2 = addHeader(writer);
                 List<MallOrderDTO> subList2 = list.subList(beginIndex, endIndex);
-                List<Map<String, Object>> result2 = MapUtil.beanToMap(subList2,containsList2);
+                List<Map<String, Object>> result2 = mapUtil.beanToMap(subList2,containsList2);
+                salesStateCodeToString(result2);
                 writer.write(result2, true);
                 beginIndex = endIndex;
                 endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
@@ -325,12 +426,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         writer.addHeaderAlias("payuser", "购买用户");
         writer.addHeaderAlias("receiverName", "收货人");
         writer.addHeaderAlias("receiverAddress", "收货人地址");
+        writer.addHeaderAlias("deliverType", "发货方式");
         writer.addHeaderAlias("orderAtStr", "下单时间");
         writer.addHeaderAlias("payedAtStr", "支付时间");
         writer.addHeaderAlias("receiveAtStr", "收货时间");
         List<String> containsList = Arrays.asList("cartOrderSn","orderNo","itemName","goodsNo","allMoney",
                 "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
-                "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
+                "payuser","receiverName","receiverAddress","deliverType","orderAtStr","payedAtStr","receiveAtStr");
         return containsList;
     }
 
@@ -364,6 +466,27 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         if (mallOrderDTO != null){
             mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+
+            //order_at;payed_at;receive_at时间转换为字符串
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setPayedAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setReceiveAtStr(orderAtStr);
+            }
+
+            if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
+                mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
+            }
 
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<MallOrderDetailVO> detailVOList = new ArrayList<>();
@@ -429,6 +552,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallAfterSalesDTOs.forEach(dto -> {
                         MallAfterSalesVO mallAfterSalesVO = new MallAfterSalesVO();
                         BeanUtils.copyProperties(dto, mallAfterSalesVO);
+                        //更新createdTime时间展示
+                        if (mallAfterSalesVO.getCreatedTime()!=null) {
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
+                            mallAfterSalesVO.setCreatedAtStr(orderAtStr);
+                        }
                         voList.add(mallAfterSalesVO);
                         afterSalesNoList.add(dto.getAfterSalesNo());
                     });
@@ -531,6 +659,24 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
             MallOrderVO mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+
+            //order_at;payed_at;receive_at时间转换为字符串
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setPayedAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setReceiveAtStr(orderAtStr);
+            }
+
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<String> orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
                 List<MallOrderDetailSpecDTO> specList = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);     //查询订单详情规格值表
@@ -595,4 +741,56 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return ReturnResponse.failed("未查询到待自提订单");
     }
 
+    /**
+     * 导出excel中的状态码转中文
+     * @param list
+     */
+    private static void salesStateCodeToString(List<Map<String, Object>> list) {
+        if (list != null && list.size() > 0) {
+            list.forEach(map -> {
+                //payType
+                if (Objects.equals(map.get("payType"), 1)) {
+                    map.put("payType", "支付宝");
+                } else if (Objects.equals(map.get("payType"), 2)) {
+                    map.put("payType", "微信");
+                } else {
+                    map.put("payType", "未知");
+                }
+                //status
+                if (Objects.equals(map.get("status"), 10)) {
+                    map.put("status", "待支付");
+                } else if (Objects.equals(map.get("status"), 20)) {
+                    map.put("status", "待发货");
+                } else if (Objects.equals(map.get("status"), 30)) {
+                    map.put("status", "待收货");
+                } else if (Objects.equals(map.get("status"), 40)) {
+                    map.put("status", "已收货");
+                } else if (Objects.equals(map.get("status"), 50)) {
+                    map.put("status", "已取消");
+                } else if (Objects.equals(map.get("status"), 60)) {
+                    map.put("status", "完成");
+                }
+                //isEnableShare
+                if (Objects.equals(map.get("isEnableShare"), 0)) {
+                    map.put("isEnableShare", "否");
+                } else if (Objects.equals(map.get("isEnableShare"), 1)) {
+                    map.put("isEnableShare", "是");
+                }
+                //asStatus
+                if (Objects.equals(map.get("asStatus"), 100)) {
+                    map.put("asStatus", "暂无");
+                } else if (Objects.equals(map.get("asStatus"), 110)) {
+                    map.put("asStatus", "否");
+                } else if (Objects.equals(map.get("asStatus"), 111)) {
+                    map.put("asStatus", "是");
+                }
+                //deliverType
+                if (Objects.equals(map.get("deliverType"), 1)) {
+                    map.put("deliverType", "配送");
+                } else if (Objects.equals(map.get("deliverType"), 2)) {
+                    map.put("deliverType", "自提");
+                }
+            });
+        }
+    }
 }

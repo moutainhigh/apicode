@@ -33,5 +33,6 @@
         updated_time as updatedTime
         from mall_after_sales_log
         where shop_no=#{shopNo} and after_sales_no=#{afterSalesNo}
+        order by id desc
     </select>
 </mapper>

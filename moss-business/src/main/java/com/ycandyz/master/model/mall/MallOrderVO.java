@@ -214,7 +214,6 @@ public class MallOrderVO {
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")
-    @Getter(AccessLevel.NONE)
     private String payedAtStr;
     /**取消订单时间字符串*/
     @ApiModelProperty(value = "取消订单时间字符串")
@@ -226,7 +225,6 @@ public class MallOrderVO {
     private String afterSalesEndAtStr;
     /**下单时间字符串*/
     @ApiModelProperty(value = "下单时间字符串")
-    @Getter(AccessLevel.NONE)
     private String orderAtStr;
     /**商家发货时间字符串*/
     @ApiModelProperty(value = "商家发货时间字符串")
@@ -234,29 +232,11 @@ public class MallOrderVO {
     private String sendAtStr;
     /**收货时间字符串*/
     @ApiModelProperty(value = "收货时间字符串")
-    @Getter(AccessLevel.NONE)
     private String receiveAtStr;
     /**订单关闭时间字符串*/
     @ApiModelProperty(value = "订单关闭时间字符串")
     @Getter(AccessLevel.NONE)
     private String closeAtStr;
-
-
-    public String getPayedAtStr(){
-        try {
-            if(payedAt!=0) {
-                Long at = Long.valueOf(payedAt) * 1000;
-                Date date = new Date(at);
-                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                this.payedAtStr = sd.format(date);
-            }else {
-                this.payedAtStr = "-";
-            }
-        }catch (Exception e){
-            payedAtStr = "-";
-        }
-        return payedAtStr;
-    }
 
     public String getCancelAtStr(){
         try {
@@ -290,22 +270,6 @@ public class MallOrderVO {
         return afterSalesEndAtStr;
     }
 
-    public String getOrderAtStr(){
-        try {
-            if(orderAt!=0) {
-                Long at = Long.valueOf(orderAt) * 1000;
-                Date date = new Date(at);
-                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                this.orderAtStr = sd.format(date);
-            }else {
-                this.orderAtStr = "-";
-            }
-        }catch (Exception e){
-            orderAtStr = "-";
-        }
-        return orderAtStr;
-    }
-
     public String getSendAtStr(){
         try {
             if(sendAt!=0) {
@@ -320,22 +284,6 @@ public class MallOrderVO {
             sendAtStr = "-";
         }
         return sendAtStr;
-    }
-
-    public String getReceiveAtStr(){
-        try {
-            if(receiveAt!=0) {
-                Long at = Long.valueOf(receiveAt) * 1000;
-                Date date = new Date(at);
-                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                this.receiveAtStr = sd.format(date);
-            }else {
-                this.receiveAtStr = "-";
-            }
-        }catch (Exception e){
-            receiveAtStr = "-";
-        }
-        return receiveAtStr;
     }
 
     public String getCloseAtStr(){
