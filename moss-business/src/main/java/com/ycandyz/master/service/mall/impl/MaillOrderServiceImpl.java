@@ -123,20 +123,20 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
 
                         //order_at;payed_at;receive_at时间转换为字符串
-                        if (mallOrderVo.getOrderAt()!=null) {
-                            long time = mallOrderVo.getOrderAt()*1000;
+                        if (mallOrderVo.getOrderAt()!=null && mallOrderVo.getOrderAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getOrderAt())*1000;
                             String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                             mallOrderVo.setOrderAtStr(orderAtStr);
                         }
-                        if (mallOrderVo.getPayedAt()!=null) {
-                            long time = mallOrderVo.getPayedAt()*1000;
+                        if (mallOrderVo.getPayedAt()!=null && mallOrderVo.getPayedAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getPayedAt())*1000;
                             String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                            mallOrderVo.setOrderAtStr(orderAtStr);
+                            mallOrderVo.setPayedAtStr(orderAtStr);
                         }
-                        if (mallOrderVo.getReceiveAt()!=null) {
-                            long time = mallOrderVo.getReceiveAt()*1000;
+                        if (mallOrderVo.getReceiveAt()!=null && mallOrderVo.getReceiveAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getReceiveAt())*1000;
                             String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                            mallOrderVo.setOrderAtStr(orderAtStr);
+                            mallOrderVo.setReceiveAtStr(orderAtStr);
                         }
 
 
@@ -254,20 +254,20 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             for (MallOrderDTO mallOrderDTO : list) {
 
                 //order_at;payed_at;receive_at时间转换为字符串
-                if (mallOrderDTO.getOrderAt()!=null) {
-                    long time = mallOrderDTO.getOrderAt()*1000;
+                if (mallOrderDTO.getOrderAt()!=null && mallOrderDTO.getOrderAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getOrderAt())*1000;
                     String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                     mallOrderDTO.setOrderAtStr(orderAtStr);
                 }
-                if (mallOrderDTO.getPayedAt()!=null) {
-                    long time = mallOrderDTO.getPayedAt()*1000;
+                if (mallOrderDTO.getPayedAt()!=null && mallOrderDTO.getPayedAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getPayedAt())*1000;
                     String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                    mallOrderDTO.setOrderAtStr(orderAtStr);
+                    mallOrderDTO.setPayedAtStr(orderAtStr);
                 }
-                if (mallOrderDTO.getReceiveAt()!=null) {
-                    long time = mallOrderDTO.getReceiveAt()*1000;
+                if (mallOrderDTO.getReceiveAt()!=null && mallOrderDTO.getReceiveAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getReceiveAt())*1000;
                     String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                    mallOrderDTO.setOrderAtStr(orderAtStr);
+                    mallOrderDTO.setReceiveAtStr(orderAtStr);
                 }
 
                 if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
@@ -468,20 +468,20 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
 
             //order_at;payed_at;receive_at时间转换为字符串
-            if (mallOrderVO.getOrderAt()!=null) {
-                long time = mallOrderVO.getOrderAt()*1000;
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
                 String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setOrderAtStr(orderAtStr);
             }
-            if (mallOrderVO.getPayedAt()!=null) {
-                long time = mallOrderVO.getPayedAt()*1000;
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
                 String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setOrderAtStr(orderAtStr);
+                mallOrderVO.setPayedAtStr(orderAtStr);
             }
-            if (mallOrderVO.getReceiveAt()!=null) {
-                long time = mallOrderVO.getReceiveAt()*1000;
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
                 String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setOrderAtStr(orderAtStr);
+                mallOrderVO.setReceiveAtStr(orderAtStr);
             }
 
             if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
@@ -661,20 +661,20 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
 
             //order_at;payed_at;receive_at时间转换为字符串
-            if (mallOrderVO.getOrderAt()!=null) {
-                long time = mallOrderVO.getOrderAt()*1000;
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
                 String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setOrderAtStr(orderAtStr);
             }
-            if (mallOrderVO.getPayedAt()!=null) {
-                long time = mallOrderVO.getPayedAt()*1000;
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
                 String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setOrderAtStr(orderAtStr);
+                mallOrderVO.setPayedAtStr(orderAtStr);
             }
-            if (mallOrderVO.getReceiveAt()!=null) {
-                long time = mallOrderVO.getReceiveAt()*1000;
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
                 String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setOrderAtStr(orderAtStr);
+                mallOrderVO.setReceiveAtStr(orderAtStr);
             }
 
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
