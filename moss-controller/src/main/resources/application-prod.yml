@@ -22,7 +22,7 @@ spring:
   redis:
     host: youchuan-prod-redis-1.5fqnep.ng.0001.cnn1.cache.amazonaws.com.cn
     port: 6379
-    database: 3
+    database: 0
     password: 1MVFIWVUS!@VX%qx
 
 mybatis:
