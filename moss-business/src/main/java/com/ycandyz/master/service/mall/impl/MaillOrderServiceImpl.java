@@ -88,6 +88,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Autowired
     private OrganizeRelDao organizeRelDao;
 
+    @Autowired
+    private MallShopDao mallShopDao;
+
     @Value("${excel.sheet}")
     private int num;
 
@@ -99,9 +102,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             mallOrderQuery.setShopNo(userVO.getShopNo());
         }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
             Long groupOrganizeId = userVO.getOrganizeId();   //集团id
-            List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id",groupOrganizeId));
-            if (organizeRels!=null && organizeRels.size()>0){
-                List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+            if (groupOrganizeId!=null) {
+                List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                if (organizeRels != null && organizeRels.size() > 0) {
+                    List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                    List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
+
+                }
             }
         }
 
