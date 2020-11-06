@@ -10,6 +10,7 @@ import com.ycandyz.master.constant.CommonConstant;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.dao.organize.OrganizeDao;
+import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.dao.user.UserExportRecordDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
@@ -18,6 +19,7 @@ import com.ycandyz.master.dto.mall.*;
 import com.ycandyz.master.dto.organize.OrganizeDTO;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallOrder;
+import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.entities.user.UserExportRecord;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.model.mall.*;
@@ -83,6 +85,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Autowired
     private IUserExportRecordService iUserExportRecordService;
 
+    @Autowired
+    private OrganizeRelDao organizeRelDao;
+
     @Value("${excel.sheet}")
     private int num;
 
@@ -90,16 +95,15 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
         MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
         //获取企业id
-//        if (mallOrderQuery.getOrganizeId()==null) {
-//            return ReturnResponse.failed("传入企业id参数为空");
-//        }
-//        Long organizeId = mallOrderQuery.getOrganizeId();
-
-//        if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
-//            mallOrderQuery.setShopNo(userVO.getShopNo());
-//        }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
-//
-//        }
+        if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
+            mallOrderQuery.setShopNo(userVO.getShopNo());
+        }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
+            Long groupOrganizeId = userVO.getOrganizeId();   //集团id
+            List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id",groupOrganizeId));
+            if (organizeRels!=null && organizeRels.size()>0){
+                List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+            }
+        }
 
         mallOrderQuery.setShopNo(userVO.getShopNo());
 
