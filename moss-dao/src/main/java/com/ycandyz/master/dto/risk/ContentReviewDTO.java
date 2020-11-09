@@ -9,6 +9,8 @@ import java.util.Date;
 @Data
 public class ContentReviewDTO {
 
+    @ApiModelProperty(value = "id")
+    private Long contentId;
 
     @ApiModelProperty(value = "内容")
     private Object content;

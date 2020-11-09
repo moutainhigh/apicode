@@ -5,6 +5,7 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
+import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
 import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
 import com.ycandyz.master.request.UserRequest;
@@ -16,6 +17,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -58,9 +61,14 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
      * @Version: V1.0
     */
     @Override
-    public BaseTabooWords selById(Long id) {
+    public BaseTabooWordsRep selById(Long id) {
         BaseTabooWords baseTabooWords = baseTabooWordsDao.selById(id);
-        return baseTabooWords;
+        BaseTabooWordsRep baseTabooWordsRep = new BaseTabooWordsRep();
+        if (baseTabooWords.getTabooWords() != null){
+            baseTabooWordsRep.setTabooWords(MyCollectionUtils.parseIds(baseTabooWords.getTabooWords()));
+        }
+        BeanUtils.copyProperties(baseTabooWords,baseTabooWordsRep);
+        return baseTabooWordsRep;
     }
 
     @Override
@@ -70,17 +78,33 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     }
 
     @Override
-    public Page<BaseTabooWords> selectList(RequestParams<BaseTabooWordsQuery> requestParams) {
+    public Page<BaseTabooWordsRep> selectList(RequestParams<BaseTabooWordsQuery> requestParams) {
         BaseTabooWordsQuery baseTabooWordsQuery = requestParams.getT();
         Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
-        Page<BaseTabooWords> page = null;
+        Page<BaseTabooWordsRep> page1 =  new Page<>();
+        List<BaseTabooWordsRep> recordReps = new ArrayList<>();
+
         try {
-            page = baseTabooWordsDao.selectList(pageQuery, baseTabooWordsQuery);
+            Page<BaseTabooWords> page = baseTabooWordsDao.selectList(pageQuery, baseTabooWordsQuery);
+            List<BaseTabooWords> records = page.getRecords();
+
+            for (BaseTabooWords b: records) {
+                BaseTabooWordsRep baseTabooWordsRep = new BaseTabooWordsRep();
+                if (b.getTabooWords() != null){
+                    baseTabooWordsRep.setTabooWords(MyCollectionUtils.parseIds(b.getTabooWords()));
+                }
+                BeanUtils.copyProperties(b,baseTabooWordsRep);
+                recordReps.add(baseTabooWordsRep);
+            }
+            page1.setPages(requestParams.getPage());
+            page1.setCurrent(requestParams.getPage());
+            page1.setRecords(recordReps);
+            page1.setSize(requestParams.getPage_size());
         }catch (Exception e){
             log.error("error:{}",e.getMessage());
-            page = new Page<>(0,10,0);
+            page1 = new Page<>(0,requestParams.getPage_size(),0);
         }
-        return page;
+        return page1;
     }
 
     @Override

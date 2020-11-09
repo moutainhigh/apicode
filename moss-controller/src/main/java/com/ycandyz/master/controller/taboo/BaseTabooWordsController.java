@@ -5,6 +5,7 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
+import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
 import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
 import com.ycandyz.master.service.taboo.IBaseTabooWordsService;
@@ -43,8 +44,8 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
 	
 	@ApiOperation(value = "查询根据ID")
     @GetMapping(value = "/select/{id}")
-	public ReturnResponse<BaseTabooWords> getById(@PathVariable Long id) {
-        BaseTabooWords baseTabooWords = baseTabooWordsServicel.selById(id);
+	public ReturnResponse<BaseTabooWordsRep> getById(@PathVariable Long id) {
+        BaseTabooWordsRep baseTabooWords = baseTabooWordsServicel.selById(id);
         return ReturnResponse.success(baseTabooWords);
     }
 
@@ -63,8 +64,8 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
 
     @ApiOperation(value = "查询全部")
     @PostMapping(value = "/select/list")
-    public ReturnResponse<Page<BaseTabooWords>> selectList(RequestParams<BaseTabooWordsQuery> query) {
-        Page<BaseTabooWords> page = baseTabooWordsServicel.selectList(query);
+    public ReturnResponse<Page<BaseTabooWordsRep>> selectList(RequestParams<BaseTabooWordsQuery> query) {
+        Page<BaseTabooWordsRep> page = baseTabooWordsServicel.selectList(query);
         return ReturnResponse.success(page);
     }
     

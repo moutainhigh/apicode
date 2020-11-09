@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
+import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
 import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
 /**
@@ -20,11 +21,11 @@ public interface IBaseTabooWordsService extends IService<BaseTabooWords>{
 
     void addBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO);
 
-    BaseTabooWords selById(Long id);
+    BaseTabooWordsRep selById(Long id);
 
     int delById(Long id);
 
-    Page<BaseTabooWords> selectList(RequestParams<BaseTabooWordsQuery> query);
+    Page<BaseTabooWordsRep> selectList(RequestParams<BaseTabooWordsQuery> query);
 
     int updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO);
 }

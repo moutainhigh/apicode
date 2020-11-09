@@ -25,7 +25,7 @@
 
             select * from (
             select concat_ws(";",m.item_name,m.item_text,m.banners,m.share_descr,m.share_img) as content,
-            c.type ,c.created_time,
+            c.content_id,c.type ,c.created_time,
             c.updated_time,c.auditor,c.audit_time,c.audit_result
             from content_review c
             inner join mall_item m
@@ -62,7 +62,7 @@
                 and m.is_del = #{con.auditResult}
             </if>
             union
-            select group_concat(f.content,fp.photo_url SEPARATOR ';') as content,c.type,c.created_time,
+            select group_concat(f.content,fp.photo_url SEPARATOR ';') as content,c.content_id,c.type,c.created_time,
             c.updated_time,c.auditor,c.audit_time ,c.audit_result
             from content_review c
             inner join footprint f
@@ -102,7 +102,7 @@
             </if>
             group by c.content_id
             union
-            select concat_ws(";",o.abstract,o.title,o.cover,o.link_url,ond.content) as content,c.type,c.created_time,
+            select concat_ws(";",o.abstract,o.title,o.cover,o.link_url,ond.content) as content,c.content_id,c.type,c.created_time,
             c.updated_time,c.auditor,c.audit_time,c.audit_result
             from content_review c
             inner join organize_news o
