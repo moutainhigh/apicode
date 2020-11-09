@@ -23,12 +23,10 @@ import java.util.*;
 public class YcCodeGenerator {
 
 	protected static final Logger log = LoggerFactory.getLogger(YcCodeGenerator.class);
-
-
 	//表名
-	private static final String tableName = "mall_shop";
+	private static final String tableName = "base_bank";
 	//生成文件所在目录层级
-	private static final String moduleName = "mall";
+	private static final String moduleName = "base";
 	private static final String daoName = "moss-dao";
 	private static final String serviceName = "moss-business";
 	private static final String controllerName = "moss-controller";
