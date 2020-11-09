@@ -10,8 +10,11 @@ import java.util.List;
 @Data
 public class ContentReviewRep {
 
-    @ApiModelProperty(value = "商品详情id")
-    private Long itemNo;
+    @ApiModelProperty(value = "商品详情itemNo;商友圈id;企业动态id")
+    private Long id;
+
+//    @ApiModelProperty(value = "商品详情id")
+//    private Long itemNo;
 
     @ApiModelProperty(value = "商品名称")
     private String itemName;
@@ -26,8 +29,8 @@ public class ContentReviewRep {
     private String[] itemImgUrls;
 
     //f.f_content,fp.photo_url
-    @ApiModelProperty(value = "商友圈id")
-    private Long fId;
+//    @ApiModelProperty(value = "商友圈id")
+//    private Long fId;
 
     @ApiModelProperty(value = "商友圈footprint内容")
     private String fcontent;
@@ -36,8 +39,8 @@ public class ContentReviewRep {
     private List<String> fphotoUrls;
 
     //o.abstract,o.title,o.cover,o.link_url,ond.ond_content
-    @ApiModelProperty(value = "企业动态id")
-    private Long oId;
+//    @ApiModelProperty(value = "企业动态id")
+//    private Long oId;
 
     @ApiModelProperty(value = "企业动态摘要")
     private String oabstracts;

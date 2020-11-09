@@ -63,7 +63,7 @@ public class MallItemHandler extends AbstractHandler {
         if (contentReviewDTO != null && contentReviewDTO.getContent() != null){
             String content = String.valueOf(contentReviewDTO.getContent());
             BeanUtils.copyProperties(contentReviewDTO,contentReviewRep);
-            contentReviewRep.setItemNo(contentReviewDTO.getContentId());
+            contentReviewRep.setId(contentReviewDTO.getContentId());
             if (content != null){
                 String[] split = content.split(";",-1);
                 if (content.startsWith(";")){

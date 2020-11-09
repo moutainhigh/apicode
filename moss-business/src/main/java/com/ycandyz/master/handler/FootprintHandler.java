@@ -69,7 +69,7 @@ public class FootprintHandler extends AbstractHandler {
                 Arrays.stream(split).forEach(s1 -> imgUrls.add(PatternUtils.reg(s1)));
                 content = split[0].split("https")[0];
             }
-            contentReviewRep.setFId(contentReviewDTO.getContentId());
+            contentReviewRep.setId(contentReviewDTO.getContentId());
             contentReviewRep.setFcontent(content);
             contentReviewRep.setFphotoUrls(imgUrls);
         }

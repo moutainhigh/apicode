@@ -59,7 +59,7 @@ public class OrganizeNewsHandler extends AbstractHandler {
 //        private String ondContent;
         if (contentReviewDTO != null && contentReviewDTO.getContent() != null){
             BeanUtils.copyProperties(contentReviewDTO,contentReviewRep);
-            contentReviewRep.setOId(contentReviewDTO.getContentId());
+            contentReviewRep.setId(contentReviewDTO.getContentId());
             String content = String.valueOf(contentReviewDTO.getContent());
             if (content != null){
                 String[] split = content.split(";",-1);
