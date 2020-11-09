@@ -9,26 +9,20 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.constant.CommonConstant;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
-import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dao.organize.OrganizeRelDao;
-import com.ycandyz.master.dao.user.UserExportRecordDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.dto.mall.*;
-import com.ycandyz.master.dto.organize.OrganizeDTO;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallOrder;
+import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.entities.organize.OrganizeRel;
-import com.ycandyz.master.entities.user.UserExportRecord;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.user.IUserExportRecordService;
 import com.ycandyz.master.utils.*;
-import eu.bitwalker.useragentutils.Browser;
-import eu.bitwalker.useragentutils.OperatingSystem;
-import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -37,9 +31,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
@@ -88,9 +79,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Autowired
     private OrganizeRelDao organizeRelDao;
 
-    @Autowired
-    private MallShopDao mallShopDao;
-
     @Value("${excel.sheet}")
     private int num;
 
@@ -99,20 +87,30 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
         //获取企业id
         if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
-            mallOrderQuery.setShopNo(userVO.getShopNo());
+            mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
         }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
-            Long groupOrganizeId = userVO.getOrganizeId();   //集团id
-            if (groupOrganizeId!=null) {
-                List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
-                if (organizeRels != null && organizeRels.size() > 0) {
-                    List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
-                    List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
-
+            if (mallOrderQuery.getChildOrganizeId()==null || "".equals(mallOrderQuery.getChildOrganizeId()) || mallOrderQuery.getChildOrganizeId().equals("0")){
+                //查询集团所有数据
+                Long groupOrganizeId = userVO.getOrganizeId();   //集团id
+                if (groupOrganizeId!=null) {
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    if (organizeRels != null && organizeRels.size() > 0) {
+                        List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                        List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
+                        if (mallShopDTOS!=null && mallShopDTOS.size()>0){
+                            List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
+                            mallOrderQuery.setShopNo(shopNos);
+                        }
+                    }
+                }
+            }else {
+                mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+                MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallOrderQuery.getChildOrganizeId()));
+                if (mallShop!=null){
+                    mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
                 }
             }
         }
-
-        mallOrderQuery.setShopNo(userVO.getShopNo());
 
         List<MallOrderVO> list = new ArrayList<>();
         Page<MallOrderVO> page1 = new Page<>();
@@ -256,8 +254,32 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     public MallOrderExportResp exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
-        String shopNo = userVO.getShopNo();
-        mallOrderQuery.setShopNo(shopNo);
+        //获取企业id
+        if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
+            mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+        }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
+            if (mallOrderQuery.getChildOrganizeId()==null || "".equals(mallOrderQuery.getChildOrganizeId()) || mallOrderQuery.getChildOrganizeId().equals("0")){
+                //查询集团所有数据
+                Long groupOrganizeId = userVO.getOrganizeId();   //集团id
+                if (groupOrganizeId!=null) {
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    if (organizeRels != null && organizeRels.size() > 0) {
+                        List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                        List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
+                        if (mallShopDTOS!=null && mallShopDTOS.size()>0){
+                            List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
+                            mallOrderQuery.setShopNo(shopNos);
+                        }
+                    }
+                }
+            }else {
+                mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+                MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallOrderQuery.getChildOrganizeId()));
+                if (mallShop!=null){
+                    mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
+                }
+            }
+        }
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
 
 
@@ -366,7 +388,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             String randomnum = String.valueOf(IDGeneratorUtils.getLongId());
             String pathpPefix = System.getProperty("user.dir") + "/xls/";
             String fileName =today + status + "订单.xls";
-            String suffix = today + CommonConstant.SLASH + randomnum + CommonConstant.SLASH + shopNo + CommonConstant.SLASH +fileName;
+            String suffix = today + CommonConstant.SLASH + randomnum + CommonConstant.SLASH + userVO.getOrganizeId() + CommonConstant.SLASH +fileName;
             String path = pathpPefix + suffix;
             deleteFile(yestoday,pathpPefix);
             ExcelWriter writer = ExcelUtil.getWriter(path,"第1页");
