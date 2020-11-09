@@ -21,4 +21,6 @@ public interface MallItemDao {
     int updateMallItem(@Param("mallItem") MallItem mallItem, @Param("shopNo") String shopNo);
 
     int updateOneMallItem(@Param("contentId") String contentId,@Param("oper") Integer oper);
+
+    int handleExamine(@Param("oper") Integer oper,@Param("ids") List<String> ids);
 }

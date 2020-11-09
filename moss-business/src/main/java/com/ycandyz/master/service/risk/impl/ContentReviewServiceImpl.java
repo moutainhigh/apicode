@@ -1,24 +1,23 @@
 package com.ycandyz.master.service.risk.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.ycandyz.master.abstracts.AbstractHandler;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dao.risk.ContentreviewDao;
-import com.ycandyz.master.domain.query.risk.ContentReviewQuery;
-import com.ycandyz.master.domain.query.risk.ReviewParam;
+import com.ycandyz.master.domain.query.risk.*;
 import com.ycandyz.master.domain.response.risk.ContentReviewRep;
-import com.ycandyz.master.dto.mall.MallOrderDTO;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
 import com.ycandyz.master.handler.HandlerContext;
-import com.ycandyz.master.model.mall.MallOrderVO;
 import com.ycandyz.master.service.risk.ContentReviewService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Slf4j
@@ -27,21 +26,6 @@ public class ContentReviewServiceImpl implements ContentReviewService {
 
     @Autowired
     private ContentreviewDao contentreviewDao;
-
-    @Override
-    public Page<List<ContentReviewDTO>> listMallItem(RequestParams<ContentReviewQuery> requestParams) {
-            ContentReviewQuery contentReviewQuery = requestParams.getT();
-            Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
-            Page<List<ContentReviewDTO>> page = new Page<>();
-            try {
-                page = contentreviewDao.listMallItem(pageQuery,contentReviewQuery);
-
-            }catch (Exception e){
-                log.error("error:{}",e.getMessage());
-                page = new Page<>(0,10,0);
-            }
-        return page;
-    }
 
     @Override
     public ReturnResponse<Page<ContentReviewRep>> list(RequestParams<ContentReviewQuery> requestParams) {
@@ -75,21 +59,43 @@ public class ContentReviewServiceImpl implements ContentReviewService {
         return ReturnResponse.success(page1);
     }
 
+    //批量通过/屏蔽
+    @Override
+    @Transactional
+    public ReturnResponse batchExamine(ReviewBatchExamineParam reviewParams) {
+        if (reviewParams == null){
+            return ReturnResponse.success(null,"无通过或屏蔽的数据");
+        }
+        Integer oper = reviewParams.getOper();
+        Multimap<Integer,Long> myMultimap = ArrayListMultimap.create();
+        List<ExamineParam> examineParams = reviewParams.getExamineParams();
+        if (examineParams != null){
+            examineParams.stream().forEach(s-> {
+                myMultimap.put(s.getType(),s.getContentId());
+            });
+        }
+        Map<Integer,Map<Integer,List<Long>>> allMaps = new HashMap<>();
+        myMultimap.forEach((mk,mv)->{
+            List<Long> ids = (List<Long>) myMultimap.get(mk);
+            Map<Integer,List<Long>> maps = new HashMap<>();
+            maps.put(oper,ids);
+            allMaps.put(mk,maps);
+        });
+        ReturnResponse re;
+        allMaps.forEach((k,v) -> {
+            AbstractHandler handler = HandlerContext.getHandler(k);
+            ReturnResponse returnResponse = handler.handleExamine(v);
+        });
+        return null;
+    }
+
 
     //通过/屏蔽
     @Override
-    public ReturnResponse updateStatus(ReviewParam reviewParam) {
+    public ReturnResponse examine(ReviewParam reviewParam) {
         AbstractHandler handler = HandlerContext.getHandler(reviewParam.getType());
-        ReturnResponse returnResponse = handler.handle(reviewParam);
+        ReturnResponse returnResponse = handler.examine(reviewParam);
         return returnResponse;
-    }
-
-    @Override
-    public Page<List<ContentReviewDTO>> listFootprint(RequestParams<ContentReviewQuery> requestParams) {
-        ContentReviewQuery contentReviewQuery = requestParams.getT();
-        Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
-        Page<List<ContentReviewDTO>> listPage = contentreviewDao.listFootprint(pageQuery, contentReviewQuery);
-        return null;
     }
 
 }

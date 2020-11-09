@@ -34,6 +34,17 @@
     <update id="updateOneOrganizeNews">
         update organize_news set is_del = #{oper} where id = #{contentId};
     </update>
+    <update id="handleExamine">
+        update organize_news
+        <set>
+            is_del = #{oper},
+            updated_at = unix_timestamp(now())
+            where id in
+            <foreach item="item" collection="ids" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </set>
+    </update>
     <select id="selectFootprintQuery" resultType="com.ycandyz.master.domain.query.organize.OrganizeNewsQuery" parameterType="java.lang.Integer">
         select id,organizeId,title,`abstract` from organize_news limit #{pageOffset},#{pageSize};
     </select>

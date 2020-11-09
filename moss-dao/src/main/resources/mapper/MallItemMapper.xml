@@ -89,7 +89,18 @@
         where shop_no = #{shopNo,jdbcType=VARCHAR} and item_no = #{mallItem.itemNo,jdbcType=VARCHAR};
     </update>
     <update id="updateOneMallItem">
-        update mall_item set status = #{oper} where item_no = #{contentId};
+        update mall_item set is_del = #{oper} where item_no = #{contentId};
+    </update>
+    <update id="handleExamine">
+        update mall_item
+        <set>
+            is_del = #{oper},
+            updated_time = now()
+            where item_no in
+            <foreach item="item" collection="ids" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </set>
     </update>
 
 </mapper>

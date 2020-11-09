@@ -13,7 +13,7 @@ public class ContentReviewRep {
     @ApiModelProperty(value = "商品名称")
     private String itemName;
 
-    @ApiModelProperty(value = "商品描述")
+    @ApiModelProperty(value = "商品详情")
     private String itemText;
 
     @ApiModelProperty(value = "商品分享描述")
@@ -60,7 +60,7 @@ public class ContentReviewRep {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date auditTime;
 
-    @ApiModelProperty(value = "审核结果")
+    @ApiModelProperty(value = "审核结果 内容审核表记录的结果[表示该条记录是否审核过， 1:待审核 2:已审核]")
     private Integer auditResult;
 
 }

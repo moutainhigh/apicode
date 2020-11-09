@@ -22,6 +22,18 @@
     <update id="updateOneFootprint">
         update footprint set is_del = #{oper} where id = #{contentId};
     </update>
+    <update id="handleExamine">
+        update footprint
+            <set>
+                is_del = #{oper},
+                updated_at = unix_timestamp(now())
+                where id in
+                <foreach item="item" collection="ids" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </set>
+
+    </update>
     <select id="selectFootprint" resultType="com.ycandyz.master.domain.query.footprint.FootprintQuery" parameterType="java.lang.Integer">
         select id,user_id,content from footprint limit  #{pageOffset},#{pageSize};
     </select>
