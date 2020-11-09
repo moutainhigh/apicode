@@ -99,7 +99,10 @@
             LEFT JOIN mall_order_detail modetail ON IF(mo.order_type=2, sales.order_detail_no=modetail.order_detail_no , modetail.order_no = mo.order_no )
             LEFT JOIN user u ON sales.user_id=u.id
             WHERE
-            sales.shop_no=#{p.shopNo}
+            sales.shop_no in
+            <foreach collection="p.shopNo" item="shopNo" index="index" open="(" close=")" separator=",">
+                #{shopNo}
+            </foreach>
             <if test="p.refundNo != null and p.refundNo != ''">
                 and
                 modetail.refund_no like concat('%',#{p.refundNo},'%')
@@ -263,7 +266,10 @@
         LEFT JOIN mall_order_detail modetail ON IF(mo.order_type=2, sales.order_detail_no=modetail.order_detail_no , modetail.order_no = mo.order_no )
         LEFT JOIN user u ON sales.user_id=u.id
         WHERE
-        sales.shop_no=#{p.shopNo}
+        sales.shop_no in
+        <foreach collection="p.shopNo" item="shopNo" index="index" open="(" close=")" separator=",">
+            #{shopNo}
+        </foreach>
         <if test="p.refundNo != null and p.refundNo != ''">
             and
             modetail.refund_no like concat('%',#{p.refundNo},'%')
