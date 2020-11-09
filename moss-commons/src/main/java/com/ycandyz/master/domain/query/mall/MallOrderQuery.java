@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 订单列表搜索传参类
@@ -57,8 +58,7 @@ public class MallOrderQuery implements Serializable {
     @ApiModelProperty(value = "是否售后:0-否，1-是",name="afterSalesStatus",required=true)
     private Integer afterSalesStatus;
     @ApiModelProperty(value = "商店标号",name="shopNo",required=true)
-    @Getter(AccessLevel.NONE)
-    private String shopNo;
+    private List<String> shopNo;
     @ApiModelProperty(value = "10-待支付  20-待发货 30-待收货 40-已收货  50-已取消",name="status",required=true)
     private Integer status;
     @ApiModelProperty(value = "发货开始时间",name="sendAtForm",required=true)
@@ -109,13 +109,6 @@ public class MallOrderQuery implements Serializable {
             socialPartner = socialPartner.trim();
         }
         return socialPartner;
-    }
-
-    public String getShopNo(){
-        if (shopNo!=null){
-            shopNo = shopNo.trim();
-        }
-        return shopNo;
     }
 
 }

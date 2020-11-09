@@ -20,4 +20,26 @@
         where shop_no=#{shopNo}
     </select>
 
+    <select id="queryByOrganizeIdList" parameterType="java.lang.Integer" resultType="com.ycandyz.master.dto.mall.MallShopDTO">
+        select
+            shop_no as shopNo,
+            shop_name as shopName,
+            organize_id as organizeId,
+            bg_img as bgImg,
+            entry_name as entryName,
+            as_hold_days as asHoldDays,
+            cs_contact as csContact,
+            cs_phone_number as csPhoneNumber,
+            cs_weixin_no as csWeixinNo,
+            status as status,
+            operate_status as operateStatus,
+            unix_timestamp(created_time) as createdTime
+        from mall_shop
+        where
+            organize_id in
+        <foreach collection="list" item="organizeId" index="index" open="(" close=")" separator=",">
+            #{organizeId}
+        </foreach>
+    </select>
+
 </mapper>

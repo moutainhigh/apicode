@@ -25,8 +25,8 @@
         <result column="userName" property="userName" />
         <result column="created_time" property="createdTime" />
         <result column="createdAtStr" property="createdAtStr" />
+        <result column="shop_no" property="shopNo" />
         <collection property="order" ofType="com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO">
-            <result column="shop_no" property="shopNo" />
             <result column="moOrderNo" property="orderNo" />
             <result column="moStatus" property="orderStatus" />
             <result column="total_money" property="totalMoney" />
@@ -72,9 +72,9 @@
             sales.audit_first_at,
             sales.audit_second_at,
             sales.created_time,
+            sales.shop_no,
             concat(u.`name`,' ',u.phone) as userName,
 
-            mo.shop_no,
             mo.order_no as moOrderNo,
             mo.status as moStatus,
             mo.total_money,
@@ -99,7 +99,10 @@
             LEFT JOIN mall_order_detail modetail ON IF(mo.order_type=2, sales.order_detail_no=modetail.order_detail_no , modetail.order_no = mo.order_no )
             LEFT JOIN user u ON sales.user_id=u.id
             WHERE
-            sales.shop_no=#{p.shopNo}
+            sales.shop_no in
+            <foreach collection="p.shopNo" item="shopNo" index="index" open="(" close=")" separator=",">
+                #{shopNo}
+            </foreach>
             <if test="p.refundNo != null and p.refundNo != ''">
                 and
                 modetail.refund_no like concat('%',#{p.refundNo},'%')
@@ -236,9 +239,9 @@
         sales.audit_first_at,
         sales.audit_second_at,
         sales.created_time,
+        sales.shop_no,
         concat(u.`name`,' ',u.phone) as userName,
 
-        mo.shop_no,
         mo.order_no as moOrderNo,
         mo.status as moStatus,
         mo.total_money,
@@ -263,7 +266,10 @@
         LEFT JOIN mall_order_detail modetail ON IF(mo.order_type=2, sales.order_detail_no=modetail.order_detail_no , modetail.order_no = mo.order_no )
         LEFT JOIN user u ON sales.user_id=u.id
         WHERE
-        sales.shop_no=#{p.shopNo}
+        sales.shop_no in
+        <foreach collection="p.shopNo" item="shopNo" index="index" open="(" close=")" separator=",">
+            #{shopNo}
+        </foreach>
         <if test="p.refundNo != null and p.refundNo != ''">
             and
             modetail.refund_no like concat('%',#{p.refundNo},'%')
@@ -343,7 +349,8 @@
             sales.remark as remark,
             sales.created_at as createdAt,
             sales.close_at as closeAt,
-            sales.reason as reason
+            sales.reason as reason,
+            sales.shop_no as shopNo
         FROM
             mall_after_sales sales
         where

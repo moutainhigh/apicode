@@ -118,6 +118,8 @@ public class MallAfterSalesDTO {
     private List<MallBuyerShippingLogDTO> buyerShippingLog;
     @ApiModelProperty(value = "本次退款的金额")
     private BigDecimal refundMoney;
+    @ApiModelProperty(value = "所属企业")
+    private String organizeName;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")
