@@ -10,6 +10,7 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.constant.CommonConstant;
 import com.ycandyz.master.dao.mall.*;
+import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.enums.mall.MallAfterSalesEnum;
@@ -17,6 +18,7 @@ import com.ycandyz.master.domain.query.mall.MallafterSalesQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.dto.mall.*;
 import com.ycandyz.master.entities.mall.*;
+import com.ycandyz.master.entities.organize.Organize;
 import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.enums.SalesEnum;
 import com.ycandyz.master.model.mall.*;
@@ -82,6 +84,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     @Autowired
     private OrganizeRelDao organizeRelDao;
 
+    @Autowired
+    private OrganizeDao organizeDao;
+
     @Value("${after-sales-days:7}")
     private Integer afterSalesDays;
 
@@ -95,8 +100,12 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         if (mallafterSalesQuery==null){
             mallafterSalesQuery = new MallafterSalesQuery();
         }
+        List<Integer> organizeIds = new ArrayList<>();  //保存企业id，用于批量查询
+        Map<String, Integer> shopNoAndOrganizeId = new HashMap<>(); //保存shopNo和organizeid    map<shopNo,organizeid>
         if (mallafterSalesQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
             mallafterSalesQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+            organizeIds.add(userVO.getOrganizeId().intValue());
+            shopNoAndOrganizeId.put(userVO.getShopNo(),userVO.getOrganizeId().intValue());
         }else if (mallafterSalesQuery.getIsGroup().equals("1")){ //集团
             if (mallafterSalesQuery.getChildOrganizeId()==null || "".equals(mallafterSalesQuery.getChildOrganizeId()) || mallafterSalesQuery.getChildOrganizeId().equals("0")){
                 //查询集团所有数据
@@ -104,19 +113,24 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 if (groupOrganizeId!=null) {
                     List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
                     if (organizeRels != null && organizeRels.size() > 0) {
-                        List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                        List<Integer> oids = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                        organizeIds.addAll(oids);
                         List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
                         if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
                             mallafterSalesQuery.setShopNo(shopNos);
+                            Map<String, Integer> map = mallShopDTOS.stream().collect(Collectors.toMap(MallShopDTO::getShopNo, MallShopDTO::getOrganizeId));
+                            shopNoAndOrganizeId.putAll(map);
                         }
                     }
                 }
             }else {
                 mallafterSalesQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+                organizeIds.add(Integer.valueOf(mallafterSalesQuery.getChildOrganizeId()));
                 MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallafterSalesQuery.getChildOrganizeId()));
                 if (mallShop!=null){
                     mallafterSalesQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
+                    shopNoAndOrganizeId.put(mallShop.getShopNo(), Integer.valueOf(mallafterSalesQuery.getChildOrganizeId()));
                 }
             }
         }
@@ -126,6 +140,12 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         try {
             page = mallAfterSalesDao.getTrendMallAfterSalesPage(pageQuery, mallafterSalesQuery);
             if (page.getRecords() != null && page.getRecords().size() > 0) {
+
+                //查询企业名称，通过organizedIds
+                List<Organize> organizeList = organizeDao.selectBatchIds(organizeIds);
+                Map<Integer, String> organizeIdAndName = organizeList.stream().collect(Collectors.toMap(Organize::getId, Organize::getFullName));
+
+
                 MallAfterSalesVO mallAfterSalesVO = null;
                 for (MallAfterSalesDTO mallAfterSalesDTO : page.getRecords()) {
                     Integer subStatus = mallAfterSalesDTO.getSubStatus();
@@ -148,6 +168,10 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     mallAfterSalesDTO.setState(state);
                     mallAfterSalesVO = new MallAfterSalesVO();
                     BeanUtils.copyProperties(mallAfterSalesDTO, mallAfterSalesVO);
+
+                    //获取企业名称，拼接进入返回值中
+                    String fullName = organizeIdAndName.get(shopNoAndOrganizeId.get(mallAfterSalesVO.getShopNo()));
+                    mallAfterSalesVO.setOrganizeName(fullName);
 
                     //更新createdTime时间展示
                     if (mallAfterSalesVO.getCreatedTime()!=null) {

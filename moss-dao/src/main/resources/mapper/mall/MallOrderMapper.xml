@@ -58,6 +58,7 @@
             mo.`deliver_type`,
             mo.`deliver_method`,
             mo.`after_sales_end_at`,
+            mo.shop_no,
             mo.all_money-mo.real_money as shippingMoney,
             concat( u.`name`, ' ', u.phone ) AS payuser,
             concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
@@ -195,6 +196,7 @@
             mo.`deliver_method`,
             mo.all_money-mo.real_money as shippingMoney,
             mo.all_money,
+            mo.shop_no,
             concat( u.`name`, ' ', u.phone ) AS payuser,
             concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
             ship.receiver_address AS receiverAddress,
@@ -401,6 +403,7 @@
             mo.`after_sales_status`,
             mo.`deliver_type`,
             mo.total_money-mo.real_money as shippingMoney,
+            mo.shop_no,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
@@ -649,6 +652,7 @@
         a.`deliver_method`,
         a.`after_sales_end_at`,
         a.shippingMoney,
+        a.shop_no,
         concat( u.`name`, ' ', u.phone ) AS payuser,
         concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
         ship.receiver_address AS receiverAddress,
@@ -689,7 +693,8 @@
         mo.all_money - mo.real_money AS shippingMoney,
         mo.receive_at,
         mo.order_type,
-        mo.all_money
+        mo.all_money,
+        mo.shop_no
         FROM
         mall_order mo
         LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
