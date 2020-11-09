@@ -21,7 +21,7 @@ import lombok.Setter;
 public class TabooWordsForReview extends Model {
 
    @ApiModelProperty(value = "词组名称")
-   private Integer phraseName;
+   private String phraseName;
 
    @ApiModelProperty(value = "敏感词")
    private String tabooWords;
