@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import com.ycandyz.master.abstracts.AbstractHandler;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
+import com.ycandyz.master.api.TabooReturnResponse;
 import com.ycandyz.master.dao.risk.ContentreviewDao;
 import com.ycandyz.master.domain.query.risk.*;
 import com.ycandyz.master.domain.response.risk.ContentReviewRep;
@@ -61,7 +62,6 @@ public class ContentReviewServiceImpl implements ContentReviewService {
 
     //批量通过/屏蔽
     @Override
-    @Transactional
     public ReturnResponse batchExamine(ReviewBatchExamineParam reviewParams) {
         if (reviewParams == null){
             return ReturnResponse.success(null,"无通过或屏蔽的数据");
@@ -81,12 +81,15 @@ public class ContentReviewServiceImpl implements ContentReviewService {
             maps.put(oper,ids);
             allMaps.put(mk,maps);
         });
-        ReturnResponse re;
+        TabooReturnResponse tabooReturnResponse = new TabooReturnResponse();
+        List<ReturnResponse> list = new ArrayList<>();
         allMaps.forEach((k,v) -> {
             AbstractHandler handler = HandlerContext.getHandler(k);
             ReturnResponse returnResponse = handler.handleExamine(v);
+            list.add(returnResponse);
         });
-        return null;
+        tabooReturnResponse.setData(list);
+        return ReturnResponse.success(tabooReturnResponse);
     }
 
 

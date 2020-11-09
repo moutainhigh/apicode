@@ -64,7 +64,7 @@ public class ContentReviewController {
     @PostMapping("/content/batchExamine")
     public ReturnResponse updateMallItem(@RequestBody ReviewBatchExamineParam reviewParams) {
         ReturnResponse response = contentReviewService.batchExamine(reviewParams);
-        return ReturnResponse.success(response);
+        return response;
     }
 
 }

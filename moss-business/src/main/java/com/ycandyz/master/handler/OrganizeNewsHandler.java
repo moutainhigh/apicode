@@ -27,13 +27,23 @@ public class OrganizeNewsHandler extends AbstractHandler {
     private OrganizeNewsDao organizeNewsDao;
 
     @Override
+    @Transactional
     public ReturnResponse examine(ReviewParam reviewParam) {
+        if (reviewParam == null ){
+            return ReturnResponse.success("企业动态更新数据为null");
+        }
+        String desc = EnumUtil.getByCode(TabooOperateEnum.class, reviewParam.getOper()).getDesc();
+        Long id = reviewParam.getContentId();
         int i = organizeNewsDao.updateOneOrganizeNews(reviewParam.getContentId(),reviewParam.getOper());
         if (i > 0) {
             updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
-            return ReturnResponse.success("更新成功");
+            log.info("企业动态id为{}的数据审批{}成功",id,desc);
+            String str=String.format("企业动态id为%d的数据审批%s成功",id, desc);
+            return ReturnResponse.success(str);
         }
-        return ReturnResponse.failed("更新失败");
+        log.info("企业动态id为{}的数据审批{}成功",id,desc);
+        String str=String.format("企业动态id为%d的数据审批%s成功",id, desc);
+        return ReturnResponse.success(str);
     }
 
     @Override
@@ -90,13 +100,15 @@ public class OrganizeNewsHandler extends AbstractHandler {
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, oper).getDesc();
         AtomicInteger i = new AtomicInteger();
         maps.forEach((k,v)->{
-            organizeNewsDao.handleExamine(k, v);
-            i.getAndIncrement();
+            int i1 = organizeNewsDao.handleExamine(k, v);
+            i.set(i1);
         });
         if (i.get() == list.size()){
-            return ReturnResponse.success("企业动态批量{}成功",desc);
+            String str=String.format("企业动态批量%s成功", desc);
+            return ReturnResponse.success(str);
         }
-        return ReturnResponse.success("企业动态批量{}}失败",desc);
+        String str=String.format("企业动态批量%s成功", desc);
+        return ReturnResponse.success(str);
     }
 
     @Override

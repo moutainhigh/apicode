@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum TabooOperateEnum implements CodeEnum {
     PASS(0,"通过"),
-    BLOCK(1,"屏蔽"),
+    BLOCK(2,"屏蔽"),
     ;
     private Integer code;
     private String  desc;

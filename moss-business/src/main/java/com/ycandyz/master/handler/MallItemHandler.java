@@ -30,13 +30,23 @@ public class MallItemHandler extends AbstractHandler {
     private MallItemDao mallItemDao;
 
     @Override
+    @Transactional
     public ReturnResponse examine(ReviewParam reviewParam) {
+        if (reviewParam == null ){
+            return ReturnResponse.success("商品详情更新数据为null");
+        }
+        String desc = EnumUtil.getByCode(TabooOperateEnum.class, reviewParam.getOper()).getDesc();
+        Long id = reviewParam.getContentId();
         int i = mallItemDao.updateOneMallItem(String.valueOf(reviewParam.getContentId()),reviewParam.getOper());
         if (i > 0) {
             updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
-            ReturnResponse.success("更新成功");
+            log.info("商品详情id为{}的数据审批{}成功",id,desc);
+            String str=String.format("商品详情id为%d的数据审批%s成功",id, desc);
+            return ReturnResponse.success(str);
         }
-        return ReturnResponse.failed("更新失败");
+        log.info("商品详情id为{}的数据审批{}成功",id,desc);
+        String str=String.format("商品详情id为%d的数据审批%s成功",id, desc);
+        return ReturnResponse.success(str);
     }
 
     @Override
@@ -88,13 +98,8 @@ public class MallItemHandler extends AbstractHandler {
                     }
                     contentReviewRep.setItemImgUrls(itemImgUrls);
                 }
-
             }
-
         }
-
-
-
     }
 
     //批量通过/屏蔽
@@ -115,13 +120,15 @@ public class MallItemHandler extends AbstractHandler {
         maps.forEach((k,v)->{
             List<String> stringList = new ArrayList<>();
             v.stream().forEach(s->stringList.add(String.valueOf(s)));
-            mallItemDao.handleExamine(k,stringList);
-            i.getAndIncrement();
+            int i1 = mallItemDao.handleExamine(k,stringList);
+            i.set(i1);
         });
         if (i.get() == list.size()){
-            return ReturnResponse.success("商品详情批量{}成功",desc);
+            String str=String.format("商品详情批量%s成功", desc);
+            return ReturnResponse.success(str);
         }
-        return ReturnResponse.success("商品详情批量{}}失败",desc);
+        String str=String.format("商品详情批量%s成功", desc);
+        return ReturnResponse.success(str);
     }
 
     @Override
