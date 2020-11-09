@@ -95,8 +95,8 @@
             modetail.price as detailPrice
         FROM
             mall_after_sales sales
-            LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
-            left join mall_order mo on modetail.order_no=mo.order_no
+            left join mall_order mo on sales.order_no=mo.order_no
+            LEFT JOIN mall_order_detail modetail ON IF(mo.order_type=2, sales.order_detail_no=modetail.order_detail_no , modetail.order_no = mo.order_no )
             LEFT JOIN user u ON sales.user_id=u.id
             WHERE
             sales.shop_no=#{p.shopNo}
@@ -206,9 +206,9 @@
             modetail.price as detailPrice
         FROM
             mall_after_sales sales
-            LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
-            LEFT JOIN user u ON sales.user_id=u.id
             LEFT JOIN mall_order mo ON sales.order_no=mo.order_no
+            LEFT JOIN mall_order_detail modetail ON IF(mo.order_type=2, sales.order_detail_no=modetail.order_detail_no , modetail.order_no = mo.order_no )
+            LEFT JOIN user u ON sales.user_id=u.id
             WHERE
             sales.after_sales_no=#{afterSalesNo}
             and sales.shop_no=#{shopNo}
@@ -259,8 +259,8 @@
         modetail.price as detailPrice
         FROM
         mall_after_sales sales
-        LEFT JOIN mall_order_detail modetail ON sales.order_detail_no=modetail.order_detail_no
-        left join mall_order mo on modetail.order_no=mo.order_no
+        left join mall_order mo on sales.order_no=mo.order_no
+        LEFT JOIN mall_order_detail modetail ON IF(mo.order_type=2, sales.order_detail_no=modetail.order_detail_no , modetail.order_no = mo.order_no )
         LEFT JOIN user u ON sales.user_id=u.id
         WHERE
         sales.shop_no=#{p.shopNo}

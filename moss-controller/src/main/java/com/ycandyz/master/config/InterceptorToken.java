@@ -91,6 +91,7 @@ public class InterceptorToken implements HandlerInterceptor {
             if(StrUtil.isNotEmpty(token)){
 
                 if (!redisUtil.hasKey(token)){
+                    log.info("redis不存在该token-----------");
                     //如果redis中不存在当前key，则返回key获取，重新登录
                     returnJson(httpServletResponse);
                     return false;
