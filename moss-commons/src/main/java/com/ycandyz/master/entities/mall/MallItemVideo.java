@@ -73,11 +73,11 @@ public class MallItemVideo extends Model {
 
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "帧率")
-   private Integer fps;
+   private String fps;
 
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "视频时长")
-   private Long duration;
+   private Integer duration;
 
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "大小")
@@ -93,15 +93,15 @@ public class MallItemVideo extends Model {
 
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "码率")
-   private Long rate;
+   private Integer rate;
 
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "宽")
-   private Double width;
+   private Integer width;
 
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "高")
-   private Double height;
+   private Integer height;
 
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "状态(审核用)")

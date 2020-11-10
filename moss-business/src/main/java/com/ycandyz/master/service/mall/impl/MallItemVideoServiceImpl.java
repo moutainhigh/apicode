@@ -16,6 +16,8 @@ import com.ycandyz.master.service.mall.IMallItemVideoService;
 import com.ycandyz.master.controller.base.BaseService;
 
 import com.ycandyz.master.utils.*;
+import it.sauronsoftware.jave.Encoder;
+import it.sauronsoftware.jave.MultimediaInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,8 +76,41 @@ public class MallItemVideoServiceImpl extends BaseService<MallItemVideoDao,MallI
         }
         entity.setTitle(inputFile);
         entity.setSize(file.getSize());
+        getVideoInfo(videoPath,entity);
         //删掉本地视频文件
         FileUtil.deleteFile(new File(videoPath));
         return super.save(entity);
+    }
+
+    private void getVideoInfo(String filePath,MallItemVideo model){
+        File source = new File(filePath);
+        Encoder encoder = new Encoder();
+        FileChannel fc= null;
+        String size = "";
+        try {
+            MultimediaInfo m = encoder.getInfo(source);
+            Long ls = m.getDuration()/1000;
+            model.setDuration(ls.intValue());
+            int fps = (int)Math.ceil(m.getVideo().getFrameRate());
+            model.setFps(fps+"/1");
+            model.setRate(m.getVideo().getBitRate());
+            model.setCodec(m.getVideo().getDecoder());
+            model.setWidth(m.getVideo().getSize().getWidth());
+            model.setHeight(m.getVideo().getSize().getHeight());
+            model.setFormat(m.getFormat());
+            FileInputStream fis = new FileInputStream(source);
+            fc= fis.getChannel();
+            model.setSize(fc.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if (null!=fc){
+                try {
+                    fc.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
