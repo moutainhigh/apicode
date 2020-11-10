@@ -10,11 +10,15 @@ import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
 import com.ycandyz.master.service.userExportRecord.IUserExportRecordService;
 import com.ycandyz.master.service.userExportRecord.impl.UserExportRecordServiceImpl;
+import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -45,7 +49,7 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
 
     @ApiOperation(value = "接入导出记录")
     @PostMapping(value = "/insert")
-    public ReturnResponse insert(@RequestBody UserExportRecordReq userExportRecordReq) {
+    public ReturnResponse insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody UserExportRecordReq userExportRecordReq) {
         ReturnResponse returnResponse = userExportRecordService.insert(userExportRecordReq);
         return returnResponse;
     }

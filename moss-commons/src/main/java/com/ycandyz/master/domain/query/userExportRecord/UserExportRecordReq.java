@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -29,12 +31,15 @@ public class UserExportRecordReq extends Model {
 
 
    @ApiModelProperty(value = "操作终端:1-U客企业后台 2-有传运营后台")
+   @NotNull(message = "操作终端terminal不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private Integer terminal;
 
    @ApiModelProperty(value = "企业编号")
+   @NotNull(message = "企业编号organizeId不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private Long organizeId;
 
    @ApiModelProperty(value = "操作人id")
+   @NotNull(message = "操作人id(operatorId)不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private Long operatorId;
 
    @ApiModelProperty(value = "ip地址")
@@ -47,9 +52,11 @@ public class UserExportRecordReq extends Model {
    private String opertorBrowser;
 
    @ApiModelProperty(value = "导出文件名称")
+   @NotNull(message = "导出文件名称exportFileName不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private String exportFileName;
 
    @ApiModelProperty(value = "导出文件链接")
+   @NotNull(message = "导出文件链接exportFileUrl不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private String exportFileUrl;
 
 }
