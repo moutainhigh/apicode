@@ -94,6 +94,7 @@ public class FootprintHandler extends AbstractHandler {
         AtomicInteger i = new AtomicInteger();
         maps.forEach((k,v)->{
             int i1 = footprintDao.handleExamine(k, v);
+            v.stream().forEach(id -> updateOrInsert(id, 1));
             i.set(i1);
         });
         if (i.get() == list.size()){

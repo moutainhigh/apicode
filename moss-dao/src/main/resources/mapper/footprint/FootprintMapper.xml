@@ -20,12 +20,12 @@
         id, user_id, content, read_num, longitude, latitude, is_del, created_at, updated_at
     </sql>
     <update id="updateOneFootprint">
-        update footprint set is_del = #{oper} where id = #{contentId};
+        update footprint set is_screen = #{oper} where id = #{contentId};
     </update>
     <update id="handleExamine">
         update footprint
             <set>
-                is_del = #{oper},
+                is_screen = #{oper},
                 updated_at = unix_timestamp(now())
                 where id in
                 <foreach item="item" collection="ids" index="index" open="(" close=")" separator=",">

@@ -93,6 +93,7 @@ public class OrganizeNewsHandler extends AbstractHandler {
         AtomicInteger i = new AtomicInteger();
         maps.forEach((k,v)->{
             int i1 = organizeNewsDao.handleExamine(k, v);
+            v.stream().forEach(id -> updateOrInsert(id, 2));
             i.set(i1);
         });
         if (i.get() == list.size()){

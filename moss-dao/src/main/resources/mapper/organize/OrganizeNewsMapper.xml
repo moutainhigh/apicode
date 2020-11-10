@@ -32,12 +32,12 @@
         published_at, disabled_at, disable_reason, is_del, del_reason, deleted_at, created_at, updated_at, origin_user_id
     </sql>
     <update id="updateOneOrganizeNews">
-        update organize_news set is_del = #{oper} where id = #{contentId};
+        update organize_news set is_screen = #{oper} where id = #{contentId};
     </update>
     <update id="handleExamine">
         update organize_news
         <set>
-            is_del = #{oper},
+            is_screen = #{oper},
             updated_at = unix_timestamp(now())
             where id in
             <foreach item="item" collection="ids" index="index" open="(" close=")" separator=",">

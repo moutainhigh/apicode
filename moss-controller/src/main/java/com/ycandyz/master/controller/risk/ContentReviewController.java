@@ -46,7 +46,7 @@ public class ContentReviewController {
      * @Date 2020/10/28
      * @Version: V1.0
      */
-    @ApiOperation(value = "商品详情/企业动态/商友圈审核",notes = "0通过/2屏蔽",httpMethod = "PUT")
+    @ApiOperation(value = "商品详情/企业动态/商友圈审核",notes = "0通过/1屏蔽",httpMethod = "PUT")
     @PutMapping("/content/examine")
     public ReturnResponse updateStatus(@RequestBody ReviewParam reviewParam) {
         ReturnResponse response = contentReviewService.examine(reviewParam);
@@ -60,7 +60,7 @@ public class ContentReviewController {
      * @Date 2020/10/28
      * @Version: V1.0
      */
-    @ApiOperation(value = "商品详情/企业动态/商友圈批量审核",notes = "0通过/2屏蔽",httpMethod = "POST")
+    @ApiOperation(value = "商品详情/企业动态/商友圈批量审核",notes = "0通过/1屏蔽",httpMethod = "POST")
     @PostMapping("/content/batchExamine")
     public ReturnResponse updateMallItem(@RequestBody ReviewBatchExamineParam reviewParams) {
         ReturnResponse response = contentReviewService.batchExamine(reviewParams);

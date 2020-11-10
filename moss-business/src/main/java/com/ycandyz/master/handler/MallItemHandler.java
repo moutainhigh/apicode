@@ -105,6 +105,7 @@ public class MallItemHandler extends AbstractHandler {
             List<String> stringList = new ArrayList<>();
             v.stream().forEach(s->stringList.add(String.valueOf(s)));
             int i1 = mallItemDao.handleExamine(k,stringList);
+            v.stream().forEach(id -> updateOrInsert(id, 0));
             i.set(i1);
         });
         if (i.get() == list.size()){
