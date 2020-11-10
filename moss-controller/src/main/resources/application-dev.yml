@@ -27,7 +27,7 @@ spring:
     bootstrap-servers: kafka-dev.ycandyz.com:9092
     producer:
       #发生错误消息重发次数
-      retries: 0
+      retries: 3
       #当有多个消息需要被发送到同一个分区时，生产者会把它们放在同一个批次里。该参数指定了一个批次可以使用的内存大小，按照字节数计算。
       batch-size: 16384
       # 设置生产者内存缓冲区的大小。
@@ -87,6 +87,7 @@ ignored:
     - /mall-buyer-shipping/mallBuyer/shipment/callback
     - /**/订单.xls
     - /base-bank/**
+    - /kafka/**/**
 
 DEFAULT_TOKEN: eyJhZ2VudF9pZCI6ICIwIiwgImVtcGxveWVlX2lkIjogMzk0LCAiZW52IjogImRldiIsICJleHAiOiAxNjAyNzYyNzAxLCAiaWF0IjogMTYwMjc1NTUwMSwgImlzX2Jvc3MiOiAxLCAib3JnYW5pemVfaWQiOiAiNDQ4IiwgInBsYXRmb3JtIjogNSwgInJvbGUiOiAiMCIsICJzaG9wX25vIjogImJlaXF1YW5fc3RvcmUiLCAidXNlcl9pZCI6ICIxMDQwMSIsICJ3eG1pbmlfb3Blbl9pZCI6ICIiLCAianRpIjogIjkzZWU5NWFjMzdiZjBmZTE2MjRhZmE2N2FiODI5OWQ0In0
 
