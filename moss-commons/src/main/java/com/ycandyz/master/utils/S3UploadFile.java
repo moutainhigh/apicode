@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.ycandyz.master.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -56,6 +57,25 @@ public class S3UploadFile {
             s3.putObject(request);
             //下载地址
             String url = downFileUrlPefix + key;
+            log.info("下载地址:{}",url);
+            return url;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String upload(File file,String uploadPath) throws BusinessException {
+        try {
+            if (!file.exists()) {
+                throw new BusinessException("文件不存在!");
+            }
+            // 设置文件上传对象
+            PutObjectRequest request = new PutObjectRequest(bucketName, uploadPath, file);
+            // 上传文件
+            s3.putObject(request);
+            //下载地址
+            String url = downFileUrlPefix + uploadPath;
             log.info("下载地址:{}",url);
             return url;
         } catch (Exception e) {

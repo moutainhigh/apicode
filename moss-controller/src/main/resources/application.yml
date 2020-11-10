@@ -1,5 +1,11 @@
 
 spring:
+  servlet:
+    multipart:
+      enabled: true #是否启用http上传处理
+      max-request-size: 100MB #最大请求文件的大小
+      max-file-size: 25MB #设置单个文件最大长度
+      file-size-threshold: 25MB #当文件达到多少时进行磁盘写入
   application:
     name: ycandyz-master-controller
   profiles:
@@ -17,3 +23,5 @@ mybatis-plus:
       logic-delete-field: deleted
       logic-delete-value: 1
       logic-not-delete-value: 0
+
+video-local-path: /tmp/upload/video

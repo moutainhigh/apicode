@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallItemVideoComplaintDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.MallItemVideoComplaint">
+        <id column="id" property="id" />
+        <result column="complaint_no" property="complaintNo" />
+        <result column="video_no" property="videoNo" />
+        <result column="type" property="type" />
+        <result column="content" property="content" />
+        <result column="user_id" property="userId" />
+        <result column="status" property="status" />
+        <result column="deleeted" property="deleeted" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, complaint_no, video_no, type, content, user_id, status, deleeted, created_time, updated_time
+    </sql>
+
+</mapper>
