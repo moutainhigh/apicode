@@ -62,26 +62,15 @@ public class OrganizeNewsHandler extends AbstractHandler {
             contentReviewRep.setId(contentReviewDTO.getContentId());
             String content = String.valueOf(contentReviewDTO.getContent());
             if (content != null){
-                String[] split = content.split(";",-1);
-                if (content.startsWith(";")){
-                    contentReviewRep.setOabstracts(null);
-                    contentReviewRep.setOtitle(split[0]);
-                    contentReviewRep.setOndContent(split[3]);
-                    String[] urls = new String[2];
-                    urls[0] = split[1];
-                    urls[1] = split[2];
-                    contentReviewRep.setOImgUrls(urls);
-                    contentReviewRep.setAuditResult(Integer.valueOf(split[6]));
-                }else {
-                    contentReviewRep.setOabstracts(split[0]);
-                    contentReviewRep.setOtitle(split[1]);
-                    contentReviewRep.setOndContent(split[4]);
-                    String[] urls = new String[2];
-                    urls[0] = split[2];
-                    urls[1] = split[3];
-                    contentReviewRep.setOImgUrls(urls);
-                    contentReviewRep.setAuditResult(Integer.valueOf(split[6]));
-                }
+                String[] split = content.split("︵",-1);
+                contentReviewRep.setOabstracts(split[0]);
+                contentReviewRep.setOtitle(split[1]);
+                contentReviewRep.setOndContent(split[5]);
+                String[] urls = new String[2];
+                urls[0] = split[2];
+                urls[1] = split[3];
+                contentReviewRep.setOImgUrls(urls);
+                contentReviewRep.setAuditResult(Integer.valueOf(split[4]));
             }
         }
 

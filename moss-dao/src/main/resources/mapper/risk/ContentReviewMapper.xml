@@ -24,7 +24,7 @@
         <select id="list" resultMap="BaseResultMap" parameterType="com.ycandyz.master.domain.query.risk.ContentReviewQuery">
 
             select * from (
-            select concat_ws(";",m.item_name,m.item_text,m.banners,m.share_descr,m.share_img,m.is_del) as content,
+            select concat_ws("︵",m.item_name,m.banners,m.share_descr,m.share_img,m.is_del,m.item_text) as content,
             c.content_id,c.type ,c.created_time,
             c.updated_time,c.auditor,c.audit_time
             from content_review c
@@ -103,7 +103,7 @@
             </if>
             group by c.content_id
             union
-            select concat_ws(";",o.abstract,o.title,o.cover,o.link_url,ond.content,o.is_del) as content,c.content_id,c.type,c.created_time,
+            select concat_ws("︵",ifnull(o.abstract,""),ifnull(o.title,""),ifnull(o.cover,""),ifnull(o.link_url,""),ifnull(o.is_del,""),ifnull(ond.content,"")) as content,c.content_id,c.type,c.created_time,
             c.updated_time,c.auditor,c.audit_time
             from content_review c
             inner join organize_news o

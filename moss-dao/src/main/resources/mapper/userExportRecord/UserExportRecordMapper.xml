@@ -25,6 +25,7 @@
         id, terminal, organize_id, organize_name, operator_id, operator_name, operator_phone, operator_ip, opertor_system, opertor_browser,
         export_file_name, export_file_url, created_at, created_time
     </sql>
+
     <select id="selectPages"  resultMap="BaseResultMap" parameterType="com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery">
         select
         <include refid="Base_Column_List" />
@@ -55,5 +56,11 @@
         </if>
 
     </select>
+    <insert id="insertUserExportRecord">
+        insert into user_export_record(terminal,organize_id,organize_name,operator_id,operator_name,operator_phone,
+            operator_ip,opertor_system,opertor_browser,export_file_name,export_file_url,created_at,created_time)
+        values(#{terminal},#{organizeId},#{organizeName},#{operatorId},#{operatorName},#{operatorPhone},
+        #{operatorIp},#{opertorSystem},#{opertorBrowser},#{exportFileName},#{exportFileUrl},unix_timestamp(now()),now())
 
+    </insert>
 </mapper>

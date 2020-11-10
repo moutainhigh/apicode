@@ -45,9 +45,9 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
 
     @ApiOperation(value = "接入导出记录")
     @PostMapping(value = "/insert")
-    public ReturnResponse<Page<UserExportRecordResp>> insert(@RequestBody RequestParams<UserExportRecordReq> requestParams) {
-        userExportRecordService.insert(requestParams);
-        return null;
+    public ReturnResponse insert(@RequestBody UserExportRecordReq userExportRecordReq) {
+        ReturnResponse returnResponse = userExportRecordService.insert(userExportRecordReq);
+        return returnResponse;
     }
     
 }

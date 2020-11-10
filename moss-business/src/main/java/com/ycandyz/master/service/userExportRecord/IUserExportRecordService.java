@@ -4,6 +4,7 @@ package com.ycandyz.master.service.userExportRecord;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.RequestParams;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordReq;
 import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
@@ -22,5 +23,5 @@ public interface IUserExportRecordService extends IService<UserExportRecord> {
 
     Page<UserExportRecordResp> selectPages(RequestParams<UserExportRecordQuery> requestParams);
 
-   void insert(RequestParams<UserExportRecordReq> requestParams);
+    ReturnResponse insert(UserExportRecordReq requestParams);
 }

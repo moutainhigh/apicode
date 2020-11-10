@@ -65,42 +65,23 @@ public class MallItemHandler extends AbstractHandler {
             BeanUtils.copyProperties(contentReviewDTO,contentReviewRep);
             contentReviewRep.setId(contentReviewDTO.getContentId());
             if (content != null){
-                String[] split = content.split(";",-1);
-                if (content.startsWith(";")){
-                    contentReviewRep.setItemName(null);
-                    contentReviewRep.setItemText(split[0]);
-                    contentReviewRep.setItemShareDescr(split[2]);
-                    String banner = split[2];
-                    String[] banners = banner.split(",",-1);
-                    String[] itemImgUrls = null;
-                    if ( banners != null){
-                        int length = banners.length + 1;
-                        itemImgUrls = new String[length];
-                        for (int i = 0; i < length - 1; i++) {
-                            itemImgUrls[i] = banners[i];
-                        }
-                        itemImgUrls[length -1 ] = split[3];
+                String[] split = content.split("︵",-1);
+                contentReviewRep.setItemName(split[0]);
+                contentReviewRep.setItemText(split[5]);
+                contentReviewRep.setItemShareDescr(split[2]);
+                String banner = split[1];
+                String[] banners = banner.split(",",-1);
+                String[] itemImgUrls = null;
+                if ( banners != null){
+                    int length = banners.length + 1;
+                    itemImgUrls = new String[length];
+                    for (int i = 0; i < length - 1; i++) {
+                        itemImgUrls[i] = banners[i];
                     }
-                    contentReviewRep.setItemImgUrls(itemImgUrls);
-                    contentReviewRep.setAuditResult(Integer.valueOf(split[5]));
-                }else {
-                    contentReviewRep.setItemName(split[0]);
-                    contentReviewRep.setItemText(split[1]);
-                    contentReviewRep.setItemShareDescr(split[3]);
-                    String banner = split[2];
-                    String[] banners = banner.split(",",-1);
-                    String[] itemImgUrls = null;
-                    if ( banners != null){
-                        int length = banners.length + 1;
-                        itemImgUrls = new String[length];
-                        for (int i = 0; i < length - 1; i++) {
-                            itemImgUrls[i] = banners[i];
-                        }
-                        itemImgUrls[length -1 ] = split[4];
-                    }
-                    contentReviewRep.setItemImgUrls(itemImgUrls);
-                    contentReviewRep.setAuditResult(Integer.valueOf(split[5]));
+                    itemImgUrls[length -1 ] = split[3];
                 }
+                contentReviewRep.setItemImgUrls(itemImgUrls);
+                contentReviewRep.setAuditResult(Integer.valueOf(split[4]));
             }
         }
     }
