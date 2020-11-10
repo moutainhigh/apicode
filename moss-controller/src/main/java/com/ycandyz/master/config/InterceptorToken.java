@@ -90,11 +90,11 @@ public class InterceptorToken implements HandlerInterceptor {
             Long organizeId = null;
             if(StrUtil.isNotEmpty(token)){
 
-                /*if (!redisUtil.hasKey(token)){
+                if (!redisUtil.hasKey(token)){
                     log.info("redis不存在该token-----------");
                     returnJson(httpServletResponse);
                     return false;
-                }*/
+                }
 
                 //更新redis中token的过期时间
                 redisUtil.set(token,"1",60*60); //token过期时间为一小时
