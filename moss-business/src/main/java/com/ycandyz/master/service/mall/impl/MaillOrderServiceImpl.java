@@ -10,31 +10,29 @@ import com.ycandyz.master.constant.CommonConstant;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.dao.organize.OrganizeDao;
-import com.ycandyz.master.dao.userExportRecord.UserExportRecordDao;
+import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.dto.mall.*;
-import com.ycandyz.master.dto.organize.OrganizeDTO;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallOrder;
-import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
+import com.ycandyz.master.entities.mall.MallShop;
+import com.ycandyz.master.entities.organize.Organize;
+import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.service.mall.MallOrderService;
+import com.ycandyz.master.service.user.IUserExportRecordService;
 import com.ycandyz.master.utils.*;
-import eu.bitwalker.useragentutils.Browser;
-import eu.bitwalker.useragentutils.OperatingSystem;
-import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
@@ -78,7 +76,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private S3UploadFile s3UploadFile;
 
     @Autowired
-    private UserExportRecordDao userExportRecordDao;
+    private IUserExportRecordService iUserExportRecordService;
+
+    @Autowired
+    private OrganizeRelDao organizeRelDao;
 
     @Autowired
     private OrganizeDao organizeDao;
@@ -89,12 +90,41 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Override
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
         MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
+        List<Integer> organizeIds = new ArrayList<>();  //保存企业id，用于批量查询
+        Map<String, Integer> shopNoAndOrganizeId = new HashMap<>(); //保存shopNo和organizeid    map<shopNo,organizeid>
         //获取企业id
-//        if (mallOrderQuery.getOrganizeId()==null) {
-//            return ReturnResponse.failed("传入企业id参数为空");
-//        }
-//        Long organizeId = mallOrderQuery.getOrganizeId();
-        mallOrderQuery.setShopNo(userVO.getShopNo());
+        if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
+            mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+            organizeIds.add(userVO.getOrganizeId().intValue());
+            shopNoAndOrganizeId.put(userVO.getShopNo(),userVO.getOrganizeId().intValue());
+        }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
+            if (mallOrderQuery.getChildOrganizeId()==null || "".equals(mallOrderQuery.getChildOrganizeId()) || mallOrderQuery.getChildOrganizeId().equals("0")){
+                //查询集团所有数据
+                Long groupOrganizeId = userVO.getOrganizeId();   //集团id
+                if (groupOrganizeId!=null) {
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    if (organizeRels != null && organizeRels.size() > 0) {
+                        List<Integer> oIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                        organizeIds.addAll(oIds);
+                        List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(oIds);
+                        if (mallShopDTOS!=null && mallShopDTOS.size()>0){
+                            List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
+                            mallOrderQuery.setShopNo(shopNos);
+                            Map<String, Integer> map = mallShopDTOS.stream().collect(Collectors.toMap(MallShopDTO::getShopNo, MallShopDTO::getOrganizeId));
+                            shopNoAndOrganizeId.putAll(map);
+                        }
+                    }
+                }
+            }else {
+                mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+                MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallOrderQuery.getChildOrganizeId()));
+                organizeIds.add(Integer.valueOf(mallOrderQuery.getChildOrganizeId()));
+                if (mallShop!=null){
+                    mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
+                    shopNoAndOrganizeId.put(mallShop.getShopNo(), Integer.valueOf(mallOrderQuery.getChildOrganizeId()));
+                }
+            }
+        }
 
         List<MallOrderVO> list = new ArrayList<>();
         Page<MallOrderVO> page1 = new Page<>();
@@ -108,12 +138,40 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 //page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
                 MallOrderVO mallOrderVo = null;
                 if (mallDTOList != null && mallDTOList.size() > 0) {
+
+                    //查询企业名称，通过organizedIds
+                    List<Organize> organizeList = organizeDao.selectBatchIds(organizeIds);
+                    Map<Integer, String> organizeIdAndName = organizeList.stream().collect(Collectors.toMap(Organize::getId, Organize::getFullName));
+
                     for (MallOrderDTO mallOrderDTO : mallDTOList) {
                         if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
                             mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
                         }
                         mallOrderVo = new MallOrderVO();
                         BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
+
+                        //获取企业名称，拼接进入返回值中
+                        String fullName = organizeIdAndName.get(shopNoAndOrganizeId.get(mallOrderVo.getShopNo()));
+                        mallOrderVo.setOrganizeName(fullName);
+
+                        //order_at;payed_at;receive_at时间转换为字符串
+                        if (mallOrderVo.getOrderAt()!=null && mallOrderVo.getOrderAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getOrderAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                            mallOrderVo.setOrderAtStr(orderAtStr);
+                        }
+                        if (mallOrderVo.getPayedAt()!=null && mallOrderVo.getPayedAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getPayedAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                            mallOrderVo.setPayedAtStr(orderAtStr);
+                        }
+                        if (mallOrderVo.getReceiveAt()!=null && mallOrderVo.getReceiveAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getReceiveAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                            mallOrderVo.setReceiveAtStr(orderAtStr);
+                        }
+
+
                         //订单列表显示商品名称数组
                         List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
 
@@ -204,6 +262,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                                 }
                             }
                         }
+
                         list.add(mallOrderVo);
                     }
                 }
@@ -219,9 +278,126 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     public MallOrderExportResp exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
-        String shopNo = userVO.getShopNo();
-        mallOrderQuery.setShopNo(shopNo);
+        //获取企业id
+        if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
+            mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+        }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
+            if (mallOrderQuery.getChildOrganizeId()==null || "".equals(mallOrderQuery.getChildOrganizeId()) || mallOrderQuery.getChildOrganizeId().equals("0")){
+                //查询集团所有数据
+                Long groupOrganizeId = userVO.getOrganizeId();   //集团id
+                if (groupOrganizeId!=null) {
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    if (organizeRels != null && organizeRels.size() > 0) {
+                        List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                        List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
+                        if (mallShopDTOS!=null && mallShopDTOS.size()>0){
+                            List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
+                            mallOrderQuery.setShopNo(shopNos);
+                        }
+                    }
+                }
+            }else {
+                mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+                MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallOrderQuery.getChildOrganizeId()));
+                if (mallShop!=null){
+                    mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
+                }
+            }
+        }
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
+
+
+        if (list!=null && list.size()>0) {
+            for (MallOrderDTO mallOrderDTO : list) {
+
+                //order_at;payed_at;receive_at时间转换为字符串
+                if (mallOrderDTO.getOrderAt()!=null && mallOrderDTO.getOrderAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getOrderAt())*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                    mallOrderDTO.setOrderAtStr(orderAtStr);
+                }
+                if (mallOrderDTO.getPayedAt()!=null && mallOrderDTO.getPayedAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getPayedAt())*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                    mallOrderDTO.setPayedAtStr(orderAtStr);
+                }
+                if (mallOrderDTO.getReceiveAt()!=null && mallOrderDTO.getReceiveAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getReceiveAt())*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                    mallOrderDTO.setReceiveAtStr(orderAtStr);
+                }
+
+                if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
+                    mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
+                }
+
+                if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0) {
+                    //订单列表显示商品名称数组
+                    List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
+                    mallOrderDTO.setItemName(itemNames);
+                    //订单中的购买商品数量
+                    List<Integer> skuQuantity = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getSkuQuantity).collect(Collectors.toList());
+                    if (skuQuantity != null && skuQuantity.size() > 0) {
+                        int quantity = skuQuantity.stream().reduce(Integer::sum).orElse(0);
+                        mallOrderDTO.setQuantity(quantity);
+                    }
+                    //订单列表显示商品货号数组
+                    List<String> goodsNos = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getGoodsNo).filter(x -> x != null && !"".equals(x)).collect(Collectors.toList());
+                    mallOrderDTO.setGoodsNo(goodsNos);
+                    //拼接是否分佣字段 isEnableShare
+                    List<Integer> isEnableShareList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getIsEnableShare).collect(Collectors.toList());
+                    if (isEnableShareList.contains(1) && mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10) { //有分佣
+                        mallOrderDTO.setIsEnableShare(1);
+                    } else { //无分佣
+                        mallOrderDTO.setIsEnableShare(0);
+                    }
+                }
+                if (mallOrderDTO.getStatus()!=50 && mallOrderDTO.getStatus()!=10) {   //已取消订单不展示分销人相关信息
+                    //订单列表显示分销合伙人，分销金额统计
+                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
+                    if (mallSocialShareFlowDTOS != null && mallSocialShareFlowDTOS.size() > 0) {
+                        List<String> sellerUserList = new ArrayList<>();
+                        BigDecimal shareAmount = new BigDecimal(0);
+                        for (MallSocialShareFlowDTO dto : mallSocialShareFlowDTOS) {
+                            if (dto.getShareType()==0) {
+                                String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
+                                sellerUserList.add(sellerUser); //分销合伙人
+                            }
+                            shareAmount = shareAmount.add(dto.getAmount());   //分销佣金
+                        }
+                        mallOrderDTO.setShareAmount(shareAmount);
+                        mallOrderDTO.setSellerUserName(sellerUserList);
+                    }
+                }
+
+                //拼接售后字段
+                List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no", mallOrderDTO.getOrderNo()));
+                if (mallAfterSalesList != null && mallAfterSalesList.size() > 0) {
+                    List<Integer> subStatusList = mallAfterSalesList.stream().map(MallAfterSales::getSubStatus).collect(Collectors.toList());
+                    if (subStatusList.contains(1010) || subStatusList.contains(1030) || subStatusList.contains(1050) || subStatusList.contains(1070) || subStatusList.contains(2010)) {
+                        //退款进行中
+                        mallOrderDTO.setAfterSalesStatus(1);
+                    } else {
+                        mallOrderDTO.setAfterSalesStatus(2);
+                    }
+                } else {
+                    mallOrderDTO.setAfterSalesStatus(0);
+                }
+                if (mallOrderDTO.getAfterSalesStatus() != null) {
+                    //修改售后返回值给前端
+                    if (mallOrderDTO.getAfterSalesStatus() != 0) {
+                        mallOrderDTO.setAsStatus(111);  //111: 是：申请了售后就是，跟有效期无关
+                    } else {
+                        if (mallOrderDTO.getAfterSalesEndAt() != null && mallOrderDTO.getAfterSalesEndAt() > new Date().getTime() / 1000) {
+                            mallOrderDTO.setAsStatus(100);  //100: 暂无：还在有效期内，目前还没有申请售后
+                        } else {
+                            mallOrderDTO.setAsStatus(110);  //110: 否：超过有效期，但是没有申请售后
+                        }
+                    }
+                }
+            }
+        }
+
         String status = null;
         if (mallOrderQuery != null && mallOrderQuery.getStatus() != null){
             status = EnumUtil.getByCode(StatusEnum.class,mallOrderQuery.getStatus()).getDesc();
@@ -236,10 +412,15 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             String randomnum = String.valueOf(IDGeneratorUtils.getLongId());
             String pathpPefix = System.getProperty("user.dir") + "/xls/";
             String fileName =today + status + "订单.xls";
-            String suffix = today + CommonConstant.SLASH + randomnum + CommonConstant.SLASH + shopNo + CommonConstant.SLASH +fileName;
+            String suffix = today + CommonConstant.SLASH + randomnum + CommonConstant.SLASH + userVO.getOrganizeId() + CommonConstant.SLASH +fileName;
             String path = pathpPefix + suffix;
             deleteFile(yestoday,pathpPefix);
             ExcelWriter writer = ExcelUtil.getWriter(path,"第1页");
+
+            //设置单元格格式
+            writer.getStyleSet().setAlign(HorizontalAlignment.LEFT, VerticalAlignment.CENTER); //水平左对齐，垂直中间对齐
+            writer.setColumnWidth(0, 40); //第1列40px宽
+
             double size = list.size();
             log.info("总共{}条数据",(int)size);
             int ceil = (int)Math.ceil(size / num);
@@ -248,7 +429,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             List<String> containsList = addHeader(writer);
             int end = num>(int)size?(int)size:num;
             List<MallOrderDTO> subList = list.subList(0, end);
-            List<Map<String, Object>> result = MapUtil.beanToMap(subList,containsList);
+            MapUtil mapUtil = new MapUtil();
+            List<Map<String, Object>> result = mapUtil.beanToMap(subList,containsList);
+            salesStateCodeToString(result);
             writer.write(result, true);
             log.info("第{}sheet导出完成",1);
             int beginIndex = num;
@@ -258,7 +441,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 writer.setSheet("第"+i+"页");
                 List<String> containsList2 = addHeader(writer);
                 List<MallOrderDTO> subList2 = list.subList(beginIndex, endIndex);
-                List<Map<String, Object>> result2 = MapUtil.beanToMap(subList2,containsList2);
+                List<Map<String, Object>> result2 = mapUtil.beanToMap(subList2,containsList2);
+                salesStateCodeToString(result2);
                 writer.write(result2, true);
                 beginIndex = endIndex;
                 endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
@@ -274,7 +458,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             mallOrderExportResp.setFielUrl(url);
             log.info("导出excel响应:{}",mallOrderExportResp);
             //导出记录表
-            insertExportRecord(mallOrderExportResp,userVO);
+            iUserExportRecordService.insertExportRecord(mallOrderExportResp,userVO);
 
             return mallOrderExportResp;
         } catch (Exception e) {
@@ -283,38 +467,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return null;
     }
 
-    private void insertExportRecord(MallOrderExportResp mallOrderExportResp, UserVO userVO) {
-        log.info("导入用户记录表入参:{};{}",mallOrderExportResp,userVO);
-        String organizeName = null;
-        if (userVO != null){
-            OrganizeDTO organizeDTO = organizeDao.queryName(userVO.getOrganizeId());
-            if (organizeDTO != null){
-                organizeName = organizeDTO.getFullNname();
-            }
-        }
-        Browser browser = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getBrowser();
-        OperatingSystem operatingSystem = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getOperatingSystem();
-        UserExportRecord userExportRecord = new UserExportRecord();
-        userExportRecord.setTerminal(1);
-        userExportRecord.setOrganizeId(userVO.getOrganizeId());
-        userExportRecord.setOrganizeName(organizeName);
-        userExportRecord.setOpertorBrowser(browser.getName());
-        userExportRecord.setOperatorId(userVO.getId());
-        userExportRecord.setOperatorName(userVO.getName());
-        userExportRecord.setOperatorPhone(userVO.getPhone());
-        userExportRecord.setOperatorIp(getIpAddr(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()));
-        userExportRecord.setOpertorSystem(operatingSystem.getName());
-        userExportRecord.setCreatedAt(System.currentTimeMillis());
-        userExportRecord.setExportFileName(mallOrderExportResp.getFileName());
-        userExportRecord.setExportFileUrl(mallOrderExportResp.getFielUrl());
-        userExportRecordDao.insert(userExportRecord);
-        log.info("导入用户记录表完成");
-    }
-
     private List<String> addHeader(ExcelWriter writer) {
         writer.addHeaderAlias("cartOrderSn", "母订单编号");
         writer.addHeaderAlias("orderNo", "子订单编号");
-        writer.addHeaderAlias("organizeName", "所属企业");
         writer.addHeaderAlias("itemName", "商品名称");
         writer.addHeaderAlias("goodsNo", "货号");
         writer.addHeaderAlias("allMoney", "总计金额(¥)");
@@ -328,12 +483,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         writer.addHeaderAlias("payuser", "购买用户");
         writer.addHeaderAlias("receiverName", "收货人");
         writer.addHeaderAlias("receiverAddress", "收货人地址");
+        writer.addHeaderAlias("deliverType", "发货方式");
         writer.addHeaderAlias("orderAtStr", "下单时间");
         writer.addHeaderAlias("payedAtStr", "支付时间");
         writer.addHeaderAlias("receiveAtStr", "收货时间");
-        List<String> containsList = Arrays.asList("cartOrderSn","orderNo","organizeName","itemName","goodsNo","allMoney",
+        List<String> containsList = Arrays.asList("cartOrderSn","orderNo","itemName","goodsNo","allMoney",
                 "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
-                "payuser","receiverName","receiverAddress","orderAtStr","payedAtStr","receiveAtStr");
+                "payuser","receiverName","receiverAddress","deliverType","orderAtStr","payedAtStr","receiveAtStr");
         return containsList;
     }
 
@@ -360,20 +516,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         }
     }
 
-    public String getIpAddr(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
-    }
-
     @Override
     public ReturnResponse<MallOrderVO> queryOrderDetail(String orderNo, UserVO userVO) {
         MallOrderVO mallOrderVO = null;
@@ -381,6 +523,27 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         if (mallOrderDTO != null){
             mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+
+            //order_at;payed_at;receive_at时间转换为字符串
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setPayedAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setReceiveAtStr(orderAtStr);
+            }
+
+            if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
+                mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
+            }
 
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<MallOrderDetailVO> detailVOList = new ArrayList<>();
@@ -446,6 +609,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallAfterSalesDTOs.forEach(dto -> {
                         MallAfterSalesVO mallAfterSalesVO = new MallAfterSalesVO();
                         BeanUtils.copyProperties(dto, mallAfterSalesVO);
+                        //更新createdTime时间展示
+                        if (mallAfterSalesVO.getCreatedTime()!=null) {
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
+                            mallAfterSalesVO.setCreatedAtStr(orderAtStr);
+                        }
                         voList.add(mallAfterSalesVO);
                         afterSalesNoList.add(dto.getAfterSalesNo());
                     });
@@ -548,6 +716,24 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
             MallOrderVO mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+
+            //order_at;payed_at;receive_at时间转换为字符串
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setPayedAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setReceiveAtStr(orderAtStr);
+            }
+
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<String> orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
                 List<MallOrderDetailSpecDTO> specList = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);     //查询订单详情规格值表
@@ -612,4 +798,56 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return ReturnResponse.failed("未查询到待自提订单");
     }
 
+    /**
+     * 导出excel中的状态码转中文
+     * @param list
+     */
+    private static void salesStateCodeToString(List<Map<String, Object>> list) {
+        if (list != null && list.size() > 0) {
+            list.forEach(map -> {
+                //payType
+                if (Objects.equals(map.get("payType"), 1)) {
+                    map.put("payType", "支付宝");
+                } else if (Objects.equals(map.get("payType"), 2)) {
+                    map.put("payType", "微信");
+                } else {
+                    map.put("payType", "未知");
+                }
+                //status
+                if (Objects.equals(map.get("status"), 10)) {
+                    map.put("status", "待支付");
+                } else if (Objects.equals(map.get("status"), 20)) {
+                    map.put("status", "待发货");
+                } else if (Objects.equals(map.get("status"), 30)) {
+                    map.put("status", "待收货");
+                } else if (Objects.equals(map.get("status"), 40)) {
+                    map.put("status", "已收货");
+                } else if (Objects.equals(map.get("status"), 50)) {
+                    map.put("status", "已取消");
+                } else if (Objects.equals(map.get("status"), 60)) {
+                    map.put("status", "完成");
+                }
+                //isEnableShare
+                if (Objects.equals(map.get("isEnableShare"), 0)) {
+                    map.put("isEnableShare", "否");
+                } else if (Objects.equals(map.get("isEnableShare"), 1)) {
+                    map.put("isEnableShare", "是");
+                }
+                //asStatus
+                if (Objects.equals(map.get("asStatus"), 100)) {
+                    map.put("asStatus", "暂无");
+                } else if (Objects.equals(map.get("asStatus"), 110)) {
+                    map.put("asStatus", "否");
+                } else if (Objects.equals(map.get("asStatus"), 111)) {
+                    map.put("asStatus", "是");
+                }
+                //deliverType
+                if (Objects.equals(map.get("deliverType"), 1)) {
+                    map.put("deliverType", "配送");
+                } else if (Objects.equals(map.get("deliverType"), 2)) {
+                    map.put("deliverType", "自提");
+                }
+            });
+        }
+    }
 }

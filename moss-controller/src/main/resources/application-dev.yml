@@ -5,10 +5,20 @@ server:
 
 spring:
   datasource:
-    name: yc-dev
-    url: jdbc:mysql://youchuan-test-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc-dev?useUnicode=true&characterEncoding=utf-8&useJDBCCompliantTimezoneShift=true&serverTimezone=Asia/Shanghai&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver           # mysql驱动包
+    url: jdbc:mysql://youchuan-test-rds.c1eouiepocc7.rds.cn-north-1.amazonaws.com.cn:3306/yc-dev?serverTimezone=Asia/Shanghai&useJDBCCompliantTimezoneShift=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull
     username: root
     password: 9HzyhWj6Gcnijbki
+    type: com.zaxxer.hikari.HikariDataSource           # 当前数据源操作类型
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: ukeHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
   redis:
     host: youchuan-test-redis.5fqnep.0001.cnn1.cache.amazonaws.com.cn
     port: 6379
@@ -17,7 +27,7 @@ spring:
     bootstrap-servers: kafka-dev.ycandyz.com:9092
     producer:
       #发生错误消息重发次数
-      retries: 0
+      retries: 3
       #当有多个消息需要被发送到同一个分区时，生产者会把它们放在同一个批次里。该参数指定了一个批次可以使用的内存大小，按照字节数计算。
       batch-size: 16384
       # 设置生产者内存缓冲区的大小。
@@ -71,11 +81,13 @@ logging:
 
 ignored:
   urls:
-    - /
     - /login
     - /error
     - /mall/order/shipment/callback
     - /mall-buyer-shipping/mallBuyer/shipment/callback
+    - /**/订单.xls
+    - /base-bank/**
+    - /kafka/**/**
 
 DEFAULT_TOKEN: eyJhZ2VudF9pZCI6ICIwIiwgImVtcGxveWVlX2lkIjogMzk0LCAiZW52IjogImRldiIsICJleHAiOiAxNjAyNzYyNzAxLCAiaWF0IjogMTYwMjc1NTUwMSwgImlzX2Jvc3MiOiAxLCAib3JnYW5pemVfaWQiOiAiNDQ4IiwgInBsYXRmb3JtIjogNSwgInJvbGUiOiAiMCIsICJzaG9wX25vIjogImJlaXF1YW5fc3RvcmUiLCAidXNlcl9pZCI6ICIxMDQwMSIsICJ3eG1pbmlfb3Blbl9pZCI6ICIiLCAianRpIjogIjkzZWU5NWFjMzdiZjBmZTE2MjRhZmE2N2FiODI5OWQ0In0
 
@@ -93,7 +105,7 @@ kuaidi:
 
 #每个sheet条数
 excel:
-  sheet: 50
+  sheet: 5000
 
 s3:
   downFileUrlPefix: https://dev-file.ycandyz.com/

@@ -23,12 +23,10 @@ import java.util.*;
 public class YcCodeGenerator {
 
 	protected static final Logger log = LoggerFactory.getLogger(YcCodeGenerator.class);
-
-
 	//表名
-	private static final String tableName = "node";
+	private static final String tableName = "base_bank";
 	//生成文件所在目录层级
-	private static final String moduleName = "user";
+	private static final String moduleName = "base";
 	private static final String daoName = "moss-dao";
 	private static final String serviceName = "moss-business";
 	private static final String controllerName = "moss-controller";
@@ -65,8 +63,8 @@ public class YcCodeGenerator {
 		dsc.setDriverName("com.mysql.cj.jdbc.Driver");
 		//dsc.setUsername("root");
 		//dsc.setPassword("root");
-		dsc.setUsername("project_dev");
-		dsc.setPassword("p3BjALdQI4SjH0w5");
+		dsc.setUsername("root");
+		dsc.setPassword("9HzyhWj6Gcnijbki");
 		return dsc;
 	}
 

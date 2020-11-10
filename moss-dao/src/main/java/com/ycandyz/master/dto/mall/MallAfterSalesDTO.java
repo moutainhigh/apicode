@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -117,4 +118,136 @@ public class MallAfterSalesDTO {
     private List<MallBuyerShippingLogDTO> buyerShippingLog;
     @ApiModelProperty(value = "本次退款的金额")
     private BigDecimal refundMoney;
+    @ApiModelProperty(value = "所属企业")
+    private String organizeName;
+
+    /**卖家收货时间字符串*/
+    @ApiModelProperty(value = "卖家收货时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String receiveAtStr;
+    @ApiModelProperty(value = "售后申请时间字符串")
+    private String createdAtStr;
+    /**售后关闭时间（退款成功时间）*/
+    @ApiModelProperty(value = "售后关闭时间（退款成功时间）字符串")
+    @Getter(AccessLevel.NONE)
+    private String closeAtStr;
+    /**申请时间字符串*/
+    @ApiModelProperty(value = "申请时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String applyAtStr;
+    /**一次审核时间字符串*/
+    @ApiModelProperty(value = "一次审核时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String auditFirstAtStr;
+    /**买家发货时间字符串*/
+    @ApiModelProperty(value = "买家发货时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String sendAtStr;
+    /**二次审核时间字符串*/
+    @ApiModelProperty(value = "二次审核时间字符串")
+    @Getter(AccessLevel.NONE)
+    private String auditSecondAtStr;
+
+    /**退款原因，文字内容*/
+    @ApiModelProperty(value = "退款原因，文字内容")
+    private String reasonStr;
+    /**退款凭证图jsonarray转换的list*/
+    @ApiModelProperty(value = "退款凭证图jsonarray转换的list")
+    private List<String> photosArray;
+
+    public String getReceiveAtStr(){
+        try {
+            if(receiveAt!=0) {
+                Long at = Long.valueOf(receiveAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.receiveAtStr = sd.format(date);
+            }else {
+                this.receiveAtStr = "-";
+            }
+        }catch (Exception e){
+            receiveAtStr = "-";
+        }
+        return receiveAtStr;
+    }
+
+    public String getCloseAtStr(){
+        try {
+            if(closeAt!=0) {
+                Long at = Long.valueOf(closeAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.closeAtStr = sd.format(date);
+            }else {
+                this.closeAtStr = "-";
+            }
+        }catch (Exception e){
+            closeAtStr = "-";
+        }
+        return closeAtStr;
+    }
+
+    public String getApplyAtStr(){
+        try {
+            if(applyAt!=0) {
+                Long at = Long.valueOf(applyAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.applyAtStr = sd.format(date);
+            }else {
+                this.applyAtStr = "-";
+            }
+        }catch (Exception e){
+            applyAtStr = "-";
+        }
+        return applyAtStr;
+    }
+
+    public String getAuditFirstAtStr(){
+        try {
+            if(auditFirstAt!=0) {
+                Long at = Long.valueOf(auditFirstAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.auditFirstAtStr = sd.format(date);
+            }else {
+                this.auditFirstAtStr = "-";
+            }
+        }catch (Exception e){
+            auditFirstAtStr = "-";
+        }
+        return auditFirstAtStr;
+    }
+
+    public String getSendAtStr(){
+        try {
+            if(sendAt!=0) {
+                Long at = Long.valueOf(sendAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.sendAtStr = sd.format(date);
+            }else {
+                this.sendAtStr = "-";
+            }
+        }catch (Exception e){
+            sendAtStr = "-";
+        }
+        return sendAtStr;
+    }
+
+    public String getAuditSecondAtStr(){
+        try {
+            if(auditSecondAt!=0) {
+                Long at = Long.valueOf(auditSecondAt) * 1000;
+                Date date = new Date(at);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.auditSecondAtStr = sd.format(date);
+            }else {
+                this.auditSecondAtStr = "-";
+            }
+        }catch (Exception e){
+            auditSecondAtStr = "-";
+        }
+        return auditSecondAtStr;
+    }
 }

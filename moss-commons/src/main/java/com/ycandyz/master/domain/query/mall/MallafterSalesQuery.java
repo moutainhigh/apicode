@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -55,10 +56,13 @@ public class MallafterSalesQuery implements Serializable {
     @Getter(AccessLevel.NONE)
     private String receiver;
     @ApiModelProperty(value = "商家编号")
-    @Getter(AccessLevel.NONE)
-    private String shopNo;
+    private List<String> shopNo;
     @ApiModelProperty(value = "售后状态 1-待审核 2-待买家退货 3-待确认退款 4-退款成功 5-退款失败 6-退款关闭")
     private Integer state;
+    @ApiModelProperty(value = "是否是集团 1-是；0-否",name="isGroup",required=true)
+    private String isGroup;
+    @ApiModelProperty(value = "企业id",name="childOrganizeId",required=true)
+    private String childOrganizeId;
 
     public String getOrderNo() {
         if (orderNo!=null){
@@ -116,10 +120,4 @@ public class MallafterSalesQuery implements Serializable {
         return receiver;
     }
 
-    public String getShopNo() {
-        if (shopNo!=null){
-            shopNo = shopNo.trim();
-        }
-        return shopNo;
-    }
 }

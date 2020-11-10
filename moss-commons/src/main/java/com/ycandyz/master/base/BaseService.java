@@ -91,7 +91,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> e
     }
 
     public boolean remove(Wrapper wrapper) {
-        return SqlHelper.delBool(baseMapper.delete(wrapper));
+        return SqlHelper.retBool(baseMapper.delete(wrapper));
     }
 
     public boolean insertBatch(Collection<T> entityList) {

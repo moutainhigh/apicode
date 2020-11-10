@@ -2,6 +2,7 @@ package com.ycandyz.master.controller.base;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.ReturnResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,6 +27,13 @@ public abstract class BaseController<S extends BaseService,T extends Model,Q > {
             return CommonResult.success(data);
         }
         return CommonResult.failed(msg);
+    }
+
+    protected <T> ReturnResponse<T> returnResponse(boolean flow, T data, String msg) {
+        if (flow){
+            return ReturnResponse.success(data);
+        }
+        return ReturnResponse.failed(msg);
     }
     
 }
