@@ -9,11 +9,13 @@ import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
 import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
 import com.ycandyz.master.request.UserRequest;
+import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.service.taboo.IBaseTabooWordsService;
 import com.ycandyz.master.dao.taboo.BaseTabooWordsDao;
 import com.ycandyz.master.utils.MyCollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -52,6 +54,12 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         baseTabooWords.setOperator(currentUser.getPhone());
         log.info("添加敏感字baseTabooWords:{}到数据库",baseTabooWords);
         baseTabooWordsDao.addBaseTabooWords(baseTabooWords);
+        String phraseName = baseTabooWordsVO.getPhraseName();
+        String[] tabooWordsArr = baseTabooWordsVO.getTabooWords();
+        updateKafka(phraseName,tabooWordsArr);
+    }
+
+    private void updateKafka(String phraseName,String[] tabooWordsArr) {
     }
 
     /**

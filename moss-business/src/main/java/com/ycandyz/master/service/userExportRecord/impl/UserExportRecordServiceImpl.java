@@ -7,17 +7,26 @@ import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dao.user.UserDao;
 import com.ycandyz.master.dao.userExportRecord.UserExportRecordDao;
+import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordReq;
+import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
 import com.ycandyz.master.dto.organize.OrganizeDTO;
 import com.ycandyz.master.dto.user.UserForExport;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
 import com.ycandyz.master.service.userExportRecord.IUserExportRecordService;
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -81,5 +90,47 @@ public class UserExportRecordServiceImpl extends BaseService<UserExportRecordDao
             String str=String.format("导出记录导入数据失败%s", e.getMessage());
             return ReturnResponse.failed(str);
         }
+    }
+
+    @Override
+    public void insertExportRecord(MallOrderExportResp mallOrderExportResp, UserVO userVO) {
+        log.info("导入用户记录表入参:{};{}",mallOrderExportResp,userVO);
+        String organizeName = null;
+        if (userVO != null){
+            OrganizeDTO organizeDTO = organizeDao.queryName(userVO.getOrganizeId());
+            if (organizeDTO != null){
+                organizeName = organizeDTO.getFullNname();
+            }
+        }
+        Browser browser = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getBrowser();
+        OperatingSystem operatingSystem = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getOperatingSystem();
+        UserExportRecord userExportRecord = new UserExportRecord();
+        userExportRecord.setTerminal(1);
+        userExportRecord.setOrganizeId(userVO.getOrganizeId());
+        userExportRecord.setOrganizeName(organizeName);
+        userExportRecord.setOpertorBrowser(browser.getName());
+        userExportRecord.setOperatorId(userVO.getId());
+        userExportRecord.setOperatorName(userVO.getName());
+        userExportRecord.setOperatorPhone(userVO.getPhone());
+        userExportRecord.setOperatorIp(getIpAddr(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()));
+        userExportRecord.setOpertorSystem(operatingSystem.getName());
+        userExportRecord.setCreatedAt(System.currentTimeMillis());
+        userExportRecord.setExportFileName(mallOrderExportResp.getFileName());
+        userExportRecord.setExportFileUrl(mallOrderExportResp.getFielUrl());
+        userExportRecordDao.insert(userExportRecord);
+        log.info("导入用户记录表完成");
+    }
+    public String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 }

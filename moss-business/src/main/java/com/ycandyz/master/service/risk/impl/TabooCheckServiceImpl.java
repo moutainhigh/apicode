@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 public class TabooCheckServiceImpl implements TabooCheckService {
 
-    private static List<String> allTaboosLists = new ArrayList<>();
+   // private static List<String> allTaboosLists = new ArrayList<>();
 
     private static Map<String,List<String>> maps = new HashMap<>();
 
@@ -28,6 +28,10 @@ public class TabooCheckServiceImpl implements TabooCheckService {
     @Override
     public List<String> check(String txt) {
         List<String> lists = new ArrayList<>();
+        List<String> allTaboosLists = new ArrayList<>();
+        maps.forEach((k,v)->{
+            allTaboosLists.addAll(v);
+        });
         List<String> list = TabooCheck.check(allTaboosLists, txt);
         for(Map.Entry<String, List<String>> it : maps.entrySet()){
             for (String s:list) {
@@ -36,7 +40,6 @@ public class TabooCheckServiceImpl implements TabooCheckService {
                 }
             }
         }
-        //maps.forEach((k,v)->{list.stream().forEach(s -> v.contains(s));});
        return lists;
     }
 
@@ -45,7 +48,7 @@ public class TabooCheckServiceImpl implements TabooCheckService {
         Map<String,String> map = new HashMap<>();
         List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
         tabooWordsForReviews.forEach(s->map.put(s.getPhraseName(),s.getTabooWords()));
-        map.forEach((k,v)->{allTaboosLists.addAll(MyCollectionUtils.parseIds(v));});
+        //map.forEach((k,v)->{allTaboosLists.addAll(MyCollectionUtils.parseIds(v));});
         map.forEach((k,v)->{maps.put(k,MyCollectionUtils.parseIds(v));});
     }
 }
