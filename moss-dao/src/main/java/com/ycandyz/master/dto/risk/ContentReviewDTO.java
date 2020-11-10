@@ -33,7 +33,7 @@ public class ContentReviewDTO {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date auditTime;
 
-    @ApiModelProperty(value = "审核结果")
+    @ApiModelProperty(value = "审核表审核结果")
     private Integer auditResult;
 
 }

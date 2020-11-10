@@ -71,6 +71,7 @@ public class OrganizeNewsHandler extends AbstractHandler {
                     urls[0] = split[1];
                     urls[1] = split[2];
                     contentReviewRep.setOImgUrls(urls);
+                    contentReviewRep.setAuditResult(Integer.valueOf(split[6]));
                 }else {
                     contentReviewRep.setOabstracts(split[0]);
                     contentReviewRep.setOtitle(split[1]);
@@ -79,6 +80,7 @@ public class OrganizeNewsHandler extends AbstractHandler {
                     urls[0] = split[2];
                     urls[1] = split[3];
                     contentReviewRep.setOImgUrls(urls);
+                    contentReviewRep.setAuditResult(Integer.valueOf(split[6]));
                 }
             }
         }

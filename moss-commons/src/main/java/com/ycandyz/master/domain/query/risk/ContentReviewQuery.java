@@ -30,6 +30,6 @@ public class ContentReviewQuery {
     private Long auditor;
 
     @ApiModelProperty(value = "内容审核表审核结果 [表示该条记录是否审核过， 1:待审核 2:已审核]")
-    private Integer ReviewAuditResult;
+    private Integer reviewAuditResult;
 
 }

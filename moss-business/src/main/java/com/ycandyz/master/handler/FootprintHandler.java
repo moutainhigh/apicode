@@ -64,14 +64,17 @@ public class FootprintHandler extends AbstractHandler {
             String s = String.valueOf(contentReviewDTO.getContent());
             List<String> imgUrls = new ArrayList();
             String content = null;
+            Integer auditResult = null;
             if (StringUtils.isNoneEmpty(s)) {
                 String[] split = s.split(";",-1);
                 Arrays.stream(split).forEach(s1 -> imgUrls.add(PatternUtils.reg(s1)));
                 content = split[0].split("https")[0];
+                auditResult = Integer.valueOf(split[0].substring(split[0].length()-1,split[0].length()));
             }
             contentReviewRep.setId(contentReviewDTO.getContentId());
             contentReviewRep.setFcontent(content);
             contentReviewRep.setFphotoUrls(imgUrls);
+            contentReviewRep.setAuditResult(auditResult);
         }
     }
 

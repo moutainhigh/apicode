@@ -3,10 +3,11 @@ package com.ycandyz.master.service.userExportRecord.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dao.userExportRecord.UserExportRecordDao;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery;
+import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordReq;
 import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
-import com.ycandyz.master.entities.taboo.BaseTabooWords;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
 import com.ycandyz.master.service.userExportRecord.IUserExportRecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,9 @@ public class UserExportRecordServiceImpl extends BaseService<UserExportRecordDao
     @Autowired
     private UserExportRecordDao userExportRecordDao;
 
+    @Autowired
+    private OrganizeDao organizeDao;
+
     @Override
     public Page<UserExportRecordResp> selectPages(RequestParams<UserExportRecordQuery> requestParams) {
         UserExportRecordQuery userExportRecordQuery = requestParams.getT();
@@ -41,5 +45,15 @@ public class UserExportRecordServiceImpl extends BaseService<UserExportRecordDao
             page = new Page<>(0,10,0);
         }
         return page;
+    }
+
+    @Override
+    public void insert(RequestParams<UserExportRecordReq> requestParams) {
+        if (requestParams == null){
+            log.error("导出记录导入数据为null");
+            return;
+        }
+        UserExportRecord userExportRecord = new UserExportRecord();
+
     }
 }

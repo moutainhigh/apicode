@@ -82,6 +82,7 @@ public class MallItemHandler extends AbstractHandler {
                         itemImgUrls[length -1 ] = split[3];
                     }
                     contentReviewRep.setItemImgUrls(itemImgUrls);
+                    contentReviewRep.setAuditResult(Integer.valueOf(split[5]));
                 }else {
                     contentReviewRep.setItemName(split[0]);
                     contentReviewRep.setItemText(split[1]);
@@ -98,6 +99,7 @@ public class MallItemHandler extends AbstractHandler {
                         itemImgUrls[length -1 ] = split[4];
                     }
                     contentReviewRep.setItemImgUrls(itemImgUrls);
+                    contentReviewRep.setAuditResult(Integer.valueOf(split[5]));
                 }
             }
         }

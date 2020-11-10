@@ -5,6 +5,7 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery;
+import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordReq;
 import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
 import com.ycandyz.master.service.userExportRecord.IUserExportRecordService;
@@ -41,12 +42,12 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
         Page<UserExportRecordResp> userExportRecordRespPage = userExportRecordService.selectPages(requestParams);
         return ReturnResponse.success(userExportRecordRespPage);
     }
-    
-//    //@ApiOperation(value = "查询全部")
-//    @GetMapping(value = "select/list")
-//    public ReturnResponse<Object> selectList(UserExportRecordQuery query) {
-//        return ReturnResponse.success(service.list(query));
-//    }
-    
 
+    @ApiOperation(value = "接入导出记录")
+    @PostMapping(value = "/insert")
+    public ReturnResponse<Page<UserExportRecordResp>> insert(@RequestBody RequestParams<UserExportRecordReq> requestParams) {
+        userExportRecordService.insert(requestParams);
+        return null;
+    }
+    
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery;
+import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordReq;
 import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
 
@@ -20,4 +21,6 @@ import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
 public interface IUserExportRecordService extends IService<UserExportRecord> {
 
     Page<UserExportRecordResp> selectPages(RequestParams<UserExportRecordQuery> requestParams);
+
+   void insert(RequestParams<UserExportRecordReq> requestParams);
 }

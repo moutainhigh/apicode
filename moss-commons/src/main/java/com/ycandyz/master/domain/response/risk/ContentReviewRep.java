@@ -72,7 +72,7 @@ public class ContentReviewRep {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date auditTime;
 
-    @ApiModelProperty(value = "审核结果 内容审核表记录的结果[表示该条记录是否审核过， 1:待审核 2:已审核]")
+    @ApiModelProperty(value = "审核结果 [商品详情is_del 系统屏蔽 0-通过 2-屏蔽;企业动态is_del 是否删除 0-正常 2-系统屏蔽；商友圈 is_del 是否删除 0-否  2-系统屏蔽]")
     private Integer auditResult;
 
 }
