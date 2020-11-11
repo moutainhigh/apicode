@@ -27,6 +27,8 @@ import java.util.Date;
 @ApiModel(value="base_taboo_words对象", description="敏感词表")
 public class BaseTabooWords extends Model {
 
+   @ApiModelProperty(value = "新增修改同一个topic,区分新增和修改入库[1新增 2修改 3删除]")
+   private Integer flag;
 
    @ApiModelProperty(value = "主键")
    @TableId(value = "id", type = IdType.AUTO)

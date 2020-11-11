@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.taboo.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.base.BaseService;
@@ -7,9 +8,10 @@ import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
 import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
+import com.ycandyz.master.kafka.KafkaConstant;
+import com.ycandyz.master.kafka.KafkaProducer;
 import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
 import com.ycandyz.master.request.UserRequest;
-import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.service.taboo.IBaseTabooWordsService;
 import com.ycandyz.master.dao.taboo.BaseTabooWordsDao;
 import com.ycandyz.master.utils.MyCollectionUtils;
@@ -38,6 +40,9 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     @Resource
     private BaseTabooWordsDao baseTabooWordsDao;
 
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
     /**
      * @Description: 新增敏感字
      * @Author li Zhuo
@@ -52,15 +57,11 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         BeanUtils.copyProperties(baseTabooWordsVO,baseTabooWords);
         baseTabooWords.setTabooWords(tabooWords);
         baseTabooWords.setOperator(currentUser.getPhone());
-        log.info("添加敏感字baseTabooWords:{}到数据库",baseTabooWords);
-        baseTabooWordsDao.addBaseTabooWords(baseTabooWords);
-        String phraseName = baseTabooWordsVO.getPhraseName();
-        String[] tabooWordsArr = baseTabooWordsVO.getTabooWords();
-        updateKafka(phraseName,tabooWordsArr);
+        baseTabooWords.setFlag(1);
+        kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
+        log.info("新增敏感词发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
     }
 
-    private void updateKafka(String phraseName,String[] tabooWordsArr) {
-    }
 
     /**
      * @Description: 根据id查询敏感字
@@ -80,9 +81,11 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     }
 
     @Override
-    public int delById(Long id) {
-        int i =baseTabooWordsDao.delById(id);
-        return i;
+    public void delById(Long id) {
+        BaseTabooWords baseTabooWords = baseTabooWordsDao.selById(id);
+        baseTabooWords.setFlag(3);
+        kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
+        log.info("删除敏感词发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
     }
 
     @Override
@@ -116,15 +119,16 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     }
 
     @Override
-    public int updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO) {
+    public void updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO) {
         UserVO currentUser = UserRequest.getCurrentUser();
         BaseTabooWords baseTabooWords = new BaseTabooWords();
         String tabooWords = MyCollectionUtils.PraseArraytoString(baseTabooWordsVO.getTabooWords());
         BeanUtils.copyProperties(baseTabooWordsVO,baseTabooWords);
         baseTabooWords.setTabooWords(tabooWords);
         baseTabooWords.setOperator(currentUser.getPhone());
-        int i = baseTabooWordsDao.updateBaseTabooWords(baseTabooWords);
-        return i;
+        baseTabooWords.setFlag(2);
+        kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
+        log.info("修改敏感词发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
     }
 
 }

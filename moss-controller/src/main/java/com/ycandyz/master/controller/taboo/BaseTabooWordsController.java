@@ -53,11 +53,8 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
     @ApiOperation(value="编辑敏感字")
     @PutMapping(value = "/updateBaseTabooWords")
     public ReturnResponse<Object> updateBaseTabooWords(@RequestBody BaseTabooWordsVO baseTabooWordsVO) {
-        int i = baseTabooWordsServicel.updateBaseTabooWords(baseTabooWordsVO);
-        if (i > 0){
-            return ReturnResponse.success("修改成功!");
-        }
-        return ReturnResponse.success("修改失败!");
+        baseTabooWordsServicel.updateBaseTabooWords(baseTabooWordsVO);
+        return ReturnResponse.success("修改成功!");
     }
 
 
@@ -72,11 +69,8 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
     @ApiOperation(value = "通过ID删除")
     @DeleteMapping(value = "/delete/{id}")
 	public ReturnResponse<Object> delById(@PathVariable Long id) {
-        int i = baseTabooWordsServicel.delById(id);
-        if (i > 0){
-            return ReturnResponse.success("删除成功!");
-        }
-        return ReturnResponse.failed("该id对应的数据不存在");
+        baseTabooWordsServicel.delById(id);
+        return ReturnResponse.failed("删除成功");
 	}
 
 
