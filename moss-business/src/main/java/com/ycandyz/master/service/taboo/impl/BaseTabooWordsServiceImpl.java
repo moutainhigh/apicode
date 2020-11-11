@@ -59,7 +59,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         baseTabooWords.setOperator(currentUser.getPhone());
         baseTabooWords.setFlag(1);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
-        log.info("新增敏感词发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
+        log.info("新增敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
     }
 
 
@@ -85,7 +85,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         BaseTabooWords baseTabooWords = baseTabooWordsDao.selById(id);
         baseTabooWords.setFlag(3);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
-        log.info("删除敏感词发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
+        log.info("删除敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
     }
 
     @Override
@@ -128,7 +128,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         baseTabooWords.setOperator(currentUser.getPhone());
         baseTabooWords.setFlag(2);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
-        log.info("修改敏感词发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
+        log.info("修改敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
     }
 
 }

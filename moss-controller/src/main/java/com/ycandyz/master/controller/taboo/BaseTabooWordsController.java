@@ -49,15 +49,12 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
         return ReturnResponse.success(baseTabooWords);
     }
 
-
     @ApiOperation(value="编辑敏感字")
     @PutMapping(value = "/updateBaseTabooWords")
     public ReturnResponse<Object> updateBaseTabooWords(@RequestBody BaseTabooWordsVO baseTabooWordsVO) {
         baseTabooWordsServicel.updateBaseTabooWords(baseTabooWordsVO);
         return ReturnResponse.success("修改成功!");
     }
-
-
 
     @ApiOperation(value = "查询全部")
     @PostMapping(value = "/select/list")
@@ -70,8 +67,7 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
     @DeleteMapping(value = "/delete/{id}")
 	public ReturnResponse<Object> delById(@PathVariable Long id) {
         baseTabooWordsServicel.delById(id);
-        return ReturnResponse.failed("删除成功");
+        return ReturnResponse.success("删除成功");
 	}
-
 
 }
