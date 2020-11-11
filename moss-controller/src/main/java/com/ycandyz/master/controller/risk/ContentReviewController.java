@@ -41,7 +41,7 @@ public class ContentReviewController {
 
 
     /**
-     * @Description: 商品详情/企业动态/商友圈审核  0通过/2屏蔽
+     * @Description: 商品详情/企业动态/商友圈审核  0通过/1屏蔽
      * @Author li Zhuo
      * @Date 2020/10/28
      * @Version: V1.0
