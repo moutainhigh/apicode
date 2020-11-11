@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 public class TabooCheckParams {
 
 
-    @ApiModelProperty(value = "审核模块id")
+    @ApiModelProperty(value = "审核模块id",required = true)
     @NotNull(message = "审核模块id(contentId)不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     private Long contentId;
 
@@ -32,7 +32,7 @@ public class TabooCheckParams {
     @ApiModelProperty(value = "商品分享描述")
     private String shareDescr;
 
-    @ApiModelProperty(value = "内容模块[0:商品详情(表:mall_item);1:商友圈(表:footprint);2:企业动态(表:organize_news)]")
+    @ApiModelProperty(value = "内容模块[0:商品详情(表:mall_item);1:商友圈(表:footprint);2:企业动态(表:organize_news)]",required = true)
     @NotNull(message = "内容模块[0:商品详情;1:商友圈;2:企业动态]不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     private Integer type;
 

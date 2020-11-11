@@ -30,15 +30,15 @@ import java.util.Date;
 public class UserExportRecordReq extends Model {
 
 
-   @ApiModelProperty(value = "操作终端:1-U客企业后台 2-有传运营后台")
+   @ApiModelProperty(value = "操作终端:1-U客企业后台 2-有传运营后台",required = true)
    @NotNull(message = "操作终端terminal不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private Integer terminal;
 
-   @ApiModelProperty(value = "企业编号")
+   @ApiModelProperty(value = "企业编号",required = true)
    @NotNull(message = "企业编号organizeId不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private Long organizeId;
 
-   @ApiModelProperty(value = "操作人id")
+   @ApiModelProperty(value = "操作人id",required = true)
    @NotNull(message = "操作人id(operatorId)不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private Long operatorId;
 
@@ -51,11 +51,11 @@ public class UserExportRecordReq extends Model {
    @ApiModelProperty(value = "操作人的浏览器")
    private String opertorBrowser;
 
-   @ApiModelProperty(value = "导出文件名称")
+   @ApiModelProperty(value = "导出文件名称",required = true)
    @NotNull(message = "导出文件名称exportFileName不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private String exportFileName;
 
-   @ApiModelProperty(value = "导出文件链接")
+   @ApiModelProperty(value = "导出文件链接",required = true)
    @NotNull(message = "导出文件链接exportFileUrl不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private String exportFileUrl;
 
