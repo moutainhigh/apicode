@@ -42,6 +42,7 @@ public class MallItemHandler extends AbstractHandler {
             updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
             log.info("商品详情id为{}的数据审批{}成功",id,desc);
             String str=String.format("商品详情id为%d的数据审批%s成功",id, desc);
+            insertAllcontentReviewLog(id,1, reviewParam.getOper(),2);
             return ReturnResponse.success(str);
         }
         log.info("商品详情id为{}的数据审批{}成功",id,desc);
@@ -105,11 +106,15 @@ public class MallItemHandler extends AbstractHandler {
             List<String> stringList = new ArrayList<>();
             v.stream().forEach(s->stringList.add(String.valueOf(s)));
             int i1 = mallItemDao.handleExamine(k,stringList);
-            v.stream().forEach(id -> updateOrInsert(id, 0));
             i.set(i1);
         });
         if (i.get() == list.size()){
             String str=String.format("商品详情批量%s成功", desc);
+            int finalOper = oper;
+            maps.forEach((k,v)->{
+                v.stream().forEach(id -> updateOrInsert(id, 1));
+                v.stream().forEach(id2-> insertAllcontentReviewLog(id2,1, finalOper,2));
+            });
             return ReturnResponse.success(str);
         }
         String str=String.format("商品详情批量%s成功", desc);

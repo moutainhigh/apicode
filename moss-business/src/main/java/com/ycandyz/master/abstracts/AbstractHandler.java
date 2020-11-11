@@ -2,7 +2,9 @@ package com.ycandyz.master.abstracts;
 
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dao.risk.ContentreviewDao;
+import com.ycandyz.master.dao.risk.ContentreviewLogDao;
 import com.ycandyz.master.domain.UserVO;
+import com.ycandyz.master.domain.query.risk.ContentReviewLogVO;
 import com.ycandyz.master.domain.query.risk.ReviewExamineParam;
 import com.ycandyz.master.domain.query.risk.ReviewParam;
 import com.ycandyz.master.domain.response.risk.ContentReviewRep;
@@ -19,6 +21,10 @@ public abstract class AbstractHandler implements InitializingBean {
 
     @Autowired
     protected ContentreviewDao contentreviewDao;
+
+    @Autowired
+    private ContentreviewLogDao contentreviewLogDao;
+
 
     abstract public ReturnResponse examine( ReviewParam reviewParam);
 
@@ -40,4 +46,16 @@ public abstract class AbstractHandler implements InitializingBean {
     }
 
     public abstract ReturnResponse handleExamine(Map<Integer,List<Long>> maps);
+
+    protected void insertAllcontentReviewLog(Long contentId, int type, int contentResult, int auditResult){
+        UserVO user = UserRequest.getCurrentUser();
+        ContentReviewLogVO contentReviewLogVO = new ContentReviewLogVO();
+        contentReviewLogVO.setContentId(contentId);
+        contentReviewLogVO.setType(type);
+        contentReviewLogVO.setAuditor(user.getId());
+        contentReviewLogVO.setContentAuditResult(contentResult);
+        contentReviewLogVO.setAuditResult(auditResult);
+        contentreviewLogDao.insertAll(contentReviewLogVO);
+    }
+
 }

@@ -39,6 +39,7 @@ public class OrganizeNewsHandler extends AbstractHandler {
             updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
             log.info("企业动态id为{}的数据审批{}成功",id,desc);
             String str=String.format("企业动态id为%d的数据审批%s成功",id, desc);
+            insertAllcontentReviewLog(id,2, reviewParam.getOper(),2);
             return ReturnResponse.success(str);
         }
         log.info("企业动态id为{}的数据审批{}成功",id,desc);
@@ -93,11 +94,15 @@ public class OrganizeNewsHandler extends AbstractHandler {
         AtomicInteger i = new AtomicInteger();
         maps.forEach((k,v)->{
             int i1 = organizeNewsDao.handleExamine(k, v);
-            v.stream().forEach(id -> updateOrInsert(id, 2));
             i.set(i1);
         });
         if (i.get() == list.size()){
             String str=String.format("企业动态批量%s成功", desc);
+            int finalOper = oper;
+            maps.forEach((k,v)->{
+                v.stream().forEach(id -> updateOrInsert(id, 1));
+                v.stream().forEach(id2-> insertAllcontentReviewLog(id2,2, finalOper,2));
+            });
             return ReturnResponse.success(str);
         }
         String str=String.format("企业动态批量%s成功", desc);

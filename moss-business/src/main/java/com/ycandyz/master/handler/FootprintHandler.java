@@ -44,6 +44,7 @@ public class FootprintHandler extends AbstractHandler {
             updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
             log.info("商友圈id为{}的数据审批{}成功",id,desc);
             String str=String.format("商友圈id为%d的数据审批%s成功",id, desc);
+            insertAllcontentReviewLog(id,0, reviewParam.getOper(),2);
             return ReturnResponse.success(str);
         }
         log.info("商友圈id为{}的数据审批{}失败",id,desc);
@@ -94,12 +95,16 @@ public class FootprintHandler extends AbstractHandler {
         AtomicInteger i = new AtomicInteger();
         maps.forEach((k,v)->{
             int i1 = footprintDao.handleExamine(k, v);
-            v.stream().forEach(id -> updateOrInsert(id, 1));
             i.set(i1);
         });
         if (i.get() == list.size()){
             log.info("商友圈批量{}成功",desc);
             String str=String.format("商友圈批量%s成功", desc);
+            int finalOper = oper;
+            maps.forEach((k, v)->{
+                v.stream().forEach(id -> updateOrInsert(id, 1));
+                v.stream().forEach(id2-> insertAllcontentReviewLog(id2,0, finalOper,2));
+            });
             return ReturnResponse.success(str);
         }
         log.info("商友圈批量{}失败",desc);

@@ -41,7 +41,7 @@ public class TabooCheckServiceImpl implements TabooCheckService {
         for(Map.Entry<String, List<String>> it : Taboomaps.entrySet()){
             for (String s:list) {
                 if (it.getValue().contains(s)){
-                    lists.add(s);
+                    lists.add(it.getKey());
                 }
             }
         }
@@ -54,6 +54,7 @@ public class TabooCheckServiceImpl implements TabooCheckService {
         List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
         tabooWordsForReviews.forEach(s->map.put(s.getPhraseName(),s.getTabooWords()));
         map.forEach((k,v)->{Taboomaps.put(k,MyCollectionUtils.parseIds(v));});
+        log.info("缓存中敏感词现存Taboomaps------->{}",Taboomaps);
     }
 
     //新增敏感词消费kafka消息

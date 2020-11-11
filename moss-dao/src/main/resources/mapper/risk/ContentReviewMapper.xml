@@ -14,8 +14,8 @@
     </resultMap>
 
     <insert id="insert" parameterType="com.ycandyz.master.entities.risk.ContentReview" >
-        insert into content_review(content_id,`type`,created_time,updated_time,audit_result)
-        values(#{contentId},#{type},now(),now(),#{auditResult});
+        insert into content_review(id,content_id,`type`,created_time,updated_time,audit_result)
+        values(#{id},#{contentId},#{type},now(),now(),#{auditResult});
     </insert>
     <update id="updateAuditResult">
         update content_review set auditor = #{auditor} ,audit_result = 2,audit_time = now() where content_id = #{contentId} and `type` = #{type};
