@@ -37,21 +37,21 @@
         </if>
         <if test="u != null and u.organizeName != null">
             and
-            organize_name like concat('%',{u.organizeName},'%')
+            organize_name like concat('%',#{u.organizeName},'%')
         </if>
         <if test="u != null and u.operatorId != null">
-            operator_id  = #{u.operatorId}
+            and operator_id  = #{u.operatorId}
         </if>
         <if test="u != null and u.createdAtStart != null">
             <![CDATA[-->
             and
-            created_time <= FROM_UNIXTIME(#{u.createdAtStart}, '%Y-%m-%d %H:%i:%S')
+            created_time >= FROM_UNIXTIME(#{u.createdAtStart}, '%Y-%m-%d %H:%i:%S')
             ]]>-->
         </if>
         <if test="u != null and u.createdAtEnd != null">
             <![CDATA[-->
             and
-            created_time >= FROM_UNIXTIME(#{u.createdAtEnd}, '%Y-%m-%d %H:%i:%S')
+            created_time <= FROM_UNIXTIME(#{u.createdAtEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>-->
         </if>
 
