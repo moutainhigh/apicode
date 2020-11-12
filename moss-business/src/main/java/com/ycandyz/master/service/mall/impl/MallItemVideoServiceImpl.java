@@ -1,17 +1,11 @@
 package com.ycandyz.master.service.mall.impl;
 
-import cn.hutool.core.date.DateUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ycandyz.master.constant.CommonConstant;
-import com.ycandyz.master.constant.Config;
 import com.ycandyz.master.constant.SymbolConstant;
-import com.ycandyz.master.entities.mall.MallAfterSales;
-import com.ycandyz.master.entities.mall.MallItem;
+import com.ycandyz.master.constant.VideoConstant;
+import com.ycandyz.master.domain.enums.mall.MallItemVideoEnum;
 import com.ycandyz.master.entities.mall.MallItemVideo;
 import com.ycandyz.master.domain.query.mall.MallItemVideoQuery;
 import com.ycandyz.master.dao.mall.MallItemVideoDao;
-import com.ycandyz.master.exception.BusinessException;
-import com.ycandyz.master.service.mall.IMallItemService;
 import com.ycandyz.master.service.mall.IMallItemVideoService;
 import com.ycandyz.master.controller.base.BaseService;
 
@@ -28,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -46,47 +39,119 @@ public class MallItemVideoServiceImpl extends BaseService<MallItemVideoDao,MallI
 
     @Autowired
     private S3UploadFile s3UploadFile;
-    @Autowired
-    private IMallItemService mallItemService;
 
     @Value("${video-local-path}")
     private String localPath;
 
     @Override
-    public boolean insert(MallItemVideo entity, MultipartFile file) {
+    public boolean insert(MallItemVideo entity, MultipartFile video, MultipartFile img) {
         entity.setVideoNo(String.valueOf(IDGeneratorUtils.getLongId()));
-        String inputFile = file.getOriginalFilename();
-        String suffix = inputFile.substring(inputFile.lastIndexOf(SymbolConstant.SYMBOL_1) + 1,inputFile.length()).toLowerCase();
-        String videoName = entity.getVideoNo()+SymbolConstant.SYMBOL_1+suffix;
-        String videoPath =localPath+ File.separator+videoName;
+        //视频
+        String videoTitle = video.getOriginalFilename();
+        String videoSuffix = videoTitle.substring(videoTitle.lastIndexOf(SymbolConstant.SYMBOL_1) + 1,videoTitle.length()).toLowerCase();
+        AssertUtils.isTrue(VideoConstant.FORMAT_MP4.equals(videoSuffix), "暂不支持此格式视频!");
+        String uuid = UUID.randomUUID().toString().replace(SymbolConstant.SYMBOL_3, SymbolConstant.SYMBOL_4);
+        String videoName = uuid+SymbolConstant.SYMBOL_1+videoSuffix;
+        String videoPath =localPath+videoName;
         //s3商店视频地址命名规则,商店编号+视频编号
-        LambdaQueryWrapper<MallItem> wrapper = new LambdaQueryWrapper<MallItem>()
-                .select(MallItem::getShopNo)
-                .eq(MallItem::getItemNo,entity.getItemNo());
-        MallItem mallItem = mallItemService.getOne(wrapper);
-        String s3Suffix = SymbolConstant.SYMBOL_2+mallItem.getShopNo()+File.separator+videoName;
+        AssertUtils.notNull(getShopNo(),"商品编号不正确");
+        String s3Suffix = getShopNo()+File.separator+videoName;
+        entity.setShopNo(getShopNo());
+        entity.setTitle(videoTitle);
+        entity.setSize(video.getSize());
+        getVideoInfo(videoPath,entity);
         try {
-            FileUtil.writeFile(file.getInputStream(),new File(videoPath));
+            FileUtil.uploadFile(localPath,videoName,video.getInputStream());
             String url = s3UploadFile.upload(new File(videoPath), s3Suffix);
             entity.setUrl(url);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
             AssertUtils.notNull(null,"视频上传服务器失败!");
+        }finally {
+            FileUtil.deleteFile(new File(videoPath));
         }
-        entity.setTitle(inputFile);
-        entity.setSize(file.getSize());
-        getVideoInfo(videoPath,entity);
-        //删掉本地视频文件
-        FileUtil.deleteFile(new File(videoPath));
+        //图片
+        if(null != img){
+            String imgTitle = img.getOriginalFilename();
+            String imgSuffix = imgTitle.substring(imgTitle.lastIndexOf(SymbolConstant.SYMBOL_1) + 1,imgTitle.length()).toLowerCase();
+            String imgName = uuid+SymbolConstant.SYMBOL_5+imgSuffix;
+            String imgPath =localPath+imgName;
+            //s3商店视频地址命名规则,商店编号+视频编号
+            String s3ImgSuffix = getShopNo()+File.separator+imgName;
+            entity.setShopNo(getShopNo());
+            getVideoInfo(videoPath,entity);
+            try {
+                FileUtil.uploadFile(localPath,imgName,img.getInputStream());
+                String url = s3UploadFile.upload(new File(imgPath), s3ImgSuffix);
+                entity.setImg(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                AssertUtils.notNull(null,"视频缩略图上传服务器失败!");
+            }finally {
+                FileUtil.deleteFile(new File(imgPath));
+            }
+        }
         return super.save(entity);
+    }
+
+    @Override
+    public boolean update(MallItemVideo entity, MultipartFile video, MultipartFile img) {
+        String uuid = UUID.randomUUID().toString().replace(SymbolConstant.SYMBOL_3, SymbolConstant.SYMBOL_4);
+        //视频
+        if(null != video){
+            String videoTitle = video.getOriginalFilename();
+            String videoSuffix = videoTitle.substring(videoTitle.lastIndexOf(SymbolConstant.SYMBOL_1) + 1,videoTitle.length()).toLowerCase();
+            AssertUtils.isTrue(VideoConstant.FORMAT_MP4.equals(videoSuffix), "暂不支持此格式视频!");
+            String videoName = uuid+SymbolConstant.SYMBOL_1+videoSuffix;
+            String videoPath =localPath+videoName;
+            //s3商店视频地址命名规则,商店编号+视频编号
+            AssertUtils.notNull(getShopNo(),"商品编号不正确");
+            String s3Suffix = getShopNo()+File.separator+videoName;
+            entity.setTitle(videoTitle);
+            entity.setSize(video.getSize());
+            getVideoInfo(videoPath,entity);
+            try {
+                FileUtil.uploadFile(localPath,videoName,video.getInputStream());
+                String url = s3UploadFile.upload(new File(videoPath), s3Suffix);
+                entity.setUrl(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                AssertUtils.notNull(null,"视频上传服务器失败!");
+            }finally {
+                FileUtil.deleteFile(new File(videoPath));
+            }
+        }
+        //图片
+        if(null != img){
+            String imgTitle = img.getOriginalFilename();
+            String imgSuffix = imgTitle.substring(imgTitle.lastIndexOf(SymbolConstant.SYMBOL_1) + 1,imgTitle.length()).toLowerCase();
+            String imgName = uuid+SymbolConstant.SYMBOL_5+imgSuffix;
+            String imgPath =localPath+imgName;
+            //s3商店视频地址命名规则,商店编号+视频编号
+            String s3ImgSuffix = getShopNo()+File.separator+imgName;
+            try {
+                FileUtil.uploadFile(localPath,imgName,img.getInputStream());
+                String url = s3UploadFile.upload(new File(imgPath), s3ImgSuffix);
+                entity.setImg(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
+                AssertUtils.notNull(null,"视频缩略图上传服务器失败!");
+            }finally {
+                FileUtil.deleteFile(new File(imgPath));
+            }
+        }
+        //删掉本地视频文件
+        return true;
     }
 
     private void getVideoInfo(String filePath,MallItemVideo model){
         File source = new File(filePath);
         Encoder encoder = new Encoder();
         FileChannel fc= null;
-        String size = "";
         try {
             MultimediaInfo m = encoder.getInfo(source);
             Long ls = m.getDuration()/1000;

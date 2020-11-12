@@ -6,6 +6,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.system.UserInfo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ycandyz.master.constant.ApiConstant;
 import com.ycandyz.master.constant.SecurityConstant;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.entities.CommonResult;
@@ -15,6 +16,7 @@ import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.service.mall.impl.MallShopServiceImpl;
 import com.ycandyz.master.service.user.IUserService;
 import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.ConfigUtils;
 import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -90,14 +92,15 @@ public class InterceptorToken implements HandlerInterceptor {
             Long organizeId = null;
             if(StrUtil.isNotEmpty(token)){
 
-                if (!redisUtil.hasKey(token)){
-                    log.info("redis不存在该token-----------");
-                    returnJson(httpServletResponse);
-                    return false;
+                if(!ApiConstant.ACTIVE.equals(ConfigUtils.getValue(Config.ACTIVE))){
+                    if (!redisUtil.hasKey(token)){
+                        log.info("redis不存在该token-----------");
+                        returnJson(httpServletResponse);
+                        return false;
+                    }
+                    //更新redis中token的过期时间
+                    redisUtil.set(token,"1",60*60); //token过期时间为一小时
                 }
-
-                //更新redis中token的过期时间
-                redisUtil.set(token,"1",60*60); //token过期时间为一小时
 
                 try {
 //                    userId = TokenUtil.verifyToken(token, authConfigSecret);
