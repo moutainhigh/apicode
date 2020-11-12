@@ -112,7 +112,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 //查询集团所有数据
                 Long groupOrganizeId = userVO.getOrganizeId();   //集团id
                 if (groupOrganizeId!=null) {
-                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status",2));
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> oids = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.addAll(oids);
@@ -502,7 +502,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 }
             }else {
                 mallafterSalesQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
-                MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallafterSalesQuery.getChildOrganizeId()));
+                MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallafterSalesQuery.getChildOrganizeId()).eq("status",2));
                 if (mallShop!=null){
                     mallafterSalesQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
                 }

@@ -104,7 +104,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 //查询集团所有数据
                 Long groupOrganizeId = userVO.getOrganizeId();   //集团id
                 if (groupOrganizeId!=null) {
-                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status",2));
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> oIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.addAll(oIds);
@@ -293,7 +293,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 //查询集团所有数据
                 Long groupOrganizeId = userVO.getOrganizeId();   //集团id
                 if (groupOrganizeId!=null) {
-                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status",2));
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.add(groupOrganizeId.intValue());
