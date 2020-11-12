@@ -89,6 +89,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
     @Override
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
+        List<MallOrderVO> list = new ArrayList<>();
+        Page<MallOrderVO> page1 = new Page<>();
         MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
         List<Integer> organizeIds = new ArrayList<>();  //保存企业id，用于批量查询
         Map<String, Integer> shopNoAndOrganizeId = new HashMap<>(); //保存shopNo和organizeid    map<shopNo,organizeid>
@@ -122,12 +124,16 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 if (mallShop!=null){
                     mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
                     shopNoAndOrganizeId.put(mallShop.getShopNo(), Integer.valueOf(mallOrderQuery.getChildOrganizeId()));
+                }else {
+                    page1.setPages(requestParams.getPage());
+                    page1.setCurrent(requestParams.getPage());
+                    page1.setRecords(list);
+                    page1.setSize(requestParams.getPage_size());
+                    return ReturnResponse.success(page1);
                 }
             }
         }
 
-        List<MallOrderVO> list = new ArrayList<>();
-        Page<MallOrderVO> page1 = new Page<>();
         try {
             //获取总条数
             Integer count = mallOrderDao.getTrendMallOrderPageSize(mallOrderQuery);
@@ -301,6 +307,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallOrderQuery.getChildOrganizeId()));
                 if (mallShop!=null){
                     mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
+                }else {
+                    return null;
                 }
             }
         }

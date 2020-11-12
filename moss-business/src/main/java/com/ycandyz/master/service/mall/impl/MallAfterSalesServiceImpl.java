@@ -96,6 +96,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     @Override
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
         Page<MallAfterSalesVO> mallPage = new Page<>();
+        List<MallAfterSalesVO> list = new ArrayList<>();
         MallafterSalesQuery mallafterSalesQuery = requestParams.getT();
         if (mallafterSalesQuery==null){
             mallafterSalesQuery = new MallafterSalesQuery();
@@ -131,11 +132,17 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 if (mallShop!=null){
                     mallafterSalesQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
                     shopNoAndOrganizeId.put(mallShop.getShopNo(), Integer.valueOf(mallafterSalesQuery.getChildOrganizeId()));
+                }else {
+                    mallPage.setSize(requestParams.getPage_size());
+                    mallPage.setRecords(list);
+                    mallPage.setCurrent(requestParams.getPage());
+                    mallPage.setPages(requestParams.getPage());
+                    return ReturnResponse.success(mallPage);
                 }
             }
         }
         Page pageQuery = new Page(requestParams.getPage(), requestParams.getPage_size());
-        List<MallAfterSalesVO> list = new ArrayList<>();
+
         Page<MallAfterSalesDTO> page = null;
         try {
             page = mallAfterSalesDao.getTrendMallAfterSalesPage(pageQuery, mallafterSalesQuery);
