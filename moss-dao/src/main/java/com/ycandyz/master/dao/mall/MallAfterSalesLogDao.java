@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface MallAfterSalesLogDao extends BaseMapper<MallAfterSalesLog> {
 
-    List<MallAfterSalesLogDTO> querySalesLogByShopNoAndSalesNoList(@Param("list") List<String> afterSalesNoList, @Param("shopNo") String shopNo);
+    List<MallAfterSalesLogDTO> querySalesLogByShopNoAndSalesNoList(@Param("list") List<String> afterSalesNoList);
 
-    List<MallAfterSalesLogDTO> querySalesLogByShopNoAndSalesNo(@Param("afterSalesNo") String afterSalesNo, @Param("shopNo") String shopNo);
+    List<MallAfterSalesLogDTO> querySalesLogByShopNoAndSalesNo(@Param("afterSalesNo") String afterSalesNo);
 }

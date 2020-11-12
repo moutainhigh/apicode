@@ -592,7 +592,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
 
             //查看商店
-            MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(userVO.getShopNo());
+            MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVO.getShopNo());
             if (mallShopDTO==null){
                 return ReturnResponse.failed("店铺信息为空");
             }
@@ -628,7 +628,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallOrderVO.setAfterSales(voList);
 
                     //查看售后日志
-                    List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNoList(afterSalesNoList, userVO.getShopNo());
+                    List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNoList(afterSalesNoList);
                     if (mallAfterSalesLogDTOs != null && mallAfterSalesLogDTOs.size() > 0) {
                         List<MallAfterSalesLogVO> salesLogVOList = new ArrayList<>();
                         mallAfterSalesLogDTOs.forEach(dto -> {

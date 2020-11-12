@@ -316,7 +316,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             }
 
             //MallAfterSalesLog表
-            List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNo(mallAfterSalesDTO.getAfterSalesNo(),userVO.getShopNo());
+            List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNo(mallAfterSalesDTO.getAfterSalesNo());
             if (mallAfterSalesLogDTOs!=null && mallAfterSalesLogDTOs.size()>0){
                 List<MallAfterSalesLogVO> mallAfterSalesLogVOS = new ArrayList<>();
                 mallAfterSalesLogDTOs.forEach(dto->{
