@@ -527,7 +527,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Override
     public ReturnResponse<MallOrderVO> queryOrderDetail(String orderNo, UserVO userVO) {
         MallOrderVO mallOrderVO = null;
-        MallOrderDTO mallOrderDTO = mallOrderDao.queryOrderDetail(orderNo,userVO.getShopNo());
+        MallOrderDTO mallOrderDTO = mallOrderDao.queryOrderDetail(orderNo);
         if (mallOrderDTO != null){
             mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);

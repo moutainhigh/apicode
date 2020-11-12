@@ -164,9 +164,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                             state = 2;
                         }else if (subStatus==1050 || subStatus==2010){
                             state = 3;
-                        }else if (subStatus==1080 || subStatus==2020 || subStatus==2030){
+                        }else if (subStatus==1080 || subStatus==2020 || subStatus==2030 || (subStatus==1070 && mallAfterSalesDTO.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                             state = 4;
-                        }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050){
+                        }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050 || (subStatus==1070 && mallAfterSalesDTO.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                             state = 6;
                         }else {
                             state = 5;
@@ -232,7 +232,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     @Override
     public ReturnResponse<MallAfterSalesVO> querySalesDetail(String afterSalesNo, UserVO userVO) {
         MallAfterSalesVO mallAfterSalesVO = null;
-        MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(afterSalesNo,userVO.getShopNo());
+        MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(afterSalesNo);
         if (mallAfterSalesDTO!=null){
             mallAfterSalesVO = new MallAfterSalesVO();
             BeanUtils.copyProperties(mallAfterSalesDTO,mallAfterSalesVO);
@@ -433,9 +433,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     state = 2;
                 }else if (subStatus==1050 || subStatus==2010){
                     state = 3;
-                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030){
+                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030 || (subStatus==1070 && mallAfterSalesDTO.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                     state = 4;
-                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050){
+                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050 || (subStatus==1070 && mallAfterSalesDTO.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                     state = 6;
                 }else {
                     state = 5;
@@ -526,9 +526,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     state = 2;
                 }else if (subStatus==1050 || subStatus==2010){
                     state = 3;
-                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030){
+                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030 || (subStatus==1070 && dto.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                     state = 4;
-                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050){
+                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050 || (subStatus==1070 && dto.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                     state = 6;
                 }else {
                     state = 5;

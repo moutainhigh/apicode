@@ -509,7 +509,6 @@
         left join mall_order_detail modetail on mo.order_no=modetail.order_no
         left join mall_shop_shipping ship on mo.order_no=ship.order_no
         where mo.order_no = #{orderNo}
-        and mo.shop_no=#{shopNo}
     </select>
 
     <select id="getTrendMallOrderPageSize" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultType="java.lang.Integer">

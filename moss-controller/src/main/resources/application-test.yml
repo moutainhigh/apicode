@@ -28,7 +28,7 @@ spring:
   mvc:
     static-path-pattern: static/**
   kafka:
-    bootstrap-servers: kafka-dev.ycandyz.com:9092
+    bootstrap-servers: kafka-test.ycandyz.com:9092
     producer:
       #发生错误消息重发次数
       retries: 3
