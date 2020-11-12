@@ -9,6 +9,7 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -31,15 +32,17 @@ public class MallItemVideoComplaintQuery implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "商品视频编号")
+    @Condition(condition = ConditionEnum.EQ)
     private String videoNo;
 
-    @ApiModelProperty(value = "投诉类型(预留)")
-    private Integer type;
-
+    @ApiParam(hidden = true)
     @ApiModelProperty(value = "视频投诉内容")
+    @Condition(condition = ConditionEnum.LIKE)
     private String content;
 
+    @ApiParam(hidden = true)
     @ApiModelProperty(value = "投诉状态(0未处理,1已处理)")
+    @Condition(condition = ConditionEnum.EQ)
     private Integer status;
 
 }

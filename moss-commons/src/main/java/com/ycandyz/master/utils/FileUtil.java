@@ -310,6 +310,27 @@ public class FileUtil {
 		}
 	}
 
+	public static final boolean uploadFile(String path,String name,InputStream in) throws Exception {
+		try {
+			File dir = new File(path);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			FileOutputStream fos = new FileOutputStream(new File(path + name));
+			byte[] buf = new byte[1024];
+			int i = 0;
+			while ((i = in.read(buf)) != -1) {
+				fos.write(buf, 0, i);
+			}
+			in.close();
+			fos.close();
+			return true;
+		} catch (IOException ie) {
+			ie.printStackTrace();
+			return false;
+		}
+	}
+
 	public static void deleteFile(File dir) {
 		if (dir.exists()) {
 			dir.delete();
