@@ -26,7 +26,6 @@
         <result column="created_time" property="createdTime" />
         <result column="createdAtStr" property="createdAtStr" />
         <result column="shop_no" property="shopNo" />
-        <result column="audit_second_at" property="auditSecondAt" />
         <collection property="order" ofType="com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO">
             <result column="moOrderNo" property="orderNo" />
             <result column="moStatus" property="orderStatus" />
@@ -74,7 +73,6 @@
             sales.audit_second_at,
             sales.created_time,
             sales.shop_no,
-            sales.audit_second_at,
             concat(u.`name`,' ',u.phone) as userName,
 
             mo.order_no as moOrderNo,
@@ -188,7 +186,6 @@
             sales.audit_first_at,
             sales.audit_second_at,
             sales.created_time,
-            sales.audit_second_at,
             sales.shop_no,
 
             mo.order_no as moOrderNo,
@@ -242,7 +239,6 @@
         sales.audit_second_at,
         sales.created_time,
         sales.shop_no,
-        sales.audit_second_at,
         concat(u.`name`,' ',u.phone) as userName,
 
         mo.order_no as moOrderNo,
@@ -353,8 +349,7 @@
             sales.created_at as createdAt,
             sales.close_at as closeAt,
             sales.reason as reason,
-            sales.shop_no as shopNo,
-            sales.audit_second_at as auditSecondAt
+            sales.shop_no as shopNo
         FROM
             mall_after_sales sales
         where
