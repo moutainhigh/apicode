@@ -109,7 +109,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         List<Integer> oIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.addAll(oIds);
                         organizeIds.add(groupOrganizeId.intValue());
-                        List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(oIds);
+                        List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
                         if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
                             mallOrderQuery.setShopNo(shopNos);
