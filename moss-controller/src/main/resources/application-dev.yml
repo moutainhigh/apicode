@@ -124,6 +124,6 @@ aliyun:
   sms:
     domain: dysmsapi.aliyuncs.com
     product: Dysmsapi
-    signName: 有传科技4
+    sign: 有传科技4
     #有传客服电话
     service-number: 13714366094
