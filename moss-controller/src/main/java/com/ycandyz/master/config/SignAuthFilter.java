@@ -2,8 +2,10 @@ package com.ycandyz.master.config;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.ycandyz.master.constant.ApiConstant;
 import com.ycandyz.master.constant.SecurityConstant;
 import com.ycandyz.master.domain.BodyReaderHttpServletRequestWrapper;
+import com.ycandyz.master.utils.ConfigUtils;
 import com.ycandyz.master.utils.SignUtil;
 import com.ycandyz.master.utils.HttpUtils;
 
@@ -53,7 +55,7 @@ public class SignAuthFilter implements Filter {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
         boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));
-        if (flow) {
+        if (flow || ApiConstant.ACTIVE.equals(ConfigUtils.getValue(Config.ACTIVE))) {
             filterChain.doFilter(request, response);
         } else {
             HttpServletRequest requestWrapper = new BodyReaderHttpServletRequestWrapper(request);
