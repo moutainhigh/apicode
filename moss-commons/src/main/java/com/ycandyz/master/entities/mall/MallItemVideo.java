@@ -7,6 +7,7 @@ import java.util.Date;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,6 +45,7 @@ public class MallItemVideo extends Model {
    @ApiModelProperty(value = "视频编号")
    private String videoNo;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "商店编号")
    @Size(max = 64, message = "商店编号长度不能大于64。",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
@@ -67,18 +69,22 @@ public class MallItemVideo extends Model {
    @ApiModelProperty(value = "视频缩略图")
    private String img;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "视频标题")
    private String title;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "视频的上传者")
    private Long userId;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "视频播放次数")
    private Long playCount;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "帧率")
    private String fps;
@@ -87,26 +93,32 @@ public class MallItemVideo extends Model {
    @ApiModelProperty(value = "视频时长")
    private Integer duration;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "大小")
    private Long size;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "视频格式")
    private String format;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "视频编码")
    private String codec;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "码率")
    private Integer rate;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "宽")
    private Integer width;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "高")
    private Integer height;
@@ -119,10 +131,12 @@ public class MallItemVideo extends Model {
    @ApiModelProperty(value = "投诉状态(0正常,1被投诉)")
    private Integer status;
 
-   @ApiModelProperty(value = "备注")
+   @JsonIgnore
+   @ApiModelProperty(value = "备注(审核不通过原因)")
    @ApiParam(hidden = true)
    private String remark;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "删除标识(0未删除,1已删除)")
    @TableLogic
