@@ -3,6 +3,7 @@ package com.ycandyz.master.service.taboo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.RequestParams;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
 import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
@@ -16,7 +17,7 @@ import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
  * @since 2020-10-23
  * @version 2.0
  */
-public interface IBaseTabooWordsService extends IService<BaseTabooWords>{
+public interface BaseTabooWordsService extends IService<BaseTabooWords>{
 
 
     void addBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO);
@@ -25,7 +26,7 @@ public interface IBaseTabooWordsService extends IService<BaseTabooWords>{
 
     void delById(Long id);
 
-    Page<BaseTabooWordsRep> selectList(RequestParams<BaseTabooWordsQuery> query);
+    Page<BaseTabooWordsRep> selectList(RequestParams<BaseTabooWordsQuery> requestParams);
 
-    void updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO);
+    ReturnResponse updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO);
 }

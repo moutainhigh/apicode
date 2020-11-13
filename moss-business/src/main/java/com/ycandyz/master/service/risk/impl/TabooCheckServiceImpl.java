@@ -68,21 +68,21 @@ public class TabooCheckServiceImpl implements TabooCheckService {
             Integer flag = baseTabooWords.getFlag();
             if (flag == 1){
                 baseTabooWordsDao.addBaseTabooWords(baseTabooWords);
-                log.info("添加敏感词组baseTabooWords:{}到数据库",baseTabooWords);
+                log.info("添加敏感词组->baseTabooWords:{}到数据库",JSON.toJSONString(baseTabooWords));
             }else if (flag == 2){
                 int i = baseTabooWordsDao.updateBaseTabooWords(baseTabooWords);
                 if (i > 0){
-                    log.info("修改敏感词组baseTabooWords:{}到数据库成功",baseTabooWords);
+                    log.info("修改敏感词组成功->baseTabooWords:{}",JSON.toJSONString(baseTabooWords));
                 }else {
-                    log.info("修改敏感词组baseTabooWords:{}到数据库失败",baseTabooWords);
+                    log.info("修改敏感词组失败->baseTabooWords:{}",JSON.toJSONString(baseTabooWords));
                 }
             }else if (flag == 3){
                 Long id = baseTabooWords.getId();
                 int i =baseTabooWordsDao.delById(id);
                 if (i > 0){
-                    log.info("删除敏感词组id:{}成功",id);
+                    log.info("删除敏感词组成功->id:{}",id);
                 }else {
-                    log.info("删除敏感词组id:{}失败",id);
+                    log.info("删除敏感词组失败->id:{}",id);
                 }
             }
             //更新新缓存

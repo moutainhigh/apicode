@@ -44,7 +44,7 @@ public class BaseTabooWords extends Model {
    private Integer treatmentMethod;
 
    @ApiModelProperty(value = "操作人员")
-   private String operator;
+   private Long operator;
 
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    @ApiModelProperty(value = "创建时间")

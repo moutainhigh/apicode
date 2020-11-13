@@ -60,7 +60,7 @@ public class DateUtil {
      * @Date 2020/10/22
      * @Version: V1.0
     */
-    public static String AddEightHoursDateToString(Date date) {
+    public static String addEightHoursDateToString(Date date) {
         if (date == null) {
             return null;
         }
@@ -69,6 +69,20 @@ public class DateUtil {
 
         SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DAY_PATTERN);
         return sdf.format(new Date(time+eightHours));
+    }
+
+    /**
+     * @Description: 减8小时
+     * @Author li Zhuo
+     * @Date 2020/10/22
+     * @Version: V1.0
+     */
+    public static Long reduceEightHours(Long data) {
+        if (data == null) {
+            return null;
+        }
+        long eightHours = 8*60*60;
+        return  data - eightHours;
     }
 
     /*

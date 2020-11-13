@@ -40,23 +40,23 @@
         where
         1=1
         <if test="bt != null and bt.phraseName != null">
-            phraseName  like concat('%',#{bt.phraseName},'%')	/**词组名称*/
+            and phrase_name  like concat('%',#{bt.phraseName},'%')
         </if>
         <if test="bt != null and bt.tabooWord != null">
             and
-            taboo_words like concat('%',{bt.tabooWord},'%') /**敏感词*/
+            taboo_words like concat('%',#{bt.tabooWord},'%')
         </if>
-        <if test="bt != null and bt.createdTime != null">
-            <![CDATA[-->
+        <if test="bt != null and bt.createdTimeStart != null">
+            <![CDATA[
             and
-            created_time <= FROM_UNIXTIME(#{bt.createdTimeStart}, '%Y-%m-%d %H:%i:%S')
-            ]]>-->
+            created_time >= FROM_UNIXTIME(#{bt.createdTimeStart}, '%Y-%m-%d %H:%i:%S')
+            ]]>
         </if>
-        <if test="bt != null and bt.updatedTime != null">
-            <![CDATA[-->
+        <if test="bt != null and bt.createdTimeEnd != null">
+            <![CDATA[
             and
-            created_time >= FROM_UNIXTIME(#{bt.createdTimeEnd}, '%Y-%m-%d %H:%i:%S')
-            ]]>-->
+            created_time < FROM_UNIXTIME(#{bt.createdTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
         </if>
     </select>
     <select id="select" resultType="com.ycandyz.master.entities.taboo.BaseTabooWords">

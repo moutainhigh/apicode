@@ -3,17 +3,21 @@ package com.ycandyz.master.service.taboo.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.dao.user.UserDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
 import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
+import com.ycandyz.master.dto.user.UserForExport;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
 import com.ycandyz.master.kafka.KafkaConstant;
 import com.ycandyz.master.kafka.KafkaProducer;
 import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
 import com.ycandyz.master.request.UserRequest;
-import com.ycandyz.master.service.taboo.IBaseTabooWordsService;
+import com.ycandyz.master.service.taboo.BaseTabooWordsService;
 import com.ycandyz.master.dao.taboo.BaseTabooWordsDao;
+import com.ycandyz.master.utils.DateUtil;
 import com.ycandyz.master.utils.MyCollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -35,13 +39,16 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, BaseTabooWords, BaseTabooWordsQuery> implements IBaseTabooWordsService {
+public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, BaseTabooWords, BaseTabooWordsQuery> implements BaseTabooWordsService {
 
     @Resource
     private BaseTabooWordsDao baseTabooWordsDao;
 
     @Autowired
     private KafkaProducer kafkaProducer;
+
+    @Autowired
+    private UserDao userDao;
 
     /**
      * @Description: 新增敏感字
@@ -56,7 +63,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         String tabooWords = MyCollectionUtils.PraseArraytoString(baseTabooWordsVO.getTabooWords());
         BeanUtils.copyProperties(baseTabooWordsVO,baseTabooWords);
         baseTabooWords.setTabooWords(tabooWords);
-        baseTabooWords.setOperator(currentUser.getPhone());
+        baseTabooWords.setOperator(currentUser.getId());
         baseTabooWords.setFlag(1);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
         log.info("新增敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
@@ -94,7 +101,6 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
         Page<BaseTabooWordsRep> page1 =  new Page<>();
         List<BaseTabooWordsRep> recordReps = new ArrayList<>();
-
         try {
             Page<BaseTabooWords> page = baseTabooWordsDao.selectList(pageQuery, baseTabooWordsQuery);
             List<BaseTabooWords> records = page.getRecords();
@@ -105,6 +111,12 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
                     baseTabooWordsRep.setTabooWords(MyCollectionUtils.parseIds(b.getTabooWords()));
                 }
                 BeanUtils.copyProperties(b,baseTabooWordsRep);
+                UserForExport userForExport = userDao.selectForExport(Long.valueOf(b.getOperator()));
+                String userPhone = null;
+                if (userForExport != null){
+                    userPhone = userForExport.getName()+ "\u0020" +userForExport.getPhone();
+                }
+                baseTabooWordsRep.setOperator(userPhone);
                 recordReps.add(baseTabooWordsRep);
             }
             page1.setPages(requestParams.getPage());
@@ -119,16 +131,24 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     }
 
     @Override
-    public void updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO) {
+    public ReturnResponse updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO) {
+        if (baseTabooWordsVO == null){
+            log.error("当前更新的入参数据为空");
+            return ReturnResponse.failed("当前更新的入参数据为空");
+        }else if (baseTabooWordsDao.selById(baseTabooWordsVO.getId()) == null){
+            log.error("当前待更新的数据不存在");
+            return ReturnResponse.failed("当前待更新的数据不存在");
+        }
         UserVO currentUser = UserRequest.getCurrentUser();
         BaseTabooWords baseTabooWords = new BaseTabooWords();
         String tabooWords = MyCollectionUtils.PraseArraytoString(baseTabooWordsVO.getTabooWords());
         BeanUtils.copyProperties(baseTabooWordsVO,baseTabooWords);
         baseTabooWords.setTabooWords(tabooWords);
-        baseTabooWords.setOperator(currentUser.getPhone());
+        baseTabooWords.setOperator(currentUser.getId());
         baseTabooWords.setFlag(2);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
         log.info("修改敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
+        return ReturnResponse.success("更新成功");
     }
 
 }

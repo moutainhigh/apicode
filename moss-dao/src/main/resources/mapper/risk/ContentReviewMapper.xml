@@ -43,7 +43,7 @@
             </if>
             <if test="con != null and con.updateTimeEnd != null">
                 <![CDATA[
-                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
             </if>
             <if test="con != null and con.auditTimeStart != null">
@@ -53,7 +53,7 @@
             </if>
             <if test="con != null and con.auditTimeEnd != null">
                 <![CDATA[
-                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
             </if>
             <if test="con != null and con.ReviewAuditResult != null">
@@ -82,7 +82,7 @@
             </if>
             <if test="con != null and con.updateTimeEnd != null">
                 <![CDATA[
-                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
             </if>
             <if test="con != null and con.auditTimeStart != null">
@@ -92,7 +92,7 @@
             </if>
             <if test="con != null and con.auditTimeEnd != null">
                 <![CDATA[
-                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
             </if>
             <if test="con != null and con.ReviewAuditResult != null">
@@ -122,7 +122,7 @@
             </if>
             <if test="con != null and con.updateTimeEnd != null">
                 <![CDATA[
-                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
             </if>
             <if test="con != null and con.auditTimeStart != null">
@@ -132,7 +132,7 @@
             </if>
             <if test="con != null and con.auditTimeEnd != null">
                 <![CDATA[
-                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
             </if>
             <if test="con != null and con.ReviewAuditResult != null">
