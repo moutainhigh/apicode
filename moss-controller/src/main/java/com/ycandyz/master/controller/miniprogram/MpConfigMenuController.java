@@ -1,6 +1,8 @@
 package com.ycandyz.master.controller.miniprogram;
 
 import com.ycandyz.master.api.*;
+import com.ycandyz.master.domain.query.mall.MallItemVideoQuery;
+import com.ycandyz.master.entities.mall.MallItemVideo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
@@ -37,51 +39,51 @@ import com.ycandyz.master.controller.base.BaseController;
 
 @Slf4j
 @RestController
-@RequestMapping("miniprogram/config/")
+@RequestMapping("miniprogram/config/menus")
 @Api(tags="miniprogram-小程序配置-菜单配置")
 public class MpConfigMenuController extends BaseController<MpConfigMenuServiceImpl,MpConfigMenu,MpConfigMenuQuery> {
 	
 	@ApiOperation(value="新增")
-    @PostMapping(value = "/menus")
+    @PostMapping
 	public CommonResult<MpConfigMenu> create(@Validated(ValidatorContract.OnCreate.class) MpConfigMenu entity) {
         return result(service.save(entity),entity,"保存失败!");
 	}
 	
 	@ApiOperation(value = "通过ID更新")
-    @PutMapping(value = "/menus/{id}")
+    @PutMapping(value = "{id}")
 	public CommonResult<MpConfigMenu> updateById(@PathVariable Integer id,@Validated(ValidatorContract.OnUpdate.class) MpConfigMenu entity) {
         entity.setId(id);
         return result(service.updateById(entity),entity,"更改失败!");
 	}
 	
 	@ApiOperation(value = "查询根据ID")
-    @GetMapping(value = "/menus/{id}")
+    @GetMapping(value = "{id}")
 	public CommonResult<MpConfigMenu> getById(@PathVariable Integer id) {
         return CommonResult.success(service.getById(id));
     }
     
 	@ApiOperation(value = "分页查询")
-    @GetMapping(value = "/menus/page")
+    @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<MpConfigMenu>> selectPage(PageModel page, MpConfigMenuQuery query) {
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "列表查询-默认菜单", tags = "小程序配置")
-    @GetMapping(value = "/menus")
-    public CommonResult<List<MpConfigMenu>> selectList(MpConfigMenuQuery query) {
-        return CommonResult.success(service.list(query));
+    @GetMapping
+    public CommonResult<BaseResult<List<MpConfigMenu>>> selectList(MpConfigMenuQuery query) {
+        return CommonResult.success(new BaseResult(service.list(query)));
     }
     
     @ApiOperation(value = "通过ID删除")
-    @DeleteMapping(value = "/menus/{id}")
+    @DeleteMapping(value = "{id}")
 	public CommonResult<MpConfigMenu> deleteById(@PathVariable Integer id) {
         return result(service.removeById(id),null,"删除失败!");
 	}
 
     @ApiImplicitParam(name="ids",value="ID集合(1,2,3)",required=true,allowMultiple=true,dataType="int")
    	@ApiOperation(value = "通过ids批量删除")
-    @DeleteMapping(value = "menus/deleteBatch")
+    @DeleteMapping(value = "deleteBatch")
 	public CommonResult<MpConfigMenu> deleteBatch(String ids) {
         return result(service.deleteByIds(Convert.toLongArray(ids)),null,"删除失败!");
 	}
