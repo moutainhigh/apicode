@@ -1,20 +1,23 @@
 package com.ycandyz.master.api;
 
+import cn.hutool.core.date.DateUtil;
+
 /**
  * 通用返回对象
- * Created by macro on 2019/4/19.
+ * Created SanGang
  */
 public class CommonResult<T> {
     private long code;
-    private String message;
+    private String msg;
     private T data;
+    private long time = DateUtil.currentSeconds();;
 
     protected CommonResult() {
     }
 
-    protected CommonResult(long code, String message, T data) {
+    protected CommonResult(long code, String msg, T data) {
         this.code = code;
-        this.message = message;
+        this.msg = msg;
         this.data = data;
     }
 
@@ -106,12 +109,20 @@ public class CommonResult<T> {
         this.code = code;
     }
 
-    public String getMessage() {
-        return message;
+    public long getTime() {
+        return time;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public T getData() {

@@ -16,5 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface IMallItemVideoService extends IService<MallItemVideo>{
 
-    boolean insert(MallItemVideo entity, MultipartFile file);
+    boolean insert(MallItemVideo entity, MultipartFile file, MultipartFile img);
+
+    boolean update(MallItemVideo entity, MultipartFile file, MultipartFile img);
 }

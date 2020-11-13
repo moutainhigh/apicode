@@ -15,6 +15,7 @@ logging:
   config: classpath:logback-spring.xml
 
 after-sales-days: 7
+video-local-path: /tmp/upload/video/
 
 # mybatis-plus
 mybatis-plus:
@@ -24,4 +25,3 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
-video-local-path: /tmp/upload/video

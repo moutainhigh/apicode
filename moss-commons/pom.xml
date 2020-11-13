@@ -101,6 +101,15 @@
             <artifactId>kafka-clients</artifactId>
             <version>2.4.1</version>
         </dependency>
+        <!-- 阿里云短信发送sdk -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

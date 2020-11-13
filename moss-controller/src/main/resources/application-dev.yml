@@ -114,3 +114,17 @@ s3:
   accessKey: AKIAVEJEAKGYZUSB2HUG
   secretKey: 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
   keyPefix: xls/
+
+#阿里云发送消息配置
+aliyun:
+  access:
+    keyId: LTAI4G38fpzXvwLpSUms4YNU
+    secret: qMYb4yRyoz4yMxtUBIA8cdSK1GTTGW
+    region: cn-beijing
+  sms:
+    domain: dysmsapi.aliyuncs.com
+    product: Dysmsapi
+    sign: 有传科技4
+    template_code: SMS_203190683
+    #有传客服电话
+    service-number: 13714366094
