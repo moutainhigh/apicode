@@ -128,12 +128,13 @@ public class MallItemVideo extends Model {
    private Integer audit;
 
    @ApiParam(hidden = true)
-   @ApiModelProperty(value = "投诉状态(0正常,1被投诉)")
+   @ApiModelProperty(value = "视频状态(0未投诉,1投诉通过,2投诉中,3投诉拒绝通过)")
    private Integer status;
 
    @JsonIgnore
    @ApiModelProperty(value = "备注(审核不通过原因)")
    @ApiParam(hidden = true)
+   @TableField(fill = FieldFill.UPDATE)
    private String remark;
 
    @JsonIgnore

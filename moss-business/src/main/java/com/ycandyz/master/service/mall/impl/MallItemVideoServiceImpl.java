@@ -1,8 +1,13 @@
 package com.ycandyz.master.service.mall.impl;
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.constant.SymbolConstant;
 import com.ycandyz.master.constant.VideoConstant;
 import com.ycandyz.master.domain.enums.mall.MallItemVideoEnum;
+import com.ycandyz.master.domain.query.base.BaseBankQuery;
+import com.ycandyz.master.entities.base.BaseBank;
 import com.ycandyz.master.entities.mall.MallItemVideo;
 import com.ycandyz.master.domain.query.mall.MallItemVideoQuery;
 import com.ycandyz.master.dao.mall.MallItemVideoDao;
@@ -13,6 +18,7 @@ import com.ycandyz.master.utils.*;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.MultimediaInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -150,6 +157,55 @@ public class MallItemVideoServiceImpl extends BaseService<MallItemVideoDao,MallI
         }
         //删掉本地视频文件
         return true;
+    }
+
+    @Override
+    public boolean audit(Long id, Integer status, String remark) {
+        MallItemVideoEnum.Check s = MallItemVideoEnum.Check.parseCode(status);
+        AssertUtils.notNull(s,"审核状态不正确");
+        MallItemVideo itemVideo = baseMapper.selectById(id);
+        AssertUtils.notNull(itemVideo,"该视频不存在");
+        //status是2,投诉状态,审核通过修改status=1,不通过status=3
+        //status是0,未投诉状态,审核通过修改audit=1,不通过audit=2
+        MallItemVideoEnum.Audit audit = MallItemVideoEnum.Audit.parseCode(itemVideo.getAudit());
+        AssertUtils.isFalse(audit.getCode().equals(MallItemVideoEnum.Audit.START_2.getCode()),"审核状态为拒绝状态,不支持此操作!");
+        MallItemVideoEnum.Status st = MallItemVideoEnum.Status.parseCode(itemVideo.getStatus());
+        if(st.getCode().equals(MallItemVideoEnum.Status.START_0.getCode())){
+            if(s.getCode().equals(MallItemVideoEnum.Check.CHECK_0.getCode())){
+                itemVideo.setAudit(MallItemVideoEnum.Audit.START_1.getCode());
+            }else {
+                itemVideo.setAudit(MallItemVideoEnum.Audit.START_2.getCode());
+            }
+        }else {
+            itemVideo.setAudit(MallItemVideoEnum.Audit.START_1.getCode());
+            if(s.getCode().equals(MallItemVideoEnum.Check.CHECK_0.getCode())){
+                itemVideo.setStatus(MallItemVideoEnum.Status.START_1.getCode());
+            }else {
+                itemVideo.setStatus(MallItemVideoEnum.Status.START_3.getCode());
+            }
+        }
+        itemVideo.setRemark(remark);
+        return super.updateById(itemVideo);
+    }
+
+    @Override
+    public Page<MallItemVideo> page(Page page, MallItemVideoQuery query) {
+        LambdaQueryWrapper<MallItemVideo> queryWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                .select(MallItemVideo::getId,MallItemVideo::getVideoNo,MallItemVideo::getDuration,MallItemVideo::getUrl,MallItemVideo::getImg)
+                .eq(StrUtil.isNotEmpty(query.getItemNo()),MallItemVideo::getItemNo, query.getItemNo())
+                .like(StrUtil.isNotEmpty(query.getTitle()),MallItemVideo::getTitle, query.getTitle())
+                .orderByDesc(MallItemVideo::getCreatedTime);
+        return (Page<MallItemVideo>) baseMapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public List<MallItemVideo> list(MallItemVideoQuery query) {
+        AssertUtils.notNull(query.getItemNo(),"商品编号不能为空");
+        LambdaQueryWrapper<MallItemVideo> queryWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                .select(MallItemVideo::getId,MallItemVideo::getVideoNo,MallItemVideo::getDuration,MallItemVideo::getUrl,MallItemVideo::getImg)
+                .eq(StrUtil.isNotEmpty(query.getItemNo()),MallItemVideo::getItemNo, query.getItemNo())
+                .orderByDesc(MallItemVideo::getCreatedTime);
+        return baseMapper.selectList(queryWrapper);
     }
 
     private void getVideoInfo(String filePath,MallItemVideo model){
