@@ -82,8 +82,8 @@ public class MallItemVideoController extends BaseController<MallItemVideoService
 
     @ApiOperation(value = "查询全部")
     @GetMapping(value = "list")
-    public CommonResult<List<MallItemVideo>> selectList(MallItemVideoQuery query) {
-        return CommonResult.success(service.list(query));
+    public CommonResult<BaseResult<List<MallItemVideo>>> selectList(MallItemVideoQuery query) {
+        return CommonResult.success(new BaseResult(service.list(query)));
     }
     
     @ApiOperation(value = "通过ID删除")
