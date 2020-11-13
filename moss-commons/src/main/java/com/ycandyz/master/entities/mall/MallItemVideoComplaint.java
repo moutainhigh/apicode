@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -37,6 +38,7 @@ public class MallItemVideoComplaint extends Model {
    @ApiParam(hidden = true)
    private Long id;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "视频投诉编号")
    private String complaintNo;
@@ -46,6 +48,7 @@ public class MallItemVideoComplaint extends Model {
    @ApiModelProperty(value = "商品视频编号")
    private String videoNo;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "投诉类型(预留)")
    private Integer type;
@@ -62,6 +65,7 @@ public class MallItemVideoComplaint extends Model {
    @ApiModelProperty(value = "投诉状态(0未处理,1已处理)")
    private Integer status;
 
+   @JsonIgnore
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "删除标识(0未删除,1已删除)")
    @TableLogic

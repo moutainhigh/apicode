@@ -46,6 +46,9 @@ public class MallItemVideoServiceImpl extends BaseService<MallItemVideoDao,MallI
     @Override
     public boolean insert(MallItemVideo entity, MultipartFile video, MultipartFile img) {
         entity.setVideoNo(String.valueOf(IDGeneratorUtils.getLongId()));
+        //校验,如果是详情视频,必须上传缩略图
+        AssertUtils.notNull(getShopNo(),"商品编号不正确");
+        AssertUtils.isFalse((MallItemVideoEnum.Type.TYPE_1.getCode().equals(entity.getType()) && null == img), "缩略图不能为空,请上传缩略图!");
         //视频
         String videoTitle = video.getOriginalFilename();
         String videoSuffix = videoTitle.substring(videoTitle.lastIndexOf(SymbolConstant.SYMBOL_1) + 1,videoTitle.length()).toLowerCase();
@@ -54,14 +57,13 @@ public class MallItemVideoServiceImpl extends BaseService<MallItemVideoDao,MallI
         String videoName = uuid+SymbolConstant.SYMBOL_1+videoSuffix;
         String videoPath =localPath+videoName;
         //s3商店视频地址命名规则,商店编号+视频编号
-        AssertUtils.notNull(getShopNo(),"商品编号不正确");
         String s3Suffix = getShopNo()+File.separator+videoName;
         entity.setShopNo(getShopNo());
         entity.setTitle(videoTitle);
         entity.setSize(video.getSize());
-        getVideoInfo(videoPath,entity);
         try {
             FileUtil.uploadFile(localPath,videoName,video.getInputStream());
+            getVideoInfo(videoPath,entity);
             String url = s3UploadFile.upload(new File(videoPath), s3Suffix);
             entity.setUrl(url);
         } catch (Exception e) {
@@ -99,6 +101,9 @@ public class MallItemVideoServiceImpl extends BaseService<MallItemVideoDao,MallI
     @Override
     public boolean update(MallItemVideo entity, MultipartFile video, MultipartFile img) {
         String uuid = UUID.randomUUID().toString().replace(SymbolConstant.SYMBOL_3, SymbolConstant.SYMBOL_4);
+        //校验,如果是详情视频,必须上传缩略图
+        AssertUtils.notNull(getShopNo(),"商品编号不正确");
+        AssertUtils.isFalse((MallItemVideoEnum.Type.TYPE_1.getCode().equals(entity.getType()) && null == img), "缩略图不能为空,请上传缩略图!");
         //视频
         if(null != video){
             String videoTitle = video.getOriginalFilename();
@@ -107,13 +112,12 @@ public class MallItemVideoServiceImpl extends BaseService<MallItemVideoDao,MallI
             String videoName = uuid+SymbolConstant.SYMBOL_1+videoSuffix;
             String videoPath =localPath+videoName;
             //s3商店视频地址命名规则,商店编号+视频编号
-            AssertUtils.notNull(getShopNo(),"商品编号不正确");
             String s3Suffix = getShopNo()+File.separator+videoName;
             entity.setTitle(videoTitle);
             entity.setSize(video.getSize());
-            getVideoInfo(videoPath,entity);
             try {
                 FileUtil.uploadFile(localPath,videoName,video.getInputStream());
+                getVideoInfo(videoPath,entity);
                 String url = s3UploadFile.upload(new File(videoPath), s3Suffix);
                 entity.setUrl(url);
             } catch (Exception e) {
