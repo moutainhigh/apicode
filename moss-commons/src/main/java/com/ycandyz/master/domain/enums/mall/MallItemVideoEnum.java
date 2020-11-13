@@ -48,8 +48,10 @@ public class MallItemVideoEnum {
     }
 
     public enum Status implements IEnum<Integer> {
-        START_0(0, "正常"),
-        START_1(1, "被投诉");
+        START_0(0, "未投诉"),
+        START_1(1, "投诉通过"),
+        START_2(2, "投诉状态"),
+        START_3(3, "投诉拒绝通过");
 
         private Integer code;
         private String text;
@@ -74,6 +76,41 @@ public class MallItemVideoEnum {
                 return null;
             }
             for (Status value : values()) {
+                if (code.equals(value.code)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
+    public enum Check implements IEnum<Integer> {
+        CHECK_0(0, "通过"),
+        CHECK_1(1, "拒绝");
+
+        private Integer code;
+        private String text;
+
+        Check(Integer code, String text) {
+            this.code = code;
+            this.text = text;
+        }
+
+        @Override
+        public Integer getCode() {
+            return code;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        public static Check parseCode(Integer code) {
+            if (code == null) {
+                return null;
+            }
+            for (Check value : values()) {
                 if (code.equals(value.code)) {
                     return value;
                 }
