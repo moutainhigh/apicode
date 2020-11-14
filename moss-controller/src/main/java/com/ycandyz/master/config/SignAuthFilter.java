@@ -55,7 +55,7 @@ public class SignAuthFilter implements Filter {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
         boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));
-        if (flow || ApiConstant.ACTIVE.equals(ConfigUtils.getValue(Config.ACTIVE))) {
+        if (flow) {
             filterChain.doFilter(request, response);
         } else {
             HttpServletRequest requestWrapper = new BodyReaderHttpServletRequestWrapper(request);
