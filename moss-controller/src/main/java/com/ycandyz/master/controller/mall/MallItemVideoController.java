@@ -39,23 +39,13 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("mall-item-video")
 @Api(tags="mall-商品视频信息")
 public class MallItemVideoController extends BaseController<MallItemVideoServiceImpl,MallItemVideo,MallItemVideoQuery> {
-	
-	@ApiOperation(value="上传视频")
+
+	@ApiOperation(value="上传视频/缩略图")
     @PostMapping
-    public CommonResult<MallItemVideo> insert(@Validated(ValidatorContract.OnCreate.class) MallItemVideoModel model, @ApiParam(name="videoFile",value="视频文件") @RequestParam(required = false) MultipartFile videoFile, @ApiParam(name="imgFile",value="缩略图") MultipartFile imgFile) {
+    public CommonResult<MallItemVideo> insert(@ApiParam(name="videoFile",value="视频文件") @RequestParam(required = false) MultipartFile videoFile, @ApiParam(name="imgFile",value="缩略图") MultipartFile imgFile) {
         MallItemVideo entity = new MallItemVideo();
-        BeanUtils.copyProperties(model,entity);
-	    return result(service.insert(entity,videoFile,imgFile),entity,"上传失败!");
+	    return result(service.upload(entity,videoFile,imgFile),entity,"上传失败!");
     }
-	
-	@ApiOperation(value = "通过视频ID更新视频/缩略图")
-    @PostMapping(value = "{id}")
-	public CommonResult<MallItemVideo> editById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) MallItemVideoModel model, @ApiParam(name="videoFile",value="视频文件") MultipartFile videoFile, @ApiParam(name="imgFile",value="缩略图") MultipartFile imgFile) {
-        MallItemVideo entity = new MallItemVideo();
-        BeanUtils.copyProperties(model,entity);
-        entity.setId(id);
-        return result(service.update(entity,videoFile,imgFile),entity,"更新失败!");
-	}
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "视频ID",required = true, dataType = "int"),
