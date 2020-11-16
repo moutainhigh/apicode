@@ -14,5 +14,17 @@
         where id = #{organizeId};
     </select>
 
-
+    <select id="queryByServiceTime" parameterType="java.lang.Long" resultType="com.ycandyz.master.dto.organize.OrganizeDTO">
+        select
+            id,
+            `type`,
+            short_name as shortName,
+            full_name as fullNname,
+            phone as phone
+        from organize
+        where
+            is_disable=0 and is_del=0
+            and
+            service_end &gt;= #{serviceEndDayBegin} and service_end &lt;= #{serviceEndDayEnd}
+    </select>
 </mapper>

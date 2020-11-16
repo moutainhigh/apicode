@@ -11,6 +11,7 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -32,19 +33,32 @@ public class MallItemVideoQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(value = "商店编号")
+    @Condition(condition = ConditionEnum.EQ)
+    private String shopNo;
+
     @ApiModelProperty(value = "商品编号")
+    @Condition(condition = ConditionEnum.EQ)
     private String itemNo;
 
+    @ApiParam(hidden = true)
     @ApiModelProperty(value = "视频类型")
+    @Condition(condition = ConditionEnum.EQ)
     private Integer type;
 
+    @ApiParam(hidden = true)
     @ApiModelProperty(value = "视频标题")
+    @Condition(condition = ConditionEnum.LIKE)
     private String title;
 
-    @ApiModelProperty(value = "状态(审核用)")
-    private Integer status;
+    @ApiParam(hidden = true)
+    @ApiModelProperty(value = "审核状态(0待审核,1通过,2未通过)")
+    @Condition(condition = ConditionEnum.EQ)
+    private Integer audit;
 
-    @ApiModelProperty(value = "备注")
-    private String remark;
+    @ApiParam(hidden = true)
+    @ApiModelProperty(value = "投诉状态(0正常,1被投诉)")
+    @Condition(condition = ConditionEnum.EQ)
+    private Integer status;
 
 }

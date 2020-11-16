@@ -23,4 +23,6 @@ public final class ApiConstant {
      */
     public static final String DEVICE = "Device";
 
+    public static final String ACTIVE = "dev";
+
 }
