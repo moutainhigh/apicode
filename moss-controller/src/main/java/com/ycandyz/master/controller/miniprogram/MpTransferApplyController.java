@@ -35,21 +35,9 @@ import com.ycandyz.master.controller.base.BaseController;
 @RequestMapping("mini-program/transfer/applies")
 @Api(tags="小程序配置-小程序转交接申请")
 public class MpTransferApplyController extends BaseController<MpTransferApplyServiceImpl,MpTransferApply,MpTransferApplyQuery> {
-<<<<<<< HEAD
 
-
-    @ApiOperation(value = "转移管理员账号信息")
-    @PostMapping(value = "transfer")
-    public CommonResult transfer(@RequestBody TransferAccountEntry transferAccountEntry) {
-        log.info("{}",transferAccountEntry);
-        return CommonResult.success("已安排我司同事联系您，请保持手机畅通");
-    }
-
-    @ApiOperation(value="创建转交接申请", tags = "小程序配置")
-=======
 	
 	@ApiOperation(value="创建转交接申请", tags = "企业小程序DIY配置")
->>>>>>> 1934f1ae32bc19fe7db493a95104d6c58a7fe124
     @PostMapping
 	public CommonResult<MpTransferApply> create(@Validated(ValidatorContract.OnCreate.class) MpTransferApply entity) {
         return result(service.save(entity),entity,"保存失败!");
