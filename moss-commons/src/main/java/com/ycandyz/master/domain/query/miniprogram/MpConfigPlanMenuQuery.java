@@ -1,5 +1,6 @@
 package com.ycandyz.master.domain.query.miniprogram;
 
+import com.baomidou.mybatisplus.core.conditions.segments.OrderBySegmentList;
 import com.ycandyz.master.annotation.Condition;
 import com.ycandyz.master.enums.ConditionEnum;
 
@@ -20,7 +21,7 @@ import lombok.experimental.Accessors;
  * @Description 小程序配置-菜单配置 检索参数类
  * </p>
  *
- * @author WangYang
+ * @author Wang Yang
  * @since 2020-11-13
  * @version 2.0
  */
@@ -28,9 +29,13 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(description="小程序配置-菜单配置-检索参数")
-public class MpConfigMenuQuery implements Serializable {
+public class MpConfigPlanMenuQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty(value = "小程序方案编号", required=true)
+    @Condition(field = "plan_id", condition = ConditionEnum.EQ)
+    private Integer planId;
 
     @ApiModelProperty(value = "逻辑删除0：未删除；1、删除")
     @Condition(field = "logic_delete", condition = ConditionEnum.EQ)

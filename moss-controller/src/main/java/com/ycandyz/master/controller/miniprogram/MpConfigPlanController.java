@@ -1,8 +1,10 @@
 package com.ycandyz.master.controller.miniprogram;
 
 import com.ycandyz.master.api.*;
+import com.ycandyz.master.domain.model.miniprogram.ConfigPlanAndMenuModel;
 import com.ycandyz.master.domain.query.miniprogram.MpConfigMenuQuery;
 import com.ycandyz.master.domain.response.miniprogram.MpConfigMenuResp;
+import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanMenuResp;
 import com.ycandyz.master.entities.miniprogram.MpConfigMenu;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,14 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import cn.hutool.core.convert.Convert;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import com.ycandyz.master.validation.ValidatorContract;
@@ -39,15 +36,16 @@ import com.ycandyz.master.controller.base.BaseController;
 
 @Slf4j
 @RestController
-@RequestMapping("miniprogram/config/plans")
-@Api(tags="miniprogram-小程序配置方案")
+@RequestMapping("mini-program/config/plans")
+@Api(tags="小程序配置-方案配置")
 public class MpConfigPlanController extends BaseController<MpConfigPlanServiceImpl,MpConfigPlan,MpConfigPlanQuery> {
 	
-	@ApiOperation(value="新增")
-    @PostMapping
-	public CommonResult<MpConfigMenuResp> create() {
-	    return result(true,service.add(),"保存成功!");
+	@ApiOperation(value="创建方案", tags = "小程序配置")
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public CommonResult<BaseResult<List<MpConfigPlanMenuResp>>> create(@RequestBody ConfigPlanAndMenuModel model) {
+	    return result(true,new BaseResult(service.add(model)),"保存成功!");
 	}
+
 	
 	@ApiOperation(value = "通过ID更新")
     @PutMapping(value = "{id}")

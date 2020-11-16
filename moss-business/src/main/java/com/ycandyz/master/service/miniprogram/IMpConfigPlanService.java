@@ -1,8 +1,12 @@
 package com.ycandyz.master.service.miniprogram;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.domain.model.miniprogram.ConfigPlanAndMenuModel;
 import com.ycandyz.master.domain.response.miniprogram.MpConfigMenuResp;
+import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanMenuResp;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlan;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,5 +19,10 @@ import com.ycandyz.master.entities.miniprogram.MpConfigPlan;
  */
 public interface IMpConfigPlanService extends IService<MpConfigPlan>{
 
-    MpConfigMenuResp add();
+    /**
+     * 保存方案，创建方案下菜单
+     * @param model
+     * @return
+     */
+    List<MpConfigPlanMenuResp> add(ConfigPlanAndMenuModel model);
 }
