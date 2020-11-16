@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -46,15 +48,18 @@ public class MpTransferApply extends Model {
    private String buttedPerson;
 
    @ApiModelProperty(value = "对接完成时间")
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date buttedFinishTime;
 
    @ApiModelProperty(value = "对接状态0、待对接；1、对接中；2、已完成")
    private Integer buttedStatus;
 
    @ApiModelProperty(value = "创建时间")
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createTime;
 
    @ApiModelProperty(value = "修改时间")
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date updateTime;
 
 
