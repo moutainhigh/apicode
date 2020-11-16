@@ -8,6 +8,9 @@ import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
 import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
 import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
+
+import java.util.List;
+
 /**
  * <p>
  * @Description 基础商品表 业务接口类
@@ -29,4 +32,6 @@ public interface BaseTabooWordsService extends IService<BaseTabooWords>{
     Page<BaseTabooWordsRep> selectList(RequestParams<BaseTabooWordsQuery> requestParams);
 
     ReturnResponse updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO);
+
+    ReturnResponse selTabooWords(String phraseName, String[] tabooWords);
 }

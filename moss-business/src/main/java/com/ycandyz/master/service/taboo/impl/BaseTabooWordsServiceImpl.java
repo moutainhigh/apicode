@@ -7,6 +7,7 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.user.UserDao;
 import com.ycandyz.master.domain.UserVO;
+import com.ycandyz.master.domain.query.risk.TabooWordsForReview;
 import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
 import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
 import com.ycandyz.master.dto.user.UserForExport;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -149,6 +152,27 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
         log.info("修改敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
         return ReturnResponse.success("更新成功");
+    }
+
+
+    //敏感词校验
+    @Override
+    public ReturnResponse selTabooWords(String phraseName, String[] tabooWords) {
+        List<BaseTabooWords> baseTabooWords = baseTabooWordsDao.selPhraseName(phraseName);
+        if (baseTabooWords != null && baseTabooWords.size() > 0){
+            return ReturnResponse.failed("添加失败,敏感词组名称已存在!");
+        }
+        List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
+        List<String> tabooList = new ArrayList<>();
+        if (tabooWordsForReviews != null && tabooWordsForReviews.size() > 0){
+            tabooWordsForReviews.stream().forEach(s->tabooList.addAll(MyCollectionUtils.parseIds(s.getTabooWords())));
+        }
+        for (String s: tabooWords) {
+            if (tabooList.contains(s)){
+                return ReturnResponse.failed("添加失败,敏感词已存在!");
+            }
+        }
+        return ReturnResponse.success("敏感词组名称和敏感词不存在!");
     }
 
 }

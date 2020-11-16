@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * <p>
  * @Description 基础商品表 接口类
@@ -44,6 +46,12 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
             log.error("当前更新的入参数据为空");
             return ReturnResponse.failed("当前更新的入参数据为空");
         }
+        String phraseName = baseTabooWordsVO.getPhraseName();
+        String[] tabooWords = baseTabooWordsVO.getTabooWords();
+        ReturnResponse returnResponse = baseTabooWordsService.selTabooWords(phraseName,tabooWords);
+        if (returnResponse != null && returnResponse.getCode() == 500){
+            return returnResponse;
+        }
 	    baseTabooWordsService.addBaseTabooWords(baseTabooWordsVO);
         return ReturnResponse.success("保存成功!");
 	}
@@ -58,8 +66,14 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
     @ApiOperation(value="编辑敏感字")
     @PutMapping(value = "/updateBaseTabooWords")
     public ReturnResponse<Object> updateBaseTabooWords(@Validated(ValidatorContract.OnCreate.class) @RequestBody BaseTabooWordsVO baseTabooWordsVO) {
-        ReturnResponse returnResponse = baseTabooWordsService.updateBaseTabooWords(baseTabooWordsVO);
-        return returnResponse;
+        String phraseName = baseTabooWordsVO.getPhraseName();
+        String[] tabooWords = baseTabooWordsVO.getTabooWords();
+	    ReturnResponse returnResponse = baseTabooWordsService.selTabooWords(phraseName,tabooWords);
+        if (returnResponse != null && returnResponse.getCode() == 500){
+            return returnResponse;
+        }
+	    ReturnResponse returnResponse2 = baseTabooWordsService.updateBaseTabooWords(baseTabooWordsVO);
+        return returnResponse2;
     }
 
     @ApiOperation(value = "查询全部")
