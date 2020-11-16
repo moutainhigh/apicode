@@ -40,7 +40,7 @@ import com.ycandyz.master.controller.base.BaseController;
 @Api(tags="小程序配置-方案配置")
 public class MpConfigPlanController extends BaseController<MpConfigPlanServiceImpl,MpConfigPlan,MpConfigPlanQuery> {
 	
-	@ApiOperation(value="创建方案", tags = "小程序配置")
+	@ApiOperation(value="创建方案", tags = "企业小程序DIY配置")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public CommonResult<BaseResult<List<MpConfigPlanMenuResp>>> create(@RequestBody ConfigPlanAndMenuModel model) {
 	    return result(true,new BaseResult(service.add(model)),"保存成功!");

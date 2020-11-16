@@ -41,13 +41,13 @@ import com.ycandyz.master.controller.base.BaseController;
 @Api(tags="小程序配置-方案菜单配置")
 public class MpConfigPlanMenuController extends BaseController<MpConfigPlanMenuServiceImpl,MpConfigPlanMenu,MpConfigPlanMenuQuery> {
 	
-	@ApiOperation(value="新增方案内菜单", tags = "小程序配置")
+	@ApiOperation(value="新增方案内菜单", tags = "企业小程序DIY配置")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public CommonResult<MpConfigPlanMenu> create(@RequestBody MpConfigPlanMenuModel model) {
         return CommonResult.success(service.add(model));
 	}
 	
-	@ApiOperation(value = "修改方案内菜单", tags = "小程序配置")
+	@ApiOperation(value = "修改方案内菜单", tags = "企业小程序DIY配置")
     @PutMapping(value = "{id}")
 	public CommonResult<MpConfigPlanMenu> updateById(@PathVariable Integer id,@Validated(ValidatorContract.OnUpdate.class) MpConfigPlanMenu entity) {
         entity.setId(id);
@@ -67,13 +67,13 @@ public class MpConfigPlanMenuController extends BaseController<MpConfigPlanMenuS
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
     
-    @ApiOperation(value = "获取方案菜单", tags = "小程序配置")
+    @ApiOperation(value = "获取方案菜单", tags = "企业小程序DIY配置")
     @GetMapping
     public CommonResult<BaseResult<List<MpConfigPlanMenu>>> selectList(MpConfigPlanMenuQuery query) {
         return CommonResult.success(new BaseResult<List<MpConfigPlanMenu>>(service.list(query)));
     }
     
-    @ApiOperation(value = "删除方案内菜单", tags = "小程序配置")
+    @ApiOperation(value = "删除方案内菜单", tags = "企业小程序DIY配置")
     @DeleteMapping(value = "{id}")
 	public CommonResult deleteById(@PathVariable Long id) {
         return result(service.removeById(id),null,"删除失败!");
