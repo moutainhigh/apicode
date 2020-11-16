@@ -100,59 +100,6 @@ public class MallItemVideoServiceImpl extends BaseService<MallItemVideoDao,MallI
     }
 
     @Override
-    public boolean update(MallItemVideo entity, MultipartFile video, MultipartFile img) {
-        String uuid = UUID.randomUUID().toString().replace(SymbolConstant.SYMBOL_3, SymbolConstant.SYMBOL_4);
-        //校验,如果是详情视频,必须上传缩略图
-        AssertUtils.notNull(getShopNo(),"商品编号不正确");
-        AssertUtils.notNull(entity.getType(),"视频栏目不正确");
-        AssertUtils.isFalse((MallItemVideoEnum.Type.TYPE_1.getCode().equals(entity.getType()) && null == img), "缩略图不能为空,请上传缩略图!");
-        //视频
-        if(null != video){
-            String videoTitle = video.getOriginalFilename();
-            String videoSuffix = videoTitle.substring(videoTitle.lastIndexOf(SymbolConstant.SYMBOL_1) + 1,videoTitle.length()).toLowerCase();
-            AssertUtils.isTrue(VideoConstant.FORMAT_MP4.equals(videoSuffix), "暂不支持此格式视频!");
-            String videoName = uuid+SymbolConstant.SYMBOL_1+videoSuffix;
-            String videoPath =localPath+videoName;
-            //s3商店视频地址命名规则,商店编号+视频编号
-            String s3Suffix = getShopNo()+File.separator+videoName;
-            //entity.setSize(video.getSize());
-            try {
-                FileUtil.uploadFile(localPath,videoName,video.getInputStream());
-                String url = s3UploadFile.upload(new File(videoPath), s3Suffix);
-                entity.setUrl(url);
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error(e.getMessage());
-                AssertUtils.notNull(null,"视频上传服务器失败!");
-            }finally {
-                FileUtil.deleteFile(new File(videoPath));
-            }
-        }
-        //图片
-        if(null != img){
-            String imgTitle = img.getOriginalFilename();
-            String imgSuffix = imgTitle.substring(imgTitle.lastIndexOf(SymbolConstant.SYMBOL_1) + 1,imgTitle.length()).toLowerCase();
-            String imgName = uuid+SymbolConstant.SYMBOL_5+imgSuffix;
-            String imgPath =localPath+imgName;
-            //s3商店视频地址命名规则,商店编号+视频编号
-            String s3ImgSuffix = getShopNo()+File.separator+imgName;
-            try {
-                FileUtil.uploadFile(localPath,imgName,img.getInputStream());
-                String url = s3UploadFile.upload(new File(imgPath), s3ImgSuffix);
-                entity.setImg(url);
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error(e.getMessage());
-                AssertUtils.notNull(null,"视频缩略图上传服务器失败!");
-            }finally {
-                FileUtil.deleteFile(new File(imgPath));
-            }
-        }
-        //删掉本地视频文件
-        return true;
-    }
-
-    @Override
     public Page<MallItemVideo> page(Page page, MallItemVideoQuery query) {
         LambdaQueryWrapper<MallItemVideo> queryWrapper = new LambdaQueryWrapper<MallItemVideo>()
                 .select(MallItemVideo::getId,MallItemVideo::getType,MallItemVideo::getUrl,MallItemVideo::getImg)

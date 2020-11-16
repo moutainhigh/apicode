@@ -2,7 +2,6 @@ package com.ycandyz.master.service.mall;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.entities.mall.MallItemVideo;
-import com.ycandyz.master.exception.BusinessException;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -17,8 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface IMallItemVideoService extends IService<MallItemVideo>{
 
     boolean upload(MallItemVideo entity, MultipartFile file, MultipartFile img);
-
-    boolean update(MallItemVideo entity, MultipartFile file, MultipartFile img);
 
     boolean audit(Long id,Integer status,String remark);
 }
