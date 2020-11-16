@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * <p>
- * @Description 基础商品表 接口类
+ * @Description 敏感词管理 接口类
  * </p>
  *
  * @author SanGang
