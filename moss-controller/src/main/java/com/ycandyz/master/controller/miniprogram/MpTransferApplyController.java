@@ -1,5 +1,7 @@
 package com.ycandyz.master.controller.miniprogram;
 
+import com.ycandyz.master.api.*;
+import com.ycandyz.master.entities.miniprogram.TransferAccountEntry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
@@ -9,20 +11,10 @@ import java.util.List;
 import cn.hutool.core.convert.Convert;
 
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import com.ycandyz.master.validation.ValidatorContract;
-import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.api.BaseResult;
-import com.ycandyz.master.api.BasePageResult;
-import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.entities.miniprogram.MpTransferApply;
 import com.ycandyz.master.domain.query.miniprogram.MpTransferApplyQuery;
 import com.ycandyz.master.service.miniprogram.impl.MpTransferApplyServiceImpl;
@@ -41,10 +33,18 @@ import com.ycandyz.master.controller.base.BaseController;
 @Slf4j
 @RestController
 @RequestMapping("mini-program/transfer/applies")
-@Api(tags="miniprogram-小程序转交接申请")
+@Api(tags="小程序配置-小程序转交接申请")
 public class MpTransferApplyController extends BaseController<MpTransferApplyServiceImpl,MpTransferApply,MpTransferApplyQuery> {
-	
-	@ApiOperation(value="创建转交接申请", tags = "小程序配置")
+
+
+    @ApiOperation(value = "转移管理员账号信息")
+    @PostMapping(value = "transfer")
+    public CommonResult transfer(@RequestBody TransferAccountEntry transferAccountEntry) {
+        log.info("{}",transferAccountEntry);
+        return CommonResult.success("已安排我司同事联系您，请保持手机畅通");
+    }
+
+    @ApiOperation(value="创建转交接申请", tags = "小程序配置")
     @PostMapping
 	public CommonResult<MpTransferApply> create(@Validated(ValidatorContract.OnCreate.class) MpTransferApply entity) {
         return result(service.save(entity),entity,"保存失败!");
