@@ -50,7 +50,6 @@ public class OrganizeMpConfigPlanPageController extends BaseController<OrganizeM
 	@ApiOperation(value = "通过ID更新")
     @PutMapping(value = "{id}")
 	public ReturnResponse<OrganizeMpConfigPlanPage> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) OrganizeMpConfigPlanPage entity) {
-        entity.setId(id);
         return returnResponse(service.updateById(entity),entity,"更改失败!");
 	}
 	
@@ -70,7 +69,7 @@ public class OrganizeMpConfigPlanPageController extends BaseController<OrganizeM
     @ApiOperation(value = "查询全部")
     @GetMapping(value = "list")
     public ReturnResponse<OrganizeMpConfigPlanPage> selectList(OrganizeMpConfigPlanPageQuery query) {
-        return ReturnResponse.success(service.list(query));
+        return null;
     }
     
     @ApiOperation(value = "通过ID删除")

@@ -1,4 +1,4 @@
-package com.ycandyz.master.entities.msg;
+package com.ycandyz.master.controller.msg;
 
 
 import com.ycandyz.master.api.ReturnResponse;

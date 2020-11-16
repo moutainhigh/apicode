@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import cn.hutool.core.convert.Convert;
 import com.ycandyz.master.api.ReturnResponse;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import com.ycandyz.master.validation.ValidatorContract;
-import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.entities.mp.OrganizeMpConfigPlan;
 import com.ycandyz.master.domain.query.mp.OrganizeMpConfigPlanQuery;
 import com.ycandyz.master.service.mp.impl.OrganizeMpConfigPlanServiceImpl;
@@ -50,7 +48,7 @@ public class OrganizeMpConfigPlanController extends BaseController<OrganizeMpCon
 	@ApiOperation(value = "通过ID更新")
     @PutMapping(value = "{id}")
 	public ReturnResponse<OrganizeMpConfigPlan> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) OrganizeMpConfigPlan entity) {
-        entity.setId(id);
+
         return returnResponse(service.updateById(entity),entity,"更改失败!");
 	}
 	
@@ -70,7 +68,7 @@ public class OrganizeMpConfigPlanController extends BaseController<OrganizeMpCon
     @ApiOperation(value = "查询全部")
     @GetMapping(value = "list")
     public ReturnResponse<OrganizeMpConfigPlan> selectList(OrganizeMpConfigPlanQuery query) {
-        return ReturnResponse.success(service.list(query));
+	    return null;
     }
     
     @ApiOperation(value = "通过ID删除")
