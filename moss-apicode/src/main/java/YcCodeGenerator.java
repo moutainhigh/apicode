@@ -24,9 +24,9 @@ public class YcCodeGenerator {
 
 	protected static final Logger log = LoggerFactory.getLogger(YcCodeGenerator.class);
 	//表名
-	private static final String tableName = "organize_mp_config_plan_page";
+	private static final String tableName = "organize_mp_release";
 	//生成文件所在目录层级
-	private static final String moduleName = "mp";
+	private static final String moduleName = "miniprogram";
 	//生成文件所在目录层级
 	private static final String daoName = "moss-dao";
 	private static final String serviceName = "moss-business";
