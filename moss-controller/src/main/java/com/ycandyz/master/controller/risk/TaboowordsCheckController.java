@@ -1,6 +1,7 @@
 package com.ycandyz.master.controller.risk;
 
 import com.ycandyz.master.api.ReturnResponse;
+import com.ycandyz.master.domain.query.risk.TabooCheckNotInsertParams;
 import com.ycandyz.master.domain.query.risk.TabooCheckParams;
 import com.ycandyz.master.service.risk.TaboowordsCheckService;
 import com.ycandyz.master.validation.ValidatorContract;
@@ -25,6 +26,12 @@ public class TaboowordsCheckController {
     @PostMapping("/check")
     public ReturnResponse check(@Validated(ValidatorContract.OnCreate.class)  @RequestBody TabooCheckParams tabooCheckParams) {
         return taboowordsCheckService.check(tabooCheckParams);
+    }
+
+    @ApiOperation(value = "敏感词检测-不插入审核表",notes = "敏感词检测-不插入审核表",httpMethod = "POST")
+    @PostMapping("/checkNotInsert")
+    public ReturnResponse checkNotInsert(@Validated(ValidatorContract.OnCreate.class)  @RequestBody TabooCheckNotInsertParams tabooCheckParams) {
+        return taboowordsCheckService.checkNotInsert(tabooCheckParams);
     }
 
 }

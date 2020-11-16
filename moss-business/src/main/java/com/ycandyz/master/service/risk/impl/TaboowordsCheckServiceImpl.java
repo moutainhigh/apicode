@@ -6,6 +6,7 @@ import com.ycandyz.master.dao.risk.ContentreviewDao;
 import com.ycandyz.master.dao.risk.ContentreviewLogDao;
 import com.ycandyz.master.domain.query.risk.ContentReviewLogVO;
 import com.ycandyz.master.domain.query.risk.ReviewParam;
+import com.ycandyz.master.domain.query.risk.TabooCheckNotInsertParams;
 import com.ycandyz.master.domain.query.risk.TabooCheckParams;
 import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.domain.response.risk.TabooCheckRep;
@@ -60,7 +61,7 @@ public class  TaboowordsCheckServiceImpl  implements TaboowordsCheckService  {
         if (result != null && result.size() >0 ){
             tabooCheckRep.setPhraseNames(result);
             tabooCheckRep.setMessage("检测到提交信息涉嫌违规提交后系统会自动屏蔽，其他人不可见");
-            return ReturnResponse.success(tabooCheckRep);
+            return ReturnResponse.failed(tabooCheckRep);
         }
         contentReview.setAuditResult(1);
         contentreviewDao.insert(contentReview);
@@ -71,6 +72,34 @@ public class  TaboowordsCheckServiceImpl  implements TaboowordsCheckService  {
         contentReviewLogVO.setContentAuditResult(0);
         contentReviewLogVO.setAuditResult(1);
         contentreviewLogDao.insert(contentReviewLogVO);
+        tabooCheckRep.setPhraseNames(null);
+        tabooCheckRep.setMessage("未检测到违规词");
+        return ReturnResponse.success(tabooCheckRep);
+    }
+
+
+    @Override
+    public ReturnResponse checkNotInsert(TabooCheckNotInsertParams tabooCheckParams) {
+        if (tabooCheckParams == null){
+            return ReturnResponse.failed("无检测参数");
+        }
+        List<String> lists = new ArrayList<>();
+        StringBuffer txt = new StringBuffer();
+        lists.add(tabooCheckParams.getItemName());
+        lists.add(tabooCheckParams.getItemText());
+        lists.add(tabooCheckParams.getShareDescr());
+        lists.add(tabooCheckParams.getContent());
+        lists.add(tabooCheckParams.getTitle());
+        lists.add(tabooCheckParams.getAbstracts());
+        lists.stream().forEach(s->txt.append(s));
+        List<String> result = tabooCheckService.check(txt.toString());
+        TabooCheckRep tabooCheckRep = new TabooCheckRep();
+        if (result != null && result.size() >0 ){
+            tabooCheckRep.setPhraseNames(result);
+            tabooCheckRep.setMessage("检测到提交信息涉嫌违规提交后系统会自动屏蔽，其他人不可见");
+            return ReturnResponse.failed(tabooCheckRep);
+        }
+        //记录日志
         tabooCheckRep.setPhraseNames(null);
         tabooCheckRep.setMessage("未检测到违规词");
         return ReturnResponse.success(tabooCheckRep);
