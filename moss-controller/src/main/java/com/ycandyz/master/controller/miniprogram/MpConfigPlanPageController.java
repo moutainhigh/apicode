@@ -41,20 +41,20 @@ import com.ycandyz.master.controller.base.BaseController;
 @Api(tags="小程序配置-方案页面配置")
 public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageServiceImpl,MpConfigPlanPage,MpConfigPlanPageQuery> {
 	
-	@ApiOperation(value="新增绑定菜单模块", tags = "小程序配置")
+	@ApiOperation(value="新增绑定菜单模块", tags = "企业小程序DIY配置")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public CommonResult<Boolean> create(@Validated(ValidatorContract.OnCreate.class) @RequestBody MpConfigPlanPageModel entity) {
         return result(service.add(entity),true,"保存失败!");
 	}
 	
-	@ApiOperation(value = "编辑绑定菜单模块", tags = "小程序配置")
+	@ApiOperation(value = "编辑绑定菜单模块", tags = "企业小程序DIY配置")
     @PutMapping(value = "{id}")
 	public CommonResult<MpConfigPlanPage> updateById(@PathVariable Integer id,@Validated(ValidatorContract.OnUpdate.class) MpConfigPlanPage entity) {
         entity.setId(id);
         return result(service.updateById(entity),entity,"更改失败!");
 	}
 	
-	@ApiOperation(value = "查询模块下元素信息", tags = "小程序配置")
+	@ApiOperation(value = "查询模块下元素信息", tags = "企业小程序DIY配置")
     @GetMapping(value = "{id}")
 	public CommonResult<MpConfigPlanPageResp> getById(@PathVariable Long id) {
         MpConfigPlanPageResp result = new MpConfigPlanPageResp();

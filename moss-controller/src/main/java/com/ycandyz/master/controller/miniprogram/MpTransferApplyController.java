@@ -31,27 +31,32 @@ import com.ycandyz.master.controller.base.BaseController;
 @RequestMapping("mini-program/transfer/applies")
 @Api(tags="小程序配置-小程序转交接申请")
 public class MpTransferApplyController extends BaseController<MpTransferApplyServiceImpl,MpTransferApply,MpTransferApplyQuery> {
+<<<<<<< HEAD
 
     @ApiOperation(value="创建转交接申请", tags = "小程序配置")
+=======
+	
+	@ApiOperation(value="创建转交接申请", tags = "企业小程序DIY配置")
+>>>>>>> 1934f1ae32bc19fe7db493a95104d6c58a7fe124
     @PostMapping
 	public CommonResult<MpTransferApply> create(@Validated(ValidatorContract.OnCreate.class) MpTransferApply entity) {
         return result(service.save(entity),entity,"保存失败!");
 	}
 	
-	@ApiOperation(value = "修改转交接申请", tags = "小程序配置")
+	@ApiOperation(value = "修改转交接申请", tags = "企业小程序DIY配置")
     @PutMapping(value = "{id}")
 	public CommonResult<MpTransferApply> updateById(@PathVariable Integer id,@Validated(ValidatorContract.OnUpdate.class) MpTransferApply entity) {
         entity.setId(id);
         return result(service.updateById(entity),entity,"更改失败!");
 	}
 	
-	@ApiOperation(value = "查询转交接申请详情", tags = "小程序配置")
+	@ApiOperation(value = "查询转交接申请详情", tags = "企业小程序DIY配置")
     @GetMapping(value = "{id}")
 	public CommonResult<MpTransferApply> getById(@PathVariable Long id) {
         return CommonResult.success(service.getById(id));
     }
     
-	@ApiOperation(value = "查询分页转交接申请", tags = "小程序配置")
+	@ApiOperation(value = "查询分页转交接申请", tags = "企业小程序DIY配置")
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<MpTransferApply>> selectPage(PageModel page, MpTransferApplyQuery query) {
