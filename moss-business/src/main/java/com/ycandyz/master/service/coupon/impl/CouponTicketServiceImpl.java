@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,54 +120,120 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
         return ReturnResponse.success(couponTicketInfoVO);
     }
 
+    @Transactional
     @Override
-    public ReturnResponse<String> updateTicket(CouponTicketInfoQuery couponTicketInfoQuery) {
-        //获取优惠卷详情
-        CouponTicketInfo couponTicketInfo = couponTicketInfoDao.selectOne(new QueryWrapper<CouponTicketInfo>().eq("ticketInfoNo", couponTicketInfoQuery.getLastTicketInfoNo()));
-        if (couponTicketInfo!=null){
-            //获取优惠券关联商品列表
-            List<CouponTicketInfoItem> couponTicketInfoItems = couponTicketInfoItemDao.selectList(new QueryWrapper<CouponTicketInfoItem>().eq("ticket_info_no",couponTicketInfoQuery.getLastTicketInfoNo()));
-            List<String> infoItemNoList = null;
-            if (couponTicketInfoItems!=null && couponTicketInfoItems.size()>0){
-                infoItemNoList = couponTicketInfoItems.stream().map(CouponTicketInfoItem::getItemNo).collect(Collectors.toList());
+    public ReturnResponse<String> updateTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO) {
+        //更新ticket表
+        CouponTicket couponTicket = couponTicketDao.selectOne(new QueryWrapper<CouponTicket>().eq("ticketNo",couponTicketInfoQuery.getTicketNo()));
+        if (couponTicket!=null){
+
+            if (!couponTicket.getShopNo().equals(userVO.getShopNo())){
+                return ReturnResponse.failed("当前所在门店无权进行此操作");
             }
-            if (!Objects.equals(couponTicketInfo.getBeginAt(),couponTicketInfoQuery.getBeginAt()) ||
-                    !Objects.equals(couponTicketInfo.getEndAt(),couponTicketInfoQuery.getEndAt()) ||
-                    !Objects.equals(couponTicketInfo.getShopType(),couponTicketInfoQuery.getShopType()) ||
-                    !Objects.equals(couponTicketInfo.getUseType(),couponTicketInfoQuery.getUserType()) ||
-                    !Objects.equals(couponTicketInfo.getFullMoney(),couponTicketInfoQuery.getFullMoney()) ||
-                    !Objects.equals(couponTicketInfo.getDiscountMoney(),couponTicketInfoQuery.getDiscountMoney()) ||
-                    !Objects.equals(couponTicketInfo.getStatus(),couponTicketInfoQuery.getStatus()) ||
-                    !Objects.equals(couponTicketInfo.getDays(),couponTicketInfoQuery.getDays()) ||
-                    !Objects.equals(couponTicketInfo.getUserType(),couponTicketInfoQuery.getUserType()) ||
-                    !Objects.equals(couponTicketInfo.getTakeNum(),couponTicketInfoQuery.getTakeNum()) ||
-                    !Objects.equals(couponTicketInfo.getSuperposition(),couponTicketInfoQuery.getSuperposition()) ||
-                    !Objects.equals(couponTicketInfo.getObtain(),couponTicketInfoQuery.getObtain()) ||
-                    !Objects.equals(couponTicketInfo.getRemark(),couponTicketInfoQuery.getRemark()) ||
-                    !Objects.equals(infoItemNoList,couponTicketInfoQuery.getItemNoList())){
-                //有不满足的进入到优惠券详情修改相关代码
-                CouponTicketInfo ticketInfo = new CouponTicketInfo();
-                ticketInfo.setBeginAt(couponTicketInfoQuery.getBeginAt());
-                ticketInfo.setEndAt(couponTicketInfoQuery.getEndAt());
-                ticketInfo.setCreatedAt(System.currentTimeMillis()/1000);
-                ticketInfo.setDays(couponTicketInfoQuery.getDays());
-                ticketInfo.setDiscountMoney(couponTicketInfoQuery.getDiscountMoney());
-                ticketInfo.setFullMoney(couponTicketInfoQuery.getFullMoney());
-                ticketInfo.setName(couponTicketInfo.getName());
-                ticketInfo.setObtain(couponTicketInfoQuery.getObtain());
-                ticketInfo.setRemark(couponTicketInfoQuery.getRemark());
-                ticketInfo.setShopType(couponTicketInfoQuery.getShopType());
-                ticketInfo.setStatus(couponTicketInfoQuery.getStatus());
-                ticketInfo.setSuperposition(couponTicketInfoQuery.getSuperposition());
-                ticketInfo.setTakeNum(couponTicketInfoQuery.getTakeNum());
-                ticketInfo.setTicketInfoNo(String.valueOf(IDGeneratorUtils.getLongId()));
-                ticketInfo.setUpdateAt(System.currentTimeMillis()/1000);
-                ticketInfo.setUserType(couponTicketInfoQuery.getUserType());
-                ticketInfo.setUseType(couponTicketInfoQuery.getUseType());
-                couponTicketInfoDao.insert(ticketInfo);
+
+            //获取优惠卷详情
+            CouponTicketInfo couponTicketInfo = couponTicketInfoDao.selectOne(new QueryWrapper<CouponTicketInfo>().eq("ticketInfoNo", couponTicketInfoQuery.getLastTicketInfoNo()));
+            if (couponTicketInfo!=null){
+
+                String ticketInfoNo = couponTicketInfo.getTicketInfoNo();   //优惠券详情编号
+
+                //获取优惠券关联商品列表
+                List<CouponTicketInfoItem> couponTicketInfoItems = couponTicketInfoItemDao.selectList(new QueryWrapper<CouponTicketInfoItem>().eq("ticket_info_no",couponTicketInfoQuery.getLastTicketInfoNo()));
+                List<String> infoItemNoList = null;
+                if (couponTicketInfoItems!=null && couponTicketInfoItems.size()>0){
+                    infoItemNoList = couponTicketInfoItems.stream().map(CouponTicketInfoItem::getItemNo).collect(Collectors.toList());
+                }
+                if (!Objects.equals(couponTicketInfo.getBeginAt(),couponTicketInfoQuery.getBeginAt()) ||
+                        !Objects.equals(couponTicketInfo.getEndAt(),couponTicketInfoQuery.getEndAt()) ||
+                        !Objects.equals(couponTicketInfo.getShopType(),couponTicketInfoQuery.getShopType()) ||
+                        !Objects.equals(couponTicketInfo.getUseType(),couponTicketInfoQuery.getUserType()) ||
+                        !Objects.equals(couponTicketInfo.getFullMoney(),couponTicketInfoQuery.getFullMoney()) ||
+                        !Objects.equals(couponTicketInfo.getDiscountMoney(),couponTicketInfoQuery.getDiscountMoney()) ||
+                        !Objects.equals(couponTicketInfo.getStatus(),couponTicketInfoQuery.getStatus()) ||
+                        !Objects.equals(couponTicketInfo.getDays(),couponTicketInfoQuery.getDays()) ||
+                        !Objects.equals(couponTicketInfo.getUserType(),couponTicketInfoQuery.getUserType()) ||
+                        !Objects.equals(couponTicketInfo.getTakeNum(),couponTicketInfoQuery.getTakeNum()) ||
+                        !Objects.equals(couponTicketInfo.getSuperposition(),couponTicketInfoQuery.getSuperposition()) ||
+                        !Objects.equals(couponTicketInfo.getObtain(),couponTicketInfoQuery.getObtain()) ||
+                        !Objects.equals(couponTicketInfo.getRemark(),couponTicketInfoQuery.getRemark()) ||
+                        !Objects.equals(infoItemNoList,couponTicketInfoQuery.getItemNoList())){
+                    //有不满足的进入到优惠券详情修改相关代码
+                    CouponTicketInfo ticketInfo = new CouponTicketInfo();
+                    ticketInfo.setBeginAt(couponTicketInfoQuery.getBeginAt());
+                    ticketInfo.setEndAt(couponTicketInfoQuery.getEndAt());
+                    ticketInfo.setCreatedAt(System.currentTimeMillis()/1000);
+                    ticketInfo.setDays(couponTicketInfoQuery.getDays());
+                    ticketInfo.setDiscountMoney(couponTicketInfoQuery.getDiscountMoney());
+                    ticketInfo.setFullMoney(couponTicketInfoQuery.getFullMoney());
+                    ticketInfo.setName(couponTicketInfo.getName());
+                    ticketInfo.setObtain(couponTicketInfoQuery.getObtain());
+                    ticketInfo.setRemark(couponTicketInfoQuery.getRemark());
+                    ticketInfo.setShopType(couponTicketInfoQuery.getShopType());
+                    ticketInfo.setStatus(couponTicketInfoQuery.getStatus());
+                    ticketInfo.setSuperposition(couponTicketInfoQuery.getSuperposition());
+                    ticketInfo.setTakeNum(couponTicketInfoQuery.getTakeNum());
+                    ticketInfo.setTicketInfoNo(String.valueOf(IDGeneratorUtils.getLongId()));
+                    ticketInfo.setUpdateAt(System.currentTimeMillis()/1000);
+                    ticketInfo.setUserType(couponTicketInfoQuery.getUserType());
+                    ticketInfo.setUseType(couponTicketInfoQuery.getUseType());
+                    couponTicketInfoDao.insert(ticketInfo);
+
+                    ticketInfoNo = ticketInfo.getTicketInfoNo();
+                }
+
+                //最后更新优惠券表
+                couponTicket.setUpdateAt(System.currentTimeMillis()/1000);
+                couponTicket.setLastTicketInfoNo(ticketInfoNo);
+                couponTicket.setName(couponTicketInfoQuery.getName());
+                couponTicket.setTicketSum(couponTicketInfoQuery.getTicketSum());
+                couponTicketDao.updateById(couponTicket);
             }
+            return ReturnResponse.success("更新成功!");
         }
-        return null;
+        return ReturnResponse.failed("更新失败");
     }
 
+    @Override
+    public ReturnResponse<String> insertTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO) {
+        Long current = System.currentTimeMillis()/1000;
+        //新增优惠券详情
+        CouponTicketInfo ticketInfo = new CouponTicketInfo();
+        ticketInfo.setBeginAt(couponTicketInfoQuery.getBeginAt());
+        ticketInfo.setEndAt(couponTicketInfoQuery.getEndAt());
+        ticketInfo.setCreatedAt(System.currentTimeMillis()/1000);
+        ticketInfo.setDays(couponTicketInfoQuery.getDays());
+        ticketInfo.setDiscountMoney(couponTicketInfoQuery.getDiscountMoney());
+        ticketInfo.setFullMoney(couponTicketInfoQuery.getFullMoney());
+        ticketInfo.setName(couponTicketInfoQuery.getName());
+        ticketInfo.setObtain(couponTicketInfoQuery.getObtain());
+        ticketInfo.setRemark(couponTicketInfoQuery.getRemark());
+        ticketInfo.setShopType(couponTicketInfoQuery.getShopType());
+        ticketInfo.setStatus(couponTicketInfoQuery.getStatus());
+        ticketInfo.setSuperposition(couponTicketInfoQuery.getSuperposition());
+        ticketInfo.setTakeNum(couponTicketInfoQuery.getTakeNum());
+        ticketInfo.setTicketInfoNo(String.valueOf(IDGeneratorUtils.getLongId()));
+        ticketInfo.setUpdateAt(current);
+        ticketInfo.setUserType(couponTicketInfoQuery.getUserType());
+        ticketInfo.setUseType(couponTicketInfoQuery.getUseType());
+        couponTicketInfoDao.insert(ticketInfo);
+        //新增优惠券
+        CouponTicket couponTicket = new CouponTicket();
+        couponTicket.setUpdateAt(current);
+        couponTicket.setLastTicketInfoNo(ticketInfo.getTicketInfoNo());
+        couponTicket.setName(couponTicketInfoQuery.getName());
+        couponTicket.setTicketSum(couponTicketInfoQuery.getTicketSum());
+        couponTicket.setShopNo(userVO.getShopNo());
+        if (current<couponTicketInfoQuery.getBeginAt()) {
+            couponTicket.setState(0);
+        }else if (current>=couponTicketInfoQuery.getBeginAt() && current<couponTicketInfoQuery.getEndAt()){
+            couponTicket.setState(1);
+        }else {
+            couponTicket.setState(2);
+        }
+        int flag = couponTicketDao.insert(couponTicket);
+        if (flag>0){
+            return ReturnResponse.success("新增成功");
+        }
+        return ReturnResponse.failed("新增失败");
+    }
 }
