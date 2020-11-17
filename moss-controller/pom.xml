@@ -152,7 +152,7 @@
     </dependencies>
 
     <build>
-        <finalName>ycandyz-uke-manager-taboo-api</finalName>
+        <finalName>ycandyz-uke-manager-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

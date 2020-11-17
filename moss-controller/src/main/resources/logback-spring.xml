@@ -22,7 +22,7 @@
     <property name="logback.max-file-size" value="10MB" />
     <property name="logback.charset" value="UTF-8" />
     <property name="logback.max-history" value="50" />
-    <property name="logback.path" value="../ycandyz-master-taboo-logs" />
+    <property name="logback.path" value="../ycandyz-master-logs" />
     <!-- 二、子节点<contextName>：用来设置上下文名称，每个logger都关联到logger上下文，默认上下文名称为default。但可以使用<contextName>设置成其他名字，用于区分不同应用程序的记录。一旦设置，不能修改。-->
     <contextName>${application.name}</contextName>
 
