@@ -62,5 +62,8 @@
         AND ur.`status` = 0
         AND ur.role_id > 0
     </select>
+    <select id="selectForExport" resultType="com.ycandyz.master.dto.user.UserForExport">
+        select id,`name`,phone from user where id = #{id};
+    </select>
 
 </mapper>

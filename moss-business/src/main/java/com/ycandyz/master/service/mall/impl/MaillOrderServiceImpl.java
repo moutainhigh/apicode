@@ -23,7 +23,7 @@ import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.enums.StatusEnum;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.service.mall.MallOrderService;
-import com.ycandyz.master.service.user.IUserExportRecordService;
+import com.ycandyz.master.service.userExportRecord.IUserExportRecordService;
 import com.ycandyz.master.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
