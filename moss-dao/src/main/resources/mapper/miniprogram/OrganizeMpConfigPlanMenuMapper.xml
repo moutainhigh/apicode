@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.miniprogram.OrganizeMpConfigPlanMenuDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanMenu">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="picture_select" property="pictureSelect" />
+        <result column="color_select" property="colorSelect" />
+        <result column="picture_not_select" property="pictureNotSelect" />
+        <result column="color_not_select" property="colorNotSelect" />
+        <result column="sort_num" property="sortNum" />
+        <result column="organize_plan_id" property="organizePlanId" />
+        <result column="logic_delete" property="logicDelete" />
+        <result column="can_layout" property="canLayout" />
+        <result column="can_delete" property="canDelete" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, picture_select, color_select, picture_not_select, color_not_select, sort_num, organize_plan_id, logic_delete, can_layout, can_delete, create_time, update_time
+    </sql>
+
+</mapper>

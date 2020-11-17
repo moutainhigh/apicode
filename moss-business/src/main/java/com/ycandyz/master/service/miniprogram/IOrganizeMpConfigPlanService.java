@@ -1,7 +1,7 @@
-package com.ycandyz.master.service.mp;
+package com.ycandyz.master.service.miniprogram;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ycandyz.master.entities.mp.OrganizeMpConfigPlan;
+import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan;
 
 /**
  * <p>
@@ -9,7 +9,7 @@ import com.ycandyz.master.entities.mp.OrganizeMpConfigPlan;
  * </p>
  *
  * @author SanGang
- * @since 2020-11-16
+ * @since 2020-11-17
  * @version 2.0
  */
 public interface IOrganizeMpConfigPlanService extends IService<OrganizeMpConfigPlan>{
