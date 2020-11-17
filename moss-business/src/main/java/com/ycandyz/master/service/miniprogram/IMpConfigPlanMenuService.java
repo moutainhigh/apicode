@@ -20,5 +20,19 @@ public interface IMpConfigPlanMenuService extends IService<MpConfigPlanMenu>{
      * @param model
      * @return
      */
-    MpConfigPlanMenu add(MpConfigPlanMenuModel model);
+    Boolean add(MpConfigPlanMenuModel model);
+
+    /**
+     * 修改方案下菜单
+     * @param mpConfigPlanMenu
+     * @return
+     */
+    Boolean updatePlanMenu(MpConfigPlanMenu mpConfigPlanMenu);
+
+    /**
+     * 逻辑删除方案菜单
+     * @param id
+     * @return
+     */
+    Boolean removePlanMenu(Integer id);
 }

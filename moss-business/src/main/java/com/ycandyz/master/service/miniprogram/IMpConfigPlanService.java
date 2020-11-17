@@ -24,5 +24,5 @@ public interface IMpConfigPlanService extends IService<MpConfigPlan>{
      * @param model
      * @return
      */
-    List<MpConfigPlanMenuResp> add(ConfigPlanAndMenuModel model);
+    MpConfigPlan add(ConfigPlanAndMenuModel model);
 }

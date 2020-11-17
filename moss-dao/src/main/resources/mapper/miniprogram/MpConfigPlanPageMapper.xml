@@ -18,4 +18,23 @@
         id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base
     </sql>
 
+    <select id="getMenuModule" resultType="com.ycandyz.master.dto.miniprogram.MpConfigPlanPageDTO">
+        SELECT p.id,p.menu_id,m.title as menu_name,p.module_id,d.module_name,p.sort_module,d.display_num as module_display_num,group_concat(p.module_base_id separator ',') as module_base_ids
+        FROM mp_config_plan_page p
+        left join mp_config_plan_menu m on p.menu_id = m.id
+        left join mp_config_module d on p.module_id = d.id
+        <where>
+            <if test="menuId != null">
+                p.menu_id = #{menuId}
+            </if>
+            <if test="moduleSort != null">
+                and p.sort_module = #{moduleSort}
+            </if>
+            <if test="moduleId != null">
+                and p.module_id = #{moduleId}
+            </if>
+        </where>
+        group by p.sort_module
+    </select>
+
 </mapper>

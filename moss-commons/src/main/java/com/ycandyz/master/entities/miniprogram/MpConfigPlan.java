@@ -44,6 +44,9 @@ public class MpConfigPlan extends Model {
    @ApiModelProperty(value = "企业选择数量")
    private Integer organizeChooseNum;
 
+   @ApiModelProperty(value = "方案展示图")
+   private String stylePicUrl;
+
    @ApiModelProperty(value = "创建时间")
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createTime;

@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanMenuModel;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
 import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanMenuQuery;
@@ -24,7 +25,25 @@ import org.springframework.stereotype.Service;
 public class MpConfigPlanMenuServiceImpl extends BaseService<MpConfigPlanMenuDao,MpConfigPlanMenu,MpConfigPlanMenuQuery> implements IMpConfigPlanMenuService {
 
     @Override
-    public MpConfigPlanMenu add(MpConfigPlanMenuModel model) {
-        return null;
+    public Boolean add(MpConfigPlanMenuModel model) {
+
+        MpConfigPlanMenu params = new MpConfigPlanMenu();
+        BeanUtil.copyProperties(model,params);
+        return this.save(params);
     }
+
+    @Override
+    public Boolean updatePlanMenu(MpConfigPlanMenu mpConfigPlanMenu) {
+        return this.updateById(mpConfigPlanMenu);
+    }
+
+    @Override
+    public Boolean removePlanMenu(Integer id) {
+        MpConfigPlanMenu deleteParams = new MpConfigPlanMenu();
+        deleteParams.setId(id);
+        deleteParams.setLogicDelete(true);
+        return this.updateById(deleteParams);
+    }
+
+
 }

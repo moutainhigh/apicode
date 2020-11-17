@@ -70,7 +70,7 @@ public class MpConfigModuleBaseController extends BaseController<MpConfigModuleB
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
     
-    @ApiOperation(value = "获取基础模块元素", tags = "企业小程序DIY配置")
+    @ApiOperation(value = "✓获取基础模块元素", tags = "企业小程序DIY配置")
     @GetMapping
     public CommonResult<BaseResult<List<MpConfigModuleBase>>> selectList(MpConfigModuleBaseQuery query) {
         return CommonResult.success(new BaseResult<List<MpConfigModuleBase>>(service.list(query)));
