@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.footprint.FootprintDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.footprint.Footprint">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="content" property="content" />
+        <result column="read_num" property="readNum" />
+        <result column="longitude" property="longitude" />
+        <result column="latitude" property="latitude" />
+        <result column="is_del" property="isDel" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, content, read_num, longitude, latitude, is_del, created_at, updated_at
+    </sql>
+    <update id="updateOneFootprint">
+        update footprint set is_screen = #{oper} where id = #{contentId};
+    </update>
+    <update id="handleExamine">
+        update footprint
+            <set>
+                is_screen = #{oper},
+                updated_at = unix_timestamp(now())
+                where id in
+                <foreach item="item" collection="ids" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </set>
+
+    </update>
+    <select id="selectFootprint" resultType="com.ycandyz.master.domain.query.footprint.FootprintQuery" parameterType="java.lang.Integer">
+        select id,user_id,content from footprint limit  #{pageOffset},#{pageSize};
+    </select>
+
+</mapper>

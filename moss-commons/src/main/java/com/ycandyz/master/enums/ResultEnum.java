@@ -42,8 +42,13 @@ public enum ResultEnum {
     MALL_ITEM_LIMIT_ORDERS(20018, "商品已超过可购买单数限制"),
     MALL_ITEM_LIMIT_SKUS(20019, "商品已超过可购买件数限制"),
     MALL_ITEM_IS_FULL(20020, "购物车已经满啦"),
-    MALL_ITEM_MAX_ORDER (20021, "最多支持60个商品下单～");
+    MALL_ITEM_MAX_ORDER (20021, "最多支持60个商品下单～"),
 
+    /**敏感词检测**/
+    TABOO_PASS(30000, "敏感词验证通过"),
+    TABOO_FAILED(30001, "敏感词验证未通过")
+
+    ;
 
     private int value;
 
