@@ -72,9 +72,11 @@ public class UserExportRecordServiceImpl extends BaseService<UserExportRecordDao
         }
         try {
             UserExportRecord userExportRecord = new UserExportRecord();
-            OrganizeDTO organizeDTO = organizeDao.queryName(userExportRecordReq.getOrganizeId());
-            if (organizeDTO != null){
-                userExportRecord.setOrganizeName(organizeDTO.getShortName());
+            if (userExportRecordReq.getOrganizeId() != null){
+                OrganizeDTO organizeDTO = organizeDao.queryName(userExportRecordReq.getOrganizeId());
+                if (organizeDTO != null){
+                    userExportRecord.setOrganizeName(organizeDTO.getShortName());
+                }
             }
             UserForExport userForExport = userDao.selectForExport(userExportRecordReq.getOperatorId());
             if (userForExport != null){
