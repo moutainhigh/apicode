@@ -12,6 +12,7 @@ import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.domain.response.risk.TabooCheckRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
 import com.ycandyz.master.entities.risk.ContentReview;
+import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.enums.ReviewEnum;
 import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.service.risk.TaboowordsCheckService;
@@ -58,10 +59,13 @@ public class  TaboowordsCheckServiceImpl  implements TaboowordsCheckService  {
         lists.stream().forEach(s->txt.append(s));
         List<String> result = tabooCheckService.check(txt.toString());
         TabooCheckRep tabooCheckRep = new TabooCheckRep();
+        ReturnResponse returnResponse = new ReturnResponse();
         if (result != null && result.size() >0 ){
             tabooCheckRep.setPhraseNames(result);
             tabooCheckRep.setMessage("检测到提交信息涉嫌违规提交后系统会自动屏蔽，其他人不可见");
-            return ReturnResponse.failed(tabooCheckRep);
+            returnResponse.setCode(Long.valueOf(ResultEnum.TABOO_FAILED.getValue()));
+            returnResponse.setData(tabooCheckRep);
+            return ReturnResponse.success(returnResponse);
         }
         contentReview.setAuditResult(1);
         contentreviewDao.insert(contentReview);
@@ -74,7 +78,9 @@ public class  TaboowordsCheckServiceImpl  implements TaboowordsCheckService  {
         contentreviewLogDao.insert(contentReviewLogVO);
         tabooCheckRep.setPhraseNames(null);
         tabooCheckRep.setMessage("未检测到违规词");
-        return ReturnResponse.success(tabooCheckRep);
+        returnResponse.setCode(Long.valueOf(ResultEnum.TABOO_PASS.getValue()));
+        returnResponse.setData(tabooCheckRep);
+        return ReturnResponse.success(returnResponse);
     }
 
 
@@ -94,15 +100,20 @@ public class  TaboowordsCheckServiceImpl  implements TaboowordsCheckService  {
         lists.stream().forEach(s->txt.append(s));
         List<String> result = tabooCheckService.check(txt.toString());
         TabooCheckRep tabooCheckRep = new TabooCheckRep();
+        ReturnResponse returnResponse = new ReturnResponse();
         if (result != null && result.size() >0 ){
             tabooCheckRep.setPhraseNames(result);
             tabooCheckRep.setMessage("检测到提交信息涉嫌违规提交后系统会自动屏蔽，其他人不可见");
-            return ReturnResponse.failed(tabooCheckRep);
+            returnResponse.setCode(Long.valueOf(ResultEnum.TABOO_FAILED.getValue()));
+            returnResponse.setData(tabooCheckRep);
+            return ReturnResponse.success(returnResponse);
         }
         //记录日志
         tabooCheckRep.setPhraseNames(null);
         tabooCheckRep.setMessage("未检测到违规词");
-        return ReturnResponse.success(tabooCheckRep);
+        returnResponse.setCode(Long.valueOf(ResultEnum.TABOO_PASS.getValue()));
+        returnResponse.setData(tabooCheckRep);
+        return ReturnResponse.success(returnResponse);
     }
 
 }
