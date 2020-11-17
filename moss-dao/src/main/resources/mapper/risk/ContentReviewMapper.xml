@@ -57,8 +57,8 @@
                 and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
             </if>
-            <if test="con != null and con.ReviewAuditResult != null">
-                and c.audit_result = #{con.ReviewAuditResult}
+            <if test="con != null and con.reviewAuditResult != null">
+                and c.audit_result = #{con.reviewAuditResult}
             </if>
             <if test="con != null and con.auditResult != null">
                 and m.is_screen = #{con.auditResult}
@@ -97,8 +97,8 @@
                 and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
             </if>
-            <if test="con != null and con.ReviewAuditResult != null">
-                and c.audit_result = #{con.ReviewAuditResult}
+            <if test="con != null and con.reviewAuditResult != null">
+                and c.audit_result = #{con.reviewAuditResult}
             </if>
             <if test="con != null and con.auditResult != null">
                 and f.is_screen = #{con.auditResult}
@@ -138,8 +138,8 @@
                 and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
             </if>
-            <if test="con != null and con.ReviewAuditResult != null">
-                and c.audit_result = #{con.ReviewAuditResult}
+            <if test="con != null and con.reviewAuditResult != null">
+                and c.audit_result = #{con.reviewAuditResult}
             </if>
             <if test="con != null and con.auditResult != null">
                 and o.is_screen = #{con.auditResult}
@@ -188,8 +188,8 @@
                 and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
-        <if test="con != null and con.ReviewAuditResult != null">
-            and c.audit_result = #{con.ReviewAuditResult}
+        <if test="con != null and con.reviewAuditResult != null">
+            and c.audit_result = #{con.reviewAuditResult}
         </if>
         <if test="con != null and con.auditResult != null">
             and m.is_screen = #{con.auditResult}
@@ -228,8 +228,8 @@
                 and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
-        <if test="con != null and con.ReviewAuditResult != null">
-            and c.audit_result = #{con.ReviewAuditResult}
+        <if test="con != null and con.reviewAuditResult != null">
+            and c.audit_result = #{con.reviewAuditResult}
         </if>
         <if test="con != null and con.auditResult != null">
             and f.is_screen = #{con.auditResult}
@@ -269,8 +269,8 @@
                 and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
-        <if test="con != null and con.ReviewAuditResult != null">
-            and c.audit_result = #{con.ReviewAuditResult}
+        <if test="con != null and con.reviewAuditResult != null">
+            and c.audit_result = #{con.reviewAuditResult}
         </if>
         <if test="con != null and con.auditResult != null">
             and o.is_screen = #{con.auditResult}
