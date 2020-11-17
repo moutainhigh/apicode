@@ -42,9 +42,6 @@ public class MpConfigPlanMenuModel implements Serializable {
     @NotNull(message = "颜色不能为空",groups = {ValidatorContract.OnCreate.class,ValidatorContract.OnUpdate.class})
     private String colorNotSelect;
 
-    @ApiModelProperty(value = "排序值")
-    private Integer sortNum;
-
     @ApiModelProperty(value = "小程序方案编号")
     @NotNull(message = "方案编号不能为空",groups = {ValidatorContract.OnCreate.class})
     private Integer planId;

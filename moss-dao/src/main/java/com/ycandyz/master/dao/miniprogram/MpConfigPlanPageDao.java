@@ -19,7 +19,7 @@ import java.util.List;
 public interface MpConfigPlanPageDao extends BaseMapper<MpConfigPlanPage> {
 
     /**
-     * 获取
+     * 获取菜单页面模块
      * @param menuId
      * @param moduleSort
      * @param moduleId
@@ -28,6 +28,12 @@ public interface MpConfigPlanPageDao extends BaseMapper<MpConfigPlanPage> {
     MpConfigPlanPageDTO getMenuModule(@Param("menuId") Integer menuId, @Param("moduleSort") Integer moduleSort, @Param("moduleId") Integer moduleId);
 
 
-    MpConfigPlanPageBaseDTO getMenuModuleElement(@Param("menuId") Integer menuId, @Param("moduleSort") Integer moduleSort, @Param("moduleId") Integer moduleId);
+    /**
+     * 获取菜单模块元素
+     * @param moduleSort
+     * @param baseIds
+     * @return
+     */
+    List<MpConfigPlanPageBaseDTO> getMenuModuleElement(@Param("moduleSort") Integer moduleSort, @Param("baseIds") List<Integer> baseIds);
 
 }

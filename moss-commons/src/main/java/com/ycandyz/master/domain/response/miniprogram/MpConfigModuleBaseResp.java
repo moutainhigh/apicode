@@ -25,12 +25,16 @@ import java.io.Serializable;
 public class MpConfigModuleBaseResp implements Serializable {
 
     @ApiModelProperty(value = "元素标识")
+    @JsonProperty(value = "id")
+    private Integer id;
+
+    @ApiModelProperty(value = "元素标识")
     @JsonProperty(value = "show_key")
-    private String showKey;
+    private String baseCode;
 
     @ApiModelProperty(value = "元素名称")
     @JsonProperty(value = "key_name")
-    private String keyName;
+    private String baseName;
 
     @ApiModelProperty(value = "模块编号")
     @JsonProperty(value = "sort_base")

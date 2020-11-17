@@ -40,7 +40,7 @@ public class MpConfigPlanPageDTO {
     private Integer sortModule;
 
     @ApiModelProperty(value = "菜单模块显示数量")
-    private Integer moduleDisplayNum;
+    private Integer displayNum;
 
     @ApiModelProperty(value = "菜单模块元素编号")
     private String moduleBaseIds;

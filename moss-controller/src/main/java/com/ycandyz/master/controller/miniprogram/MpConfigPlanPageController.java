@@ -54,13 +54,10 @@ public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageS
         return result(service.updateById(entity),entity,"更改失败!");
 	}
 	
-	@ApiOperation(value = "查询模块下元素信息", tags = "企业小程序DIY配置")
+	@ApiOperation(value = "✓查询模块下元素信息", tags = "企业小程序DIY配置")
     @GetMapping(value = "menu/{menuId}/sort/{sortId}/module/{moduleId}")
 	public CommonResult<MpConfigPlanPageResp> getById(@PathVariable Integer menuId,@PathVariable Integer sortId,@PathVariable Integer moduleId) {
-        MpConfigPlanPageResp result = new MpConfigPlanPageResp();
-        service.getPlanMenuModule(menuId,sortId,moduleId);
-
-        return CommonResult.success(result);
+        return CommonResult.success(service.getPlanMenuModule(menuId,sortId,moduleId));
     }
     
 	@ApiOperation(value = "查询分页")

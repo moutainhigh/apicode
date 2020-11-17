@@ -44,6 +44,10 @@ public class MpConfigPlanPageResp implements Serializable {
     @JsonProperty(value = "module_name")
     private String moduleName;
 
+    @ApiModelProperty(value = "菜单模块排序")
+    @JsonProperty(value = "sort_module")
+    private Integer sortModule;
+
     @ApiModelProperty(value = "显示个数")
     @JsonProperty(value = "display_num")
     private Integer displayNum;
