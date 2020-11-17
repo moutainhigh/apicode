@@ -21,7 +21,6 @@ import com.ycandyz.master.entities.mall.MallCategory;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.model.ad.SpecialModel;
 import com.ycandyz.master.service.ad.ISpecialService;
-import com.ycandyz.master.service.mall.goodsManage.impl.MallItemServiceImpl;
 import com.ycandyz.master.service.mall.impl.MallHomeCategoryServiceImpl;
 import com.ycandyz.master.service.mall.impl.MallHomeItemServiceImpl;
 import com.ycandyz.master.utils.AssertUtils;
@@ -269,6 +268,7 @@ public class SpecialServiceImpl extends BaseService<SpecialDao,Special,SpecialQu
                 return false;
             }
             LambdaQueryWrapper<MallItem> mallItemWrapper = new LambdaQueryWrapper<MallItem>()
+                    .eq(MallItem::getIsScreen,MallItemEnum.IsScreen.START_0.getCode())
                     .in(MallItem::getItemNo,specailItemList)
                     .in(MallItem::getStatus, MallItemEnum.Status.START_10.getCode(),MallItemEnum.Status.START_30.getCode());
             List<MallItem> mallItem = mallItemService.list(mallItemWrapper);

@@ -63,7 +63,7 @@ public class MallItemVideo extends Model {
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "删除标识(0未删除,1已删除)")
    @TableLogic
-   private Integer deleted;
+   private Integer isDel;
 
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "创建时间")
