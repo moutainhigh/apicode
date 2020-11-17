@@ -1,6 +1,6 @@
-package com.ycandyz.master.dao.mp;
+package com.ycandyz.master.dao.miniprogram;
 
-import com.ycandyz.master.entities.mp.OrganizeMpConfigPlan;
+import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author SanGang
- * @since 2020-11-16
+ * @since 2020-11-17
  */
 public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan> {
 

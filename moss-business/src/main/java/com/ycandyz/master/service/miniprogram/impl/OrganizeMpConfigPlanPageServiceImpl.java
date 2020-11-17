@@ -1,9 +1,9 @@
-package com.ycandyz.master.service.mp.impl;
+package com.ycandyz.master.service.miniprogram.impl;
 
-import com.ycandyz.master.entities.mp.OrganizeMpConfigPlanPage;
-import com.ycandyz.master.domain.query.mp.OrganizeMpConfigPlanPageQuery;
-import com.ycandyz.master.dao.mp.OrganizeMpConfigPlanPageDao;
-import com.ycandyz.master.service.mp.IOrganizeMpConfigPlanPageService;
+import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanPage;
+import com.ycandyz.master.domain.query.miniprogram.OrganizeMpConfigPlanPageQuery;
+import com.ycandyz.master.dao.miniprogram.OrganizeMpConfigPlanPageDao;
+import com.ycandyz.master.service.miniprogram.IOrganizeMpConfigPlanPageService;
 import com.ycandyz.master.controller.base.BaseService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * </p>
  *
  * @author SanGang
- * @since 2020-11-16
+ * @since 2020-11-17
  * @version 2.0
  */
 @Slf4j
