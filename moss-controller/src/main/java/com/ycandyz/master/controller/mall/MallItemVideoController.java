@@ -36,7 +36,7 @@ import javax.validation.constraints.NotNull;
 
 @Slf4j
 @RestController
-@RequestMapping("mall-item-video")
+@RequestMapping("mall/item/video")
 @Api(tags="mall-商品视频信息")
 public class MallItemVideoController extends BaseController<MallItemVideoServiceImpl,MallItemVideo,MallItemVideoQuery> {
 
