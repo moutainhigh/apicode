@@ -47,7 +47,7 @@ public class MallItemVideoController extends BaseController<MallItemVideoService
 	    return result(service.upload(entity,videoFile,imgFile),entity,"上传失败!");
     }
 
-    @ApiImplicitParams({
+    /*@ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "视频ID",required = true, dataType = "int"),
             @ApiImplicitParam(name = "status", value = "审核状态(0通过,1不通过)",required = true, dataType = "int"),
             @ApiImplicitParam(name = "remark", value = "拒绝通过原因", dataType = "string")
@@ -56,7 +56,7 @@ public class MallItemVideoController extends BaseController<MallItemVideoService
     @PutMapping(value = "audit/{id}")
     public CommonResult<String> auditById(@PathVariable Long id, Integer status, String remark) {
         return result(service.audit(id,status,remark),"审核成功","审核失败!");
-    }
+    }*/
 	
 	@ApiOperation(value = "查询根据ID")
     @GetMapping(value = "{id}")
