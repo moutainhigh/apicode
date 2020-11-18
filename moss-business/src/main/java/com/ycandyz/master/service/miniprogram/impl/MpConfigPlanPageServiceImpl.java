@@ -3,6 +3,7 @@ package com.ycandyz.master.service.miniprogram.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanPageModel;
+import com.ycandyz.master.domain.model.miniprogram.PlanModuleModel;
 import com.ycandyz.master.domain.response.miniprogram.MpConfigModuleBaseResp;
 import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanPageResp;
 import com.ycandyz.master.dto.miniprogram.MpConfigPlanPageBaseDTO;
@@ -70,8 +71,14 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
             BeanUtil.copyProperties(base,resp);
             baseInfoList.add(resp);
         }
+
         result.setBaseInfo(baseInfoList);
         return result;
+    }
+
+    @Override
+    public Boolean addBatch(PlanModuleModel model) {
+        return null;
     }
 
 

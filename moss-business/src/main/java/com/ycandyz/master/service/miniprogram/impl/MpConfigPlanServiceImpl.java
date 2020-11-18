@@ -1,11 +1,8 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.ycandyz.master.dao.mall.goodsManage.MallShippingDao;
 import com.ycandyz.master.domain.model.miniprogram.ConfigPlanAndMenuModel;
 import com.ycandyz.master.domain.model.miniprogram.MenuWithinPlan;
-import com.ycandyz.master.domain.response.miniprogram.MpConfigMenuResp;
-import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanMenuResp;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlan;
 import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanQuery;
 import com.ycandyz.master.dao.miniprogram.MpConfigPlanDao;
@@ -48,7 +45,7 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
         this.save(mpConfigPlan);
 
         //批量保存菜单
-        List<MenuWithinPlan> menuWithinPlanList = model.getMemus();
+        List<MenuWithinPlan> menuWithinPlanList = model.getMenus();
         List<MpConfigPlanMenu> configPlanMenuList = new ArrayList<MpConfigPlanMenu>();
         for(MenuWithinPlan menuWithinPlan: menuWithinPlanList){
             MpConfigPlanMenu mpConfigPlanMenu = new MpConfigPlanMenu();
@@ -60,4 +57,13 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
 
         return mpConfigPlan;
     }
+
+    @Override
+    public Boolean initPlan(String planName) {
+        MpConfigPlan mpConfigPlan = new MpConfigPlan();
+        mpConfigPlan.setPlanName(planName);
+        return this.save(mpConfigPlan);
+    }
+
+
 }

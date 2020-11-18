@@ -2,6 +2,7 @@ package com.ycandyz.master.service.miniprogram.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanMenuModel;
+import com.ycandyz.master.domain.model.miniprogram.PlanMenuModel;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
 import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanMenuQuery;
 import com.ycandyz.master.dao.miniprogram.MpConfigPlanMenuDao;
@@ -26,7 +27,6 @@ public class MpConfigPlanMenuServiceImpl extends BaseService<MpConfigPlanMenuDao
 
     @Override
     public Boolean add(MpConfigPlanMenuModel model) {
-
         MpConfigPlanMenu params = new MpConfigPlanMenu();
         BeanUtil.copyProperties(model,params);
         return this.save(params);
@@ -43,6 +43,11 @@ public class MpConfigPlanMenuServiceImpl extends BaseService<MpConfigPlanMenuDao
         deleteParams.setId(id);
         deleteParams.setLogicDelete(true);
         return this.updateById(deleteParams);
+    }
+
+    @Override
+    public Boolean addBatch(PlanMenuModel model) {
+        return null;
     }
 
 

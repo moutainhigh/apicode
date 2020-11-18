@@ -39,7 +39,7 @@ import com.ycandyz.master.controller.base.BaseController;
 
 @Slf4j
 @RestController
-@RequestMapping("mini-program/config/menus")
+@RequestMapping("cms/mp/dict/menus")
 @Api(tags="小程序配置-菜单配置")
 public class MpConfigMenuController extends BaseController<MpConfigMenuServiceImpl,MpConfigMenu,MpConfigMenuQuery> {
 	

@@ -30,5 +30,5 @@ public class ConfigPlanAndMenuModel implements Serializable {
     private String stylePicUrl;
 
     @ApiModelProperty(value = "方案内菜单")
-    private List<MenuWithinPlan> memus;
+    private List<MenuWithinPlan> menus;
 }

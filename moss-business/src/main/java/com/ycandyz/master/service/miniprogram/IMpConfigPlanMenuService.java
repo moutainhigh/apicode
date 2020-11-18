@@ -2,6 +2,7 @@ package com.ycandyz.master.service.miniprogram;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanMenuModel;
+import com.ycandyz.master.domain.model.miniprogram.PlanMenuModel;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
 
 /**
@@ -35,4 +36,11 @@ public interface IMpConfigPlanMenuService extends IService<MpConfigPlanMenu>{
      * @return
      */
     Boolean removePlanMenu(Integer id);
+
+    /**
+     * 批量新增方案下菜单
+     * @param model
+     * @return
+     */
+    Boolean addBatch(PlanMenuModel model);
 }
