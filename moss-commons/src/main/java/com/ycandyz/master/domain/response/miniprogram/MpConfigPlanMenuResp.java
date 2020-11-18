@@ -22,9 +22,6 @@ import lombok.Setter;
 @TableName("mp_config_plan_menu")
 public class MpConfigPlanMenuResp extends MenuWithinPlan {
 
-    @ApiModelProperty(value = "方案内菜单编号")
-    private Integer id;
-
     @ApiModelProperty(value = "方案编号")
     private Integer planId;
 }

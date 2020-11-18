@@ -1,6 +1,7 @@
 package com.ycandyz.master.controller.miniprogram;
 
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanPageModel;
+import com.ycandyz.master.domain.model.miniprogram.PlanModuleModel;
 import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanPageResp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,15 +38,16 @@ import com.ycandyz.master.controller.base.BaseController;
 
 @Slf4j
 @RestController
-@RequestMapping("mini-program/config/plan/pages")
+@RequestMapping("cms/mp/modules")
 @Api(tags="小程序配置-方案页面配置")
 public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageServiceImpl,MpConfigPlanPage,MpConfigPlanPageQuery> {
-	
-	@ApiOperation(value="新增绑定菜单模块", tags = "企业小程序DIY配置")
+
+
+    @ApiOperation(value="配置绑定菜单模块", tags = "企业小程序DIY配置")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public CommonResult<Boolean> create(@Validated(ValidatorContract.OnCreate.class) @RequestBody MpConfigPlanPageModel entity) {
-        return result(service.add(entity),true,"保存失败!");
-	}
+    public CommonResult<Boolean> createBatch(@Validated(ValidatorContract.OnCreate.class) @RequestBody PlanModuleModel entity) {
+        return result(service.addBatch(entity),true,"批量保存失败!");
+    }
 	
 	@ApiOperation(value = "编辑绑定菜单模块", tags = "企业小程序DIY配置")
     @PutMapping(value = "{id}")
@@ -53,19 +55,17 @@ public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageS
         entity.setId(id);
         return result(service.updateById(entity),entity,"更改失败!");
 	}
-	
-	@ApiOperation(value = "查询模块下元素信息", tags = "企业小程序DIY配置")
-    @GetMapping(value = "{id}")
-	public CommonResult<MpConfigPlanPageResp> getById(@PathVariable Long id) {
-        MpConfigPlanPageResp result = new MpConfigPlanPageResp();
-        return CommonResult.success(result);
+
+    @ApiOperation(value = "✓查询菜单下模块信息", tags = "企业小程序DIY配置")
+    @GetMapping
+    public CommonResult<MpConfigPlanPageResp> getMenuById(@RequestParam Integer menuId) {
+        return CommonResult.success(null);
     }
-    
-	@ApiOperation(value = "查询分页")
-    @GetMapping(value = "page")
-    @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<MpConfigPlanPage>> selectPage(PageModel page, MpConfigPlanPageQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+	
+	@ApiOperation(value = "✓查询模块下元素信息", tags = "企业小程序DIY配置")
+    @GetMapping(value = "/{moduleId}")
+	public CommonResult<MpConfigPlanPageResp> getModuleById(@PathVariable Integer moduleId,@RequestParam Integer sortId,@RequestParam Integer menuId) {
+        return CommonResult.success(service.getPlanMenuModule(menuId,sortId,moduleId));
     }
     
     @ApiOperation(value = "查询全部")
@@ -74,17 +74,11 @@ public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageS
         return CommonResult.success(new BaseResult<List<MpConfigPlanPage>>(service.list(query)));
     }
     
-    @ApiOperation(value = "通过ID删除")
-    @DeleteMapping(value = "{id}")
-	public CommonResult deleteById(@PathVariable Long id) {
-        return result(service.removeById(id),null,"删除失败!");
+    @ApiOperation(value = "删除页面模块", tags = "企业小程序DIY配置")
+    @DeleteMapping(value = "{moduleId}")
+	public CommonResult deleteById(@PathVariable Long moduleId) {
+        return result(service.removeById(moduleId),null,"删除失败!");
 	}
 
-    @ApiImplicitParam(name="ids",value="ID集合(1,2,3)",required=true,allowMultiple=true,dataType="int")
-   	@ApiOperation(value = "通过ids批量删除")
-    @DeleteMapping(value = "delete")
-	public CommonResult deleteBatch(String ids) {
-        return result(service.deleteByIds(Convert.toLongArray(ids)),null,"删除失败!");
-	}
     
 }
