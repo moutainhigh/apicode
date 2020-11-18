@@ -123,6 +123,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
             page1.setCurrent(requestParams.getPage());
             page1.setRecords(recordReps);
             page1.setSize(requestParams.getPage_size());
+            page1.setTotal(page.getTotal());
         }catch (Exception e){
             log.error("error:{}",e.getMessage());
             page1 = new Page<>(0,requestParams.getPage_size(),0);
