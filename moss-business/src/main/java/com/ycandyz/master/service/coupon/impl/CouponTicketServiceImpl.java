@@ -77,6 +77,12 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
                     if (couponTicketInfoVO.getTicketCreatedAt()!=null && couponTicketInfoVO.getTicketCreatedAt()!=0){
                         couponTicketInfoVO.setTicketCreatedAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getTicketCreatedAt()*1000),"yyyy-MM-dd HH:mm:ss"));
                     }
+                    if (couponTicketInfoVO.getBeginAt()!=null && couponTicketInfoVO.getBeginAt()!=0){
+                        couponTicketInfoVO.setBeginAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getBeginAt()*1000),"yyyy-MM-dd HH:mm:ss"));
+                    }
+                    if (couponTicketInfoVO.getEndAt()!=null && couponTicketInfoVO.getEndAt()!=0){
+                        couponTicketInfoVO.setEndAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getEndAt()*1000),"yyyy-MM-dd HH:mm:ss"));
+                    }
                     list.add(couponTicketInfoVO);
                 }
             }
@@ -116,6 +122,15 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
         if (couponTicketInfoDTO!=null){
             couponTicketInfoVO = new CouponTicketInfoVO();
             BeanUtils.copyProperties(couponTicketInfoDTO,couponTicketInfoVO);
+            if (couponTicketInfoVO.getTicketCreatedAt()!=null && couponTicketInfoVO.getTicketCreatedAt()!=0){
+                couponTicketInfoVO.setTicketCreatedAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getTicketCreatedAt()*1000),"yyyy-MM-dd HH:mm:ss"));
+            }
+            if (couponTicketInfoVO.getBeginAt()!=null && couponTicketInfoVO.getBeginAt()!=0){
+                couponTicketInfoVO.setBeginAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getBeginAt()*1000),"yyyy-MM-dd HH:mm:ss"));
+            }
+            if (couponTicketInfoVO.getEndAt()!=null && couponTicketInfoVO.getEndAt()!=0){
+                couponTicketInfoVO.setEndAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getEndAt()*1000),"yyyy-MM-dd HH:mm:ss"));
+            }
         }
         return ReturnResponse.success(couponTicketInfoVO);
     }
@@ -176,6 +191,7 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
                     ticketInfo.setUpdateAt(System.currentTimeMillis()/1000);
                     ticketInfo.setUserType(couponTicketInfoQuery.getUserType());
                     ticketInfo.setUseType(couponTicketInfoQuery.getUseType());
+                    ticketInfo.setTicketNo(couponTicket.getTicketNo());
                     couponTicketInfoDao.insert(ticketInfo);
 
                     ticketInfoNo = ticketInfo.getTicketInfoNo();
@@ -196,6 +212,8 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
     @Override
     public ReturnResponse<String> insertTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO) {
         Long current = System.currentTimeMillis()/1000;
+        String ticketInfoNo = String.valueOf(IDGeneratorUtils.getLongId());
+        String ticketNo = String.valueOf(IDGeneratorUtils.getLongId());
         //新增优惠券详情
         CouponTicketInfo ticketInfo = new CouponTicketInfo();
         ticketInfo.setBeginAt(couponTicketInfoQuery.getBeginAt());
@@ -211,18 +229,20 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
         ticketInfo.setStatus(couponTicketInfoQuery.getStatus());
         ticketInfo.setSuperposition(couponTicketInfoQuery.getSuperposition());
         ticketInfo.setTakeNum(couponTicketInfoQuery.getTakeNum());
-        ticketInfo.setTicketInfoNo(String.valueOf(IDGeneratorUtils.getLongId()));
+        ticketInfo.setTicketInfoNo(ticketInfoNo);
         ticketInfo.setUpdateAt(current);
         ticketInfo.setUserType(couponTicketInfoQuery.getUserType());
         ticketInfo.setUseType(couponTicketInfoQuery.getUseType());
+        ticketInfo.setTicketNo(ticketNo);
         couponTicketInfoDao.insert(ticketInfo);
         //新增优惠券
         CouponTicket couponTicket = new CouponTicket();
         couponTicket.setUpdateAt(current);
-        couponTicket.setLastTicketInfoNo(ticketInfo.getTicketInfoNo());
+        couponTicket.setLastTicketInfoNo(ticketInfoNo);
         couponTicket.setName(couponTicketInfoQuery.getName());
         couponTicket.setTicketSum(couponTicketInfoQuery.getTicketSum());
         couponTicket.setShopNo(userVO.getShopNo());
+        couponTicket.setTicketNo(ticketNo);
         if (current<couponTicketInfoQuery.getBeginAt()) {
             couponTicket.setState(0);
         }else if (current>=couponTicketInfoQuery.getBeginAt() && current<couponTicketInfoQuery.getEndAt()){
