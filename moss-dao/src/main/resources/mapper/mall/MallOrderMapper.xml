@@ -422,6 +422,7 @@
     <resultMap id="BasePlusResultMap" type="com.ycandyz.master.dto.mall.MallOrderDTO">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="order_no" property="orderNo" />
+        <result column="shop_no" property="shopNo" />
         <result column="cart_order_sn" property="cartOrderSn" />
         <result column="real_money" property="realMoney" />
         <result column="payed_at" property="payedAt" />
@@ -494,6 +495,7 @@
             mo.pre_phone,
             mo.all_money-mo.real_money as shippingMoney,
             mo.all_money,
+            mo.shop_no,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
@@ -509,7 +511,6 @@
         left join mall_order_detail modetail on mo.order_no=modetail.order_no
         left join mall_shop_shipping ship on mo.order_no=ship.order_no
         where mo.order_no = #{orderNo}
-        and mo.shop_no=#{shopNo}
     </select>
 
     <select id="getTrendMallOrderPageSize" parameterType="com.ycandyz.master.domain.query.mall.MallOrderQuery" resultType="java.lang.Integer">

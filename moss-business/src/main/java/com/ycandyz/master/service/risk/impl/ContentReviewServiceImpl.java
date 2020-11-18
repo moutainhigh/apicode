@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.risk.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -10,11 +11,15 @@ import com.ycandyz.master.api.TabooReturnResponse;
 import com.ycandyz.master.dao.risk.ContentreviewDao;
 import com.ycandyz.master.dao.risk.ContentreviewLogDao;
 import com.ycandyz.master.domain.UserVO;
+import com.ycandyz.master.domain.enums.ad.AdvertisingEnum;
 import com.ycandyz.master.domain.query.risk.*;
 import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
+import com.ycandyz.master.entities.ad.Advertising;
+import com.ycandyz.master.entities.mall.MallItemVideo;
 import com.ycandyz.master.handler.HandlerContext;
 import com.ycandyz.master.request.UserRequest;
+import com.ycandyz.master.service.mall.impl.MallItemVideoServiceImpl;
 import com.ycandyz.master.service.risk.ContentReviewService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +35,9 @@ public class ContentReviewServiceImpl implements ContentReviewService {
 
     @Autowired
     private ContentreviewDao contentreviewDao;
+
+    @Autowired
+    private MallItemVideoServiceImpl mallItemVideoService;
 
     @Override
     public ReturnResponse<Page<ContentReviewRep>> list(RequestParams<ContentReviewQuery> requestParams) {
@@ -49,6 +57,14 @@ public class ContentReviewServiceImpl implements ContentReviewService {
                     ContentReviewRep contentReviewRep = new ContentReviewRep();
                     AbstractHandler handler = HandlerContext.getHandler(s.getType());
                     handler.handleContentreview(s,contentReviewRep);
+                    //add video
+                    if(s.getType() == 0){
+                        LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                                .select(MallItemVideo::getId,MallItemVideo::getUrl,MallItemVideo::getImg)
+                                .eq(MallItemVideo::getItemNo, s.getContentId());
+                        List<MallItemVideo> videoList = mallItemVideoService.list(videoWrapper);
+                        contentReviewRep.setVideo(videoList);
+                    }
                     newlist.add(contentReviewRep);
                 });
             }
@@ -56,6 +72,11 @@ public class ContentReviewServiceImpl implements ContentReviewService {
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }
+        newlist.stream().forEach(i -> {
+            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                    .eq(MallItemVideo::getItemNo, i.getOndContent());
+            mallItemVideoService.list();
+        });
         page1.setPages(requestParams.getPage());
         page1.setCurrent(requestParams.getPage());
         page1.setRecords(newlist);

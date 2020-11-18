@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.coupon.CouponTicketInfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.coupon.CouponTicketInfoDTO">
+        <id column="id" property="id" />
+        <result column="ticket_info_no" property="ticketInfoNo" />
+        <result column="name" property="name" />
+        <result column="shop_type" property="shopType" />
+        <result column="use_type" property="useType" />
+        <result column="full_money" property="fullMoney" />
+        <result column="discount_money" property="discountMoney" />
+        <result column="status" property="status" />
+        <result column="begin_at" property="beginAt" />
+        <result column="end_at" property="endAt" />
+        <result column="days" property="days" />
+        <result column="user_type" property="userType" />
+        <result column="take_num" property="takeNum" />
+        <result column="superposition" property="superposition" />
+        <result column="obtain" property="obtain" />
+        <result column="remark" property="remark" />
+        <result column="created_at" property="createdAt" />
+        <result column="update_at" property="updateAt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, ticket_info_no, name, shop_type, use_type, full_money, discount_money, status, begin_at, end_at, days, user_type, take_num, superposition, obtain, remark, created_at, update_at
+    </sql>
+
+</mapper>

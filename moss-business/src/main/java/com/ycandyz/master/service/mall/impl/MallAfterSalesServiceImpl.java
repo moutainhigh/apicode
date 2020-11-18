@@ -96,6 +96,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     @Override
     public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
         Page<MallAfterSalesVO> mallPage = new Page<>();
+        List<MallAfterSalesVO> list = new ArrayList<>();
         MallafterSalesQuery mallafterSalesQuery = requestParams.getT();
         if (mallafterSalesQuery==null){
             mallafterSalesQuery = new MallafterSalesQuery();
@@ -111,10 +112,11 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 //查询集团所有数据
                 Long groupOrganizeId = userVO.getOrganizeId();   //集团id
                 if (groupOrganizeId!=null) {
-                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status",2));
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> oids = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.addAll(oids);
+                        organizeIds.add(groupOrganizeId.intValue());
                         List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
                         if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
@@ -131,11 +133,17 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 if (mallShop!=null){
                     mallafterSalesQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
                     shopNoAndOrganizeId.put(mallShop.getShopNo(), Integer.valueOf(mallafterSalesQuery.getChildOrganizeId()));
+                }else {
+                    mallPage.setSize(requestParams.getPage_size());
+                    mallPage.setRecords(list);
+                    mallPage.setCurrent(requestParams.getPage());
+                    mallPage.setPages(requestParams.getPage());
+                    return ReturnResponse.success(mallPage);
                 }
             }
         }
         Page pageQuery = new Page(requestParams.getPage(), requestParams.getPage_size());
-        List<MallAfterSalesVO> list = new ArrayList<>();
+
         Page<MallAfterSalesDTO> page = null;
         try {
             page = mallAfterSalesDao.getTrendMallAfterSalesPage(pageQuery, mallafterSalesQuery);
@@ -157,9 +165,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                             state = 2;
                         }else if (subStatus==1050 || subStatus==2010){
                             state = 3;
-                        }else if (subStatus==1080 || subStatus==2020 || subStatus==2030){
+                        }else if (subStatus==1080 || subStatus==2020 || subStatus==2030 || (subStatus==1070 && mallAfterSalesDTO.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                             state = 4;
-                        }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050){
+                        }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050 || (subStatus==1070 && mallAfterSalesDTO.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                             state = 6;
                         }else {
                             state = 5;
@@ -225,7 +233,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     @Override
     public ReturnResponse<MallAfterSalesVO> querySalesDetail(String afterSalesNo, UserVO userVO) {
         MallAfterSalesVO mallAfterSalesVO = null;
-        MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(afterSalesNo,userVO.getShopNo());
+        MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(afterSalesNo);
         if (mallAfterSalesDTO!=null){
             mallAfterSalesVO = new MallAfterSalesVO();
             BeanUtils.copyProperties(mallAfterSalesDTO,mallAfterSalesVO);
@@ -309,7 +317,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             }
 
             //MallAfterSalesLog表
-            List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNo(mallAfterSalesDTO.getAfterSalesNo(),userVO.getShopNo());
+            List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNo(mallAfterSalesDTO.getAfterSalesNo());
             if (mallAfterSalesLogDTOs!=null && mallAfterSalesLogDTOs.size()>0){
                 List<MallAfterSalesLogVO> mallAfterSalesLogVOS = new ArrayList<>();
                 mallAfterSalesLogDTOs.forEach(dto->{
@@ -426,9 +434,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     state = 2;
                 }else if (subStatus==1050 || subStatus==2010){
                     state = 3;
-                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030){
+                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030 || (subStatus==1070 && mallAfterSalesDTO.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                     state = 4;
-                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050){
+                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050 || (subStatus==1070 && mallAfterSalesDTO.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                     state = 6;
                 }else {
                     state = 5;
@@ -484,6 +492,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                        organizeIds.add(groupOrganizeId.intValue());
                         List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
                         if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
@@ -493,7 +502,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 }
             }else {
                 mallafterSalesQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
-                MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallafterSalesQuery.getChildOrganizeId()));
+                MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallafterSalesQuery.getChildOrganizeId()).eq("status",2));
                 if (mallShop!=null){
                     mallafterSalesQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
                 }
@@ -519,9 +528,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     state = 2;
                 }else if (subStatus==1050 || subStatus==2010){
                     state = 3;
-                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030){
+                }else if (subStatus==1080 || subStatus==2020 || subStatus==2030 || (subStatus==1070 && dto.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                     state = 4;
-                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050){
+                }else if (subStatus==1020 || subStatus==1040 || subStatus==1060 || subStatus==2050 || (subStatus==1070 && dto.getAuditSecondAt()>= cn.hutool.core.date.DateUtil.beginOfDay(new Date()).getTime()/1000)){
                     state = 6;
                 }else {
                     state = 5;

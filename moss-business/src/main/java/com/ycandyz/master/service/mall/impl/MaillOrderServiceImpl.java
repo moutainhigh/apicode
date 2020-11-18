@@ -89,6 +89,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
     @Override
     public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
+        List<MallOrderVO> list = new ArrayList<>();
+        Page<MallOrderVO> page1 = new Page<>();
         MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
         List<Integer> organizeIds = new ArrayList<>();  //保存企业id，用于批量查询
         Map<String, Integer> shopNoAndOrganizeId = new HashMap<>(); //保存shopNo和organizeid    map<shopNo,organizeid>
@@ -102,11 +104,12 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 //查询集团所有数据
                 Long groupOrganizeId = userVO.getOrganizeId();   //集团id
                 if (groupOrganizeId!=null) {
-                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status",2));
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> oIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.addAll(oIds);
-                        List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(oIds);
+                        organizeIds.add(groupOrganizeId.intValue());
+                        List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
                         if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
                             mallOrderQuery.setShopNo(shopNos);
@@ -122,12 +125,16 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 if (mallShop!=null){
                     mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
                     shopNoAndOrganizeId.put(mallShop.getShopNo(), Integer.valueOf(mallOrderQuery.getChildOrganizeId()));
+                }else {
+                    page1.setPages(requestParams.getPage());
+                    page1.setCurrent(requestParams.getPage());
+                    page1.setRecords(list);
+                    page1.setSize(requestParams.getPage_size());
+                    return ReturnResponse.success(page1);
                 }
             }
         }
 
-        List<MallOrderVO> list = new ArrayList<>();
-        Page<MallOrderVO> page1 = new Page<>();
         try {
             //获取总条数
             Integer count = mallOrderDao.getTrendMallOrderPageSize(mallOrderQuery);
@@ -286,9 +293,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 //查询集团所有数据
                 Long groupOrganizeId = userVO.getOrganizeId();   //集团id
                 if (groupOrganizeId!=null) {
-                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()));
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status",2));
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                        organizeIds.add(groupOrganizeId.intValue());
                         List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
                         if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
@@ -301,6 +309,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallOrderQuery.getChildOrganizeId()));
                 if (mallShop!=null){
                     mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
+                }else {
+                    return null;
                 }
             }
         }
@@ -519,7 +529,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Override
     public ReturnResponse<MallOrderVO> queryOrderDetail(String orderNo, UserVO userVO) {
         MallOrderVO mallOrderVO = null;
-        MallOrderDTO mallOrderDTO = mallOrderDao.queryOrderDetail(orderNo,userVO.getShopNo());
+        MallOrderDTO mallOrderDTO = mallOrderDao.queryOrderDetail(orderNo);
         if (mallOrderDTO != null){
             mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
@@ -584,7 +594,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
 
             //查看商店
-            MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(userVO.getShopNo());
+            MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVO.getShopNo());
             if (mallShopDTO==null){
                 return ReturnResponse.failed("店铺信息为空");
             }
@@ -620,7 +630,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallOrderVO.setAfterSales(voList);
 
                     //查看售后日志
-                    List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNoList(afterSalesNoList, userVO.getShopNo());
+                    List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNoList(afterSalesNoList);
                     if (mallAfterSalesLogDTOs != null && mallAfterSalesLogDTOs.size() > 0) {
                         List<MallAfterSalesLogVO> salesLogVOList = new ArrayList<>();
                         mallAfterSalesLogDTOs.forEach(dto -> {

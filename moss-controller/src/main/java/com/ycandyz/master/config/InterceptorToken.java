@@ -6,14 +6,17 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.system.UserInfo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ycandyz.master.constant.ApiConstant;
 import com.ycandyz.master.constant.SecurityConstant;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.enums.ResultEnum;
+import com.ycandyz.master.service.mall.impl.MallShopServiceImpl;
 import com.ycandyz.master.service.user.IUserService;
 import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.ConfigUtils;
 import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +51,8 @@ public class InterceptorToken implements HandlerInterceptor {
 
     @Resource
     private IUserService userService;
+    @Resource
+    private MallShopServiceImpl mallShopService;
 
     @Autowired
     IgnoreUrlsConfig ignoreUrlsConfig;
@@ -62,14 +67,6 @@ public class InterceptorToken implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         String path = httpServletRequest.getServletPath();
         log.info(path);
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-        String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
-        boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));
-        if (flow) {
-            log.info("requestUrl: {}", path);
-            // 请求放行
-            return true;
-        }
         String url = httpServletRequest.getRequestURI();
         String token = httpServletRequest.getHeader(SecurityConstant.JWT_TOKEN);
         String method = httpServletRequest.getMethod();
@@ -77,30 +74,34 @@ public class InterceptorToken implements HandlerInterceptor {
             log.info(token);
             log.info(url);
 
+            AntPathMatcher antPathMatcher = new AntPathMatcher();
+            String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
+            boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));
+
             httpServletResponse.setCharacterEncoding("UTF-8");
             httpServletResponse.setContentType("application/json; charset=utf-8");
             PrintWriter out = null ;
 
             CommonResult result = null;
-            Integer userId = 0;
+            Long userId = null;
             String shopNo = "";
             Long organizeId = null;
             if(StrUtil.isNotEmpty(token)){
 
-                //dev没有上redis，tets有，放开
-//                if (!redisUtil.hasKey(token)){
-//                    //如果redis中不存在当前key，则返回key获取，重新登录
-//                    returnJson(httpServletResponse);
-//                    return false;
-//                }
-//
-//                //更新redis中token的过期时间
-//                redisUtil.set(token,"1",60*60); //token过期时间为一小时
+                if(!flow){
+                    if (!redisUtil.hasKey(token)){
+                        log.info("redis不存在该token-----------");
+                        returnJson(httpServletResponse);
+                        return false;
+                    }
+                    //更新redis中token的过期时间
+                    redisUtil.set(token,"1",60*60); //token过期时间为一小时
+                }
 
                 try {
 //                    userId = TokenUtil.verifyToken(token, authConfigSecret);
                     JSONObject jsonObject = TokenUtil.verifyToken(token, authConfigSecret);
-                    userId = jsonObject.getInt("user_id");
+                    userId = jsonObject.getLong("user_id");
                     shopNo = jsonObject.getStr("shop_no");
                     //获取企业ID
                     organizeId = jsonObject.getLong("organize_id");
@@ -114,7 +115,7 @@ public class InterceptorToken implements HandlerInterceptor {
                     out.flush();
                     return false;
                 }
-                if(userId == 0){
+                if(userId == null || userId == 0){
                     result = new CommonResult(ResultEnum.TOKEN_INVALID.getValue(),ResultEnum.TOKEN_INVALID.getDesc(),null);
                     try{
                         String json = JSONUtil.toJsonStr(result);
@@ -129,30 +130,27 @@ public class InterceptorToken implements HandlerInterceptor {
                     }
                 }else{
                     //校验用户信息
-                    User ukeUser = userService.getById(userId);
-                    if(ukeUser == null){
-                        result = new CommonResult(ResultEnum.USER_NOT_EXIST.getValue(),ResultEnum.USER_NOT_EXIST.getDesc(),null);
-                        try{
-                            String json = JSONUtil.toJsonStr(result);
-                            httpServletResponse.setContentType("application/json");
-                            out = httpServletResponse.getWriter();
-                            out.append(json);
-                            out.flush();
-                            return false;
-                        } catch (Exception e){
-                            httpServletResponse.sendError(500);
-                            return false;
+                    //User ukeUser = userService.getById(userId);
+                    //查看shop_no
+                    UserVO userVO = new UserVO();
+                    userVO.setId(userId);
+                    userVO.setOrganizeId(organizeId);
+                    if(organizeId != null){
+                        LambdaQueryWrapper<MallShop> queryWrapper = new LambdaQueryWrapper<MallShop>()
+                                .eq(MallShop::getOrganizeId, organizeId);
+                        MallShop mallShop = mallShopService.getOne(queryWrapper);
+                        if(null != mallShop){
+                            userVO.setShopNo(mallShop.getShopNo());
                         }
-                    }else {
-                        //获取到用户信息
-                        //查看shop_no
-                        UserVO userVO = userToUserVO(ukeUser);
-                        userVO.setShopNo(shopNo);
-                        userVO.setOrganizeId(organizeId);
-                        httpServletRequest.getSession().setAttribute(SecurityConstant.USER_TOKEN_HEADER, userVO);
                     }
+                    httpServletRequest.getSession().setAttribute(SecurityConstant.USER_TOKEN_HEADER, userVO);
                 }
             }else{
+                if (flow) {
+                    log.info("requestUrl: {}", path);
+                    // 请求放行
+                    return true;
+                }
                 result = new CommonResult(ResultEnum.TOKEN_IS_NULL.getValue(),ResultEnum.TOKEN_IS_NULL.getDesc(),null);
                 try{
                     String json = JSONUtil.toJsonStr(result);
@@ -168,7 +166,7 @@ public class InterceptorToken implements HandlerInterceptor {
             }
             return true;
         }
-        return false;
+        return true;
     }
 
     @Override

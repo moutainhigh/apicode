@@ -2,8 +2,10 @@ package com.ycandyz.master.config;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.ycandyz.master.constant.ApiConstant;
 import com.ycandyz.master.constant.SecurityConstant;
 import com.ycandyz.master.domain.BodyReaderHttpServletRequestWrapper;
+import com.ycandyz.master.utils.ConfigUtils;
 import com.ycandyz.master.utils.SignUtil;
 import com.ycandyz.master.utils.HttpUtils;
 
@@ -29,7 +31,7 @@ import java.util.SortedMap;
  */
 
 @Slf4j
-//@Component
+@Component
 public class SignAuthFilter implements Filter {
 
     @Autowired

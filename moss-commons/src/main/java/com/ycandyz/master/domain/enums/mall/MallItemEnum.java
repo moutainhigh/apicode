@@ -48,4 +48,39 @@ public class MallItemEnum {
             return null;
         }
     }
+
+    public enum IsScreen implements IEnum<Integer> {
+        START_0(0, "正常"),
+        START_1(1, "风控");
+
+        private Integer code;
+        private String text;
+
+        IsScreen(Integer code, String text) {
+            this.code = code;
+            this.text = text;
+        }
+
+        @Override
+        public Integer getCode() {
+            return code;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        public static MallItemEnum.IsScreen parseCode(Integer code) {
+            if (code == null) {
+                return null;
+            }
+            for (MallItemEnum.IsScreen value : values()) {
+                if (code.equals(value.code)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
 }

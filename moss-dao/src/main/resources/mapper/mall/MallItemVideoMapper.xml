@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallItemVideoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.MallItemVideo">
+        <id column="id" property="id" />
+        <result column="video_no" property="videoNo" />
+        <result column="item_no" property="itemNo" />
+        <result column="type" property="type" />
+        <result column="url" property="url" />
+        <result column="title" property="title" />
+        <result column="user_id" property="userId" />
+        <result column="play_count" property="playCount" />
+        <result column="fps" property="fps" />
+        <result column="duration" property="duration" />
+        <result column="size" property="size" />
+        <result column="format" property="format" />
+        <result column="codec" property="codec" />
+        <result column="rate" property="rate" />
+        <result column="width" property="width" />
+        <result column="height" property="height" />
+        <result column="status" property="status" />
+        <result column="remark" property="remark" />
+        <result column="deleted" property="deleted" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, video_no, item_no, type, url, title, user_id, play_count, fps, duration, size, format, codec, rate, width, height, status, remark, deleted, created_time, updated_time
+    </sql>
+
+</mapper>

@@ -1,5 +1,5 @@
 server:
-  port: 7001
+  port: 9001
   servlet:
     context-path: /youchuan-master
 
@@ -89,6 +89,7 @@ ignored:
     - /**/订单.xls
     - /base-bank/**
     - /kafka/**/**
+    - /**
 
 DEFAULT_TOKEN: eyJhZ2VudF9pZCI6ICIwIiwgImVtcGxveWVlX2lkIjogMzk0LCAiZW52IjogImRldiIsICJleHAiOiAxNjAyNzYyNzAxLCAiaWF0IjogMTYwMjc1NTUwMSwgImlzX2Jvc3MiOiAxLCAib3JnYW5pemVfaWQiOiAiNDQ4IiwgInBsYXRmb3JtIjogNSwgInJvbGUiOiAiMCIsICJzaG9wX25vIjogImJlaXF1YW5fc3RvcmUiLCAidXNlcl9pZCI6ICIxMDQwMSIsICJ3eG1pbmlfb3Blbl9pZCI6ICIiLCAianRpIjogIjkzZWU5NWFjMzdiZjBmZTE2MjRhZmE2N2FiODI5OWQ0In0
 
@@ -114,3 +115,17 @@ s3:
   accessKey: AKIAVEJEAKGYZUSB2HUG
   secretKey: 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
   keyPefix: xls/
+
+#阿里云发送消息配置
+aliyun:
+  access:
+    keyId: LTAI4G38fpzXvwLpSUms4YNU
+    secret: qMYb4yRyoz4yMxtUBIA8cdSK1GTTGW
+    region: cn-beijing
+  sms:
+    domain: dysmsapi.aliyuncs.com
+    product: Dysmsapi
+    sign: 有传科技4
+    template_code: SMS_203190683
+    #有传客服电话
+    service-number: 13714366094

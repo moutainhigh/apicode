@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.msg.MsgNotifyRelationDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.msg.MsgNotifyRelation">
+        <id column="id" property="id" />
+        <result column="msg_notify_id" property="msgNotifyId" />
+        <result column="notify_type" property="notifyType" />
+        <result column="role_type" property="roleType" />
+        <result column="relation_type" property="relationType" />
+        <result column="relation_id" property="relationId" />
+        <result column="is_del" property="isDel" />
+        <result column="is_read" property="isRead" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="created_at" property="createdAt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, msg_notify_id, notify_type, role_type, relation_type, relation_id, is_del, is_read, updated_at, created_at
+    </sql>
+
+</mapper>

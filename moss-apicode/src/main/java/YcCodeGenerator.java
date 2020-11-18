@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.ycandyz.master.annotation.Condition;
-import com.ycandyz.master.api.ReturnResponse;
+import com.ycandyz.master.api.*;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.enums.ConditionEnum;
@@ -24,9 +24,10 @@ public class YcCodeGenerator {
 
 	protected static final Logger log = LoggerFactory.getLogger(YcCodeGenerator.class);
 	//表名
-	private static final String tableName = "base_bank";
+	private static final String tableName = "coupon_activity_ticket";
 	//生成文件所在目录层级
-	private static final String moduleName = "base";
+	private static final String moduleName = "coupon";
+	//生成文件所在目录层级
 	private static final String daoName = "moss-dao";
 	private static final String serviceName = "moss-business";
 	private static final String controllerName = "moss-controller";
@@ -141,7 +142,10 @@ public class YcCodeGenerator {
 				map.put("respSuffix", respSuffix);
 				map.put("condition", Condition.class.getName());
 				map.put("conditionEnum", ConditionEnum.class.getName());
-				map.put("result", ReturnResponse.class.getName());
+				map.put("result", CommonResult.class.getName());
+				map.put("baseResult", BaseResult.class.getName());
+				map.put("basePageResult", BasePageResult.class.getName());
+				map.put("pageModel", PageModel.class.getName());
 				map.put("entity", packageName+".entities."+moduleName);
 				map.put("Mapper", packageName+".dao."+moduleName);
 				map.put("mapperSuffix", mapperSuffix);
