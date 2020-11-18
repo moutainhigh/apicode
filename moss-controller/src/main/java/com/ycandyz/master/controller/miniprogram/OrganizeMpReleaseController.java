@@ -1,10 +1,12 @@
 package com.ycandyz.master.controller.miniprogram;
 
+import com.ycandyz.master.model.miniprogram.OrganizeMpReleaseVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import cn.hutool.core.convert.Convert;
 
@@ -40,34 +42,22 @@ import com.ycandyz.master.controller.base.BaseController;
 
 @Slf4j
 @RestController
-@RequestMapping("mini-program/origanize/release")
+@RequestMapping("cms/mp/release")
 @Api(tags="小程序配置-企业小程序发布记录")
 public class OrganizeMpReleaseController extends BaseController<OrganizeMpReleaseServiceImpl,OrganizeMpRelease,OrganizeMpReleaseQuery> {
 	
-	@ApiOperation(value="新增", tags = "企业小程序DIY配置")
+	@ApiOperation(value="新增发布记录", tags = "企业小程序DIY配置")
     @PostMapping
-	public CommonResult<OrganizeMpRelease> insert(@Validated(ValidatorContract.OnCreate.class) OrganizeMpRelease entity) {
+	public CommonResult<OrganizeMpRelease> insert(@Validated(ValidatorContract.OnCreate.class) OrganizeMpReleaseVO entity) {
         return result(service.save(entity),entity,"保存失败!");
 	}
 	
-	@ApiOperation(value = "通过ID更新", tags = "企业小程序DIY配置")
-    @PutMapping(value = "{id}")
-	public CommonResult<OrganizeMpRelease> update(@PathVariable Integer id,@Validated(ValidatorContract.OnUpdate.class) OrganizeMpRelease entity) {
-        entity.setId(id);
-        return result(service.updateById(entity),entity,"更改失败!");
-	}
-	
-	@ApiOperation(value = "查询根据ID", tags = "企业小程序DIY配置")
-    @GetMapping(value = "{id}")
-	public CommonResult<OrganizeMpRelease> get(@PathVariable Long id) {
-        return CommonResult.success(service.getById(id));
-    }
 
-    
-    @ApiOperation(value = "查询全部", tags = "企业小程序DIY配置")
-    @GetMapping(value = "list")
-    public CommonResult<BaseResult<List<OrganizeMpRelease>>> list(OrganizeMpReleaseQuery query) {
-        return CommonResult.success(new BaseResult<List<OrganizeMpRelease>>(service.list(query)));
+    @ApiOperation(value = "查询全部发布记录", tags = "企业小程序DIY配置")
+    @GetMapping
+    public CommonResult<List<OrganizeMpReleaseVO>> list() {
+	    List<OrganizeMpReleaseVO> list = new ArrayList<>();
+        return CommonResult.success(list);
     }
 
 }
