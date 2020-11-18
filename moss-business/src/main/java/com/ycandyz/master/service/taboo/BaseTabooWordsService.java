@@ -27,7 +27,7 @@ public interface BaseTabooWordsService extends IService<BaseTabooWords>{
 
     BaseTabooWordsRep selById(Long id);
 
-    void delById(Long id);
+    ReturnResponse delById(Long id);
 
     Page<BaseTabooWordsRep> selectList(RequestParams<BaseTabooWordsQuery> requestParams);
 

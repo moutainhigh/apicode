@@ -18,10 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/contentReview")
+@RequestMapping("/cms/risk/review")
 @Api(value="内容审核",tags={"内容审核-动态接口"})
 public class ContentReviewController {
-
 
     @Autowired
     private ContentReviewService contentReviewService;
@@ -33,7 +32,7 @@ public class ContentReviewController {
      * @Version: V1.0
      */
     @ApiOperation(value = "内容审核展示",notes = "内容审核",httpMethod = "POST")
-    @PostMapping("/content/list")
+    @PostMapping("/list")
     public ReturnResponse<Page<ContentReviewRep>> list(@RequestBody RequestParams<ContentReviewQuery> requestParams) {
         ReturnResponse<Page<ContentReviewRep>> contentReviewReps = contentReviewService.list(requestParams);
         return contentReviewReps;
@@ -47,7 +46,7 @@ public class ContentReviewController {
      * @Version: V1.0
      */
     @ApiOperation(value = "商品详情/企业动态/商友圈审核",notes = "0通过/1屏蔽",httpMethod = "PUT")
-    @PutMapping("/content/examine")
+    @PutMapping("/examine")
     public ReturnResponse updateStatus(@RequestBody ReviewParam reviewParam) {
         ReturnResponse response = contentReviewService.examine(reviewParam);
         return response;
@@ -61,7 +60,7 @@ public class ContentReviewController {
      * @Version: V1.0
      */
     @ApiOperation(value = "商品详情/企业动态/商友圈批量审核",notes = "0通过/1屏蔽",httpMethod = "POST")
-    @PostMapping("/content/batchExamine")
+    @PostMapping("/batchExamine")
     public ReturnResponse updateMallItem(@RequestBody ReviewBatchExamineParam reviewParams) {
         ReturnResponse response = contentReviewService.batchExamine(reviewParams);
         return response;

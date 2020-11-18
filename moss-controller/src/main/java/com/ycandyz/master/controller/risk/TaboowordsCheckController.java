@@ -15,21 +15,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/taboowordsCheck")
-@Api(value="敏感词检测",tags={"敏感词检测-动态接口"})
+@RequestMapping("/cms/risk/taboo/check")
+@Api(value="敏感词检测",tags={"敏感词检测"})
 public class TaboowordsCheckController {
 
     @Autowired
     private TaboowordsCheckService taboowordsCheckService;
 
     @ApiOperation(value = "敏感词检测",notes = "敏感词检测",httpMethod = "POST")
-    @PostMapping("/check")
+    @PostMapping
     public ReturnResponse check(@Validated(ValidatorContract.OnCreate.class)  @RequestBody TabooCheckParams tabooCheckParams) {
         return taboowordsCheckService.check(tabooCheckParams);
     }
 
     @ApiOperation(value = "敏感词检测-不插入审核表",notes = "敏感词检测-不插入审核表",httpMethod = "POST")
-    @PostMapping("/checkNotInsert")
+    @PostMapping("/check")
     public ReturnResponse checkNotInsert(@Validated(ValidatorContract.OnCreate.class)  @RequestBody TabooCheckNotInsertParams tabooCheckParams) {
         return taboowordsCheckService.checkNotInsert(tabooCheckParams);
     }
