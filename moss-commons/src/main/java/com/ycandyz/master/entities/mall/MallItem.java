@@ -185,5 +185,8 @@ public class MallItem extends Model {
    @ApiModelProperty(value = "1-配送 2-自提")
    private String deliveryTypeBak;
 
+   @ApiModelProperty(value = "是否系统屏蔽 0-通过 1-屏蔽")
+   private Integer isScreen;
+
 
 }

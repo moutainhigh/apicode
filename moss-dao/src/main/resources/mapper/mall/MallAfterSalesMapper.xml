@@ -186,8 +186,8 @@
             sales.audit_first_at,
             sales.audit_second_at,
             sales.created_time,
+            sales.shop_no,
 
-            mo.shop_no,
             mo.order_no as moOrderNo,
             mo.status as moStatus,
             mo.total_money,
@@ -214,7 +214,6 @@
             LEFT JOIN user u ON sales.user_id=u.id
             WHERE
             sales.after_sales_no=#{afterSalesNo}
-            and sales.shop_no=#{shopNo}
     </select>
 
     <select id="getTrendMallAfterSalesList" parameterType="com.ycandyz.master.domain.query.mall.MallafterSalesQuery" resultMap="BaseAfterSalesDetailResultMap">

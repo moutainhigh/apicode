@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.risk.ContentreviewLogDao">
+
+
+    <insert id="insertAll" parameterType="com.ycandyz.master.entities.risk.ContentReviewLog" >
+        insert into content_review_log(id,content_id,`type`,created_time,updated_time,auditor,audit_result,content_audit_result)
+        values(#{id},#{contentId},#{type},now(),now(),#{auditor},#{auditResult},#{contentAuditResult});
+    </insert>
+    <insert id="insert">
+         insert into content_review_log(id,content_id,`type`,created_time,updated_time,content_audit_result,audit_result)
+        values(#{id},#{contentId},#{type},now(),now(),#{contentAuditResult},#{auditResult});
+    </insert>
+</mapper>

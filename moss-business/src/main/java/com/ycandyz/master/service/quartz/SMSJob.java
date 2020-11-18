@@ -4,8 +4,11 @@ import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.ycandyz.master.aliyun.sms.AliSmsMessage;
+import com.ycandyz.master.constant.KafkaConstant;
 import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dto.organize.OrganizeDTO;
+import com.ycandyz.master.kafka.KafkaProducer;
+import com.ycandyz.master.kafka.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -33,6 +37,9 @@ public class SMSJob {
     @Autowired
     private AliSmsMessage aliSmsMessage;
 
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
     /**
      * u客用户发送短信，到期提醒
      */
@@ -46,7 +53,10 @@ public class SMSJob {
         if (list!=null && list.size()>0){
             List<String> phoneList = list.stream().map(OrganizeDTO::getPhone).collect(Collectors.toList());
             phoneList.add(serviceNumber);
-            aliSmsMessage.sendMsg(phoneList,null,templateCode);
+            String bizId = aliSmsMessage.sendMsg(phoneList,null,templateCode);
+            if (bizId!=null && !"".equals(bizId)) {
+                aliSmsMessage.messageSendState(phoneList, bizId);
+            }
         }
 
         //七天
@@ -57,7 +67,10 @@ public class SMSJob {
         if (sevenList!=null && sevenList.size()>0){
             List<String> sevenPhoneList = sevenList.stream().map(OrganizeDTO::getPhone).collect(Collectors.toList());
             sevenPhoneList.add(serviceNumber);
-            aliSmsMessage.sendMsg(sevenPhoneList,null,templateCode);
+            String bizId = aliSmsMessage.sendMsg(sevenPhoneList,null,templateCode);
+            if (bizId!=null && !"".equals(bizId)) {
+                aliSmsMessage.messageSendState(sevenPhoneList, bizId);
+            }
         }
 
         //30天
@@ -68,7 +81,10 @@ public class SMSJob {
         if (thirtyList!=null && thirtyList.size()>0){
             List<String> thirtyPhoneList = thirtyList.stream().map(OrganizeDTO::getPhone).collect(Collectors.toList());
             thirtyPhoneList.add(serviceNumber);
-            aliSmsMessage.sendMsg(thirtyPhoneList,null,templateCode);
+            String bizId = aliSmsMessage.sendMsg(thirtyPhoneList,null,templateCode);
+            if (bizId!=null && !"".equals(bizId)) {
+                aliSmsMessage.messageSendState(thirtyPhoneList, bizId);
+            }
         }
     }
 

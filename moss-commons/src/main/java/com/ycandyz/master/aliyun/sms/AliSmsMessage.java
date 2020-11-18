@@ -1,15 +1,15 @@
 package com.ycandyz.master.aliyun.sms;
 
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
+import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsRequest;
+import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;
 import com.aliyuncs.dysmsapi.model.v20170525.SendBatchSmsRequest;
 import com.aliyuncs.dysmsapi.model.v20170525.SendBatchSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.http.FormatType;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -50,10 +51,10 @@ public class AliSmsMessage {
      * @param telephone [\"1500000000\",\"1500000001\"]
      * @param message   {\"name\":\"Tom\", \"code\":\"123\"}
      */
-    public void sendMsg(List<String> telephone, String message, String templateCode){
+    public String sendMsg(List<String> telephone, String message, String templateCode){
         if (telephone==null || telephone.size()==0){
             log.error("传入的手机号码不允许为空值!");
-            return;
+            return null;
         }
         try {
             //设置超时时间-可自行调整
@@ -67,6 +68,8 @@ public class AliSmsMessage {
             SendBatchSmsRequest request = new SendBatchSmsRequest();
             //使用post提交
             request.setMethod(MethodType.POST);
+            //修改数据交互格式
+            request.setAcceptFormat(FormatType.JSON);
             //必填:待发送手机号。支持JSON格式的批量调用，批量上限为100个手机号码,批量调用相对于单条调用及时性稍有延迟,验证码类型的短信推荐使用单条调用的方式
             JSONArray phoneArray = new JSONArray(Collections.singletonList(telephone));
             request.setPhoneNumberJson(phoneArray.toJSONString());
@@ -91,6 +94,8 @@ public class AliSmsMessage {
             SendBatchSmsResponse sendSmsResponse = client.getAcsResponse(request);
             if(sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
                 //请求成功
+                String bizId = sendSmsResponse.getBizId();
+                return bizId;
             }else {
                 //发送失败
                 log.error("消息发送失败,错误码：{};错误内容：{}",sendSmsResponse.getCode(),sendSmsResponse.getMessage());
@@ -98,12 +103,55 @@ public class AliSmsMessage {
         }catch (ClientException e){
             log.error(e.getMessage(),e);
         }
+        return null;
     }
 
-    public static void main(String[] args) {
-        DateTime dateTime = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR, -7);
-        String ste = DateUtil.format(DateUtil.beginOfDay(dateTime),"yyyy-MM-dd HH:mm:ss");
-        System.out.println(ste);
+    public void messageSendState(List<String> telephone, String bizId) {
+        //可自助调整超时时间
+        System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
+        System.setProperty("sun.net.client.defaultReadTimeout", "10000");
+        try {
+            //初始化acsClient,暂不支持region化
+            IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessSecret);
+            DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+            IAcsClient acsClient = new DefaultAcsClient(profile);
 
+            for (String phone : telephone){
+
+                //组装请求对象
+                QuerySendDetailsRequest request = new QuerySendDetailsRequest();
+                //必填-号码
+                request.setPhoneNumber("15000000000");
+                //可选-流水号
+                request.setBizId(bizId);
+                //必填-发送日期 支持30天内记录查询，格式yyyyMMdd
+                SimpleDateFormat ft = new SimpleDateFormat("yyyyMMdd");
+                request.setSendDate(ft.format(new Date()));
+                //必填-页大小
+                request.setPageSize(10L);
+                //必填-当前页码从1开始计数
+                request.setCurrentPage(1L);
+
+                //hint 此处可能会抛出异常，注意catch
+                QuerySendDetailsResponse querySendDetailsResponse = acsClient.getAcsResponse(request);
+                log.info("阿里云短信发送状态：" + querySendDetailsResponse.toString());
+                int i = 0;
+                for(QuerySendDetailsResponse.SmsSendDetailDTO smsSendDetailDTO : querySendDetailsResponse.getSmsSendDetailDTOs())
+                {
+                    if (smsSendDetailDTO.getSendStatus()==3){   //短信发送成功
+                        //记录数据库
+                    }else if (smsSendDetailDTO.getSendStatus()==2){ //发送失败
+                        //记录数据库
+                    }else if (smsSendDetailDTO.getSendStatus()==1){ //等待回执
+                        //记录数据库
+                    }
+                }
+                System.out.println("TotalCount=" + querySendDetailsResponse.getTotalCount());
+                System.out.println("RequestId=" + querySendDetailsResponse.getRequestId());
+            }
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
     }
+
 }

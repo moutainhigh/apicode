@@ -26,6 +26,7 @@
         WHERE 1=1
         AND s.shop_no = #{query.shopNo}
         AND s.special_no = #{query.specialNo}
+        AND t.is_screen = 0
         AND t.status in (10,30)
     </select>
 
@@ -44,6 +45,7 @@
         WHERE 1=1
         AND s.shop_no = #{query.shopNo}
         AND s.special_no = #{query.specialNo}
+        AND t.is_screen = 0
         AND t.status in (10,30)
         order by id desc
     </select>
