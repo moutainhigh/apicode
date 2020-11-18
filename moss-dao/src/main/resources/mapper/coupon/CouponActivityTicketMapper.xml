@@ -16,4 +16,14 @@
         id, activity_no, ticket_no, created_at, updated_at
     </sql>
 
+    <select id="list" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp">
+        SELECT ct.id,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_at,ti.end_at
+        FROM
+            coupon_activity_ticket ct
+            LEFT JOIN coupon_ticket t ON ct.ticket_no = t.ticket_no
+            LEFT JOIN coupon_ticket_info ti ON t.last_ticket_info_no = ti.ticket_info_no
+        WHERE
+            ct.activity_no = #{activityNo}
+    </select>
+
 </mapper>
