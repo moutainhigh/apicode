@@ -2,6 +2,7 @@ package com.ycandyz.master.controller.miniprogram;
 
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanPageModel;
 import com.ycandyz.master.domain.model.miniprogram.PlanModuleModel;
+import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanMenuResp;
 import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanPageResp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -56,9 +57,9 @@ public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageS
         return result(service.updateById(entity),entity,"更改失败!");
 	}
 
-    @ApiOperation(value = "✓查询菜单下模块信息", tags = "企业小程序DIY配置")
+    @ApiOperation(value = "查询菜单下模块信息", tags = "企业小程序DIY配置")
     @GetMapping
-    public CommonResult<MpConfigPlanPageResp> getMenuById(@RequestParam Integer menuId) {
+    public CommonResult<MpConfigPlanMenuResp> getMenuById(@RequestParam Integer menuId) {
         return CommonResult.success(null);
     }
 	
