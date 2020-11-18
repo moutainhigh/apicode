@@ -1,8 +1,6 @@
 package com.ycandyz.master.domain.response.coupon;
 
-import com.ycandyz.master.entities.coupon.CouponActivityTicket;
-import com.baomidou.mybatisplus.annotation.TableName;
-
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +15,22 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("coupon_activity_ticket")
-public class CouponActivityTicketResp extends CouponActivityTicket {
+public class CouponActivityTicketResp {
+
+    @ApiModelProperty(value = "主键ID")
+    private Long id;
+
+    @ApiModelProperty(value = "优惠券名称")
+    private String name;
+
+    @ApiModelProperty(value = "优惠卷剩余数量")
+    private Integer remainNum;
+
+    @ApiModelProperty(value = "券生效开始时间")
+    private Long beginAt;
+
+    @ApiModelProperty(value = "券生效结束时间")
+    private Long endAt;
+
 
 }

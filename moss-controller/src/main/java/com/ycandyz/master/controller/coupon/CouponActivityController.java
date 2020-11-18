@@ -56,6 +56,18 @@ public class CouponActivityController extends BaseController<CouponActivityServi
         entity.setId(id);
         return result(service.updateById(entity),entity,"更改失败!");
 	}
+
+    @ApiOperation(value = "通过ID停止")
+    @PutMapping(value = "stop/{id}")
+    public CommonResult<String> stopById(@PathVariable Long id) {
+        return result(service.stopById(id),"停止成功！","停止失败!");
+    }
+
+    @ApiOperation(value = "通过ID启用")
+    @PutMapping(value = "start/{id}")
+    public CommonResult<String> startById(@PathVariable Long id) {
+        return result(service.startById(id),"启用成功！","启用失败!");
+    }
 	
 	@ApiOperation(value = "查询根据ID")
     @GetMapping(value = "{id}")
@@ -70,10 +82,11 @@ public class CouponActivityController extends BaseController<CouponActivityServi
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
     
-    @ApiOperation(value = "通过ID删除")
-    @DeleteMapping(value = "{id}")
-	public CommonResult deleteById(@PathVariable Long id) {
-        return result(service.removeById(id),null,"删除失败!");
+    @ApiOperation(value = "通过ID删除发卷宝-优惠卷")
+    @DeleteMapping(value = "ticket/{id}")
+	public CommonResult deleteTicketById(@PathVariable Long id) {
+        return result(service.removeTicketById(id),"删除成功！","删除失败!");
 	}
+
     
 }

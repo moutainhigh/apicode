@@ -1,7 +1,10 @@
 package com.ycandyz.master.dao.coupon;
 
+import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
 import com.ycandyz.master.entities.coupon.CouponActivityTicket;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CouponActivityTicketDao extends BaseMapper<CouponActivityTicket> {
 
+    List<CouponActivityTicketResp> list(String activityNo);
 }
