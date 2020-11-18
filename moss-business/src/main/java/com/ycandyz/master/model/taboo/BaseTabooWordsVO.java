@@ -32,8 +32,4 @@ public class BaseTabooWordsVO {
     @NotNull(message = "敏感词组不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     private String[] tabooWords;
 
-    @ApiModelProperty(value = "处理方式 [0:发布屏蔽]" ,required = true)
-    @NotNull(message = "处理方式不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-    private Integer treatmentMethod;
-
 }

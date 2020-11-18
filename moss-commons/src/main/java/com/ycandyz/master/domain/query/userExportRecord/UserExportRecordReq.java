@@ -34,8 +34,7 @@ public class UserExportRecordReq extends Model {
    @NotNull(message = "操作终端terminal不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    private Integer terminal;
 
-   @ApiModelProperty(value = "企业编号",required = true)
-   @NotNull(message = "企业编号organizeId不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+   @ApiModelProperty(value = "企业编号")
    private Long organizeId;
 
    @ApiModelProperty(value = "操作人id",required = true)
