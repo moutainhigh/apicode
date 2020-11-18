@@ -32,35 +32,12 @@ public class MpConfigPlanQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "编号")
-    @Condition(field = "id", condition = ConditionEnum.EQ)
-    private Integer id;
-
     @ApiModelProperty(value = "方案名称")
+    @Condition(field = "plan_name", condition = ConditionEnum.LIKE)
     private String planName;
 
     @ApiModelProperty(value = "是否同步U客")
+    @Condition(field = "sync_uke", condition = ConditionEnum.EQ)
     private Boolean syncUke;
-
-    @ApiModelProperty(value = "企业选择数量")
-    private Integer organizeChooseNum;
-
-    @ApiModelProperty(value = "创建时间起")
-    @Condition(field = "create_time", condition = ConditionEnum.GE)
-    private Date createTimeS;
-    
-    @ApiModelProperty(value = "创建时间止")
-    @Condition(field = "create_time", condition = ConditionEnum.LE)
-    private Date createTimeE;
-
-    @ApiModelProperty(value = "修改时间起")
-    @Condition(field = "update_time", condition = ConditionEnum.GE)
-    private Date updateTimeS;
-    
-    @ApiModelProperty(value = "修改时间止")
-    @Condition(field = "update_time", condition = ConditionEnum.LE)
-    private Date updateTimeE;
-
-
 
 }

@@ -26,6 +26,9 @@ public class CouponTicketInfoDTO extends CouponTicketInfo {
     @ApiModelProperty(value = "优惠券详情编码")
     private String ticketInfoNo;
 
+    @ApiModelProperty(value = "优惠券编码")
+    private String ticketNo;
+
     @ApiModelProperty(value = "优惠券名称")
     private String name;
 
@@ -85,9 +88,6 @@ public class CouponTicketInfoDTO extends CouponTicketInfo {
 
     @ApiModelProperty(value = "门店编号")
     private String shopNo;
-
-    @ApiModelProperty(value = "优惠券编码")
-    private String ticketNo;
 
     @ApiModelProperty(value = "券总数量")
     private Integer ticketSum;

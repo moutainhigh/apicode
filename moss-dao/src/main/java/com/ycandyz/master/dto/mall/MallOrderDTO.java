@@ -173,6 +173,9 @@ public class MallOrderDTO {
     /**SKU数量*/
     @ApiModelProperty(value = "购买数量")
     private java.lang.Integer quantity;
+    /**该笔订单折扣金额*/
+    @ApiModelProperty(value = "该笔订单折扣金额")
+    private BigDecimal discountMoney;
     /**关联订单详情*/
     @ApiModelProperty(value = "关联订单详情")
     private List<MallOrderDetailDTO> details;

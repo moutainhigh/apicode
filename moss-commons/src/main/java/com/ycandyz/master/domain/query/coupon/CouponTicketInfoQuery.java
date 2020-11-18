@@ -37,6 +37,9 @@ public class CouponTicketInfoQuery implements Serializable {
     @ApiModelProperty(value = "优惠券详情编码")
     private String ticketInfoNo;
 
+    @ApiModelProperty(value = "优惠券编码")
+    private String ticketNo;
+
     @ApiModelProperty(value = "适用商品：0:全部，1:指定可用，2:指定不可用")
     private Integer shopType;
 
@@ -83,8 +86,6 @@ public class CouponTicketInfoQuery implements Serializable {
     private Long updateAt;
 
     //优惠券表中字段
-    @ApiModelProperty(value = "优惠券编码")
-    private String ticketNo;
 
     @ApiModelProperty(value = "优惠券名称")
     private String name;

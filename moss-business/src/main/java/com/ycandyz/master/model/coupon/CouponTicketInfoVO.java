@@ -28,6 +28,9 @@ public class CouponTicketInfoVO extends CouponTicketInfo {
     @ApiModelProperty(value = "优惠券详情编码")
     private String ticketInfoNo;
 
+    @ApiModelProperty(value = "优惠券编码")
+    private String ticketNo;
+
     @ApiModelProperty(value = "优惠券名称")
     private String name;
 
@@ -87,9 +90,6 @@ public class CouponTicketInfoVO extends CouponTicketInfo {
     @ApiModelProperty(value = "门店编号")
     private String shopNo;
 
-    @ApiModelProperty(value = "优惠券编码")
-    private String ticketNo;
-
     @ApiModelProperty(value = "券总数量")
     private Integer ticketSum;
 
@@ -107,4 +107,10 @@ public class CouponTicketInfoVO extends CouponTicketInfo {
 
     @ApiModelProperty(value = "生成时间,字符串")
     private String ticketCreatedAtStr;
+
+    @ApiModelProperty(value = "券生效开始时间,字符串")
+    private String beginAtStr;
+
+    @ApiModelProperty(value = "券生效结束时间,字符串")
+    private String endAtStr;
 }

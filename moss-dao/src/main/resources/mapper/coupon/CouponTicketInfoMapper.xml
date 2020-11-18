@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.coupon.CouponTicketInfoDTO">
         <id column="id" property="id" />
         <result column="ticket_info_no" property="ticketInfoNo" />
+        <result column="ticket_no" property="ticketNo" />
         <result column="name" property="name" />
         <result column="shop_type" property="shopType" />
         <result column="use_type" property="useType" />
@@ -26,7 +27,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, ticket_info_no, name, shop_type, use_type, full_money, discount_money, status, begin_at, end_at, days, user_type, take_num, superposition, obtain, remark, created_at, update_at
+        id, ticket_info_no, ticket_no, name, shop_type, use_type, full_money, discount_money, status, begin_at, end_at, days, user_type, take_num, superposition, obtain, remark, created_at, update_at
     </sql>
 
 </mapper>

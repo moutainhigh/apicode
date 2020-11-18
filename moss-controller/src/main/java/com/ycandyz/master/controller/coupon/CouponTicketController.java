@@ -88,14 +88,26 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
     }
 
     /**
-     * 优惠券的启用和停用
+     * 优惠券的编辑
      * @param couponTicketInfoQuery
      * @return
      */
-    @ApiOperation(value = "优惠券启用停用")
+    @ApiOperation(value = "优惠券的编辑")
     @DeleteMapping(value = "/update")
-    public ReturnResponse<String> updateTicket(@RequestBody CouponTicketInfoQuery couponTicketInfoQuery){
-        iCouponTicketService.updateTicket(couponTicketInfoQuery);
+    public ReturnResponse<String> updateTicket(@RequestBody CouponTicketInfoQuery couponTicketInfoQuery, @CurrentUser UserVO userVO){
+        iCouponTicketService.updateTicket(couponTicketInfoQuery,userVO);
+        return null;
+    }
+
+    /**
+     * 优惠券的新增
+     * @param couponTicketInfoQuery
+     * @return
+     */
+    @ApiOperation(value = "优惠券的新增")
+    @DeleteMapping(value = "/insert")
+    public ReturnResponse<String> insertTicket(@RequestBody CouponTicketInfoQuery couponTicketInfoQuery, @CurrentUser UserVO userVO){
+        iCouponTicketService.insertTicket(couponTicketInfoQuery,userVO);
         return null;
     }
 

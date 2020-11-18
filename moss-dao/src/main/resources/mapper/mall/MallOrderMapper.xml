@@ -28,6 +28,7 @@
         <result column="payedAtStr" property="payedAtStr" />
         <result column="orderAtStr" property="orderAtStr" />
         <result column="receiveAtStr" property="receiveAtStr" />
+        <result column="discountMoney" property="discountMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -66,6 +67,7 @@
             mo.receive_at,
             mo.order_type,
             mo.all_money,
+            mo.total_money-mo.real_money as discountMoney,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
@@ -202,6 +204,7 @@
             ship.receiver_address AS receiverAddress,
             mo.receive_at,
             mo.order_type,
+            mo.total_money-mo.real_money as discountMoney,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
@@ -371,6 +374,7 @@
         <result column="payedAtStr" property="payedAtStr" />
         <result column="orderAtStr" property="orderAtStr" />
         <result column="receiveAtStr" property="receiveAtStr" />
+        <result column="discountMoney" property="discountMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -404,6 +408,7 @@
             mo.`deliver_type`,
             mo.total_money-mo.real_money as shippingMoney,
             mo.shop_no,
+            mo.total_money-mo.real_money as discountMoney,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
@@ -451,6 +456,7 @@
         <result column="payedAtStr" property="payedAtStr" />
         <result column="orderAtStr" property="orderAtStr" />
         <result column="receiveAtStr" property="receiveAtStr" />
+        <result column="discountMoney" property="discountMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -496,6 +502,7 @@
             mo.all_money-mo.real_money as shippingMoney,
             mo.all_money,
             mo.shop_no,
+            mo.total_money-mo.real_money as discountMoney,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
@@ -654,6 +661,7 @@
         a.`after_sales_end_at`,
         a.shippingMoney,
         a.shop_no,
+        a.total_money-a.real_money as discountMoney,
         concat( u.`name`, ' ', u.phone ) AS payuser,
         concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
         ship.receiver_address AS receiverAddress,

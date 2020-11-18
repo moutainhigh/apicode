@@ -35,6 +35,9 @@ public class CouponTicketInfo extends Model {
    @ApiModelProperty(value = "优惠券详情编码")
    private String ticketInfoNo;
 
+   @ApiModelProperty(value = "优惠券编码")
+   private String ticketNo;
+
    @ApiModelProperty(value = "优惠券名称")
    private String name;
 

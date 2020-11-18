@@ -20,6 +20,9 @@ import java.io.Serializable;
 @ApiModel(description="小程序配置创建方案内菜单-参数")
 public class MenuWithinPlan implements Serializable {
 
+    @ApiModelProperty(value = "编号")
+    private Integer id;
+
     @ApiModelProperty(value = "名称")
     private String title;
 

@@ -39,7 +39,7 @@ import com.ycandyz.master.controller.base.BaseController;
 
 @Slf4j
 @RestController
-@RequestMapping("mini-program/config/menus")
+@RequestMapping("cms/mp/dict/menus")
 @Api(tags="小程序配置-菜单配置")
 public class MpConfigMenuController extends BaseController<MpConfigMenuServiceImpl,MpConfigMenu,MpConfigMenuQuery> {
 	
@@ -69,7 +69,7 @@ public class MpConfigMenuController extends BaseController<MpConfigMenuServiceIm
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
     
-    @ApiOperation(value = "列表查询-默认菜单", tags = "企业小程序DIY配置")
+    @ApiOperation(value = "✓列表查询-默认菜单", tags = "企业小程序DIY配置")
     @GetMapping
     public CommonResult<BaseResult<List<MpConfigMenu>>> selectList(MpConfigMenuQuery query) {
         return CommonResult.success(new BaseResult(service.list(query)));

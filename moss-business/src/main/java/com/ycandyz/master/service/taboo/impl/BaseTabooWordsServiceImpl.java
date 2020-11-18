@@ -18,17 +18,13 @@ import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
 import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.taboo.BaseTabooWordsService;
 import com.ycandyz.master.dao.taboo.BaseTabooWordsDao;
-import com.ycandyz.master.utils.DateUtil;
 import com.ycandyz.master.utils.MyCollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -67,6 +63,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         BeanUtils.copyProperties(baseTabooWordsVO,baseTabooWords);
         baseTabooWords.setTabooWords(tabooWords);
         baseTabooWords.setOperator(currentUser.getId());
+        baseTabooWords.setTreatmentMethod(0);
         baseTabooWords.setFlag(1);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
         log.info("新增敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
@@ -126,6 +123,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
             page1.setCurrent(requestParams.getPage());
             page1.setRecords(recordReps);
             page1.setSize(requestParams.getPage_size());
+            page1.setTotal(page.getTotal());
         }catch (Exception e){
             log.error("error:{}",e.getMessage());
             page1 = new Page<>(0,requestParams.getPage_size(),0);
@@ -148,6 +146,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         BeanUtils.copyProperties(baseTabooWordsVO,baseTabooWords);
         baseTabooWords.setTabooWords(tabooWords);
         baseTabooWords.setOperator(currentUser.getId());
+        baseTabooWords.setTreatmentMethod(0);
         baseTabooWords.setFlag(2);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
         log.info("修改敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
