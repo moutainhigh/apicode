@@ -25,4 +25,8 @@
         id, activity_no, shop_no, name, begin_at, end_at, height_limit, status, join_type, activity_num, created_at, updated_at, created_by, updated_by
     </sql>
 
+    <update id="updateStatusById">
+        update coupon_activity set status = #{status} where id = #{id}
+    </update>
+
 </mapper>

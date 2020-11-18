@@ -1,7 +1,11 @@
 package com.ycandyz.master.service.coupon;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
 import com.ycandyz.master.entities.coupon.CouponActivityTicket;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,5 +17,6 @@ import com.ycandyz.master.entities.coupon.CouponActivityTicket;
  * @version 2.0
  */
 public interface ICouponActivityTicketService extends IService<CouponActivityTicket>{
-	
+
+    List<CouponActivityTicketResp> list(String activityNo);
 }
