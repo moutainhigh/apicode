@@ -2,6 +2,8 @@ package com.ycandyz.master.service.miniprogram;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanPageModel;
+import com.ycandyz.master.domain.model.miniprogram.PlanModuleModel;
+import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanPageResp;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanPage;
 
 /**
@@ -21,4 +23,20 @@ public interface IMpConfigPlanPageService extends IService<MpConfigPlanPage>{
      * @return
      */
     Boolean add(MpConfigPlanPageModel model);
+
+
+    /**
+     * 获取菜单下模块元素
+     * @param menuId
+     * @param moduleId
+     * @return
+     */
+    MpConfigPlanPageResp getPlanMenuModule(Integer menuId, Integer moduleSort, Integer moduleId);
+
+    /**
+     * 添加模块下元素信息
+     * @param model
+     * @return
+     */
+    Boolean addBatch(PlanModuleModel model);
 }
