@@ -35,7 +35,7 @@ public class SmsSendQueueLogDTO extends SmsSendQueueLog {
     private String bizId;
 
     @ApiModelProperty(value = "0:推送中；1:成功；2:失败")
-    private String state;
+    private Integer state;
 
     @ApiModelProperty(value = "短信发送队列返回错误日志")
     private String log;

@@ -111,6 +111,10 @@ aliyun:
     domain: dysmsapi.aliyuncs.com
     product: Dysmsapi
     sign: 有传科技4
-    template_code: SMS_203190683
+    template_code: SMS_205575167
     #有传客服电话
     service-number: 13714366094
+
+#kafka topic配置
+topic:
+  sms: ALI_SMS_TOPIC

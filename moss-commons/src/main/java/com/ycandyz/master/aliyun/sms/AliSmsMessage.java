@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -77,11 +78,12 @@ public class AliSmsMessage {
             JSONArray msgArray = new JSONArray();       //发送消息中特殊字符的替换jsonarray
             for (int i=0;i<telephone.size();i++) {
                 signNameArray.add(i,signName);
-                if (message!=null && !"".equals(message)) {
-                    msgArray.add(i, JSONObject.parseObject(message));
-                }else {
+                if (message==null || "".equals(message)) {
                     msgArray.add(i, JSONObject.parseObject("{}"));
                 }
+            }
+            if (message==null || "".equals(message)){
+                message = msgArray.toJSONString();
             }
             //必填:短信签名-支持不同的号码发送不同的短信签名
             request.setSignNameJson(signNameArray.toJSONString());
@@ -89,7 +91,7 @@ public class AliSmsMessage {
             request.setTemplateCode(templateCode);
             //必填:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
             //友情提示:如果JSON中需要带换行符,请参照标准的JSON协议对换行符的要求,比如短信内容中包含\r\n的情况在JSON中需要表示成\\r\\n,否则会导致JSON在服务端解析失败
-            request.setTemplateParamJson(msgArray.toJSONString());
+            request.setTemplateParamJson(message);
             //请求失败这里会抛ClientException异常
             SendBatchSmsResponse sendSmsResponse = client.getAcsResponse(request);
             if(sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
@@ -106,7 +108,7 @@ public class AliSmsMessage {
         return null;
     }
 
-    public void messageSendState(List<String> telephone, String bizId) {
+    public List<QuerySendDetailsResponse.SmsSendDetailDTO> messageSendState(List<String> telephone, String bizId) {
         //可自助调整超时时间
         System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
@@ -115,13 +117,13 @@ public class AliSmsMessage {
             IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessSecret);
             DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
             IAcsClient acsClient = new DefaultAcsClient(profile);
-
+            List<QuerySendDetailsResponse.SmsSendDetailDTO> list = new ArrayList<>();
             for (String phone : telephone){
 
                 //组装请求对象
                 QuerySendDetailsRequest request = new QuerySendDetailsRequest();
                 //必填-号码
-                request.setPhoneNumber("15000000000");
+                request.setPhoneNumber(phone);
                 //可选-流水号
                 request.setBizId(bizId);
                 //必填-发送日期 支持30天内记录查询，格式yyyyMMdd
@@ -135,23 +137,13 @@ public class AliSmsMessage {
                 //hint 此处可能会抛出异常，注意catch
                 QuerySendDetailsResponse querySendDetailsResponse = acsClient.getAcsResponse(request);
                 log.info("阿里云短信发送状态：" + querySendDetailsResponse.toString());
-                int i = 0;
-                for(QuerySendDetailsResponse.SmsSendDetailDTO smsSendDetailDTO : querySendDetailsResponse.getSmsSendDetailDTOs())
-                {
-                    if (smsSendDetailDTO.getSendStatus()==3){   //短信发送成功
-                        //记录数据库
-                    }else if (smsSendDetailDTO.getSendStatus()==2){ //发送失败
-                        //记录数据库
-                    }else if (smsSendDetailDTO.getSendStatus()==1){ //等待回执
-                        //记录数据库
-                    }
-                }
-                System.out.println("TotalCount=" + querySendDetailsResponse.getTotalCount());
-                System.out.println("RequestId=" + querySendDetailsResponse.getRequestId());
+                list.add(querySendDetailsResponse.getSmsSendDetailDTOs().get(0));
             }
+            return list;
         } catch (ClientException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 }
