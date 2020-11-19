@@ -26,6 +26,7 @@ import java.util.*;
 public class TabooCheckServiceImpl implements TabooCheckService {
 
     public static Map<String,List<String>> Taboomaps = new HashMap<>();
+    public static List<String> allTaboosLists = new ArrayList<>();
 
     @Resource
     private BaseTabooWordsDao baseTabooWordsDao;
@@ -33,10 +34,6 @@ public class TabooCheckServiceImpl implements TabooCheckService {
     @Override
     public List<String> check(String txt) {
         List<String> lists = new ArrayList<>();
-        List<String> allTaboosLists = new ArrayList<>();
-        Taboomaps.forEach((k,v)->{
-            allTaboosLists.addAll(v);
-        });
         List<String> list = TabooCheck.check(allTaboosLists, txt);
         for(Map.Entry<String, List<String>> it : Taboomaps.entrySet()){
             for (String s:list) {
@@ -55,6 +52,11 @@ public class TabooCheckServiceImpl implements TabooCheckService {
         tabooWordsForReviews.forEach(s->map.put(s.getPhraseName(),s.getTabooWords()));
         map.forEach((k,v)->{Taboomaps.put(k,MyCollectionUtils.parseIds(v));});
         log.info("缓存中敏感词现存Taboomaps------->{}",Taboomaps);
+        Taboomaps.forEach((k,v)->{
+            if (v != null){
+                allTaboosLists.addAll(v);
+            }
+        });
     }
 
     //新增敏感词消费kafka消息
@@ -110,7 +112,12 @@ public class TabooCheckServiceImpl implements TabooCheckService {
             }
             ack.acknowledge();
         }
-    log.info("缓存中敏感词现存Taboomaps------->{}",Taboomaps);
+        log.info("缓存中敏感词现存Taboomaps------->{}",Taboomaps);
+        Taboomaps.forEach((k,v)->{
+            if (v != null){
+                allTaboosLists.addAll(v);
+            }
+        });
     }
 
 }
