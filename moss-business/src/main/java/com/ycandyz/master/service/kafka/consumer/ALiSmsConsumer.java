@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 public class ALiSmsConsumer {
 
-    @KafkaListener(topics = "${queue.name}", groupId = "group_kafka_test")
+    @KafkaListener(topics = "${topic.sms}", groupId = "group_kafka_test")
     public void topic_test(ConsumerRecord<?, ?> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.info("---------"+topic);
         Optional message = Optional.ofNullable(record.value());
