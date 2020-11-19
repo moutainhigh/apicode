@@ -24,7 +24,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("mp_config_module")
-@ApiModel(description="")
+@ApiModel(description="基础模块信息")
 public class MpConfigModule extends Model {
 
 
@@ -35,8 +35,8 @@ public class MpConfigModule extends Model {
    @ApiModelProperty(value = "元素名称")
    private String moduleName;
 
-   @ApiModelProperty(value = "限制展示数量")
-   private Integer displayNum;
+   @ApiModelProperty(value = "图标")
+   private String icon;
 
 
 }
