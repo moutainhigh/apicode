@@ -29,6 +29,9 @@ public class MpConfigPlanMenuResp implements Serializable {
     @ApiModelProperty(value = "菜单编号")
     private Integer menuId;
 
+    @ApiModelProperty(value = "菜单名称")
+    private String menuName;
+
     @ApiModelProperty(value = "页面模块")
     private List<MpConfigPlanPageResp> modules;
 }

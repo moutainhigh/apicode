@@ -17,6 +17,9 @@ import lombok.experimental.Accessors;
 @ApiModel(description="小程序配置模块内元素-参数")
 public class ElementWithinModule {
 
+    @ApiModelProperty(value = "数据编号")
+    private Integer Id;
+
     @ApiModelProperty(value = "元素编号")
     private Integer moduleBaseId;
 

@@ -1,4 +1,4 @@
-package com.ycandyz.master.model.miniprogram;
+package com.ycandyz.master.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,7 +13,7 @@ import lombok.Data;
  * @version 2.0
  */
 @Data
-public class OrganizeMpConfigModuleBaseVO {
+public class OrganizeMpConfigModuleBaseVo {
 
     @ApiModelProperty(value = "元素编码")
     private Integer showKey;

@@ -44,7 +44,7 @@ import com.ycandyz.master.controller.base.BaseController;
 public class MpConfigPlanMenuController extends BaseController<MpConfigPlanMenuServiceImpl,MpConfigPlanMenu,MpConfigPlanMenuQuery> {
 
 
-    @ApiOperation(value="配置方案内菜单", tags = "企业小程序DIY配置")
+    @ApiOperation(value="✓配置方案内菜单", tags = "企业小程序DIY配置")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResult<PlanMenuModel> createBatch(@Validated(ValidatorContract.OnCreate.class) @RequestBody PlanMenuModel model) {
         return result(service.addBatch(model),model,"批量保存失败!");

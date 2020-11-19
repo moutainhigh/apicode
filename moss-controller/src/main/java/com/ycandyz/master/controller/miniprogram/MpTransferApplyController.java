@@ -31,7 +31,7 @@ import com.ycandyz.master.controller.base.BaseController;
 
 @Slf4j
 @RestController
-@RequestMapping("mini-program/transfer/applies")
+@RequestMapping("cms/mp/applies")
 @Api(tags="小程序配置-小程序转交接申请")
 public class MpTransferApplyController extends BaseController<MpTransferApplyServiceImpl,MpTransferApply,MpTransferApplyQuery> {
 
@@ -57,16 +57,9 @@ public class MpTransferApplyController extends BaseController<MpTransferApplySer
     }
     
 	@ApiOperation(value = "✓查询分页转交接申请", tags = "企业小程序DIY配置")
-    @GetMapping(value = "page")
-    @SuppressWarnings("unchecked")
+    @GetMapping
     public CommonResult<BasePageResult<MpTransferApply>> selectPage(PageModel page, MpTransferApplyQuery query) {
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
-    }
-    
-    @ApiOperation(value = "查询全部")
-    @GetMapping(value = "list")
-    public CommonResult<BaseResult<List<MpTransferApply>>> selectList(MpTransferApplyQuery query) {
-        return CommonResult.success(new BaseResult<List<MpTransferApply>>(service.list(query)));
     }
     
     @ApiOperation(value = "通过ID删除")

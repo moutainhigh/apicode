@@ -36,4 +36,23 @@ public interface MpConfigPlanPageDao extends BaseMapper<MpConfigPlanPage> {
      */
     List<MpConfigPlanPageBaseDTO> getMenuModuleElement(@Param("moduleSort") Integer moduleSort, @Param("baseIds") List<Integer> baseIds);
 
+
+    /**
+     * 获取菜单页面所有模块
+     * @param menuId
+     * @return
+     */
+    List<MpConfigPlanPageDTO> getMenuModuleList(@Param("menuId") Integer menuId);
+
+
+    /**
+     * 获取指定排序值的模块
+     * @param menuId
+     * @param moduleSort
+     * @param moduleId
+     * @return
+     */
+    List<MpConfigPlanPage> getMenuSortModule(@Param("menuId") Integer menuId, @Param("moduleSort") Integer moduleSort, @Param("moduleId") Integer moduleId);
+
+
 }
