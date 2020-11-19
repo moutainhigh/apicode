@@ -56,7 +56,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         AssertUtils.notNull(entity.getTicketList(), "优惠卷不能为空");
         // TODO 校验时间折叠
-        AssertUtils.isFalse(isEmpty(entity.getActivityNo()),"该时间区间存在已有活动,请更改时间区间");
+        AssertUtils.isFalse(isEmpty(entity.getBeginAt(),entity.getEndAt(),null),"该时间区间存在已有活动,请更改时间区间");
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
         t.setActivityNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
@@ -74,7 +74,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         AssertUtils.notNull(entity.getTicketList(), "优惠卷不能为空");
         // TODO 校验时间折叠
-        AssertUtils.isFalse(isEmpty(entity.getActivityNo()),"该时间区间存在已有活动,请更改时间区间");
+        AssertUtils.isFalse(isEmpty(entity.getBeginAt(),entity.getEndAt(),entity.getActivityNo()),"该时间区间存在已有活动,请更改时间区间");
         LambdaQueryWrapper<CouponActivityTicket> queryWrapper = new LambdaQueryWrapper<CouponActivityTicket>()
                 .eq(CouponActivityTicket::getActivityNo, entity.getActivityNo());
         couponActivityTicketService.remove(queryWrapper);
@@ -89,9 +89,12 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         return super.updateById(t);
     }
 
-    private boolean isEmpty(String activityNo){
+    private boolean isEmpty(Long beginAt,Long endAt,String activityNo){
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
-                .eq(CouponActivity::getActivityNo, activityNo);
+                .eq(CouponActivity::getShopNo, getShopNo())
+                .ge(CouponActivity::getBeginAt, beginAt)
+                .gt(CouponActivity::getEndAt, endAt)
+                .notIn(StrUtil.isNotEmpty(activityNo),CouponActivity::getActivityNo, activityNo);
         CouponActivity couponActivity = baseMapper.selectOne(queryWrapper);
         if(null == couponActivity){
             return false;
