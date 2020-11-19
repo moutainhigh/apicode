@@ -47,7 +47,7 @@ public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageS
     @ApiOperation(value="✓配置绑定菜单模块", tags = "企业小程序DIY配置")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResult<Boolean> createBatch(@Validated(ValidatorContract.OnCreate.class) @RequestBody PlanModuleModel entity) {
-        return result(service.addBatch(entity),true,"批量保存失败!");
+        return CommonResult.success(service.addBatch(entity));
     }
 	
 	@ApiOperation(value = "编辑绑定菜单模块")

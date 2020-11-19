@@ -1,27 +1,22 @@
 package com.ycandyz.master.controller.miniprogram;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.ycandyz.master.domain.model.miniprogram.ConfigPlanAndMenuModel;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanMenuModel;
 import com.ycandyz.master.domain.model.miniprogram.PlanMenuModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiImplicitParam;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import cn.hutool.core.convert.Convert;
 
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 
 import com.ycandyz.master.validation.ValidatorContract;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.BaseResult;
-import com.ycandyz.master.api.BasePageResult;
-import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
 import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanMenuQuery;
 import com.ycandyz.master.service.miniprogram.impl.MpConfigPlanMenuServiceImpl;
@@ -46,8 +41,8 @@ public class MpConfigPlanMenuController extends BaseController<MpConfigPlanMenuS
 
     @ApiOperation(value="✓配置方案内菜单", tags = "企业小程序DIY配置")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResult<PlanMenuModel> createBatch(@Validated(ValidatorContract.OnCreate.class) @RequestBody PlanMenuModel model) {
-        return result(service.addBatch(model),model,"批量保存失败!");
+    public CommonResult<Boolean> createBatch(@Validated(ValidatorContract.OnCreate.class) @RequestBody PlanMenuModel model) {
+        return CommonResult.success(service.addBatch(model));
     }
 
 	
@@ -69,7 +64,8 @@ public class MpConfigPlanMenuController extends BaseController<MpConfigPlanMenuS
     @ApiOperation(value = "✓获取方案菜单", tags = "企业小程序DIY配置")
     @GetMapping
     public CommonResult<BaseResult<List<MpConfigPlanMenu>>> selectList(MpConfigPlanMenuQuery query) {
-        return CommonResult.success(new BaseResult<List<MpConfigPlanMenu>>(service.list(query)));
+        List<MpConfigPlanMenu> planMenuList = service.getMenusByPlanId(query);
+        return CommonResult.success(new BaseResult(planMenuList));
     }
     
     @ApiOperation(value = "✓删除方案内菜单", tags = "企业小程序DIY配置")
