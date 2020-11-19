@@ -72,7 +72,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 	@ApiOperation(value = "查询根据ID")
     @GetMapping(value = "{id}")
 	public CommonResult<CouponActivity> getById(@PathVariable Long id) {
-        return CommonResult.success(service.getById(id));
+        return CommonResult.success(service.selectById(id));
     }
     
 	@ApiOperation(value = "查询分页")
