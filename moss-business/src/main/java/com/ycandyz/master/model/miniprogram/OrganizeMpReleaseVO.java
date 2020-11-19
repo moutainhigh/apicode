@@ -35,7 +35,4 @@ public class OrganizeMpReleaseVO extends OrganizeMpRelease {
     @ApiModelProperty(value = "版本")
     private String version;
 
-    @ApiModelProperty(value = "企业类目")
-    private String organizeCategory;
-
 }
