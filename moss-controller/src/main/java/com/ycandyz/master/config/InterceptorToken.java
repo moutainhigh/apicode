@@ -88,7 +88,7 @@ public class InterceptorToken implements HandlerInterceptor {
             Long organizeId = null;
             if(StrUtil.isNotEmpty(token)){
 
-                if(!flow){
+                if(!ConfigUtils.getBoolean(Config.ENABLED)){
                     if (!redisUtil.hasKey(token)){
                         log.info("redis不存在该token-----------");
                         returnJson(httpServletResponse);

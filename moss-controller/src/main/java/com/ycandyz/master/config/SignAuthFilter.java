@@ -52,10 +52,7 @@ public class SignAuthFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String path = request.getServletPath();
         //获取图标不需要验证签名
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-        String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
-        boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));
-        if (flow) {
+        if (ConfigUtils.getBoolean(Config.ENABLED)) {
             filterChain.doFilter(request, response);
         } else {
             HttpServletRequest requestWrapper = new BodyReaderHttpServletRequestWrapper(request);
