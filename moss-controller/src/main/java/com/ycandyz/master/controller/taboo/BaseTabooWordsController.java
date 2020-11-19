@@ -32,16 +32,16 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("cms/risk/taboo")
+@RequestMapping("baseTabooWords")
 @Api(tags="敏感词管理")
 public class BaseTabooWordsController extends BaseController<BaseTabooWordsServiceImpl, BaseTabooWords, BaseTabooWordsQuery> {
 
     @Autowired
     private BaseTabooWordsService baseTabooWordsService;
 
-	@ApiOperation(value="新增敏感字")
-    @PostMapping
-	public ReturnResponse<Object> insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody BaseTabooWordsVO baseTabooWordsVO) {
+    @ApiOperation(value="新增敏感字")
+    @PostMapping(value = "/addBaseTabooWords")
+    public ReturnResponse<Object> addBaseTabooWords(@Validated(ValidatorContract.OnCreate.class) @RequestBody BaseTabooWordsVO baseTabooWordsVO) {
         if (baseTabooWordsVO == null){
             log.error("当前更新的入参数据为空");
             return ReturnResponse.failed("当前更新的入参数据为空");
@@ -52,42 +52,42 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
         if (returnResponse != null && returnResponse.getCode() == 500){
             return returnResponse;
         }
-	    baseTabooWordsService.addBaseTabooWords(baseTabooWordsVO);
+        baseTabooWordsService.addBaseTabooWords(baseTabooWordsVO);
         return ReturnResponse.success("保存成功!");
-	}
-	
-	@ApiOperation(value = "查询根据ID")
-    @GetMapping(value = "/{id}")
-	public ReturnResponse<BaseTabooWordsRep> get(@PathVariable Long id) {
+    }
+
+    @ApiOperation(value = "查询根据ID")
+    @GetMapping(value = "/select/{id}")
+    public ReturnResponse<BaseTabooWordsRep> getById(@PathVariable Long id) {
         BaseTabooWordsRep baseTabooWords = baseTabooWordsService.selById(id);
         return ReturnResponse.success(baseTabooWords);
     }
 
     @ApiOperation(value="编辑敏感字")
-    @PutMapping
-    public ReturnResponse<Object> update(@Validated(ValidatorContract.OnCreate.class) @RequestBody BaseTabooWordsVO baseTabooWordsVO) {
+    @PutMapping(value = "/updateBaseTabooWords")
+    public ReturnResponse<Object> updateBaseTabooWords(@Validated(ValidatorContract.OnCreate.class) @RequestBody BaseTabooWordsVO baseTabooWordsVO) {
         String phraseName = baseTabooWordsVO.getPhraseName();
         String[] tabooWords = baseTabooWordsVO.getTabooWords();
-	    ReturnResponse returnResponse = baseTabooWordsService.selTabooWords(phraseName,tabooWords);
+        ReturnResponse returnResponse = baseTabooWordsService.selTabooWords(phraseName,tabooWords);
         if (returnResponse != null && returnResponse.getCode() == 500){
             return returnResponse;
         }
-	    ReturnResponse returnResponse2 = baseTabooWordsService.updateBaseTabooWords(baseTabooWordsVO);
+        ReturnResponse returnResponse2 = baseTabooWordsService.updateBaseTabooWords(baseTabooWordsVO);
         return returnResponse2;
     }
 
     @ApiOperation(value = "查询全部")
-    @PostMapping(value = "/list")
-    public ReturnResponse<Page<BaseTabooWordsRep>> list(@RequestBody RequestParams<BaseTabooWordsQuery> requestParams) {
+    @PostMapping(value = "/select/list")
+    public ReturnResponse<Page<BaseTabooWordsRep>> selectList(@RequestBody RequestParams<BaseTabooWordsQuery> requestParams) {
         Page<BaseTabooWordsRep> page = baseTabooWordsService.selectList(requestParams);
         return ReturnResponse.success(page);
     }
-    
+
     @ApiOperation(value = "通过ID删除")
-    @DeleteMapping(value = "/{id}")
-	public ReturnResponse delete(@PathVariable Long id) {
-        ReturnResponse returnResponse = baseTabooWordsService.delById(id);
-        return returnResponse;
-	}
+    @DeleteMapping(value = "/delete/{id}")
+    public ReturnResponse<Object> delById(@PathVariable Long id) {
+        baseTabooWordsService.delById(id);
+        return ReturnResponse.success("删除成功");
+    }
 
 }
