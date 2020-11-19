@@ -24,8 +24,9 @@
         left join mp_config_plan_menu m on p.menu_id = m.id
         left join mp_config_module d on p.module_id = d.id
         <where>
+            p.logic_delete = 0
             <if test="menuId != null">
-                p.menu_id = #{menuId}
+                and p.menu_id = #{menuId}
             </if>
             <if test="moduleSort != null">
                 and p.sort_module = #{moduleSort}
@@ -38,7 +39,7 @@
     </select>
 
     <select id="getMenuModuleElement" resultType="com.ycandyz.master.dto.miniprogram.MpConfigPlanPageBaseDTO">
-        SELECT b.id,b.base_name,b.base_code,p.sort_base,p.show_layout,b.display_num FROM mp_config_plan_page p
+        SELECT p.id,b.base_name,b.base_code,p.sort_base,p.show_layout,b.display_num FROM mp_config_plan_page p
         left join mp_config_module_base b on p.module_base_id = b.id
         <where>
             <if test="moduleSort != null">
@@ -53,5 +54,37 @@
             </if>
         </where>
     </select>
+
+    <select id="getMenuModuleList" resultType="com.ycandyz.master.dto.miniprogram.MpConfigPlanPageDTO">
+        SELECT p.id,p.menu_id,m.title as menu_name,p.module_id,d.module_name,p.sort_module,d.display_num,group_concat(p.module_base_id separator ',') as module_base_ids
+        FROM mp_config_plan_page p
+        left join mp_config_plan_menu m on p.menu_id = m.id
+        left join mp_config_module d on p.module_id = d.id
+        <where>
+            p.logic_delete = 0
+            <if test="menuId != null">
+                and p.menu_id = #{menuId}
+            </if>
+        </where>
+        group by p.sort_module
+    </select>
+
+    <select id="getMenuSortModule" resultType="com.ycandyz.master.entities.miniprogram.MpConfigPlanPage">
+        SELECT * FROM mp_config_plan_page p
+        <where>
+            p.logic_delete = 0
+            <if test="menuId != null">
+                and p.menu_id = #{menuId}
+            </if>
+            <if test="moduleSort != null">
+                and p.sort_module = #{moduleSort}
+            </if>
+            <if test="moduleId != null">
+                and p.module_id = #{moduleId}
+            </if>
+        </where>
+    </select>
+
+
 
 </mapper>
