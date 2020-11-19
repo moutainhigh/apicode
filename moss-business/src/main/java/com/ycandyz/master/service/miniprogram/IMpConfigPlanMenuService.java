@@ -3,7 +3,10 @@ package com.ycandyz.master.service.miniprogram;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanMenuModel;
 import com.ycandyz.master.domain.model.miniprogram.PlanMenuModel;
+import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanMenuQuery;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
+
+import java.util.List;
 
 /**
  * <p>
@@ -43,4 +46,11 @@ public interface IMpConfigPlanMenuService extends IService<MpConfigPlanMenu>{
      * @return
      */
     Boolean addBatch(PlanMenuModel model);
+
+    /**
+     * 查询方案下菜单列表
+     * @param planId
+     * @return
+     */
+    List<MpConfigPlanMenu> getMenusByPlanId(MpConfigPlanMenuQuery query);
 }

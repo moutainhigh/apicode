@@ -63,5 +63,9 @@ public class MpConfigPlanMenuServiceImpl extends BaseService<MpConfigPlanMenuDao
         return this.saveOrUpdateBatch(planMenuList);
     }
 
+    @Override
+    public List<MpConfigPlanMenu> getMenusByPlanId(MpConfigPlanMenuQuery query) {
+        return this.baseMapper.getMenusByPlanId(query.getPlanId(),query.getLogicDelete());
+    }
 
 }
