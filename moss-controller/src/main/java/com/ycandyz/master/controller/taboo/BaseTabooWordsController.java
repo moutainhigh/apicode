@@ -66,9 +66,8 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
     @ApiOperation(value="编辑敏感字")
     @PutMapping(value = "/updateBaseTabooWords")
     public ReturnResponse<Object> updateBaseTabooWords(@Validated(ValidatorContract.OnCreate.class) @RequestBody BaseTabooWordsVO baseTabooWordsVO) {
-        String phraseName = baseTabooWordsVO.getPhraseName();
         String[] tabooWords = baseTabooWordsVO.getTabooWords();
-        ReturnResponse returnResponse = baseTabooWordsService.selTabooWords(phraseName,tabooWords);
+        ReturnResponse returnResponse = baseTabooWordsService.selTabooWord(tabooWords);
         if (returnResponse != null && returnResponse.getCode() == 500){
             return returnResponse;
         }
@@ -86,8 +85,8 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
     @ApiOperation(value = "通过ID删除")
     @DeleteMapping(value = "/delete/{id}")
     public ReturnResponse<Object> delById(@PathVariable Long id) {
-        baseTabooWordsService.delById(id);
-        return ReturnResponse.success("删除成功");
+        ReturnResponse returnResponse = baseTabooWordsService.delById(id);
+        return ReturnResponse.success(returnResponse);
     }
 
 }

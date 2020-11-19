@@ -34,4 +34,6 @@ public interface BaseTabooWordsService extends IService<BaseTabooWords>{
     ReturnResponse updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO);
 
     ReturnResponse selTabooWords(String phraseName, String[] tabooWords);
+
+    ReturnResponse selTabooWord(String[] tabooWords);
 }

@@ -18,7 +18,7 @@
         values(#{id},#{contentId},#{type},now(),now(),#{auditResult});
     </insert>
     <update id="updateAuditResult">
-        update content_review set auditor = #{auditor} ,audit_result = 2,audit_time = now(),audit_nums = audit_nums + 1 where content_id = #{contentId} and `type` = #{type};
+        update content_review set auditor = #{auditor} ,audit_result = 2,audit_time = now() where content_id = #{contentId} and `type` = #{type};
     </update>
 
         <select id="list" resultMap="BaseResultMap" parameterType="com.ycandyz.master.domain.query.risk.ContentReviewQuery">
@@ -32,7 +32,6 @@
             on m.item_no = c.content_id
             where
             c.type = 0
-            and <![CDATA[ c.audit_nums <= 1]]>
             and <![CDATA[ m.status <> 50]]>
             <if test="con != null and con.auditor != null and con.auditor != ''">
                 and c.auditor = #{con.auditor}
@@ -73,7 +72,6 @@
             on fp.footprint_id = c.content_id
             where
             c.type = 1 and is_del = 0
-            and <![CDATA[ c.audit_nums <= 1]]>
             <if test="con != null and con.auditor != null and con.auditor != ''">
                 and c.auditor = #{con.auditor}
             </if>
@@ -114,7 +112,6 @@
             on ond.organize_news_id = c.content_id
             where
             c.type = 2 and is_del = 0
-            and <![CDATA[ c.audit_nums <= 1]]>
             <if test="con != null and con.auditor != null and con.auditor != ''">
                 and c.auditor = #{con.auditor}
             </if>
@@ -163,7 +160,6 @@
         on m.item_no = c.content_id
         where
         c.type = 0
-        and <![CDATA[ c.audit_nums <= 1]]>
         and <![CDATA[ m.status <> 50]]>
         <if test="con != null and con.auditor != null and con.auditor != ''">
             and c.auditor = #{con.auditor}
@@ -204,7 +200,6 @@
         on fp.footprint_id = c.content_id
         where
         c.type = 1 and is_del = 0
-        and <![CDATA[ c.audit_nums <= 1]]>
         <if test="con != null and con.auditor != null and con.auditor != ''">
             and c.auditor = #{con.auditor}
         </if>
@@ -245,7 +240,6 @@
         on ond.organize_news_id = c.content_id
         where
         c.type = 2 and is_del = 0
-        and <![CDATA[ c.audit_nums <= 1]]>
         <if test="con != null and con.auditor != null and con.auditor != ''">
             and c.auditor = #{con.auditor}
         </if>
