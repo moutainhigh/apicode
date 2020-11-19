@@ -91,17 +91,17 @@ public class ContentReviewServiceImpl implements ContentReviewService {
             return ReturnResponse.success(null,"无通过或屏蔽的数据");
         }
         Integer oper = reviewParams.getOper();
-        Multimap<Integer,Long> myMultimap = ArrayListMultimap.create();
+        Multimap<Integer,String> myMultimap = ArrayListMultimap.create();
         List<ExamineParam> examineParams = reviewParams.getExamineParams();
         if (examineParams != null){
             examineParams.stream().forEach(s-> {
                 myMultimap.put(s.getType(),s.getContentId());
             });
         }
-        Map<Integer,Map<Integer,List<Long>>> allMaps = new HashMap<>();
+        Map<Integer,Map<Integer,List<String>>> allMaps = new HashMap<>();
         myMultimap.forEach((mk,mv)->{
-            List<Long> ids = (List<Long>) myMultimap.get(mk);
-            Map<Integer,List<Long>> maps = new HashMap<>();
+            List<String> ids = (List<String>) myMultimap.get(mk);
+            Map<Integer,List<String>> maps = new HashMap<>();
             maps.put(oper,ids);
             allMaps.put(mk,maps);
         });

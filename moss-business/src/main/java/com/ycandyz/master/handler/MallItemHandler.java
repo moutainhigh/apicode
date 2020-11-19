@@ -36,17 +36,17 @@ public class MallItemHandler extends AbstractHandler {
             return ReturnResponse.success("商品详情更新数据为null");
         }
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, reviewParam.getOper()).getDesc();
-        Long id = reviewParam.getContentId();
+        String id = reviewParam.getContentId();
         int i = mallItemDao.updateOneMallItem(String.valueOf(reviewParam.getContentId()),reviewParam.getOper());
         if (i > 0) {
             updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
             log.info("商品详情id为{}的数据审批{}成功",id,desc);
-            String str=String.format("商品详情id为%d的数据审批%s成功",id, desc);
+            String str=String.format("商品详情id为%s的数据审批%s成功",id, desc);
             insertAllcontentReviewLog(id,1, reviewParam.getOper(),2);
             return ReturnResponse.success(str);
         }
         log.info("商品详情id为{}的数据审批{}成功",id,desc);
-        String str=String.format("商品详情id为%d的数据审批%s成功",id, desc);
+        String str=String.format("商品详情id为%s的数据审批%s成功",id, desc);
         return ReturnResponse.success(str);
     }
 
@@ -90,13 +90,13 @@ public class MallItemHandler extends AbstractHandler {
     //批量通过/屏蔽
     @Override
     @Transactional
-    public ReturnResponse handleExamine(Map<Integer,List<Long>> maps) {
+    public ReturnResponse handleExamine(Map<Integer,List<String>> maps) {
         int oper = 0;
-        List<Long> list = null;
+        List<String> list = null;
         if (maps == null || maps.size() == 0){
             return ReturnResponse.success("商品详情无通过或屏蔽数据");
         }
-        for(Map.Entry<Integer, List<Long>> vo : maps.entrySet()){
+        for(Map.Entry<Integer, List<String>> vo : maps.entrySet()){
             oper = vo.getKey();
             list = vo.getValue();
         }

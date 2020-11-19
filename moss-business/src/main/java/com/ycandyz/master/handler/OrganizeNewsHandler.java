@@ -33,17 +33,17 @@ public class OrganizeNewsHandler extends AbstractHandler {
             return ReturnResponse.success("企业动态更新数据为null");
         }
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, reviewParam.getOper()).getDesc();
-        Long id = reviewParam.getContentId();
-        int i = organizeNewsDao.updateOneOrganizeNews(reviewParam.getContentId(),reviewParam.getOper());
+        String id = reviewParam.getContentId();
+        int i = organizeNewsDao.updateOneOrganizeNews(Long.valueOf(id),reviewParam.getOper());
         if (i > 0) {
             updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
             log.info("企业动态id为{}的数据审批{}成功",id,desc);
-            String str=String.format("企业动态id为%d的数据审批%s成功",id, desc);
+            String str=String.format("企业动态id为%s的数据审批%s成功",id, desc);
             insertAllcontentReviewLog(id,2, reviewParam.getOper(),2);
             return ReturnResponse.success(str);
         }
         log.info("企业动态id为{}的数据审批{}成功",id,desc);
-        String str=String.format("企业动态id为%d的数据审批%s成功",id, desc);
+        String str=String.format("企业动态id为%s的数据审批%s成功",id, desc);
         return ReturnResponse.success(str);
     }
 
@@ -80,13 +80,13 @@ public class OrganizeNewsHandler extends AbstractHandler {
     //批量通过/屏蔽
     @Override
     @Transactional
-    public ReturnResponse handleExamine(Map<Integer,List<Long>> maps) {
+    public ReturnResponse handleExamine(Map<Integer,List<String>> maps) {
         int oper = 0;
-        List<Long> list = null;
+        List<String> list = null;
         if (maps == null || maps.size() == 0){
             return ReturnResponse.success("企业动态无通过或屏蔽数据");
         }
-        for(Map.Entry<Integer, List<Long>> vo : maps.entrySet()){
+        for(Map.Entry<Integer, List<String>> vo : maps.entrySet()){
             oper = vo.getKey();
             list = vo.getValue();
         }

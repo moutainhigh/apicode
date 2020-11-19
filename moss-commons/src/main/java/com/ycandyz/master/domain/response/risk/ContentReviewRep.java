@@ -12,7 +12,7 @@ import java.util.List;
 public class ContentReviewRep {
 
     @ApiModelProperty(value = "商品详情itemNo;商友圈id;企业动态id")
-    private Long id;
+    private String id;
 
 //    @ApiModelProperty(value = "商品详情id")
 //    private Long itemNo;

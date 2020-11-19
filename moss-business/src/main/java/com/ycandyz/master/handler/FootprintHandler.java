@@ -38,17 +38,17 @@ public class FootprintHandler extends AbstractHandler {
             return ReturnResponse.success("商友圈更新数据为null");
         }
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, reviewParam.getOper()).getDesc();
-        Long id = reviewParam.getContentId();
-        int i = footprintDao.updateOneFootprint(id,reviewParam.getOper());
+        String id = reviewParam.getContentId();
+        int i = footprintDao.updateOneFootprint(Long.valueOf(id),reviewParam.getOper());
         if (i > 0) {
-            updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
+            updateOrInsert(id, reviewParam.getType());
             log.info("商友圈id为{}的数据审批{}成功",id,desc);
-            String str=String.format("商友圈id为%d的数据审批%s成功",id, desc);
+            String str=String.format("商友圈id为%s的数据审批%s成功",id, desc);
             insertAllcontentReviewLog(id,0, reviewParam.getOper(),2);
             return ReturnResponse.success(str);
         }
         log.info("商友圈id为{}的数据审批{}失败",id,desc);
-        String str=String.format("商友圈id为%d的数据审批%s失败",id, desc);
+        String str=String.format("商友圈id为%s的数据审批%s失败",id, desc);
         return ReturnResponse.success(str);
     }
 
@@ -81,13 +81,13 @@ public class FootprintHandler extends AbstractHandler {
 
     @Override
     @Transactional
-    public ReturnResponse handleExamine(Map<Integer,List<Long>> maps) {
+    public ReturnResponse handleExamine(Map<Integer,List<String>> maps) {
         int oper = 0;
-        List<Long> list = null;
+        List<String> list = null;
         if (maps == null || maps.size() == 0){
             return ReturnResponse.success("商友圈无通过或屏蔽数据");
         }
-        for(Map.Entry<Integer, List<Long>> vo : maps.entrySet()){
+        for(Map.Entry<Integer, List<String>> vo : maps.entrySet()){
             oper = vo.getKey();
             list = vo.getValue();
         }

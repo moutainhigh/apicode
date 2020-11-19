@@ -30,24 +30,28 @@ public abstract class AbstractHandler implements InitializingBean {
 
     abstract public void handleContentreview(ContentReviewDTO contentReviewDTO, ContentReviewRep contentReviewRep);
 
-    protected void updateOrInsert(Long contentId, int type) {
+    protected void updateOrInsert(String contentId, int type) {
         UserVO user = UserRequest.getCurrentUser();
-        ContentReviewDTO contentReviewDTO = contentreviewDao.selectByContentId(contentId, type);
-        if (contentReviewDTO != null){
-            contentreviewDao.updateAuditResult(String.valueOf(user.getId()), contentId, type);
-        }else {
-            ContentReview contentReview = new ContentReview();
-            contentReview.setType(type);
-            contentReview.setAuditResult(2);
-            contentReview.setAuditor(user.getId());
-            contentReview.setContentId(contentId);
-            contentreviewDao.insert(contentReview);
+        List<ContentReviewDTO>  contentReviewDTO = contentreviewDao.selectByContentId(contentId, type);
+        if (contentReviewDTO != null && contentReviewDTO.size() >0){
+            contentReviewDTO.stream().forEach(k->{
+                if (contentReviewDTO != null){
+                    contentreviewDao.updateAuditResult(String.valueOf(user.getId()), contentId, type);
+                }else {
+                    ContentReview contentReview = new ContentReview();
+                    contentReview.setType(type);
+                    contentReview.setAuditResult(2);
+                    contentReview.setAuditor(user.getId());
+                    contentReview.setContentId(contentId);
+                    contentreviewDao.insert(contentReview);
+                }
+            });
         }
     }
 
-    public abstract ReturnResponse handleExamine(Map<Integer,List<Long>> maps);
+    public abstract ReturnResponse handleExamine(Map<Integer,List<String>> maps);
 
-    protected void insertAllcontentReviewLog(Long contentId, int type, int contentResult, int auditResult){
+    protected void insertAllcontentReviewLog(String contentId, int type, int contentResult, int auditResult){
         UserVO user = UserRequest.getCurrentUser();
         ContentReviewLogVO contentReviewLogVO = new ContentReviewLogVO();
         contentReviewLogVO.setContentId(contentId);

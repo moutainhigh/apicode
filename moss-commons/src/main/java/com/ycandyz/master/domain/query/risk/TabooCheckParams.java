@@ -12,7 +12,7 @@ public class TabooCheckParams {
 
     @ApiModelProperty(value = "审核模块id",required = true)
     @NotNull(message = "审核模块id(contentId)不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-    private Long contentId;
+    private String contentId;
 
     @ApiModelProperty(value = "企业动态标题")
     private String title;
