@@ -9,6 +9,7 @@ import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallOrder;
+import com.ycandyz.master.enums.ExpressEnum;
 import com.ycandyz.master.model.mall.MallOrderVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.mall.impl.MaillOrderServiceImpl;
@@ -18,6 +19,9 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/mall")
@@ -103,4 +107,14 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
         return mallOrderService.verPickupNo(pickupNo,orderNo, userVO);
     }
 
+    /**
+     * 获取快递公司列表
+     * @return
+     */
+    @ApiOperation(value = "获取快递公司列表",notes = "获取快递公司列表",httpMethod = "GET")
+    @GetMapping("/delivery/company/list")
+    public ReturnResponse<List<Map<String, String>>> getDeliveryCompanyList(){
+        List<Map<String, String>> list = ExpressEnum.getMap();
+        return ReturnResponse.success(list);
+    }
 }

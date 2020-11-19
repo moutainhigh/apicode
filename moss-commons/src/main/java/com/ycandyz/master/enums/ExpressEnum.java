@@ -1,5 +1,10 @@
 package com.ycandyz.master.enums;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public enum ExpressEnum {
 
     YUANTONG("yuantong", "圆通速递"),
@@ -1107,6 +1112,22 @@ public enum ExpressEnum {
             }
         }
         return null;
+    }
+
+    /**
+     * 枚举类转map
+     * @return
+     */
+    public static List<Map<String, String>> getMap(){
+        ExpressEnum[] expressEnums = values();
+        List<Map<String,String>> list = new ArrayList<>();
+        for (ExpressEnum expressEnum : expressEnums){
+            Map<String, String> map = new HashMap<>();
+            map.put("code",expressEnum.key());
+            map.put("company",expressEnum.value());
+            list.add(map);
+        }
+        return list;
     }
 
     public String key() {
