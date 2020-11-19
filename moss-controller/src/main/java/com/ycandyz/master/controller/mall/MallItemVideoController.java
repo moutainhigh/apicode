@@ -71,6 +71,7 @@ public class MallItemVideoController extends BaseController<MallItemVideoService
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
 
+    @ApiImplicitParam(name="itemNo",value="商品编号",required=true,dataType="string")
     @ApiOperation(value = "查询全部")
     @GetMapping(value = "list")
     public CommonResult<BaseResult<List<MallItemVideo>>> selectList(MallItemVideoQuery query) {
