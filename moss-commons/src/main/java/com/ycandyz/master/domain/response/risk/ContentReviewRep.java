@@ -11,8 +11,8 @@ import java.util.List;
 @Data
 public class ContentReviewRep {
 
-    @ApiModelProperty(value = "商品详情itemNo;商友圈id;企业动态id")
-    private String id;
+    @ApiModelProperty(value = "content_review主键id")
+    private Long id;
 
 //    @ApiModelProperty(value = "商品详情id")
 //    private Long itemNo;

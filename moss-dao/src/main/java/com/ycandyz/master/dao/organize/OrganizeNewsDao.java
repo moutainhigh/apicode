@@ -21,5 +21,6 @@ public interface OrganizeNewsDao extends BaseMapper<OrganizeNews> {
     List<OrganizeNewsQuery> selectFootprintQuery(@Param("pageOffset") int pageOffset, @Param("pageSize") int pageSize);
     int updateOneOrganizeNews(@Param("contentId") Long contentId ,@Param("oper") Integer oper);
 
-    int handleExamine(@Param("oper") Integer oper, @Param("ids") List<String> ids);
+    int handleExamine(@Param("oper") Integer oper, @Param("ids") List<Long> ids);
+    OrganizeNewsQuery selById(Long id);
 }

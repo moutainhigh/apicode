@@ -10,7 +10,7 @@ import java.util.Date;
 public class ContentReviewDTO {
 
     @ApiModelProperty(value = "id")
-    private String contentId;
+    private Long id;
 
     @ApiModelProperty(value = "内容")
     private Object content;

@@ -48,5 +48,8 @@
     <select id="selectFootprintQuery" resultType="com.ycandyz.master.domain.query.organize.OrganizeNewsQuery" parameterType="java.lang.Integer">
         select id,organizeId,title,`abstract` from organize_news limit #{pageOffset},#{pageSize};
     </select>
+    <select id="selById" resultType="com.ycandyz.master.domain.query.organize.OrganizeNewsQuery">
+        select id from organize_news where id = #{id}
+    </select>
 
 </mapper>

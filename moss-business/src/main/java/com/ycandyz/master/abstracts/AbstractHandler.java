@@ -11,6 +11,7 @@ import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
 import com.ycandyz.master.entities.risk.ContentReview;
 import com.ycandyz.master.request.UserRequest;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,26 +31,37 @@ public abstract class AbstractHandler implements InitializingBean {
 
     abstract public void handleContentreview(ContentReviewDTO contentReviewDTO, ContentReviewRep contentReviewRep);
 
-    protected void updateOrInsert(String contentId, int type) {
+    protected void updateOrInsert(Long id,String contentId, int type) {
         UserVO user = UserRequest.getCurrentUser();
-        List<ContentReviewDTO>  contentReviewDTO = contentreviewDao.selectByContentId(contentId, type);
-        if (contentReviewDTO != null && contentReviewDTO.size() >0){
-            contentReviewDTO.stream().forEach(k->{
-                if (contentReviewDTO != null){
-                    contentreviewDao.updateAuditResult(String.valueOf(user.getId()), contentId, type);
-                }else {
-                    ContentReview contentReview = new ContentReview();
-                    contentReview.setType(type);
-                    contentReview.setAuditResult(2);
-                    contentReview.setAuditor(user.getId());
-                    contentReview.setContentId(contentId);
-                    contentreviewDao.insert(contentReview);
-                }
-            });
+        ContentReviewDTO contentReviewDTO = contentreviewDao.selectByIdE(id);
+        if (contentReviewDTO != null){
+            contentreviewDao.updateAudit(String.valueOf(user.getId()),id);
+        }else {
+            ContentReview contentReview = new ContentReview();
+            contentReview.setType(type);
+            contentReview.setAuditResult(2);
+            contentReview.setAuditor(user.getId());
+            contentReview.setContentId(contentId);
+            contentreviewDao.insert(contentReview);
         }
+        //List<ContentReviewDTO>  contentReviewDTO = contentreviewDao.selectByContentId(contentId, type);
+//        if (contentReviewDTO != null && contentReviewDTO.size() >0){
+//            contentReviewDTO.stream().forEach(k->{
+//                if (contentReviewDTO != null){
+//                    contentreviewDao.updateAuditResult(String.valueOf(user.getId()), contentId, type);
+//                }else {
+//                    ContentReview contentReview = new ContentReview();
+//                    contentReview.setType(type);
+//                    contentReview.setAuditResult(2);
+//                    contentReview.setAuditor(user.getId());
+//                    contentReview.setContentId(contentId);
+//                    contentreviewDao.insert(contentReview);
+//                }
+//            });
+//        }
     }
 
-    public abstract ReturnResponse handleExamine(Map<Integer,List<String>> maps);
+    public abstract ReturnResponse handleExamine(Map<Integer,List<Long>> maps);
 
     protected void insertAllcontentReviewLog(String contentId, int type, int contentResult, int auditResult){
         UserVO user = UserRequest.getCurrentUser();
