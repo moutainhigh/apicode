@@ -22,6 +22,9 @@ public class MpConfigPlanPageBaseDTO {
     @ApiModelProperty(value = "元素编号")
     private Integer id;
 
+    @ApiModelProperty(value = "元素基础编号")
+    private Integer moduleBaseId;
+
     @ApiModelProperty(value = "元素名称")
     private String baseName;
 
