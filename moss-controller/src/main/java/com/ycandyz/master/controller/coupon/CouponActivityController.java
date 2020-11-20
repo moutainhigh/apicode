@@ -1,5 +1,6 @@
 package com.ycandyz.master.controller.coupon;
 
+import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
@@ -46,15 +47,15 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 	
 	@ApiOperation(value="新增")
     @PostMapping
-	public CommonResult<CouponActivity> insert(@Validated(ValidatorContract.OnCreate.class) CouponActivity entity) {
-        return result(service.save(entity),entity,"保存失败!");
+	public CommonResult<CouponActivityModel> insert(@Validated(ValidatorContract.OnCreate.class) CouponActivityModel entity) {
+        return result(service.insert(entity),entity,"保存失败!");
 	}
 	
 	@ApiOperation(value = "通过ID更新")
     @PutMapping(value = "{id}")
-	public CommonResult<CouponActivity> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) CouponActivity entity) {
+	public CommonResult<CouponActivityModel> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) CouponActivityModel entity) {
         entity.setId(id);
-        return result(service.updateById(entity),entity,"更改失败!");
+        return result(service.update(entity),entity,"更改失败!");
 	}
 
     @ApiOperation(value = "通过ID停止")

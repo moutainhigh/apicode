@@ -2,7 +2,6 @@ package com.ycandyz.master.service.coupon.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.github.pagehelper.util.StringUtil;
 import com.ycandyz.master.domain.enums.coupon.CouponActivityEnum;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
