@@ -28,7 +28,5 @@ public interface ICouponTicketService extends IService<CouponTicket>{
 
     ReturnResponse<CouponTicketInfoVO> ticketDetail(String ticketNo, UserVO userVO);
 
-    ReturnResponse<String> updateTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO);
-
-    ReturnResponse<String> insertTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO);
+    ReturnResponse<String> saveTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO);
 }

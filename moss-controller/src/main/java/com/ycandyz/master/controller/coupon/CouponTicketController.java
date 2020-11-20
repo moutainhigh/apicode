@@ -65,7 +65,7 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
      * @return
      */
     @ApiOperation(value = "优惠券启用停用")
-    @DeleteMapping(value = "/audit")
+    @GetMapping(value = "/audit")
 	public ReturnResponse<String> auditState(@RequestParam("id") Long id, @RequestParam("state") Integer state, @CurrentUser UserVO userVO) {
         if (id==null || id==0 || state==null){
             return ReturnResponse.failed("传入参数为空");
@@ -79,7 +79,7 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
      * @return
      */
     @ApiOperation(value = "优惠券启用停用")
-    @DeleteMapping(value = "/detail")
+    @GetMapping(value = "/detail")
     public ReturnResponse<CouponTicketInfoVO> ticketDetail(@RequestParam("ticketNo") String ticketNo, @CurrentUser UserVO userVO) {
         if (ticketNo==null || "".equals(ticketNo)){
             return ReturnResponse.failed("传入参数为空");
@@ -88,34 +88,15 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
     }
 
     /**
-     * 优惠券的编辑
+     * 优惠券的编辑或新增
      * @param couponTicketInfoQuery
      * @return
      */
-    @ApiOperation(value = "优惠券的编辑")
-    @DeleteMapping(value = "/update")
-    public ReturnResponse<String> updateTicket(@RequestBody CouponTicketInfoQuery couponTicketInfoQuery, @CurrentUser UserVO userVO){
-        iCouponTicketService.updateTicket(couponTicketInfoQuery,userVO);
-        return null;
+    @ApiOperation(value = "优惠券的新增或修改")
+    @PutMapping(value = "/ticket")
+    public ReturnResponse<String> saveTicket(@RequestBody CouponTicketInfoQuery couponTicketInfoQuery, @CurrentUser UserVO userVO){
+        ReturnResponse<String> returnResponse = iCouponTicketService.saveTicket(couponTicketInfoQuery,userVO);
+        return returnResponse;
     }
-
-    /**
-     * 优惠券的新增
-     * @param couponTicketInfoQuery
-     * @return
-     */
-    @ApiOperation(value = "优惠券的新增")
-    @DeleteMapping(value = "/insert")
-    public ReturnResponse<String> insertTicket(@RequestBody CouponTicketInfoQuery couponTicketInfoQuery, @CurrentUser UserVO userVO){
-        iCouponTicketService.insertTicket(couponTicketInfoQuery,userVO);
-        return null;
-    }
-
-    @ApiImplicitParam(name="ids",value="ID集合(1,2,3)",required=true,allowMultiple=true,dataType="int")
-   	@ApiOperation(value = "通过ids批量删除")
-    @DeleteMapping(value = "delete")
-	public CommonResult deleteBatch(String ids) {
-        return result(service.deleteByIds(Convert.toLongArray(ids)),null,"删除失败!");
-	}
     
 }

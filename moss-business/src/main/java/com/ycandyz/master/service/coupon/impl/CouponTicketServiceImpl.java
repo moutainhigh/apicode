@@ -135,9 +135,18 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
         return ReturnResponse.success(couponTicketInfoVO);
     }
 
-    @Transactional
     @Override
-    public ReturnResponse<String> updateTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO) {
+    public ReturnResponse<String> saveTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO) {
+
+        if (couponTicketInfoQuery.getTicketNo()!=null && !"".equals(couponTicketInfoQuery.getTicketNo())){
+            return updateTicket(couponTicketInfoQuery,userVO);
+        }else {
+            return insertTicket(couponTicketInfoQuery,userVO);
+        }
+    }
+
+    @Transactional
+    public ReturnResponse<String> updateTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO){
         //更新ticket表
         CouponTicket couponTicket = couponTicketDao.selectOne(new QueryWrapper<CouponTicket>().eq("ticketNo",couponTicketInfoQuery.getTicketNo()));
         if (couponTicket!=null){
@@ -209,7 +218,7 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
         return ReturnResponse.failed("更新失败");
     }
 
-    @Override
+    @Transactional
     public ReturnResponse<String> insertTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO) {
         Long current = System.currentTimeMillis()/1000;
         String ticketInfoNo = String.valueOf(IDGeneratorUtils.getLongId());

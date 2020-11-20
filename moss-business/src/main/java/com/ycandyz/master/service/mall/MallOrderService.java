@@ -6,6 +6,7 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
+import com.ycandyz.master.domain.query.mall.MallOrderUAppQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.MallOrderVO;
@@ -21,4 +22,6 @@ public interface MallOrderService extends IService<MallOrder> {
     ReturnResponse<MallOrderVO> queryDetailByPickupNo(String pickupNo, String orderNo, UserVO userVO);
 
     ReturnResponse<String> verPickupNo(String pickupNo, String orderNo, UserVO userVO);
+
+    ReturnResponse<Page<MallOrderVO>> queryMallOrderListByUApp(RequestParams<MallOrderUAppQuery> requestParams, UserVO userVO);
 }

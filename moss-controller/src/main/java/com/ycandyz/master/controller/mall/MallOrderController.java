@@ -7,6 +7,7 @@ import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
+import com.ycandyz.master.domain.query.mall.MallOrderUAppQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.enums.ExpressEnum;
@@ -116,5 +117,20 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     public ReturnResponse<List<Map<String, String>>> getDeliveryCompanyList(){
         List<Map<String, String>> list = ExpressEnum.getMap();
         return ReturnResponse.success(list);
+    }
+
+    /**
+     * UApp项目订单列表接口
+     * @param requestParams
+     * @param userVO
+     * @return
+     */
+    @ApiOperation(value = "UApp项目订单列表接口",notes = "UApp项目订单列表接口",httpMethod = "POST")
+    @PostMapping("/u-app/order/page")
+    public ReturnResponse<Page<MallOrderVO>> queryMallOrderListByUApp(@RequestBody RequestParams<MallOrderUAppQuery> requestParams, @CurrentUser UserVO userVO){
+        if (requestParams.getT()==null){
+            return ReturnResponse.failed("请求入参为空");
+        }
+        return mallOrderService.queryMallOrderListByUApp(requestParams,userVO);
     }
 }
