@@ -10,6 +10,7 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.api.TabooReturnResponse;
 import com.ycandyz.master.dao.risk.ContentreviewDao;
 import com.ycandyz.master.dao.risk.ContentreviewLogDao;
+import com.ycandyz.master.dao.user.UserDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.enums.ad.AdvertisingEnum;
 import com.ycandyz.master.domain.query.risk.*;
@@ -17,6 +18,7 @@ import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
 import com.ycandyz.master.entities.ad.Advertising;
 import com.ycandyz.master.entities.mall.MallItemVideo;
+import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.handler.HandlerContext;
 import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.mall.impl.MallItemVideoServiceImpl;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -38,6 +41,9 @@ public class ContentReviewServiceImpl implements ContentReviewService {
 
     @Autowired
     private MallItemVideoServiceImpl mallItemVideoService;
+
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public ReturnResponse<Page<ContentReviewRep>> list(RequestParams<ContentReviewQuery> requestParams) {
@@ -53,6 +59,9 @@ public class ContentReviewServiceImpl implements ContentReviewService {
                 List<ContentReviewDTO> list = contentreviewDao.list((requestParams.getPage() - 1) * requestParams.getPage_size(),
                         requestParams.getPage_size(), contentReviewQuery);
                 //List<ContentReviewDTO> list = contentreviewDao.list(contentReviewQuery);
+                List<Long> auditorList = list.stream().map(ContentReviewDTO::getAuditor).collect(Collectors.toList());
+                List<User> userList = userDao.selectBatchIds(auditorList);
+                Map<Long, String> map = userList.stream().collect(Collectors.toMap(User::getId,User::getName));
                 list.stream().forEach(s -> {
                     ContentReviewRep contentReviewRep = new ContentReviewRep();
                     AbstractHandler handler = HandlerContext.getHandler(s.getType());
@@ -65,6 +74,8 @@ public class ContentReviewServiceImpl implements ContentReviewService {
 //                        List<MallItemVideo> videoList = mallItemVideoService.list(videoWrapper);
 //                        contentReviewRep.setVideo(videoList);
 //                    }
+                    //拼接审核人姓名
+                    contentReviewRep.setAuditorName(map.get(s.getAuditor()));
                     newlist.add(contentReviewRep);
                 });
             }

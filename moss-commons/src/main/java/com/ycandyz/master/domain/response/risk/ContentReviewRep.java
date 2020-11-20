@@ -69,6 +69,9 @@ public class ContentReviewRep {
     @ApiModelProperty(value = "审核人")
     private Long auditor;
 
+    @ApiModelProperty(value = "审核人姓名")
+    private String auditorName;
+
     @ApiModelProperty(value = "审核时间")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date auditTime;
