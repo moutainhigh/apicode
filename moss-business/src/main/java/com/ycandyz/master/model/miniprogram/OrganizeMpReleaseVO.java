@@ -23,9 +23,6 @@ import java.util.Date;
 @TableName("organize_mp_release")
 public class OrganizeMpReleaseVO extends OrganizeMpRelease {
 
-    @ApiModelProperty(value = "小程序名称")
-    private String planName;
-
     @ApiModelProperty(value = "申请发布时间")
     private Date createTime;
 

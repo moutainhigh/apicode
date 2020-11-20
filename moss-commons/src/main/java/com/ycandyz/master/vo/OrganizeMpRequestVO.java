@@ -11,7 +11,7 @@ public class OrganizeMpRequestVO {
    @ApiModelProperty(value = "所有菜单页面全部数据")
    private List<OrganizeChooseMpConfigPageVo> organizeChooseMpConfigPages;
 
-   @ApiModelProperty(value = "状态 [0:草稿；1:发布中；2:发布成功；3:发布失败]")
+   @ApiModelProperty(value = "状态 [0:草稿；1:发布中]")
    private Integer status;
 
 }
