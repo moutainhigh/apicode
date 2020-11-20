@@ -86,7 +86,7 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
         List<ModuleWithinMenu> modules = model.getModules();
         List<MpConfigPlanPage> planPageList = new ArrayList<MpConfigPlanPage>();
         for(ModuleWithinMenu module: modules){
-            List<ElementWithinModule> elements = module.getElements();
+            List<ElementWithinModule> elements = module.getBaseInfo();
             for(ElementWithinModule element: elements){
                 MpConfigPlanPage planPage = new MpConfigPlanPage();
                 if(element.getId() != null){
