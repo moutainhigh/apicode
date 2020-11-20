@@ -49,9 +49,13 @@
         left join mall_sku_spec as t3 on t2.sku_no = t3.sku_no
         where t1.shop_no = #{shopNo,jdbcType=VARCHAR} and t1.item_no = #{itemNo,jdbcType=VARCHAR};
     </delete>
-        <select id="selMallItemByitemNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <select id="selMallItemByitemNo" resultMap="BaseResultMap" parameterType="java.lang.String">
         select * from mall_item where shop_no = #{shopNo,jdbcType=VARCHAR} and item_no = #{itemNo,jdbcType=VARCHAR};
     </select>
+    <select id="selByitemNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select id,item_no from mall_item where item_no = #{itemNo,jdbcType=VARCHAR};
+    </select>
+
     <update id="oprbyItemNo">
         update mall_item set status = #{status,jdbcType=INTEGER} where item_no in
         <foreach collection="itemNoList" item="state" open="(" separator="," close=")">

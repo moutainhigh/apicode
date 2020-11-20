@@ -23,8 +23,6 @@ spring:
     host: youchuan-test-redis.5fqnep.0001.cnn1.cache.amazonaws.com.cn
     port: 6379
     database: 0
-  resources:
-    static-locations: classpath:static/,file:static/,classpath:/resources/
   kafka:
     bootstrap-servers: kafka-test.ycandyz.com:9092
     producer:

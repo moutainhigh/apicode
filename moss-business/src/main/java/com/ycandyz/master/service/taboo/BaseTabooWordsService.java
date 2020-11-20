@@ -27,11 +27,13 @@ public interface BaseTabooWordsService extends IService<BaseTabooWords>{
 
     BaseTabooWordsRep selById(Long id);
 
-    void delById(Long id);
+    ReturnResponse delById(Long id);
 
     Page<BaseTabooWordsRep> selectList(RequestParams<BaseTabooWordsQuery> requestParams);
 
     ReturnResponse updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO);
 
     ReturnResponse selTabooWords(String phraseName, String[] tabooWords);
+
+    ReturnResponse selTabooWord(String[] tabooWords);
 }

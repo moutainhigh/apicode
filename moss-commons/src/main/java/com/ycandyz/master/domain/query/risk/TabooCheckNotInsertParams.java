@@ -8,7 +8,7 @@ public class TabooCheckNotInsertParams {
 
 
     @ApiModelProperty(value = "审核模块id")
-    private Long contentId;
+    private String contentId;
 
     @ApiModelProperty(value = "企业动态标题")
     private String title;

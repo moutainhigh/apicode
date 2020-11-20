@@ -80,19 +80,25 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     public BaseTabooWordsRep selById(Long id) {
         BaseTabooWords baseTabooWords = baseTabooWordsDao.selById(id);
         BaseTabooWordsRep baseTabooWordsRep = new BaseTabooWordsRep();
-        if (baseTabooWords.getTabooWords() != null){
-            baseTabooWordsRep.setTabooWords(MyCollectionUtils.parseIds(baseTabooWords.getTabooWords()));
+        if (baseTabooWords != null){
+            if (baseTabooWords.getTabooWords() != null){
+                baseTabooWordsRep.setTabooWords(MyCollectionUtils.parseIds(baseTabooWords.getTabooWords()));
+            }
+            BeanUtils.copyProperties(baseTabooWords,baseTabooWordsRep);
         }
-        BeanUtils.copyProperties(baseTabooWords,baseTabooWordsRep);
         return baseTabooWordsRep;
     }
 
     @Override
-    public void delById(Long id) {
+    public ReturnResponse delById(Long id) {
         BaseTabooWords baseTabooWords = baseTabooWordsDao.selById(id);
+        if (baseTabooWords == null){
+            return ReturnResponse.success("该条数据不存在!");
+        }
         baseTabooWords.setFlag(3);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
         log.info("删除敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
+        return ReturnResponse.success("删除成功!");
     }
 
     @Override
@@ -161,6 +167,21 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         if (baseTabooWords != null && baseTabooWords.size() > 0){
             return ReturnResponse.failed("添加失败,敏感词组名称已存在!");
         }
+        List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
+        List<String> tabooList = new ArrayList<>();
+        if (tabooWordsForReviews != null && tabooWordsForReviews.size() > 0){
+            tabooWordsForReviews.stream().forEach(s->tabooList.addAll(MyCollectionUtils.parseIds(s.getTabooWords())));
+        }
+        for (String s: tabooWords) {
+            if (tabooList.contains(s)){
+                return ReturnResponse.failed("添加失败,敏感词已存在!");
+            }
+        }
+        return ReturnResponse.success("敏感词组名称和敏感词不存在!");
+    }
+
+    @Override
+    public ReturnResponse selTabooWord(String[] tabooWords) {
         List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
         List<String> tabooList = new ArrayList<>();
         if (tabooWordsForReviews != null && tabooWordsForReviews.size() > 0){

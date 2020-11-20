@@ -58,13 +58,13 @@ public class ContentReviewServiceImpl implements ContentReviewService {
                     AbstractHandler handler = HandlerContext.getHandler(s.getType());
                     handler.handleContentreview(s,contentReviewRep);
                     //add video
-                    if(s.getType() == 0){
-                        LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
-                                .select(MallItemVideo::getId,MallItemVideo::getUrl,MallItemVideo::getImg)
-                                .eq(MallItemVideo::getItemNo, s.getContentId());
-                        List<MallItemVideo> videoList = mallItemVideoService.list(videoWrapper);
-                        contentReviewRep.setVideo(videoList);
-                    }
+//                    if(s.getType() == 0){
+//                        LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+//                                .select(MallItemVideo::getId,MallItemVideo::getUrl,MallItemVideo::getImg)
+//                                .eq(MallItemVideo::getItemNo, s.getContentId());
+//                        List<MallItemVideo> videoList = mallItemVideoService.list(videoWrapper);
+//                        contentReviewRep.setVideo(videoList);
+//                    }
                     newlist.add(contentReviewRep);
                 });
             }
@@ -72,11 +72,11 @@ public class ContentReviewServiceImpl implements ContentReviewService {
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }
-        newlist.stream().forEach(i -> {
-            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
-                    .eq(MallItemVideo::getItemNo, i.getOndContent());
-            mallItemVideoService.list();
-        });
+//        newlist.stream().forEach(i -> {
+//            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+//                    .eq(MallItemVideo::getItemNo, i.getOndContent());
+//            mallItemVideoService.list();
+//        });
         page1.setPages(requestParams.getPage());
         page1.setCurrent(requestParams.getPage());
         page1.setRecords(newlist);
@@ -95,13 +95,18 @@ public class ContentReviewServiceImpl implements ContentReviewService {
         List<ExamineParam> examineParams = reviewParams.getExamineParams();
         if (examineParams != null){
             examineParams.stream().forEach(s-> {
-                myMultimap.put(s.getType(),s.getContentId());
+                myMultimap.put(s.getType(),s.getId());
             });
         }
         Map<Integer,Map<Integer,List<Long>>> allMaps = new HashMap<>();
         myMultimap.forEach((mk,mv)->{
             List<Long> ids = (List<Long>) myMultimap.get(mk);
             Map<Integer,List<Long>> maps = new HashMap<>();
+            //List<String> contentIds = new ArrayList<>();
+//            ids.stream().forEach(id->{
+//                String contentId = contentreviewDao.selectById(id);
+//                contentIds.add(contentId);
+//            });
             maps.put(oper,ids);
             allMaps.put(mk,maps);
         });
@@ -120,7 +125,11 @@ public class ContentReviewServiceImpl implements ContentReviewService {
     //通过/屏蔽
     @Override
     public ReturnResponse examine(ReviewParam reviewParam) {
+        if (reviewParam == null){
+            return null;
+        }
         AbstractHandler handler = HandlerContext.getHandler(reviewParam.getType());
+
         ReturnResponse returnResponse = handler.examine(reviewParam);
         return returnResponse;
     }
