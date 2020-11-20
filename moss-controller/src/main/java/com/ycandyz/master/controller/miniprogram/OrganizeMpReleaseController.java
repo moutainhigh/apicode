@@ -46,11 +46,11 @@ import com.ycandyz.master.controller.base.BaseController;
 @Api(tags="小程序配置-企业小程序发布记录")
 public class OrganizeMpReleaseController extends BaseController<OrganizeMpReleaseServiceImpl,OrganizeMpRelease,OrganizeMpReleaseQuery> {
 	
-	@ApiOperation(value="新增发布记录", tags = "企业小程序DIY配置")
-    @PostMapping
-	public CommonResult<OrganizeMpRelease> insert(@Validated(ValidatorContract.OnCreate.class) OrganizeMpReleaseVO entity) {
-        return result(service.save(entity),entity,"保存失败!");
-	}
+//	@ApiOperation(value="新增发布记录", tags = "企业小程序DIY配置")
+//    @PostMapping
+//	public CommonResult<OrganizeMpRelease> insert(@Validated(ValidatorContract.OnCreate.class) OrganizeMpReleaseVO entity) {
+//        return result(service.save(entity),entity,"保存失败!");
+//	}
 	
 
     @ApiOperation(value = "查询全部发布记录", tags = "企业小程序DIY配置")
