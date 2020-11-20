@@ -42,7 +42,7 @@ public class FootprintHandler extends AbstractHandler {
     @Transactional
     public ReturnResponse examine(ReviewParam reviewParam) {
         if (reviewParam == null ){
-            return ReturnResponse.success("商友圈更新数据为null");
+            return ReturnResponse.failed("数据不存在!");
         }
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, reviewParam.getOper()).getDesc();
         Long id = reviewParam.getId();
@@ -50,7 +50,7 @@ public class FootprintHandler extends AbstractHandler {
         FootprintQuery footprintQuery = footprintDao.selById(Long.valueOf(contentId));
         if (footprintQuery ==null){
             String str=String.format("审核id为%d对应的商友圈id为%s的数据不存在",id,contentId, desc);
-            return  ReturnResponse.success(str);
+            return  ReturnResponse.failed(str);
         }
         int i = footprintDao.updateOneFootprint(Long.valueOf(contentId),reviewParam.getOper());
         if (i > 0) {
@@ -58,11 +58,11 @@ public class FootprintHandler extends AbstractHandler {
             log.info("商友圈id为{}的数据审批{}成功",contentId,desc);
             String str=String.format("商友圈id为%s的数据审批%s成功",contentId, desc);
             insertAllcontentReviewLog(contentId,0, reviewParam.getOper(),2);
-            return ReturnResponse.success(str);
+            return ReturnResponse.failed(str);
         }
         log.info("商友圈id为{}的数据审批{}失败",contentId,desc);
         String str=String.format("商友圈id为%s的数据审批%s失败",contentId, desc);
-        return ReturnResponse.success(str);
+        return ReturnResponse.failed(str);
     }
 
     @Override

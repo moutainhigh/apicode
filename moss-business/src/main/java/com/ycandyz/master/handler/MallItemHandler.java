@@ -10,6 +10,7 @@ import com.ycandyz.master.entities.mall.goodsManage.MallItem;
 import com.ycandyz.master.enums.ReviewEnum;
 import com.ycandyz.master.enums.TabooOperateEnum;
 import com.ycandyz.master.utils.EnumUtil;
+import com.ycandyz.master.utils.MyCollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -85,7 +86,7 @@ public class MallItemHandler extends AbstractHandler {
                     int length = banners.length + 1;
                     itemImgUrls = new String[length];
                     for (int i = 0; i < length - 1; i++) {
-                        itemImgUrls[i] = banners[i];
+                        itemImgUrls[i] = banners[i].replace("\"", "");;
                     }
                     itemImgUrls[length -1 ] = split[3];
                 }

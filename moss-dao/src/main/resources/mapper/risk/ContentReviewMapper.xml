@@ -71,7 +71,7 @@
                 and m.is_screen = #{con.auditResult}
             </if>
             union
-            select group_concat(f.content,fp.photo_url,f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
+            select group_concat(f.content,ifnull(fp.photo_url,""),f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
             c.updated_time,c.auditor,c.audit_time
             from content_review c
             inner join footprint f
@@ -210,7 +210,7 @@
             and m.is_screen = #{con.auditResult}
         </if>
         union
-        select group_concat(f.content,fp.photo_url,f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
+        select group_concat(f.content,ifnull(fp.photo_url,""),f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
         c.updated_time,c.auditor,c.audit_time
         from content_review c
         inner join footprint f
