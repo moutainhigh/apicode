@@ -50,7 +50,7 @@ public class ContentReviewRep {
     private String otitle;
 
     @ApiModelProperty(value = "企业动态封面 cover;企业动态链接 link_url")
-    private String[] oImgUrls;
+    private List<String> oImgUrls;
 
     @ApiModelProperty(value = "企业动态organize_news_detail内容")
     private String ondContent;

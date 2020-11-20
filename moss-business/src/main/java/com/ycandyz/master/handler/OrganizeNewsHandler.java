@@ -11,6 +11,7 @@ import com.ycandyz.master.dto.risk.ContentReviewDTO;
 import com.ycandyz.master.enums.ReviewEnum;
 import com.ycandyz.master.enums.TabooOperateEnum;
 import com.ycandyz.master.utils.EnumUtil;
+import com.ycandyz.master.utils.MyCollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -80,7 +81,7 @@ public class OrganizeNewsHandler extends AbstractHandler {
                 String[] urls = new String[2];
                 urls[0] = split[2];
                 urls[1] = split[3];
-                contentReviewRep.setOImgUrls(urls);
+                contentReviewRep.setOImgUrls(MyCollectionUtils.removeNullString(urls));
                 contentReviewRep.setAuditResult(Integer.valueOf(split[4]));
             }
         }
