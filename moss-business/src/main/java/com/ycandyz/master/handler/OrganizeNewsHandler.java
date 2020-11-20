@@ -82,7 +82,11 @@ public class OrganizeNewsHandler extends AbstractHandler {
                 urls[0] = split[2];
                 urls[1] = split[3];
                 contentReviewRep.setOImgUrls(MyCollectionUtils.removeNullString(urls));
-                contentReviewRep.setAuditResult(Integer.valueOf(split[4]));
+                if (contentReviewDTO.getReviewAuditResult() == 2){
+                    contentReviewRep.setAuditResult(Integer.valueOf(split[4]));
+                }else {
+                    contentReviewRep.setAuditResult(null);
+                }
             }
         }
 

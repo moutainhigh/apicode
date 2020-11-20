@@ -27,7 +27,7 @@ public class ContentReviewRep {
     private String itemShareDescr;
 
     @ApiModelProperty(value = "商品轮播图banners，商品分享图片shareImg")
-    private String[] itemImgUrls;
+    private List<String> itemImgUrls;
 
     //f.f_content,fp.photo_url
 //    @ApiModelProperty(value = "商友圈id")

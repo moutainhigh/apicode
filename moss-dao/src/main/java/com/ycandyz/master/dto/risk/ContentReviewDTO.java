@@ -36,4 +36,7 @@ public class ContentReviewDTO {
     @ApiModelProperty(value = "审核表审核结果")
     private Integer auditResult;
 
+    @ApiModelProperty(value = "内容审核表审核结果[1.待审核 2.已审核]")
+    private Integer reviewAuditResult;
+
 }

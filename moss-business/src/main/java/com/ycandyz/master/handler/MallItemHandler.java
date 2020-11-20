@@ -80,18 +80,19 @@ public class MallItemHandler extends AbstractHandler {
                 contentReviewRep.setItemText(split[5]);
                 contentReviewRep.setItemShareDescr(split[2]);
                 String banner = split[1];
-                String[] banners = banner.split(",",-1);
-                String[] itemImgUrls = null;
-                if ( banners != null){
-                    int length = banners.length + 1;
-                    itemImgUrls = new String[length];
-                    for (int i = 0; i < length - 1; i++) {
-                        itemImgUrls[i] = banners[i].replace("\"", "");;
-                    }
-                    itemImgUrls[length -1 ] = split[3];
-                }
+                List<String> list = MyCollectionUtils.parseIds(banner);
+                List<String> itemImgUrls = new ArrayList<>();
+                list.stream()
+                        .filter(s->StringUtils.isNotBlank(s.replace("\"", "")))
+                        .forEach(s->{
+                    itemImgUrls.add(s.replace("\"", ""));
+                });
                 contentReviewRep.setItemImgUrls(itemImgUrls);
-                contentReviewRep.setAuditResult(Integer.valueOf(split[4]));
+                if (contentReviewDTO.getReviewAuditResult() == 2){
+                    contentReviewRep.setAuditResult(Integer.valueOf(split[4]));
+                }else {
+                    contentReviewRep.setAuditResult(null);
+                }
             }
         }
     }
