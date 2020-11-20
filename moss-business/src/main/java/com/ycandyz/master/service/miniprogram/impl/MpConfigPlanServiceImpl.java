@@ -3,10 +3,12 @@ package com.ycandyz.master.service.miniprogram.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.ycandyz.master.domain.model.miniprogram.ConfigPlanAndMenuModel;
 import com.ycandyz.master.domain.model.miniprogram.MenuWithinPlan;
+import com.ycandyz.master.entities.miniprogram.MpConfigMenu;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlan;
 import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanQuery;
 import com.ycandyz.master.dao.miniprogram.MpConfigPlanDao;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
+import com.ycandyz.master.service.miniprogram.IMpConfigMenuService;
 import com.ycandyz.master.service.miniprogram.IMpConfigPlanMenuService;
 import com.ycandyz.master.service.miniprogram.IMpConfigPlanService;
 import com.ycandyz.master.controller.base.BaseService;
@@ -33,6 +35,8 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
 
     @Resource
     private IMpConfigPlanMenuService mpConfigPlanMenuService;
+    @Resource
+    private IMpConfigMenuService configMenuService;
 
     @Override
     public MpConfigPlan add(ConfigPlanAndMenuModel model) {
@@ -62,8 +66,22 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
     public Boolean initPlan(String planName) {
         MpConfigPlan mpConfigPlan = new MpConfigPlan();
         mpConfigPlan.setPlanName(planName);
-        return this.save(mpConfigPlan);
+        this.save(mpConfigPlan);
+        //查询默认菜单
+        List<MpConfigMenu> baseMenus = configMenuService.list();
+        List<MpConfigPlanMenu> configPlanMenuList = new ArrayList<MpConfigPlanMenu>();
+        int sortMenu = 0;
+        for(MpConfigMenu mpConfigMenu: baseMenus){
+            mpConfigMenu.setCreateTime(null);
+            mpConfigMenu.setUpdateTime(null);
+            MpConfigPlanMenu mpConfigPlanMenu = new MpConfigPlanMenu();
+            mpConfigPlanMenu.setPlanId(mpConfigPlan.getId());
+            mpConfigPlanMenu.setSortNum(sortMenu);
+            BeanUtil.copyProperties(mpConfigMenu,mpConfigPlanMenu);
+            configPlanMenuList.add(mpConfigPlanMenu);
+            sortMenu ++;
+        }
+        return mpConfigPlanMenuService.saveBatch(configPlanMenuList);
     }
-
 
 }

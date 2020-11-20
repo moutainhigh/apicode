@@ -25,14 +25,6 @@ import java.util.List;
 @TableName("mp_config_plan_page")
 public class MpConfigPlanPageResp implements Serializable {
 
-    @ApiModelProperty(value = "编号")
-    private Integer id;
-
-    @ApiModelProperty(value = "菜单编号")
-    private Integer menuId;
-
-    @ApiModelProperty(value = "菜单名称")
-    private String menuName;
 
     @ApiModelProperty(value = "模块编号")
     private Integer moduleId;

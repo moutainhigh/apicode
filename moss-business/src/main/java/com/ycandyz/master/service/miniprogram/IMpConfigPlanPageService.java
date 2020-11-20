@@ -3,6 +3,7 @@ package com.ycandyz.master.service.miniprogram;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanPageModel;
 import com.ycandyz.master.domain.model.miniprogram.PlanModuleModel;
+import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanMenuResp;
 import com.ycandyz.master.domain.response.miniprogram.MpConfigPlanPageResp;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanPage;
 
@@ -39,4 +40,21 @@ public interface IMpConfigPlanPageService extends IService<MpConfigPlanPage>{
      * @return
      */
     Boolean addBatch(PlanModuleModel model);
+
+
+    /**
+     * 获取菜单下页面模块
+     * @param menuId
+     * @return
+     */
+    MpConfigPlanMenuResp getModuleByMenuId(Integer menuId);
+
+
+    /**
+     * 删除页面下模块
+     * @param moduleId
+     * @param moduleSort
+     * @return
+     */
+    Boolean removePageModule(Integer moduleId, Integer menuId, Integer moduleSort);
 }

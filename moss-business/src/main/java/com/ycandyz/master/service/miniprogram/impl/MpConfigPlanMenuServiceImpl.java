@@ -1,6 +1,7 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.ycandyz.master.domain.model.miniprogram.MenuWithinPlan;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanMenuModel;
 import com.ycandyz.master.domain.model.miniprogram.PlanMenuModel;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
@@ -11,6 +12,9 @@ import com.ycandyz.master.controller.base.BaseService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -47,8 +51,21 @@ public class MpConfigPlanMenuServiceImpl extends BaseService<MpConfigPlanMenuDao
 
     @Override
     public Boolean addBatch(PlanMenuModel model) {
-        return null;
+
+        List<MenuWithinPlan> menus = model.getMenus();
+        List<MpConfigPlanMenu> planMenuList = new ArrayList<MpConfigPlanMenu>();
+        for(MenuWithinPlan menu: menus){
+            MpConfigPlanMenu planMenu = new MpConfigPlanMenu();
+            planMenu.setPlanId(model.getPlanId());
+            BeanUtil.copyProperties(menu,planMenu);
+            planMenuList.add(planMenu);
+        }
+        return this.saveOrUpdateBatch(planMenuList);
     }
 
+    @Override
+    public List<MpConfigPlanMenu> getMenusByPlanId(MpConfigPlanMenuQuery query) {
+        return this.baseMapper.getMenusByPlanId(query.getPlanId(),query.getLogicDelete());
+    }
 
 }

@@ -44,23 +44,23 @@ import com.ycandyz.master.controller.base.BaseController;
 public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageServiceImpl,MpConfigPlanPage,MpConfigPlanPageQuery> {
 
 
-    @ApiOperation(value="配置绑定菜单模块", tags = "企业小程序DIY配置")
+    @ApiOperation(value="✓配置绑定菜单模块", tags = "企业小程序DIY配置")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResult<Boolean> createBatch(@Validated(ValidatorContract.OnCreate.class) @RequestBody PlanModuleModel entity) {
-        return result(service.addBatch(entity),true,"批量保存失败!");
+        return CommonResult.success(service.addBatch(entity));
     }
 	
-	@ApiOperation(value = "编辑绑定菜单模块", tags = "企业小程序DIY配置")
+	@ApiOperation(value = "编辑绑定菜单模块")
     @PutMapping(value = "{id}")
 	public CommonResult<MpConfigPlanPage> updateById(@PathVariable Integer id,@Validated(ValidatorContract.OnUpdate.class) MpConfigPlanPage entity) {
         entity.setId(id);
         return result(service.updateById(entity),entity,"更改失败!");
 	}
 
-    @ApiOperation(value = "查询菜单下模块信息", tags = "企业小程序DIY配置")
+    @ApiOperation(value = "✓查询菜单下模块信息", tags = "企业小程序DIY配置")
     @GetMapping
     public CommonResult<MpConfigPlanMenuResp> getMenuById(@RequestParam Integer menuId) {
-        return CommonResult.success(null);
+        return CommonResult.success(service.getModuleByMenuId(menuId));
     }
 	
 	@ApiOperation(value = "✓查询模块下元素信息", tags = "企业小程序DIY配置")
@@ -75,10 +75,10 @@ public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageS
         return CommonResult.success(new BaseResult<List<MpConfigPlanPage>>(service.list(query)));
     }
     
-    @ApiOperation(value = "删除页面模块", tags = "企业小程序DIY配置")
+    @ApiOperation(value = "✓删除页面模块", tags = "企业小程序DIY配置")
     @DeleteMapping(value = "{moduleId}")
-	public CommonResult deleteById(@PathVariable Long moduleId) {
-        return result(service.removeById(moduleId),null,"删除失败!");
+	public CommonResult deleteById(@PathVariable Integer moduleId,@RequestParam Integer menuId,@RequestParam Integer sortId) {
+        return result(service.removePageModule(moduleId,menuId,sortId),null,"删除失败!");
 	}
 
     
