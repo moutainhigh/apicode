@@ -6,10 +6,13 @@ import com.ycandyz.master.dao.mall.goodsManage.MallItemDao;
 import com.ycandyz.master.domain.query.risk.ReviewParam;
 import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
+import com.ycandyz.master.entities.mall.goodsManage.MallItem;
 import com.ycandyz.master.enums.ReviewEnum;
 import com.ycandyz.master.enums.TabooOperateEnum;
 import com.ycandyz.master.utils.EnumUtil;
+import com.ycandyz.master.utils.MyCollectionUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,17 +39,23 @@ public class MallItemHandler extends AbstractHandler {
             return ReturnResponse.success("商品详情更新数据为null");
         }
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, reviewParam.getOper()).getDesc();
-        Long id = reviewParam.getContentId();
-        int i = mallItemDao.updateOneMallItem(String.valueOf(reviewParam.getContentId()),reviewParam.getOper());
+        Long id = reviewParam.getId();
+        String contentId = contentreviewDao.selectById(reviewParam.getId());
+        MallItem mallItem = mallItemDao.selByitemNo(contentId);
+        if (mallItem ==null){
+            String str=String.format("审核id为%d对应的商品详情id为%s数据不存在",id,contentId, desc);
+            return  ReturnResponse.success(str);
+        }
+        int i = mallItemDao.updateOneMallItem(contentId,reviewParam.getOper());
         if (i > 0) {
-            updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
-            log.info("商品详情id为{}的数据审批{}成功",id,desc);
-            String str=String.format("商品详情id为%d的数据审批%s成功",id, desc);
-            insertAllcontentReviewLog(id,1, reviewParam.getOper(),2);
+            updateOrInsert(id,contentId, reviewParam.getType());
+            log.info("商品详情id为{}的数据审批{}成功",contentId,desc);
+            String str=String.format("商品详情id为%s的数据审批%s成功",contentId, desc);
+            insertAllcontentReviewLog(contentId,1, reviewParam.getOper(),2);
             return ReturnResponse.success(str);
         }
-        log.info("商品详情id为{}的数据审批{}成功",id,desc);
-        String str=String.format("商品详情id为%d的数据审批%s成功",id, desc);
+        log.info("商品详情id为{}的数据审批{}失败",contentId,desc);
+        String str=String.format("商品详情id为%s的数据审批%s失败",contentId, desc);
         return ReturnResponse.success(str);
     }
 
@@ -64,7 +73,7 @@ public class MallItemHandler extends AbstractHandler {
         if (contentReviewDTO != null && contentReviewDTO.getContent() != null){
             String content = String.valueOf(contentReviewDTO.getContent());
             BeanUtils.copyProperties(contentReviewDTO,contentReviewRep);
-            contentReviewRep.setId(contentReviewDTO.getContentId());
+            contentReviewRep.setId(contentReviewDTO.getId());
             if (content != null){
                 String[] split = content.split("︵",-1);
                 contentReviewRep.setItemName(split[0]);
@@ -77,7 +86,7 @@ public class MallItemHandler extends AbstractHandler {
                     int length = banners.length + 1;
                     itemImgUrls = new String[length];
                     for (int i = 0; i < length - 1; i++) {
-                        itemImgUrls[i] = banners[i];
+                        itemImgUrls[i] = banners[i].replace("\"", "");;
                     }
                     itemImgUrls[length -1 ] = split[3];
                 }
@@ -102,22 +111,33 @@ public class MallItemHandler extends AbstractHandler {
         }
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, oper).getDesc();
         AtomicInteger i = new AtomicInteger();
-        maps.forEach((k,v)->{
-            List<String> stringList = new ArrayList<>();
-            v.stream().forEach(s->stringList.add(String.valueOf(s)));
-            int i1 = mallItemDao.handleExamine(k,stringList);
+        for(Map.Entry<Integer, List<Long>> entry : maps.entrySet()){
+            List<String> ids = new ArrayList<>();
+            for (Long id: entry.getValue()) {
+                String contentId = contentreviewDao.selectById(id);
+                MallItem mallItem = mallItemDao.selByitemNo(contentId);
+                if (mallItem ==null){
+                    String str=String.format("审核id为%d对应的商品详情id为%s的数据不存在",id,contentId, desc);
+                    return  ReturnResponse.success(str);
+                }
+                ids.add(contentId);
+            }
+            int i1 = mallItemDao.handleExamine(entry.getKey(),ids);
             i.set(i1);
-        });
+        }
         if (i.get() == list.size()){
             String str=String.format("商品详情批量%s成功", desc);
             int finalOper = oper;
             maps.forEach((k,v)->{
-                v.stream().forEach(id -> updateOrInsert(id, 1));
-                v.stream().forEach(id2-> insertAllcontentReviewLog(id2,1, finalOper,2));
+                v.stream().forEach(id->{
+                    String contentId = contentreviewDao.selectById(id);
+                    updateOrInsert(id, contentId,1);
+                    insertAllcontentReviewLog(contentId,0, finalOper,2);
+                });
             });
             return ReturnResponse.success(str);
         }
-        String str=String.format("商品详情批量%s成功", desc);
+        String str=String.format("商品详情批量%s失败", desc);
         return ReturnResponse.success(str);
     }
 

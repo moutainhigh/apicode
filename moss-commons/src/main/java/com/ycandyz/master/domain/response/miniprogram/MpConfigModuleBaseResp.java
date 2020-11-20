@@ -24,8 +24,11 @@ import java.io.Serializable;
 @TableName("mp_config_module_base")
 public class MpConfigModuleBaseResp implements Serializable {
 
-    @ApiModelProperty(value = "元素标识")
+    @ApiModelProperty(value = "编号")
     private Integer id;
+
+    @ApiModelProperty(value = "元素编号")
+    private Integer moduleBaseId;
 
     @ApiModelProperty(value = "元素标识")
     private String baseCode;

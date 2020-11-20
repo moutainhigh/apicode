@@ -3,6 +3,8 @@ package com.ycandyz.master.handler;
 import com.ycandyz.master.abstracts.AbstractHandler;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dao.organize.OrganizeNewsDao;
+import com.ycandyz.master.domain.query.footprint.FootprintQuery;
+import com.ycandyz.master.domain.query.organize.OrganizeNewsQuery;
 import com.ycandyz.master.domain.query.risk.ReviewParam;
 import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
@@ -10,11 +12,13 @@ import com.ycandyz.master.enums.ReviewEnum;
 import com.ycandyz.master.enums.TabooOperateEnum;
 import com.ycandyz.master.utils.EnumUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,17 +37,23 @@ public class OrganizeNewsHandler extends AbstractHandler {
             return ReturnResponse.success("企业动态更新数据为null");
         }
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, reviewParam.getOper()).getDesc();
-        Long id = reviewParam.getContentId();
-        int i = organizeNewsDao.updateOneOrganizeNews(reviewParam.getContentId(),reviewParam.getOper());
+        Long id = reviewParam.getId();
+        String contentId = contentreviewDao.selectById(id);
+        OrganizeNewsQuery organizeNewsQuery = organizeNewsDao.selById(Long.valueOf(contentId));
+        if (organizeNewsQuery ==null){
+            String str=String.format("审核id为%d对应的企业动态id为%s的数据不存在",id,contentId, desc);
+            return  ReturnResponse.success(str);
+        }
+        int i = organizeNewsDao.updateOneOrganizeNews(Long.valueOf(contentId),reviewParam.getOper());
         if (i > 0) {
-            updateOrInsert(reviewParam.getContentId(), reviewParam.getType());
-            log.info("企业动态id为{}的数据审批{}成功",id,desc);
-            String str=String.format("企业动态id为%d的数据审批%s成功",id, desc);
-            insertAllcontentReviewLog(id,2, reviewParam.getOper(),2);
+            updateOrInsert(id,contentId, reviewParam.getType());
+            log.info("企业动态id为{}的数据审批{}成功",contentId,desc);
+            String str=String.format("企业动态id为%s的数据审批%s成功",contentId, desc);
+            insertAllcontentReviewLog(contentId,2, reviewParam.getOper(),2);
             return ReturnResponse.success(str);
         }
-        log.info("企业动态id为{}的数据审批{}成功",id,desc);
-        String str=String.format("企业动态id为%d的数据审批%s成功",id, desc);
+        log.info("企业动态id为{}的数据审批{}失败",contentId,desc);
+        String str=String.format("企业动态id为%s的数据审批%s失败",contentId, desc);
         return ReturnResponse.success(str);
     }
 
@@ -60,7 +70,7 @@ public class OrganizeNewsHandler extends AbstractHandler {
 //        private String ondContent;
         if (contentReviewDTO != null && contentReviewDTO.getContent() != null){
             BeanUtils.copyProperties(contentReviewDTO,contentReviewRep);
-            contentReviewRep.setId(contentReviewDTO.getContentId());
+            contentReviewRep.setId(contentReviewDTO.getId());
             String content = String.valueOf(contentReviewDTO.getContent());
             if (content != null){
                 String[] split = content.split("︵",-1);
@@ -92,20 +102,33 @@ public class OrganizeNewsHandler extends AbstractHandler {
         }
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, oper).getDesc();
         AtomicInteger i = new AtomicInteger();
-        maps.forEach((k,v)->{
-            int i1 = organizeNewsDao.handleExamine(k, v);
+        for(Map.Entry<Integer, List<Long>> entry : maps.entrySet()){
+            List<Long> ids = new ArrayList<>();
+            for (Long id: entry.getValue()) {
+                String contentId = contentreviewDao.selectById(id);
+                OrganizeNewsQuery organizeNewsQuery = organizeNewsDao.selById(Long.valueOf(contentId));
+                if (organizeNewsQuery ==null){
+                    String str=String.format("审核id为%d对应的企业动态id为%s的数据不存在",id,contentId, desc);
+                    return  ReturnResponse.success(str);
+                }
+                ids.add(Long.valueOf(contentId));
+            }
+            int i1 = organizeNewsDao.handleExamine(entry.getKey(),ids);
             i.set(i1);
-        });
+        }
         if (i.get() == list.size()){
             String str=String.format("企业动态批量%s成功", desc);
             int finalOper = oper;
             maps.forEach((k,v)->{
-                v.stream().forEach(id -> updateOrInsert(id, 1));
-                v.stream().forEach(id2-> insertAllcontentReviewLog(id2,2, finalOper,2));
+                v.stream().forEach(id->{
+                    String contentId = contentreviewDao.selectById(id);
+                    updateOrInsert(id, contentId,1);
+                    insertAllcontentReviewLog(contentId,0, finalOper,2);
+                });
             });
             return ReturnResponse.success(str);
         }
-        String str=String.format("企业动态批量%s成功", desc);
+        String str=String.format("企业动态批量%s失败", desc);
         return ReturnResponse.success(str);
     }
 

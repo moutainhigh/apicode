@@ -22,4 +22,5 @@ public interface OrganizeNewsDao extends BaseMapper<OrganizeNews> {
     int updateOneOrganizeNews(@Param("contentId") Long contentId ,@Param("oper") Integer oper);
 
     int handleExamine(@Param("oper") Integer oper, @Param("ids") List<Long> ids);
+    OrganizeNewsQuery selById(Long id);
 }

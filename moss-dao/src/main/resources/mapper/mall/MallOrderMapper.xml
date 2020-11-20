@@ -836,4 +836,126 @@
         LEFT JOIN mall_after_sales sales ON IF(a.order_type=2, sales.order_detail_no = modetail.order_detail_no , sales.order_no = a.order_no )
         ORDER BY a.order_at DESC
     </select>
+
+    <select id="getTrendMallOrderByUAppPageSize" parameterType="com.ycandyz.master.domain.query.mall.MallOrderUAppQuery" resultType="java.lang.Integer">
+        select count(1) from (SELECT
+        mo.id
+        FROM
+        mall_order mo
+        LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
+        LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
+        LEFT JOIN user	u ON mo.user_id = u.id
+        LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
+        LEFT JOIN mall_social_share_flow s ON IF(mo.order_type=2, s.order_detail_no = modetail.order_detail_no , s.order_no = mo.order_no )
+        AND s.share_type = 0
+        LEFT JOIN user AS uu ON uu.id = s.user_id
+        WHERE
+        mo.shop_no=#{p.shopNo}
+        and mo.is_del=0
+        <if test="p.mallOrderQuery != null and p.mallOrderQuery != ''">
+            and
+            (mo.order_no  like concat('%',#{p.mallOrderQuery},'%') or mo.cart_order_sn like concat('%',#{p.mallOrderQuery},'%') or u.`name` like concat('%',#{p.mallOrderQuery},'%') OR u.phone like concat('%',#{p.mallOrderQuery},'%') or ship.receiver like concat('%',#{p.mallOrderQuery},'%') OR ship.receiver_phone like concat('%',#{p.mallOrderQuery},'%') or mo.pre_phone=#{p.mallOrderQuery})	/**子订单编号或母订单编号*/
+        </if>
+        <if test="p.status != null">
+            and mo.status=#{p.status}
+        </if>
+        /**group by mo.id*/
+        /*order by mo.order_at DESC*/
+        GROUP BY mo.order_no) total
+    </select>
+
+    <select id="getTrendMallOrderByPageUApp" parameterType="com.ycandyz.master.domain.query.mall.MallOrderUAppQuery" resultMap="BaseOrderListResultMap">
+        SELECT
+        a.id,
+        cart.order_sn,
+        a.order_no,
+        a.real_money,
+        a.total_money,
+        a.payed_at,
+        a.order_at,
+        a.pay_type,
+        a.`status`,
+        a.`deliver_type`,
+        a.`deliver_method`,
+        a.`after_sales_end_at`,
+        a.shippingMoney,
+        a.shop_no,
+        a.total_money-a.real_money as discountMoney,
+        concat( u.`name`, ' ', u.phone ) AS payuser,
+        concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
+        ship.receiver_address AS receiverAddress,
+        a.receive_at,
+        a.order_type,
+        a.all_money,
+        modetail.item_no,
+        modetail.item_name,
+        modetail.goods_no,
+        modetail.sku_no,
+        modetail.quantity AS skuQuantity,
+        modetail.item_cover,
+        modetail.is_enable_share,
+        modetail.share_user_id,
+        uu.`name` AS sellerUserName,
+        uu.phone AS sellerUserPhone,
+        s.amount AS shareAmount,
+        sales.`status` AS after_sales_status,
+        sales.sub_status AS after_sales_sub_status
+        FROM
+        (
+        SELECT
+        mo.id,
+        mo.cart_order_id,
+        mo.cart_order_sn,
+        cart.order_sn,
+        mo.order_no,
+        mo.user_id,
+        mo.real_money,
+        mo.total_money,
+        mo.payed_at,
+        mo.order_at,
+        mo.pay_type,
+        mo.`status`,
+        mo.`deliver_type`,
+        mo.`deliver_method`,
+        mo.`after_sales_end_at`,
+        mo.all_money - mo.real_money AS shippingMoney,
+        mo.receive_at,
+        mo.order_type,
+        mo.all_money,
+        mo.shop_no
+        FROM
+        mall_order mo
+        LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
+        LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
+        LEFT JOIN user	u ON mo.user_id = u.id
+        LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
+        LEFT JOIN mall_social_share_flow s ON IF(mo.order_type=2, s.order_detail_no = modetail.order_detail_no , s.order_no = mo.order_no )
+        AND s.share_type = 0
+        LEFT JOIN user AS uu ON uu.id = s.user_id
+        WHERE
+        mo.shop_no in
+        mo.shop_no=#{p.shopNo}
+        and mo.is_del=0
+        <if test="p.mallOrderQuery != null and p.mallOrderQuery != ''">
+            and
+            (mo.order_no  like concat('%',#{p.mallOrderQuery},'%') or mo.cart_order_sn like concat('%',#{p.mallOrderQuery},'%') or u.`name` like concat('%',#{p.mallOrderQuery},'%') OR u.phone like concat('%',#{p.mallOrderQuery},'%') or ship.receiver like concat('%',#{p.mallOrderQuery},'%') OR ship.receiver_phone like concat('%',#{p.mallOrderQuery},'%') or mo.pre_phone=#{p.mallOrderQuery})	/**子订单编号或母订单编号*/
+        </if>
+        <if test="p.status != null">
+            and mo.status=#{p.status}
+        </if>
+        /**group by mo.id*/
+        /*order by mo.order_at DESC*/
+        GROUP BY mo.order_no
+        ORDER BY mo.order_at DESC
+        LIMIT #{page},#{size}) a
+        LEFT JOIN mall_cart_order cart ON cart.id = a.cart_order_id
+        LEFT JOIN mall_order_detail modetail ON a.order_no = modetail.order_no
+        LEFT JOIN user u ON a.user_id = u.id
+        LEFT JOIN mall_shop_shipping ship ON ship.order_no = a.order_no
+        LEFT JOIN mall_social_share_flow s ON IF(a.order_type=2, s.order_detail_no = modetail.order_detail_no , s.order_no = a.order_no )
+        AND s.share_type = 0
+        LEFT JOIN user AS uu ON uu.id = s.user_id
+        LEFT JOIN mall_after_sales sales ON IF(a.order_type=2, sales.order_detail_no = modetail.order_detail_no , sales.order_no = a.order_no )
+        ORDER BY a.order_at DESC
+    </select>
 </mapper>

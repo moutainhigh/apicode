@@ -43,50 +43,5 @@ import com.ycandyz.master.controller.base.BaseController;
 @RequestMapping("coupon-ticket-info-item")
 @Api(tags="coupon-优惠券详情关联商品表")
 public class CouponTicketInfoItemController extends BaseController<CouponTicketInfoItemServiceImpl,CouponTicketInfoItem,CouponTicketInfoItemQuery> {
-	
-	@ApiOperation(value="新增")
-    @PostMapping
-	public CommonResult<CouponTicketInfoItem> insert(@Validated(ValidatorContract.OnCreate.class) CouponTicketInfoItem entity) {
-        return result(service.save(entity),entity,"保存失败!");
-	}
-	
-	@ApiOperation(value = "通过ID更新")
-    @PutMapping(value = "{id}")
-	public CommonResult<CouponTicketInfoItem> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) CouponTicketInfoItem entity) {
-        entity.setId(id);
-        return result(service.updateById(entity),entity,"更改失败!");
-	}
-	
-	@ApiOperation(value = "查询根据ID")
-    @GetMapping(value = "{id}")
-	public CommonResult<CouponTicketInfoItem> getById(@PathVariable Long id) {
-        return CommonResult.success(service.getById(id));
-    }
-    
-	@ApiOperation(value = "查询分页")
-    @GetMapping(value = "page")
-    @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponTicketInfoItem>> selectPage(PageModel page, CouponTicketInfoItemQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
-    }
-    
-    @ApiOperation(value = "查询全部")
-    @GetMapping(value = "list")
-    public CommonResult<BaseResult<List<CouponTicketInfoItem>>> selectList(CouponTicketInfoItemQuery query) {
-        return CommonResult.success(new BaseResult<List<CouponTicketInfoItem>>(service.list(query)));
-    }
-    
-    @ApiOperation(value = "通过ID删除")
-    @DeleteMapping(value = "{id}")
-	public CommonResult deleteById(@PathVariable Long id) {
-        return result(service.removeById(id),null,"删除失败!");
-	}
-
-    @ApiImplicitParam(name="ids",value="ID集合(1,2,3)",required=true,allowMultiple=true,dataType="int")
-   	@ApiOperation(value = "通过ids批量删除")
-    @DeleteMapping(value = "delete")
-	public CommonResult deleteBatch(String ids) {
-        return result(service.deleteByIds(Convert.toLongArray(ids)),null,"删除失败!");
-	}
     
 }

@@ -22,5 +22,5 @@ public class ModuleWithinMenu implements Serializable {
     private Integer sortModule;
 
     @ApiModelProperty(value = "模块下元素")
-    private List<ElementWithinModule> elements;
+    private List<ElementWithinModule> baseInfo;
 }

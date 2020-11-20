@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class ContentReviewRep {
 
-    @ApiModelProperty(value = "商品详情itemNo;商友圈id;企业动态id")
+    @ApiModelProperty(value = "content_review主键id")
     private Long id;
 
 //    @ApiModelProperty(value = "商品详情id")
@@ -68,6 +68,9 @@ public class ContentReviewRep {
 
     @ApiModelProperty(value = "审核人")
     private Long auditor;
+
+    @ApiModelProperty(value = "审核人姓名")
+    private String auditorName;
 
     @ApiModelProperty(value = "审核时间")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")

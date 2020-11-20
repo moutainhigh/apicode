@@ -4,6 +4,7 @@
 
 
     <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        <result column="id" property="id" />
         <result column="type" property="type" />
         <result column="created_time" property="createdTime" />
         <result column="updated_time" property="updateTime" />
@@ -18,23 +19,29 @@
         values(#{id},#{contentId},#{type},now(),now(),#{auditResult});
     </insert>
     <update id="updateAuditResult">
-        update content_review set auditor = #{auditor} ,audit_result = 2,audit_time = now(),audit_nums = audit_nums + 1 where content_id = #{contentId} and `type` = #{type};
+        update content_review set auditor = #{auditor} ,audit_result = 2,audit_time = now() where content_id = #{contentId} and `type` = #{type};
+    </update>
+
+    <update id="updateAudit">
+        update content_review set auditor = #{auditor} ,audit_result = 2,audit_time = now() where id = #{id};
     </update>
 
         <select id="list" resultMap="BaseResultMap" parameterType="com.ycandyz.master.domain.query.risk.ContentReviewQuery">
 
             select * from (
             select concat_ws("︵",m.item_name,m.banners,m.share_descr,m.share_img,m.is_screen,m.item_text) as content,
-            c.content_id,c.type ,c.created_time,
+            c.id,c.type ,c.created_time,
             c.updated_time,c.auditor,c.audit_time
             from content_review c
             inner join mall_item m
             on m.item_no = c.content_id
             where
-            c.type = 0
-            and <![CDATA[ c.audit_nums <= 1]]>
-            and <![CDATA[ m.status <> 50]]>
-            <if test="con != null and con.auditor != null and con.auditor != ''">
+            <![CDATA[ m.status <> 50]]>
+            and c.type = 0
+            <if test="con != null and con.type != null">
+                and c.type = #{con.type}
+            </if>
+            <if test="con != null and con.auditor != null">
                 and c.auditor = #{con.auditor}
             </if>
             <if test="con != null and con.updateTimeStart != null">
@@ -64,7 +71,7 @@
                 and m.is_screen = #{con.auditResult}
             </if>
             union
-            select group_concat(f.content,fp.photo_url,f.is_screen SEPARATOR ';') as content,c.content_id,c.type,c.created_time,
+            select group_concat(f.content,ifnull(fp.photo_url,""),f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
             c.updated_time,c.auditor,c.audit_time
             from content_review c
             inner join footprint f
@@ -72,9 +79,12 @@
             left join footprint_photo fp
             on fp.footprint_id = c.content_id
             where
-            c.type = 1 and is_del = 0
-            and <![CDATA[ c.audit_nums <= 1]]>
-            <if test="con != null and con.auditor != null and con.auditor != ''">
+            is_del = 0
+            and c.type = 1
+            <if test="con != null and con.type != null">
+                and c.type = #{con.type}
+            </if>
+            <if test="con != null and con.auditor != null">
                 and c.auditor = #{con.auditor}
             </if>
             <if test="con != null and con.updateTimeStart != null">
@@ -105,7 +115,7 @@
             </if>
             group by c.content_id
             union
-            select concat_ws("︵",ifnull(o.abstract,""),ifnull(o.title,""),ifnull(o.cover,""),ifnull(o.link_url,""),ifnull(o.is_screen,""),ifnull(ond.content,"")) as content,c.content_id,c.type,c.created_time,
+            select concat_ws("︵",ifnull(o.abstract,""),ifnull(o.title,""),ifnull(o.cover,""),ifnull(o.link_url,""),ifnull(o.is_screen,""),ifnull(ond.content,"")) as content,c.id,c.type,c.created_time,
             c.updated_time,c.auditor,c.audit_time
             from content_review c
             inner join organize_news o
@@ -113,9 +123,12 @@
             left join organize_news_detail ond
             on ond.organize_news_id = c.content_id
             where
-            c.type = 2 and is_del = 0
-            and <![CDATA[ c.audit_nums <= 1]]>
-            <if test="con != null and con.auditor != null and con.auditor != ''">
+            is_del = 0
+            and c.type = 2
+            <if test="con != null and con.type != null">
+                and c.type = #{con.type}
+            </if>
+            <if test="con != null and con.auditor != null">
                 and c.auditor = #{con.auditor}
             </if>
             <if test="con != null and con.updateTimeStart != null">
@@ -156,16 +169,18 @@
     <select id="getReviewCount" resultType="java.lang.Integer">
     select count(1) from (
         select concat_ws("︵",m.item_name,m.banners,m.share_descr,m.share_img,m.is_screen,m.item_text) as content,
-        c.content_id,c.type ,c.created_time,
+        c.id,c.type ,c.created_time,
         c.updated_time,c.auditor,c.audit_time
         from content_review c
         inner join mall_item m
         on m.item_no = c.content_id
         where
-        c.type = 0
-        and <![CDATA[ c.audit_nums <= 1]]>
-        and <![CDATA[ m.status <> 50]]>
-        <if test="con != null and con.auditor != null and con.auditor != ''">
+        <![CDATA[ m.status <> 50]]>
+        and c.type = 0
+        <if test="con != null and con.type != null">
+            and c.type = #{con.type}
+        </if>
+        <if test="con != null and con.auditor != null">
             and c.auditor = #{con.auditor}
         </if>
         <if test="con != null and con.updateTimeStart != null">
@@ -175,7 +190,7 @@
         </if>
         <if test="con != null and con.updateTimeEnd != null">
             <![CDATA[
-                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
         <if test="con != null and con.auditTimeStart != null">
@@ -185,7 +200,7 @@
         </if>
         <if test="con != null and con.auditTimeEnd != null">
             <![CDATA[
-                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
         <if test="con != null and con.reviewAuditResult != null">
@@ -195,7 +210,7 @@
             and m.is_screen = #{con.auditResult}
         </if>
         union
-        select group_concat(f.content,fp.photo_url,f.is_screen SEPARATOR ';') as content,c.content_id,c.type,c.created_time,
+        select group_concat(f.content,ifnull(fp.photo_url,""),f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
         c.updated_time,c.auditor,c.audit_time
         from content_review c
         inner join footprint f
@@ -203,9 +218,12 @@
         left join footprint_photo fp
         on fp.footprint_id = c.content_id
         where
-        c.type = 1 and is_del = 0
-        and <![CDATA[ c.audit_nums <= 1]]>
-        <if test="con != null and con.auditor != null and con.auditor != ''">
+        is_del = 0
+        and c.type = 1
+        <if test="con != null and con.type != null">
+            and c.type = #{con.type}
+        </if>
+        <if test="con != null and con.auditor != null">
             and c.auditor = #{con.auditor}
         </if>
         <if test="con != null and con.updateTimeStart != null">
@@ -215,7 +233,7 @@
         </if>
         <if test="con != null and con.updateTimeEnd != null">
             <![CDATA[
-                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
         <if test="con != null and con.auditTimeStart != null">
@@ -225,7 +243,7 @@
         </if>
         <if test="con != null and con.auditTimeEnd != null">
             <![CDATA[
-                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
         <if test="con != null and con.reviewAuditResult != null">
@@ -236,7 +254,7 @@
         </if>
         group by c.content_id
         union
-        select concat_ws("︵",ifnull(o.abstract,""),ifnull(o.title,""),ifnull(o.cover,""),ifnull(o.link_url,""),ifnull(o.is_screen,""),ifnull(ond.content,"")) as content,c.content_id,c.type,c.created_time,
+        select concat_ws("︵",ifnull(o.abstract,""),ifnull(o.title,""),ifnull(o.cover,""),ifnull(o.link_url,""),ifnull(o.is_screen,""),ifnull(ond.content,"")) as content,c.id,c.type,c.created_time,
         c.updated_time,c.auditor,c.audit_time
         from content_review c
         inner join organize_news o
@@ -244,9 +262,12 @@
         left join organize_news_detail ond
         on ond.organize_news_id = c.content_id
         where
-        c.type = 2 and is_del = 0
-        and <![CDATA[ c.audit_nums <= 1]]>
-        <if test="con != null and con.auditor != null and con.auditor != ''">
+        is_del = 0
+        and c.type = 2
+        <if test="con != null and con.type != null">
+            and c.type = #{con.type}
+        </if>
+        <if test="con != null and con.auditor != null">
             and c.auditor = #{con.auditor}
         </if>
         <if test="con != null and con.updateTimeStart != null">
@@ -256,7 +277,7 @@
         </if>
         <if test="con != null and con.updateTimeEnd != null">
             <![CDATA[
-                and c.updated_time <= FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
         <if test="con != null and con.auditTimeStart != null">
@@ -266,7 +287,7 @@
         </if>
         <if test="con != null and con.auditTimeEnd != null">
             <![CDATA[
-                and c.audit_time <= FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>
         </if>
         <if test="con != null and con.reviewAuditResult != null">
@@ -276,6 +297,12 @@
             and o.is_screen = #{con.auditResult}
         </if>
          ) as total
+    </select>
+    <select id="selectById" resultType="java.lang.String">
+        select content_id from content_review where id =#{id};
+    </select>
+    <select id="selectByIdE" resultType="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        select * from content_review where id =#{id};
     </select>
 
 </mapper>

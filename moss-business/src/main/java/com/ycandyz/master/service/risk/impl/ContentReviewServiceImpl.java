@@ -10,6 +10,7 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.api.TabooReturnResponse;
 import com.ycandyz.master.dao.risk.ContentreviewDao;
 import com.ycandyz.master.dao.risk.ContentreviewLogDao;
+import com.ycandyz.master.dao.user.UserDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.enums.ad.AdvertisingEnum;
 import com.ycandyz.master.domain.query.risk.*;
@@ -17,6 +18,7 @@ import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
 import com.ycandyz.master.entities.ad.Advertising;
 import com.ycandyz.master.entities.mall.MallItemVideo;
+import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.handler.HandlerContext;
 import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.mall.impl.MallItemVideoServiceImpl;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -38,6 +41,9 @@ public class ContentReviewServiceImpl implements ContentReviewService {
 
     @Autowired
     private MallItemVideoServiceImpl mallItemVideoService;
+
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public ReturnResponse<Page<ContentReviewRep>> list(RequestParams<ContentReviewQuery> requestParams) {
@@ -52,19 +58,24 @@ public class ContentReviewServiceImpl implements ContentReviewService {
                 //分页
                 List<ContentReviewDTO> list = contentreviewDao.list((requestParams.getPage() - 1) * requestParams.getPage_size(),
                         requestParams.getPage_size(), contentReviewQuery);
-                //List<ContentReviewDTO> list = contentreviewDao.list(contentReviewQuery);
+                List<Long> auditorList = list.stream().map(ContentReviewDTO::getAuditor).collect(Collectors.toList());
+                List<User> userList = userDao.selectBatchIds(auditorList);
+                Map<Long, String> map = userList.stream().collect(Collectors.toMap(User::getId,User::getName));
                 list.stream().forEach(s -> {
                     ContentReviewRep contentReviewRep = new ContentReviewRep();
                     AbstractHandler handler = HandlerContext.getHandler(s.getType());
                     handler.handleContentreview(s,contentReviewRep);
                     //add video
                     if(s.getType() == 0){
+                        String conId = contentreviewDao.selectById(s.getId());
                         LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
                                 .select(MallItemVideo::getId,MallItemVideo::getUrl,MallItemVideo::getImg)
-                                .eq(MallItemVideo::getItemNo, s.getContentId());
+                                .eq(MallItemVideo::getItemNo,conId);
                         List<MallItemVideo> videoList = mallItemVideoService.list(videoWrapper);
                         contentReviewRep.setVideo(videoList);
                     }
+                    //拼接审核人姓名
+                    contentReviewRep.setAuditorName(map.get(s.getAuditor()));
                     newlist.add(contentReviewRep);
                 });
             }
@@ -95,13 +106,18 @@ public class ContentReviewServiceImpl implements ContentReviewService {
         List<ExamineParam> examineParams = reviewParams.getExamineParams();
         if (examineParams != null){
             examineParams.stream().forEach(s-> {
-                myMultimap.put(s.getType(),s.getContentId());
+                myMultimap.put(s.getType(),s.getId());
             });
         }
         Map<Integer,Map<Integer,List<Long>>> allMaps = new HashMap<>();
         myMultimap.forEach((mk,mv)->{
             List<Long> ids = (List<Long>) myMultimap.get(mk);
             Map<Integer,List<Long>> maps = new HashMap<>();
+            //List<String> contentIds = new ArrayList<>();
+//            ids.stream().forEach(id->{
+//                String contentId = contentreviewDao.selectById(id);
+//                contentIds.add(contentId);
+//            });
             maps.put(oper,ids);
             allMaps.put(mk,maps);
         });
@@ -120,6 +136,9 @@ public class ContentReviewServiceImpl implements ContentReviewService {
     //通过/屏蔽
     @Override
     public ReturnResponse examine(ReviewParam reviewParam) {
+        if (reviewParam == null){
+            return null;
+        }
         AbstractHandler handler = HandlerContext.getHandler(reviewParam.getType());
         ReturnResponse returnResponse = handler.examine(reviewParam);
         return returnResponse;

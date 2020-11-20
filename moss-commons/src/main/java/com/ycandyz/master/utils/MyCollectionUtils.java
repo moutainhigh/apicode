@@ -20,10 +20,10 @@ public class MyCollectionUtils {
         int beginIndex = s.indexOf("[") == 0 ? 1 : 0;
         int endIndex = s.lastIndexOf("]") + 1 == s.length() ? s.lastIndexOf("]") : s.length();
         s = s.substring(beginIndex, endIndex);
-        if (s.length() <= 0){
-            return null;
-        }
         List<String> ids = Lists.newArrayList();
+        if (s.length() <= 0){
+            return ids;
+        }
         Arrays.stream(s.split(",")).forEach(s1 -> ids.add(s1.trim()));
         return ids;
     }
