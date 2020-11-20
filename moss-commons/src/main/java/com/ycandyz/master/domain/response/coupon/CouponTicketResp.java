@@ -1,16 +1,17 @@
 package com.ycandyz.master.domain.response.coupon;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
  * <p>
- * @Description 发卷宝-优惠卷 Resp
+ * @Description 优惠卷 Resp
  * </p>
  *
  * @author SanGang
@@ -19,7 +20,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class CouponActivityTicketResp {
+public class CouponTicketResp {
 
     @ApiModelProperty(value = "主键ID")
     private Long id;
@@ -27,23 +28,12 @@ public class CouponActivityTicketResp {
     @ApiModelProperty(value = "优惠券名称")
     private String name;
 
-    @ApiModelProperty(value = "优惠卷剩余数量")
-    private Integer remainNum;
-
-    @JsonIgnore
-    @ApiModelProperty(value = "券生效开始时间")
-    private Long beginAt;
-
-    @JsonIgnore
-    @ApiModelProperty(value = "券生效结束时间")
-    private Long endAt;
-
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    @ApiModelProperty(value = "券生效开始时间")
+    @ApiModelProperty(value = "活动开始时间")
     private Date beginTime;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    @ApiModelProperty(value = "券生效结束时间")
+    @ApiModelProperty(value = "活动结束时间")
     private Date endTime;
 
     @ApiModelProperty(value = "优惠券状态：0:未开始，1:进行中，2:已结束，3:已停止")
@@ -51,6 +41,9 @@ public class CouponActivityTicketResp {
 
     @ApiModelProperty(value = "说明备注")
     private String remark;
+
+    @ApiModelProperty(value = "优惠卷剩余数量")
+    private Integer remainNum;
 
 
 }

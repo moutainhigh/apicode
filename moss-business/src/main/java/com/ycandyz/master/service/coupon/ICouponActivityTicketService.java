@@ -1,9 +1,12 @@
 package com.ycandyz.master.service.coupon;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
 import com.ycandyz.master.entities.coupon.CouponActivityTicket;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,4 +22,6 @@ import java.util.List;
 public interface ICouponActivityTicketService extends IService<CouponActivityTicket>{
 
     List<CouponActivityTicketResp> list(String activityNo);
+
+    Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query);
 }

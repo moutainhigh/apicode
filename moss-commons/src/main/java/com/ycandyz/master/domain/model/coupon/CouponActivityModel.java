@@ -3,6 +3,7 @@ package com.ycandyz.master.domain.model.coupon;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.ApiModel;
@@ -13,6 +14,7 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,13 +49,15 @@ public class CouponActivityModel {
     @ApiModelProperty(value = "活动入口名称")
     private String joinName;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @NotNull(message = "活动开始时间不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(value = "活动开始时间")
-    private Long beginAt;
+    private Date beginTime;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @NotNull(message = "活动结束时间不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(value = "活动结束时间")
-    private Long endAt;
+    private Date endTime;
 
     @Range(min = 1, max = 1000000, message = "赠送上限人数范围为1-1000000之间", groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @NotNull(message = "活赠送上限人数不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})

@@ -1,11 +1,17 @@
 package com.ycandyz.master.service.coupon;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
+import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
+import com.ycandyz.master.domain.query.coupon.CouponTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
+import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
+import com.ycandyz.master.domain.response.coupon.CouponTicketResp;
 import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.ycandyz.master.model.ad.SpecialModel;
+import com.ycandyz.master.utils.QueryUtil;
 
 import java.io.Serializable;
 
@@ -31,4 +37,6 @@ public interface ICouponActivityService extends IService<CouponActivity>{
     boolean startById(Long id);
 
     boolean removeTicketById(Serializable id);
+
+    Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query);
 }

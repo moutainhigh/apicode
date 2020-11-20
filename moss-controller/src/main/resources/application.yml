@@ -8,6 +8,9 @@ spring:
       file-size-threshold: 25MB #当文件达到多少时进行磁盘写入
   application:
     name: ycandyz-master-controller
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: UTC
   profiles:
     active: dev
 

@@ -1,5 +1,7 @@
 package com.ycandyz.master.service.coupon.impl;
 
+import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
 import com.ycandyz.master.entities.coupon.CouponActivityTicket;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
@@ -28,5 +30,19 @@ public class CouponActivityTicketServiceImpl extends BaseService<CouponActivityT
     @Override
     public List<CouponActivityTicketResp> list(String activityNo) {
         return baseMapper.list(activityNo);
+    }
+
+    @Override
+    public Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query) {
+        Page<CouponActivityTicketResp> p = baseMapper.selectActivityTicketPage(page,query);
+        p.getRecords().stream().forEach(f -> {
+            if (f.getBeginAt() != null && f.getBeginAt() != 0){
+                f.setBeginTime(getCurrentDate(f.getBeginAt()));
+            }
+            if (f.getEndAt() != null && f.getEndAt() != 0){
+                f.setEndTime(getCurrentDate(f.getEndAt()));
+            }
+        });
+        return p;
     }
 }

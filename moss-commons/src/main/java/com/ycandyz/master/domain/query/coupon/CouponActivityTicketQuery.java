@@ -10,6 +10,7 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -31,22 +32,14 @@ public class CouponActivityTicketQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "ID")
-    @Condition(field = "id", condition = ConditionEnum.EQ)
-    private Long id;
+    @ApiParam(hidden = true)
+    @ApiModelProperty(value = "门店编号")
+    private String shopNo;
 
     @ApiModelProperty(value = "优惠宝编号")
     private String activityNo;
 
-    @ApiModelProperty(value = "优惠券编号")
-    private String ticketNo;
-
-    @ApiModelProperty(value = "创建时间")
-    private Long createdAt;
-
-    @ApiModelProperty(value = "更新时间")
-    private Long updatedAt;
-
-
+    @ApiModelProperty(value = "优惠卷名称")
+    private String name;
 
 }

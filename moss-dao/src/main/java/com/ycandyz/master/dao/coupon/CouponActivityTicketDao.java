@@ -1,8 +1,11 @@
 package com.ycandyz.master.dao.coupon;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
 import com.ycandyz.master.entities.coupon.CouponActivityTicket;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,4 +20,7 @@ import java.util.List;
 public interface CouponActivityTicketDao extends BaseMapper<CouponActivityTicket> {
 
     List<CouponActivityTicketResp> list(String activityNo);
+
+    Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, @Param("q") CouponActivityTicketQuery query);
+
 }
