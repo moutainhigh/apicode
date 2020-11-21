@@ -90,6 +90,7 @@ public class FootprintHandler extends AbstractHandler {
             contentReviewRep.setId(contentReviewDTO.getId());
             contentReviewRep.setFcontent(content);
             contentReviewRep.setFphotoUrls(imgUrls);
+            //contentReviewRep.setCreatedTime(contentReviewDTO.getCreatedTime());
             if (contentReviewDTO.getReviewAuditResult() == 2){
                 contentReviewRep.setAuditResult(auditResult);
             }else {

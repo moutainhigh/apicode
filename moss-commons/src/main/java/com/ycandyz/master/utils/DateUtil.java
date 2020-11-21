@@ -12,6 +12,7 @@ public class DateUtil {
 
     public static final String DEFAULT_DAY_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final String DEFAULT_YMD_PATTERN = "yyyyMMdd";
+    public static final String DEFAULT_YMDHM_PATTERN = "yyyyMMdd HH:mm";
     /**
      * @Description: String to date
      * @Author li Zhuo
@@ -97,5 +98,17 @@ public class DateUtil {
         String time = simpleDateFormat.format(date);
         return time;
     }
+
+    /*
+     * 转yyyyMMdd HH:mm:
+     */
+//    public static Date toymdhm(Date date){
+//        if (date == null) {
+//            return null;
+//        }
+//        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_YMDHM_PATTERN);
+//        String format = sdf.format(date);
+//        return sdf.format(new Date(time+eightHours));
+//    }
 
 }

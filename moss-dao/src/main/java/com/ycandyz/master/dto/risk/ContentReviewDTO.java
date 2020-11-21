@@ -19,18 +19,18 @@ public class ContentReviewDTO {
     private Integer type;
 
     @ApiModelProperty(value = "创建时间")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private Date createdTime;
 
     @ApiModelProperty(value = "更新时间")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private Date updateTime;
 
     @ApiModelProperty(value = "审核人")
     private Long auditor;
 
     @ApiModelProperty(value = "审核时间")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm",timezone = "GMT+8")
     private Date auditTime;
 
     @ApiModelProperty(value = "审核表审核结果")
