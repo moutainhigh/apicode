@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.risk.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.ArrayListMultimap;
@@ -47,6 +48,7 @@ public class ContentReviewServiceImpl implements ContentReviewService {
 
     @Override
     public ReturnResponse<Page<ContentReviewRep>> list(RequestParams<ContentReviewQuery> requestParams) {
+        log.info("内容审核查询入参:{}", JSON.toJSONString(requestParams));
         ContentReviewQuery contentReviewQuery = requestParams.getT();
         Page<ContentReviewRep> page1 = new Page<>();
         List<ContentReviewRep> newlist = new ArrayList<>();
@@ -113,11 +115,6 @@ public class ContentReviewServiceImpl implements ContentReviewService {
         myMultimap.forEach((mk,mv)->{
             List<Long> ids = (List<Long>) myMultimap.get(mk);
             Map<Integer,List<Long>> maps = new HashMap<>();
-            //List<String> contentIds = new ArrayList<>();
-//            ids.stream().forEach(id->{
-//                String contentId = contentreviewDao.selectById(id);
-//                contentIds.add(contentId);
-//            });
             maps.put(oper,ids);
             allMaps.put(mk,maps);
         });

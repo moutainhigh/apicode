@@ -1,5 +1,6 @@
 package com.ycandyz.master.controller.userExportRecord;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
@@ -43,14 +44,18 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
 	@ApiOperation(value = "导出记录查询分页")
     @PostMapping(value = "/selectPage")
     public ReturnResponse<Page<UserExportRecordResp>> selectPage(@RequestBody RequestParams<UserExportRecordQuery> requestParams) {
+        log.info("导出记录-用户导出记录查询分页请求入参:{}", JSON.toJSONString(requestParams));
         Page<UserExportRecordResp> userExportRecordRespPage = userExportRecordService.selectPages(requestParams);
+        log.info("导出记录-用户导出记录查询分页请求响应:{}", JSON.toJSONString(ReturnResponse.success(userExportRecordRespPage)));
         return ReturnResponse.success(userExportRecordRespPage);
     }
 
     @ApiOperation(value = "接入导出记录")
     @PostMapping(value = "/insert")
     public ReturnResponse insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody UserExportRecordReq userExportRecordReq) {
+        log.info("导出记录-用户导出记录接入导出记录请求入参:{}", JSON.toJSONString(userExportRecordReq));
         ReturnResponse returnResponse = userExportRecordService.insert(userExportRecordReq);
+        log.info("导出记录-用户导出记录接入导出记录请求响应:{}", JSON.toJSONString(returnResponse));
         return returnResponse;
     }
     

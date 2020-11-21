@@ -1,5 +1,6 @@
 package com.ycandyz.master.controller.taboo;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
@@ -46,6 +47,7 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
             log.error("当前更新的入参数据为空");
             return ReturnResponse.failed("当前更新的入参数据为空");
         }
+        log.info("新增敏感字请求入参:{}", JSON.toJSONString(baseTabooWordsVO));
         String phraseName = baseTabooWordsVO.getPhraseName();
         String[] tabooWords = baseTabooWordsVO.getTabooWords();
         ReturnResponse returnResponse = baseTabooWordsService.selTabooWords(phraseName,tabooWords);
@@ -53,39 +55,48 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
             return returnResponse;
         }
         baseTabooWordsService.addBaseTabooWords(baseTabooWordsVO);
+        log.info("新增敏感字请求响应:{}", ReturnResponse.success("保存成功!"));
         return ReturnResponse.success("保存成功!");
     }
 
     @ApiOperation(value = "查询根据ID")
     @GetMapping(value = "/select/{id}")
     public ReturnResponse<BaseTabooWordsRep> getById(@PathVariable Long id) {
+        log.info("敏感词管理查询根据ID请求入参:{}", id);
         BaseTabooWordsRep baseTabooWords = baseTabooWordsService.selById(id);
+        log.info("敏感词管理查询根据ID请求响应:{}", ReturnResponse.success(baseTabooWords));
         return ReturnResponse.success(baseTabooWords);
     }
 
     @ApiOperation(value="编辑敏感字")
     @PutMapping(value = "/updateBaseTabooWords")
     public ReturnResponse<Object> updateBaseTabooWords(@Validated(ValidatorContract.OnCreate.class) @RequestBody BaseTabooWordsVO baseTabooWordsVO) {
+        log.info("编辑敏感字请求入参:{}", JSON.toJSONString(baseTabooWordsVO));
         String[] tabooWords = baseTabooWordsVO.getTabooWords();
         ReturnResponse returnResponse = baseTabooWordsService.selTabooWord(tabooWords);
         if (returnResponse != null && returnResponse.getCode() == 500){
             return returnResponse;
         }
         ReturnResponse returnResponse2 = baseTabooWordsService.updateBaseTabooWords(baseTabooWordsVO);
+        log.info("编辑敏感字请求响应:{}", JSON.toJSONString(returnResponse2));
         return returnResponse2;
     }
 
     @ApiOperation(value = "查询全部")
     @PostMapping(value = "/select/list")
     public ReturnResponse<Page<BaseTabooWordsRep>> selectList(@RequestBody RequestParams<BaseTabooWordsQuery> requestParams) {
+        log.info("敏感词管理查询全部请求入参:{}", JSON.toJSONString(requestParams));
         Page<BaseTabooWordsRep> page = baseTabooWordsService.selectList(requestParams);
+        log.info("敏感词管理查询全部请求响应:{}", JSON.toJSONString(ReturnResponse.success(page)));
         return ReturnResponse.success(page);
     }
 
     @ApiOperation(value = "通过ID删除")
     @DeleteMapping(value = "/delete/{id}")
     public ReturnResponse<Object> delById(@PathVariable Long id) {
+        log.info("敏感词管理通过ID删除请求入参:{}", id);
         ReturnResponse returnResponse = baseTabooWordsService.delById(id);
+        log.info("敏感词管理查询全部请求响应:{}", JSON.toJSONString(ReturnResponse.success(returnResponse)));
         return ReturnResponse.success(returnResponse);
     }
 

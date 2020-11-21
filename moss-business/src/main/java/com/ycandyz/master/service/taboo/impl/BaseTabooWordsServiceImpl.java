@@ -65,6 +65,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         baseTabooWords.setOperator(currentUser.getId());
         baseTabooWords.setTreatmentMethod(0);
         baseTabooWords.setFlag(1);
+        //baseTabooWordsDao.addBaseTabooWords(baseTabooWords);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
         log.info("新增敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
     }
