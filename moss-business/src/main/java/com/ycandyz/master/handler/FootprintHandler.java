@@ -49,19 +49,19 @@ public class FootprintHandler extends AbstractHandler {
         String contentId = contentreviewDao.selectById(id);
         FootprintQuery footprintQuery = footprintDao.selById(Long.valueOf(contentId));
         if (footprintQuery ==null){
-            String str=String.format("审核id为%d对应的商友圈id为%s的数据不存在",id,contentId, desc);
+            String str=String.format("审核id为%d对应的商友圈item_no为%s的数据不存在",id,contentId, desc);
             return  ReturnResponse.failed(str);
         }
         int i = footprintDao.updateOneFootprint(Long.valueOf(contentId),reviewParam.getOper());
         if (i > 0) {
             updateOrInsert(id,contentId, reviewParam.getType());
-            log.info("商友圈id为{}的数据审批{}成功",contentId,desc);
-            String str=String.format("商友圈id为%s的数据审批%s成功",contentId, desc);
-            insertAllcontentReviewLog(contentId,0, reviewParam.getOper(),2);
+            log.info("商友圈item_no为{}的数据审批{}成功",contentId,desc);
+            String str=String.format("商友圈item_no为%s的数据审批%s成功",contentId, desc);
+            insertAllcontentReviewLog(id,contentId,0, reviewParam.getOper(),2);
             return ReturnResponse.failed(str);
         }
-        log.info("商友圈id为{}的数据审批{}失败",contentId,desc);
-        String str=String.format("商友圈id为%s的数据审批%s失败",contentId, desc);
+        log.info("商友圈item_no为{}的数据审批{}失败",contentId,desc);
+        String str=String.format("商友圈item_no为%s的数据审批%s失败",contentId, desc);
         return ReturnResponse.failed(str);
     }
 
@@ -118,7 +118,7 @@ public class FootprintHandler extends AbstractHandler {
                 String contentId = contentreviewDao.selectById(id);
                 FootprintQuery footprintQuery = footprintDao.selById(Long.valueOf(contentId));
                 if (footprintQuery ==null){
-                    String str=String.format("审核id为%d对应的商友圈id为%s的数据不存在",id,contentId, desc);
+                    String str=String.format("审核id为%d对应的商友圈item_no为%s的数据不存在",id,contentId, desc);
                     return  ReturnResponse.success(str);
                 }
                 ids.add(Long.valueOf(contentId));
@@ -134,7 +134,7 @@ public class FootprintHandler extends AbstractHandler {
                 v.stream().forEach(id->{
                     String contentId = contentreviewDao.selectById(id);
                     updateOrInsert(id, contentId,1);
-                    insertAllcontentReviewLog(contentId,0, finalOper,2);
+                    insertAllcontentReviewLog(id,contentId,0, finalOper,2);
                 });
             });
             return ReturnResponse.success(str);

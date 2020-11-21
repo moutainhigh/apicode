@@ -51,7 +51,7 @@ public class MallItemHandler extends AbstractHandler {
             updateOrInsert(id,contentId, reviewParam.getType());
             log.info("商品详情id为{}的数据审批{}成功",contentId,desc);
             String str=String.format("商品详情id为%s的数据审批%s成功",contentId, desc);
-            insertAllcontentReviewLog(contentId,1, reviewParam.getOper(),2);
+            insertAllcontentReviewLog(id,contentId,1, reviewParam.getOper(),2);
             return ReturnResponse.success(str);
         }
         log.info("商品详情id为{}的数据审批{}失败",contentId,desc);
@@ -133,7 +133,7 @@ public class MallItemHandler extends AbstractHandler {
                 v.stream().forEach(id->{
                     String contentId = contentreviewDao.selectById(id);
                     updateOrInsert(id, contentId,1);
-                    insertAllcontentReviewLog(contentId,0, finalOper,2);
+                    insertAllcontentReviewLog(id,contentId,0, finalOper,2);
                 });
             });
             return ReturnResponse.success(str);

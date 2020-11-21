@@ -21,11 +21,11 @@
         insert into base_taboo_words(id, phrase_name, taboo_words, treatment_method, operator, created_time, updated_time)
         values (#{id,jdbcType=INTEGER},#{phraseName,jdbcType=VARCHAR},
         #{tabooWords,jdbcType=VARCHAR},#{treatmentMethod,jdbcType=INTEGER},#{operator,jdbcType=VARCHAR},
-       DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i'),DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i'));
+       DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s'),DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s'));
     </insert>
     <update id="updateBaseTabooWords">
         update base_taboo_words set phrase_name = #{phraseName}, taboo_words = #{tabooWords},treatment_method = #{treatmentMethod},
-        operator = #{operator},updated_time = DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i') where id = #{id};
+        operator = #{operator},updated_time = DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s') where id = #{id};
     </update>
     <delete id="delById" parameterType="java.lang.Long">
         delete from base_taboo_words where id = #{id,jdbcType=BIGINT};
@@ -49,13 +49,13 @@
         <if test="bt != null and bt.createdTimeStart != null">
             <![CDATA[
             and
-            created_time >= FROM_UNIXTIME(#{bt.createdTimeStart}, '%Y-%m-%d %H:%i')
+            created_time >= FROM_UNIXTIME(#{bt.createdTimeStart}, '%Y-%m-%d %H:%i:%s')
             ]]>
         </if>
         <if test="bt != null and bt.createdTimeEnd != null">
             <![CDATA[
             and
-            created_time <= FROM_UNIXTIME(#{bt.createdTimeEnd}, '%Y-%m-%d %H:%i')
+            created_time <= FROM_UNIXTIME(#{bt.createdTimeEnd}, '%Y-%m-%d %H:%i:%s')
             ]]>
         </if>
             order by updated_time desc,id desc
