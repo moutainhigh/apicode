@@ -20,6 +20,9 @@
     <sql id="Base_Column_List">
         id, title, picture_select, color_select, picture_not_select, color_not_select, sort_num,can_layout,can_delete
     </sql>
+    <insert id="insertSingle">
+        insert into
+    </insert>
 
     <select id="selById">
 <!--        select <include refid="Base_Column_List" />-->
@@ -32,14 +35,10 @@
         from organize_mp_config_plan_menu
         where organize_plan_id = #{organizePlanId}
     </select>
-    <select id="selectMenuById" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO">
-        select * from
-        organize_mp_config_plan_page omcpp
-        left join mp_config_module mcm
-        on omcpp.module_id = mcm.id
-        left join mp_config_module_base mcmb
-        on omcpp.module_base_id = mcmb.id
-        where omcpp.id = #{menuId}
+    <select id="selectMenuById" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
+        select <include refid="Base_Column_List" />
+        from organize_mp_config_plan_menu
+        where id = #{menuId}
     </select>
 
 </mapper>

@@ -5,6 +5,8 @@ import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
  * <p>
  * 企业小程序配置-菜单配置 Mapper 接口
@@ -19,5 +21,7 @@ public interface OrganizeMpConfigPlanMenuDao extends BaseMapper<OrganizeMpConfig
 
     OrganizeMpConfigPlanMenuDTO selByOrGanizeMoudleId(Integer id);
 
-    OrganizeMpConfigPlanPageDTO selectMenuById(Integer menuId);
+    OrganizeMpConfigPlanMenuDTO selectMenuById(Integer menuId);
+
+    void insertSingle(OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu);
 }

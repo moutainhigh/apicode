@@ -50,7 +50,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         // 注册 token 验证拦截器
          registry.addInterceptor(tokenInterceptor).addPathPatterns("/**").excludePathPatterns("/META-INF/**/**","/swagger-ui.html/**","/swagger-resources");
          registry.addInterceptor(logInterceptor);
-         registry.addInterceptor(authInterceptor);
+         //registry.addInterceptor(authInterceptor);
     }
 
     /**

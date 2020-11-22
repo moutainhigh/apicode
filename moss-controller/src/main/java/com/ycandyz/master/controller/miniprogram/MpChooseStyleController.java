@@ -25,25 +25,25 @@ public class MpChooseStyleController {
     private MpChooseStyleService mpChooseStyleService;
 
 
-    @ApiOperation(value = "查询模版小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="id",value="小程序模版菜单编号",required=true,dataType="Integer")
-    })
-    @GetMapping(value = "{id}")
-    public CommonResult<OrganizeMpConfigMenuVO> chose(@PathVariable Integer id) {
-        //OrganizeMpConfigMenuVO organizeMpConfigMenuVO = mpChooseStyleService.selByMoudleId(id);
-        return CommonResult.success(null);
-    }
-
-    @ApiOperation(value = "查询模版小程序单个菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="menuid",value="菜单编号",required=true,dataType="Integer")
-    })
-    @GetMapping(value = "organize/{menuId}")
-    public CommonResult<OrganizeChooseMpConfigPage> selectMoudleMenu(@PathVariable("menuid") Integer menuId) {
-        //OrganizeChooseMpConfigPage organizeChooseMpConfigPage = mpChooseStyleService.selectMenuById(menuId);
-        return CommonResult.success(null);
-    }
+//    @ApiOperation(value = "查询模版小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name="id",value="小程序模版编号",required=true,dataType="Integer")
+//    })
+//    @GetMapping(value = "{id}")
+//    public CommonResult<OrganizeMpConfigMenuVO> chose(@PathVariable Integer id) {
+//        //OrganizeMpConfigMenuVO organizeMpConfigMenuVO = mpChooseStyleService.selByMoudleId(id);
+//        return CommonResult.success(null);
+//    }
+//
+//    @ApiOperation(value = "查询模版小程序单个菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name="menuid",value="小程序模版菜单编号",required=true,dataType="Integer")
+//    })
+//    @GetMapping(value = "{menuId}")
+//    public CommonResult<OrganizeChooseMpConfigPage> selectMoudleMenu(@PathVariable("menuid") Integer menuId) {
+//        //OrganizeChooseMpConfigPage organizeChooseMpConfigPage = mpChooseStyleService.selectMenuById(menuId);
+//        return CommonResult.success(null);
+//    }
 
 
 
@@ -59,23 +59,25 @@ public class MpChooseStyleController {
 
     @ApiOperation(value = "查询企业小程序单个菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="menuid",value="菜单编号",required=true,dataType="Integer")
+            @ApiImplicitParam(name="menuid",value="企业小程序菜单编号",required=true,dataType="Integer")
     })
-    @GetMapping(value = "organize/{menuId}")
-    public CommonResult<OrganizeChooseMpConfigPage> selectMenu(@PathVariable("menuId") Integer menuId) {
+    @GetMapping(value = "organize/menu/{menuId}")
+    public CommonResult<OrganizeChooseMpConfigPage> selectOrgainizeMenu(@PathVariable("menuId") Integer menuId) {
         OrganizeChooseMpConfigPage organizeChooseMpConfigPage = mpChooseStyleService.selectMenuById(menuId);
         return CommonResult.success(organizeChooseMpConfigPage);
     }
 
-    @ApiOperation(value = "企业小程序编辑单个菜单页面样式" , tags = "企业小程序DIY配置",httpMethod = "PUT")
-    @PutMapping("/organize/menupage")
-    public CommonResult modify(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
+    @ApiOperation(value = "企业小程序保存单个菜单页面样式" , tags = "企业小程序DIY配置",httpMethod = "POST")
+    @PostMapping("/organize/menupage")
+    public CommonResult saveSinglePage(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
+        mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
         return CommonResult.success("成功");
     }
 
     @ApiOperation(value = "企业小程序保存到草稿或保存页面" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize")
-    public CommonResult save(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
+    public CommonResult saveAllPage(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
+        mpChooseStyleService.saveAll(organizeMpRequestVO);
         return CommonResult.success("成功");
     }
 

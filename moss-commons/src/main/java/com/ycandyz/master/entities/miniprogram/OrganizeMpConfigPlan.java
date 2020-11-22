@@ -34,7 +34,7 @@ public class OrganizeMpConfigPlan extends Model {
    private Integer id;
 
    @ApiModelProperty(value = "企业编号")
-   private Integer organizeId;
+   private Long organizeId;
 
    @ApiModelProperty(value = "小程序名称")
    private String planName;

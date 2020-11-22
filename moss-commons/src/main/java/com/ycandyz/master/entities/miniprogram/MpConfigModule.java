@@ -38,5 +38,8 @@ public class MpConfigModule extends Model {
    @ApiModelProperty(value = "图标")
    private String icon;
 
+   @ApiModelProperty(value = "限制展示数量")
+   private Integer displayNum;
+
 
 }

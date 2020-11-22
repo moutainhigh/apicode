@@ -14,7 +14,7 @@ public class OrganizeChooseMpConfigPage {
     @ApiModelProperty(value = "menuName")
     private String menuName;
 
-    @ApiModelProperty(value = "外部元素")
+    @ApiModelProperty(value = "模块")
     private List<OrganizeMpConfigPageMenuVO> modules;
 
 }
