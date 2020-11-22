@@ -1,5 +1,7 @@
 package com.ycandyz.master.dao.miniprogram;
 
+import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
+import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -13,4 +15,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface OrganizeMpConfigPlanMenuDao extends BaseMapper<OrganizeMpConfigPlanMenu> {
 
+    void selById(Integer id);
+
+    OrganizeMpConfigPlanMenuDTO selByOrGanizeMoudleId(Integer id);
+
+    OrganizeMpConfigPlanPageDTO selectMenuById(Integer menuId);
 }

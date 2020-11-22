@@ -4,6 +4,7 @@ package com.ycandyz.master.controller.miniprogram;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.model.miniprogram.OrganizeChooseMpConfigPage;
 import com.ycandyz.master.model.miniprogram.OrganizeMpConfigMenuVO;
+import com.ycandyz.master.service.miniprogram.MpChooseStyleService;
 import com.ycandyz.master.vo.OrganizeMenuMpRequestVO;
 import com.ycandyz.master.vo.OrganizeMpRequestVO;
 import io.swagger.annotations.Api;
@@ -11,24 +12,40 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequestMapping("cms/mp/style/")
 @Api(tags="小程序配置-选择修改样式")
-public class MpChoiceStyleController {
+public class MpChooseStyleController {
+
+    @Autowired
+    private MpChooseStyleService mpChooseStyleService;
 
 
-    @ApiOperation(value = "查询小程序模版全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
+    @ApiOperation(value = "查询模版小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value="小程序模版菜单编号",required=true,dataType="Integer")
     })
     @GetMapping(value = "{id}")
     public CommonResult<OrganizeMpConfigMenuVO> chose(@PathVariable Integer id) {
-        OrganizeMpConfigMenuVO organizeMpConfigMenuVO = new OrganizeMpConfigMenuVO();
-        return CommonResult.success(organizeMpConfigMenuVO);
+        //OrganizeMpConfigMenuVO organizeMpConfigMenuVO = mpChooseStyleService.selByMoudleId(id);
+        return CommonResult.success(null);
     }
+
+    @ApiOperation(value = "查询模版小程序单个菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="menuid",value="菜单编号",required=true,dataType="Integer")
+    })
+    @GetMapping(value = "organize/{menuId}")
+    public CommonResult<OrganizeChooseMpConfigPage> selectMoudleMenu(@PathVariable("menuid") Integer menuId) {
+        //OrganizeChooseMpConfigPage organizeChooseMpConfigPage = mpChooseStyleService.selectMenuById(menuId);
+        return CommonResult.success(null);
+    }
+
+
 
     @ApiOperation(value = "查询企业小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
     @ApiImplicitParams({
@@ -36,18 +53,17 @@ public class MpChoiceStyleController {
     })
     @GetMapping(value = "organize/{id}")
     public CommonResult<OrganizeMpConfigMenuVO> select(@PathVariable("id") Integer id) {
-        OrganizeMpConfigMenuVO organizeMpConfigMenuVO = new OrganizeMpConfigMenuVO();
+        OrganizeMpConfigMenuVO organizeMpConfigMenuVO = mpChooseStyleService.selByOrGanizeMoudleId(id);
         return CommonResult.success(organizeMpConfigMenuVO);
     }
 
-    @ApiOperation(value = "查询企业/模版小程序单个菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
+    @ApiOperation(value = "查询企业小程序单个菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="id",value="小程序模版菜单编号",required=true,dataType="Integer"),
             @ApiImplicitParam(name="menuid",value="菜单编号",required=true,dataType="Integer")
     })
-    @GetMapping(value = "organize/{id}/{menuid}")
-    public CommonResult<OrganizeChooseMpConfigPage> select(@PathVariable("id") Integer id,@PathVariable("menuid") Integer menuid) {
-        OrganizeChooseMpConfigPage organizeChooseMpConfigPage = new OrganizeChooseMpConfigPage();
+    @GetMapping(value = "organize/{menuId}")
+    public CommonResult<OrganizeChooseMpConfigPage> selectMenu(@PathVariable("menuId") Integer menuId) {
+        OrganizeChooseMpConfigPage organizeChooseMpConfigPage = mpChooseStyleService.selectMenuById(menuId);
         return CommonResult.success(organizeChooseMpConfigPage);
     }
 
