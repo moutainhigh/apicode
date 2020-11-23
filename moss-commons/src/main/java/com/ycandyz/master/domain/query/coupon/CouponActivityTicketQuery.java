@@ -1,11 +1,5 @@
 package com.ycandyz.master.domain.query.coupon;
 
-import com.ycandyz.master.annotation.Condition;
-import com.ycandyz.master.enums.ConditionEnum;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,10 +27,10 @@ public class CouponActivityTicketQuery implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiParam(hidden = true)
-    @ApiModelProperty(value = "门店编号")
+    @ApiModelProperty(name = "shop_no",value = "门店编号")
     private String shopNo;
 
-    @ApiModelProperty(value = "优惠宝编号")
+    @ApiModelProperty(name = "activity_no",value = "优惠宝编号")
     private String activityNo;
 
     @ApiModelProperty(value = "优惠卷名称")

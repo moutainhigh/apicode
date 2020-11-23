@@ -4,9 +4,11 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -19,13 +21,26 @@ import java.util.TimeZone;
 public class DateUtils {
 
 
+    public final static String DEFAULT_PATTERN = "yyyy-MM-dd hh:mm:ss";
+
+    public final static String YYYY_MM_DD = "yyyy-MM-dd";
+
+    public static final ThreadLocal<SimpleDateFormat> DATE_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat(DEFAULT_PATTERN, Locale.CHINA));
+
+
+    public static Date parseWithPattern(String strDate, String pattern) throws ParseException {
+        SimpleDateFormat dateFormat = DATE_FORMAT.get();
+        dateFormat.applyPattern(pattern);
+        return dateFormat.parse(strDate);
+    }
+
     /**
      * 获得当前日期 yyyy-MM-dd HH:mm:ss
      */
     public static Date getZeroZoneTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_PATTERN);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
-        DateTime dateTime = DateUtil.parse(dateFormat.format(DateUtil.date()), "yyyy-MM-dd HH:mm:ss");
+        DateTime dateTime = DateUtil.parse(dateFormat.format(DateUtil.date()), DEFAULT_PATTERN);
         return dateTime.toJdkDate();
     }
 

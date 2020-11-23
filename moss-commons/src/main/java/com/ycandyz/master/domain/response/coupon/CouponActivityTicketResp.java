@@ -1,8 +1,12 @@
 package com.ycandyz.master.domain.response.coupon;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,10 +23,14 @@ import java.util.Date;
  */
 @Getter
 @Setter
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class CouponActivityTicketResp {
 
     @ApiModelProperty(value = "主键ID")
     private Long id;
+
+    @ApiModelProperty(value = "优惠券编号")
+    private String ticketNo;
 
     @ApiModelProperty(value = "优惠券名称")
     private String name;
@@ -51,6 +59,12 @@ public class CouponActivityTicketResp {
 
     @ApiModelProperty(value = "说明备注")
     private String remark;
+
+    @ApiModelProperty(value = "卷宝-优惠卷 ID")
+    private Long activityTicketId;
+
+    @ApiModelProperty(value = "是否选中")
+    private Boolean selected;
 
 
 }

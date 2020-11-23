@@ -1,5 +1,8 @@
 package com.ycandyz.master.domain.query.coupon;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ycandyz.master.annotation.Condition;
 import com.ycandyz.master.enums.ConditionEnum;
 
@@ -9,6 +12,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.ycandyz.master.underline.Hump;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -29,17 +33,18 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @ApiModel(description="发卷宝-检索参数")
 public class CouponActivityQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiParam(hidden = true)
-    @ApiModelProperty(value = "门店编号")
+    @ApiModelProperty(name = "shop_no",value = "门店编号")
     @Condition(condition = ConditionEnum.EQ)
     private String shopNo;
 
-    @ApiModelProperty(value = "活动名称")
+    @ApiModelProperty(name = "name",value = "活动名称")
     @Condition(condition = ConditionEnum.EQ)
     private String name;
 
@@ -47,11 +52,11 @@ public class CouponActivityQuery implements Serializable {
     @Condition(field = "created_time", condition = ConditionEnum.EQ)
     private Date createdTime;
 
-    @ApiModelProperty(value = "创建时间起")
+    @ApiModelProperty(name = "created_time_s",value = "创建时间起")
     @Condition(field = "create_time", condition = ConditionEnum.GE)
     private Date createdTimeS;
 
-    @ApiModelProperty(value = "创建时间止")
+    @ApiModelProperty(name = "created_time_e",value = "创建时间止")
     @Condition(field = "create_time", condition = ConditionEnum.LE)
     private Date createdTimeE;
 

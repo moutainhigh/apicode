@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.coupon.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -90,6 +92,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.isFalse(isEmpty(entity.getBeginTime(),entity.getEndTime(),null),"该时间区间存在已有活动,请更改时间区间");
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
+        t.setCreatedBy(getUserId());
+        t.setUpdatedBy(getUserId());
         t.setShopNo(getShopNo());
         t.setActivityNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
         entity.getTicketList().forEach(i -> {
@@ -112,6 +116,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         couponActivityTicketService.remove(queryWrapper);
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
+        t.setUpdatedBy(getUserId());
         t.setShopNo(getShopNo());
         entity.getTicketList().forEach(i -> {
             CouponActivityTicket at = new CouponActivityTicket();
@@ -125,11 +130,12 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     private boolean isEmpty(Date beginAt, Date endAt, String activityNo){
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .eq(CouponActivity::getShopNo, getShopNo())
-                .ge(CouponActivity::getBeginTime, beginAt)
-                .gt(CouponActivity::getEndTime, endAt)
+                .and(obj -> obj.between(CouponActivity::getBeginTime, beginAt,endAt)
+                        .or(obj1 -> obj1.between(CouponActivity::getEndTime, beginAt,endAt))
+                )
                 .notIn(StrUtil.isNotEmpty(activityNo),CouponActivity::getActivityNo, activityNo);
-        CouponActivity couponActivity = baseMapper.selectOne(queryWrapper);
-        if(null == couponActivity){
+        List<CouponActivity> list = baseMapper.selectList(queryWrapper);
+        if(CollectionUtil.isEmpty(list)){
             return false;
         }
         return true;
@@ -152,6 +158,13 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query) {
+        AssertUtils.notNull(getShopNo(), "商店编号不能为空");
+        query.setShopNo(getShopNo());
+        return couponActivityTicketService.selectTicketPage(page,query);
+    }
+
+    @Override
+    public Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query) {
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         query.setShopNo(getShopNo());
         return couponActivityTicketService.selectActivityTicketPage(page,query);

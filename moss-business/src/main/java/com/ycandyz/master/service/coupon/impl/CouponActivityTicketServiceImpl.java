@@ -33,6 +33,20 @@ public class CouponActivityTicketServiceImpl extends BaseService<CouponActivityT
     }
 
     @Override
+    public Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query) {
+        Page<CouponActivityTicketResp> p = baseMapper.selectTicketPage(page,query);
+        p.getRecords().stream().forEach(f -> {
+            if (f.getBeginAt() != null && f.getBeginAt() != 0){
+                f.setBeginTime(getCurrentDate(f.getBeginAt()));
+            }
+            if (f.getEndAt() != null && f.getEndAt() != 0){
+                f.setEndTime(getCurrentDate(f.getEndAt()));
+            }
+        });
+        return p;
+    }
+
+    @Override
     public Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query) {
         Page<CouponActivityTicketResp> p = baseMapper.selectActivityTicketPage(page,query);
         p.getRecords().stream().forEach(f -> {

@@ -1,5 +1,6 @@
 package com.ycandyz.master.config;
 
+import com.ycandyz.master.underline.CustomHandlerMethodArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,11 +57,12 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     /**
      * 参数解析器
      *
-     * @param argumentResolvers
+     * @param resolvers
      */
     @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(CurrentUserHandlerMethodArgReslover);
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(CurrentUserHandlerMethodArgReslover);
+        resolvers.add(new CustomHandlerMethodArgumentResolver());
     }
 
 //    @Override

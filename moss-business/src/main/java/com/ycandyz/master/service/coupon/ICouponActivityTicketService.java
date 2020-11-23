@@ -23,5 +23,7 @@ public interface ICouponActivityTicketService extends IService<CouponActivityTic
 
     List<CouponActivityTicketResp> list(String activityNo);
 
+    Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query);
+
     Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query);
 }

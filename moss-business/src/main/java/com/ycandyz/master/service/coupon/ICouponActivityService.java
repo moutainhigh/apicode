@@ -39,4 +39,6 @@ public interface ICouponActivityService extends IService<CouponActivity>{
     boolean removeTicketById(Serializable id);
 
     Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query);
+
+    Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query);
 }

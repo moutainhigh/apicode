@@ -26,14 +26,28 @@
             ct.activity_no = #{activityNo}
     </select>
 
-    <select id="selectActivityTicketPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp">
-        SELECT ct.id,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_at,ti.end_at
+    <select id="selectTicketPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp">
+        SELECT t.id,t.ticket_no,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_at,ti.end_at,ct.id activity_ticket_id
         FROM
         coupon_activity_ticket ct
         LEFT JOIN coupon_ticket t ON ct.ticket_no = t.ticket_no
         LEFT JOIN coupon_ticket_info ti ON t.last_ticket_info_no = ti.ticket_info_no
-        WHERE
-            ct.activity_no = #{q.activityNo}
+        WHERE 1=1
+        AND ct.activity_no = #{q.activityNo}
+        <if test="q.name!=null and q.name!=''">
+            and ti.name like concat('%',#{q.name},'%')
+        </if>
+    </select>
+
+    <select id="selectActivityTicketPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp">
+        SELECT t.id,t.ticket_no,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_at,ti.end_at,case when ct.id is null then 'false' else 'true' end selected
+        FROM
+        coupon_ticket t
+        LEFT JOIN coupon_ticket_info ti ON t.last_ticket_info_no = ti.ticket_info_no
+        LEFT JOIN coupon_activity_ticket ct ON ct.ticket_no = t.ticket_no
+        AND ct.activity_no = #{q.activityNo}
+        WHERE 1=1
+        AND t.shop_no = #{q.shopNo}
         <if test="q.name!=null and q.name!=''">
             and ti.name like concat('%',#{q.name},'%')
         </if>

@@ -21,6 +21,8 @@ public interface CouponActivityTicketDao extends BaseMapper<CouponActivityTicket
 
     List<CouponActivityTicketResp> list(String activityNo);
 
+    Page<CouponActivityTicketResp> selectTicketPage(Page page, @Param("q") CouponActivityTicketQuery query);
+
     Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, @Param("q") CouponActivityTicketQuery query);
 
 }
