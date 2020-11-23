@@ -42,7 +42,7 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
 	
 	@ApiOperation(value = "✓更新方案", tags = "企业小程序DIY配置")
     @PutMapping(value = "{id}")
-	public CommonResult<MpConfigPlanModel> updateById(@PathVariable Integer id,@Validated(ValidatorContract.OnUpdate.class) MpConfigPlanModel entity) {
+	public CommonResult<MpConfigPlanModel> updateById(@PathVariable Integer id,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MpConfigPlanModel entity) {
         MpConfigPlan params = new MpConfigPlan();
         params.setId(id);
         BeanUtil.copyProperties(entity,params);
