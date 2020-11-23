@@ -24,4 +24,5 @@ public interface OrganizeMpConfigPlanMenuDao extends BaseMapper<OrganizeMpConfig
     OrganizeMpConfigPlanMenuDTO selectMenuById(Integer menuId);
 
     void insertSingle(OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu);
+
 }

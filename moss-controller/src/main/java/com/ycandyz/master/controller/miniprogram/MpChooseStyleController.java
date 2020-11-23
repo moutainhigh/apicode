@@ -26,11 +26,17 @@ public class MpChooseStyleController {
     @Autowired
     private MpChooseStyleService mpChooseStyleService;
 
-    @ApiOperation(value = "查询企业小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="id",value="查询企业小程序编号",dataType="Integer")
-    })
+    @ApiOperation(value = "查询企业正在使用的小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
+    @GetMapping(value = "organize")
+    public CommonResult<List<OrganizeMpConfigMenuVO>> select() {
+        List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.select();
+        return CommonResult.success(organizeMpConfigMenuVO);
+    }
+
     @GetMapping(value = "organize/{id}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value="企业小程序编号",required=true,dataType="Integer")
+    })
     public CommonResult<List<OrganizeMpConfigMenuVO>> select(@PathVariable("id") Integer id) {
         List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.selByOrGanizeMoudleId(id);
         return CommonResult.success(organizeMpConfigMenuVO);

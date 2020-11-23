@@ -53,8 +53,8 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     }
 
     @Override
-    public List<OrganizeMpConfigMenuVO> selByOrGanizeMoudleId(Integer id) {
-        List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(id);
+    public List<OrganizeMpConfigMenuVO> selByOrGanizeMoudleId(Integer organizePlanId) {
+        List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(organizePlanId);
         List<OrganizeMpConfigMenuVO> lsit = new ArrayList<>();
         if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
             for (OrganizeMpConfigPlanMenuDTO o: organizeMpConfigPlanMenuDTOS) {
@@ -239,5 +239,25 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             }
         }
         return 1;
+    }
+
+    @Override
+    public List<OrganizeMpConfigMenuVO> select() {
+        UserVO currentUser = UserRequest.getCurrentUser();
+        Long organizeId = currentUser.getOrganizeId();
+        OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeId(organizeId);
+        if (organizeMpConfigPlan != null){
+            List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(organizeMpConfigPlan.getId());
+            List<OrganizeMpConfigMenuVO> lsit = new ArrayList<>();
+            if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
+                for (OrganizeMpConfigPlanMenuDTO o: organizeMpConfigPlanMenuDTOS) {
+                    OrganizeMpConfigMenuVO organizeMpConfigMenuVO = new OrganizeMpConfigMenuVO();
+                    BeanUtils.copyProperties(o, organizeMpConfigMenuVO);
+                    lsit.add(organizeMpConfigMenuVO);
+                }
+            }
+            return lsit;
+        }
+        return null;
     }
 }
