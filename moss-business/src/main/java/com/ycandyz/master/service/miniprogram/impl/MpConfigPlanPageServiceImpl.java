@@ -68,7 +68,7 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
                 baseIds.add(Integer.parseInt(id));
             }
         }
-        List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = this.baseMapper.getMenuModuleElement(moduleSort,baseIds);
+        List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = this.baseMapper.getMenuModuleElement(menuId,moduleSort,baseIds);
         List<MpConfigModuleBaseResp> baseInfoList = new ArrayList<MpConfigModuleBaseResp>();
         for(MpConfigPlanPageBaseDTO base: configPlanPageBaseDTOList){
             MpConfigModuleBaseResp resp = new MpConfigModuleBaseResp();
@@ -127,7 +127,7 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
                     baseIds.add(Integer.parseInt(id));
                 }
             }
-            List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = this.baseMapper.getMenuModuleElement(dto.getSortModule(),baseIds);
+            List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = this.baseMapper.getMenuModuleElement(menuId,dto.getSortModule(),baseIds);
             List<MpConfigModuleBaseResp> baseInfoList = new ArrayList<MpConfigModuleBaseResp>();
             for(MpConfigPlanPageBaseDTO dtoBase: configPlanPageBaseDTOList){
                 MpConfigModuleBaseResp resp = new MpConfigModuleBaseResp();
