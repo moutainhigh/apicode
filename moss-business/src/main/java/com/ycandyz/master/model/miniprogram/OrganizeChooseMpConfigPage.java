@@ -8,13 +8,13 @@ import java.util.List;
 @Data
 public class OrganizeChooseMpConfigPage {
 
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty(value = "menuId")
     private Integer menuId;
 
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty(value = "menuName")
     private String menuName;
 
-    @ApiModelProperty(value = "菜单")
+    @ApiModelProperty(value = "模块")
     private List<OrganizeMpConfigPageMenuVO> modules;
 
 }

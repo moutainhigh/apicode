@@ -16,7 +16,33 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, organize_id, plan_name, mp_plan_id, logic_delete, current_using, create_time, update_time
+        id, organize_id, plan_name, mp_plan_id, logic_delete, current_using, create_time, update_time,status
     </sql>
+    <insert id="insertSingle">
+        insert into organize_mp_config_plan(id,organize_id, plan_name, mp_plan_id,
+        logic_delete, current_using, create_time, update_time,status)
+        values (#{id},#{organizeId},#{planName},#{mpPlanId},0,0,now(),now(),#{status});
+    </insert>
+    <update id="setDelete">
+        update organize_mp_config_plan set logic_delete = 1 where id = #{id};
+    </update>
+    <select id="getOrganizePlan" resultMap="BaseResultMap">
+        select * from organize_mp_config_plan
+        where id = #{id} and organize_id = #{organizeId}
+    </select>
+    <select id="getOrganizePlanById" resultMap="BaseResultMap">
+         select * from organize_mp_config_plan
+        where id = #{id} and organize_id = #{organizeId}
+    </select>
+    <select id="selectByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
+        select * from organize_mp_config_plan where organize_id = #{organizeId};
+    </select>
+    <select id="getByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
+        select * from organize_mp_config_plan where organize_id = #{organizeId};
+    </select>
+    <select id="selectByOrganizeIdStatus"
+            resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and status = #{status} and logic_delete = #{delete};
+    </select>
 
 </mapper>

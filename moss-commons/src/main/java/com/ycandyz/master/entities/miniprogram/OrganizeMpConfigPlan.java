@@ -34,7 +34,7 @@ public class OrganizeMpConfigPlan extends Model {
    private Integer id;
 
    @ApiModelProperty(value = "企业编号")
-   private Integer organizeId;
+   private Long organizeId;
 
    @ApiModelProperty(value = "小程序名称")
    private String planName;
@@ -43,7 +43,7 @@ public class OrganizeMpConfigPlan extends Model {
    private Integer mpPlanId;
 
    @ApiModelProperty(value = "逻辑删除0：未删除；1、删除")
-   private Boolean logicDelete;
+   private Integer logicDelete;
 
    @ApiModelProperty(value = "当前应用0：未应用；1、应用")
    private Boolean currentUsing;
@@ -54,5 +54,7 @@ public class OrganizeMpConfigPlan extends Model {
    @ApiModelProperty(value = "修改时间")
    private Date updateTime;
 
+   @ApiModelProperty(value = "状态 [0:草稿；1:发布中；")
+   private Integer status;
 
 }

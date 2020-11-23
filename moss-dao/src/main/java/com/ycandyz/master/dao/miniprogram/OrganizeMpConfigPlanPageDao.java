@@ -1,7 +1,12 @@
 package com.ycandyz.master.dao.miniprogram;
 
+import com.ycandyz.master.dto.miniprogram.MpConfigPlanPageBaseDTO;
+import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanPage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +18,17 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface OrganizeMpConfigPlanPageDao extends BaseMapper<OrganizeMpConfigPlanPage> {
 
+    List<OrganizeMpConfigPlanPageDTO> selectByMenuId(@Param("menuId") Integer menuId);
+
+    /**
+     * 获取菜单模块元素
+     * @param moduleSort
+     * @param baseIds
+     * @return
+     */
+    List<OrganizeMpConfigPlanPageDTO> getMenuModuleElement(@Param("moduleSort") Integer moduleSort, @Param("baseIds") List<Integer> baseIds);
+
+    void insertSingle(OrganizeMpConfigPlanPage o);
+
+    void updateBaseNameById(Integer id1, String baseName);
 }

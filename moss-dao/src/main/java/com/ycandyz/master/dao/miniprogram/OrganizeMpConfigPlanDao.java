@@ -2,6 +2,9 @@ package com.ycandyz.master.dao.miniprogram;
 
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,17 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan> {
 
+    OrganizeMpConfigPlan getOrganizePlan(@Param("organizeId") Long organizeId, @Param("id") Integer id);
+
+    OrganizeMpConfigPlan getOrganizePlanById(@Param("organizeId") Long organizeId, @Param("id") Integer id);
+
+    void insertSingle(OrganizeMpConfigPlan organizeMpConfigPlan1);
+
+    List<OrganizeMpConfigPlan> selectByOrganizeId(Long organizeId);
+
+    OrganizeMpConfigPlan selectByOrganizeIdStatus(@Param("organizeId") Long organizeId,@Param("status")Integer status,@Param("delete") Integer delete);
+
+    OrganizeMpConfigPlan getByOrganizeId(Long organizeId);
+
+    int setDelete(@Param("id") Integer id);
 }
