@@ -43,6 +43,9 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     @Autowired
     private OrganizeMpConfigPlanDao organizeMpConfigPlanDao;
 
+    @Autowired
+    private MpConfigPlanMenuDao mpConfigPlanMenuDao;
+
     @Override
     public OrganizeMpConfigMenuVO selById(Integer id) {
         organizeMpConfigPlanMenuDao.selById(id);
@@ -100,11 +103,12 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         Integer id = organizeMenuMpRequestVO.getId();
         //OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getOrganizePlanById(organizeId,id);
         if (id == null){
-            //新增
+            //第一次新增
             //查询草稿
-            List<OrganizeMpConfigPlan> organizeMpConfigPlan = organizeMpConfigPlanDao.selectByOrganizeIdStatus(organizeId);
-            if (organizeMpConfigPlan != null && organizeMpConfigPlan.size() > 0){
-
+            OrganizeMpConfigPlan organizeMpConfigPlan0 = organizeMpConfigPlanDao.selectByOrganizeIdStatus(organizeId,0,0);
+            if (organizeMpConfigPlan0 != null){
+                //删除之前的草稿
+                int i = organizeMpConfigPlanDao.setDelete(organizeMpConfigPlan0.getId());
             }
             //plan表
             OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
@@ -112,12 +116,13 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             organizeMpConfigPlan1.setPlanName(organizeMenuMpRequestVO.getPlanName());
             organizeMpConfigPlan1.setOrganizeId(organizeId);
             organizeMpConfigPlan1.setStatus(0);
+            organizeMpConfigPlan1.setLogicDelete(0);
             organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
             //菜单表
             OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
-            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(organizeMenuMpRequestVO.getMenuId());
-            BeanUtils.copyProperties(organizeMpConfigPlanMenuDTO, organizeMpConfigPlanMenu);
-            List<OrganizeMpConfigPlan> organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByOrganizeId(organizeId);
+            MpConfigPlanMenu mpConfigPlanMenu = mpConfigPlanMenuDao.selectMenuById(organizeMenuMpRequestVO.getMenuId());
+            BeanUtils.copyProperties(mpConfigPlanMenu, organizeMpConfigPlanMenu);
+            OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByOrganizeIdStatus(organizeId,0,0);
             organizeMpConfigPlanMenu.setOrganizePlanId(organizeMpConfigPlan2.getId());
             organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
             //page表
@@ -141,6 +146,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 organizeMpConfigPlanPageDao.insertSingle(o);
             }
         }else {
+
             //修改
             List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
             for (OrganizeMpConfigPageMenuVo o : modules) {
@@ -174,8 +180,8 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
                 OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(omm.getMenuId());
                 BeanUtils.copyProperties(organizeMpConfigPlanMenuDTO, organizeMpConfigPlanMenu);
-                List<OrganizeMpConfigPlan> organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByOrganizeId(organizeId);
-                organizeMpConfigPlanMenu.setOrganizePlanId(organizeMpConfigPlan2.getId());
+                //OrganizeMpConfigPlan> organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByOrganizeId(organizeId);
+                //organizeMpConfigPlanMenu.setOrganizePlanId(organizeMpConfigPlan2.getId());
                 organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
 
                 OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();

@@ -19,8 +19,8 @@
         id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name
     </sql>
     <insert id="insertSingle">
-        insert into ( id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name)
-        values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName})
+        insert into organize_mp_config_plan_page(id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,logic_delete)
+        values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0)
     </insert>
     <update id="updateBaseNameById">
         update organize_mp_config_plan_page set base_name = #{baseName} where id = #{id}
