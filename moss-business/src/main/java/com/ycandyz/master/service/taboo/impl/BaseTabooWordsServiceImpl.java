@@ -183,17 +183,28 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
 
     @Override
     public ReturnResponse selTabooWord(BaseTabooWordsVO baseTabooWordsVO) {
-        if (baseTabooWordsVO != null) {
+        if (baseTabooWordsVO == null){
+            log.error("敏感词跟新入参为空");
+            return null;
+        }else{
             Long id = baseTabooWordsVO.getId();
             List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWord(id);
             List<String> tabooList = new ArrayList<>();
+            List<String> nameList = new ArrayList<>();
             if (tabooWordsForReviews != null && tabooWordsForReviews.size() > 0) {
                 tabooWordsForReviews.stream().forEach(s -> tabooList.addAll(MyCollectionUtils.parseIds(s.getTabooWords())));
+                tabooWordsForReviews.stream().forEach(s -> nameList.add(s.getPhraseName()));
             }
             String[] tabooWords = baseTabooWordsVO.getTabooWords();
+            String phraseName = baseTabooWordsVO.getPhraseName();
+            if (nameList != null && nameList.size()>0){
+                if (nameList.contains(phraseName)){
+                    return ReturnResponse.failed("更新失败,敏感词组名称已存在!");
+                }
+            }
             for (String s : tabooWords) {
                 if (tabooList.contains(s)) {
-                    return ReturnResponse.failed("添加失败,敏感词已存在!");
+                    return ReturnResponse.failed("更新失败,敏感词已存在!");
                 }
             }
         }
