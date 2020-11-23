@@ -82,11 +82,12 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     baseIds.add(Integer.parseInt(id));
                 }
             }
-            List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = organizeMpConfigPlanPageDao.getMenuModuleElement(dto.getSortModule(), baseIds);
+            List<OrganizeMpConfigPlanPageDTO> configPlanPageBaseDTOList = organizeMpConfigPlanPageDao.getMenuModuleElement(dto.getSortModule(), baseIds);
             List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
-            for (MpConfigPlanPageBaseDTO dtoBase : configPlanPageBaseDTOList) {
+            for (OrganizeMpConfigPlanPageDTO dtoBase : configPlanPageBaseDTOList) {
                 OrganizeMpConfigModuleBaseVO resp = new OrganizeMpConfigModuleBaseVO();
                 BeanUtil.copyProperties(dtoBase, resp);
+                resp.setId(dtoBase.getModuleBaseId());
                 baseInfoList.add(resp);
                 module.setBaseInfo(baseInfoList);
             }
