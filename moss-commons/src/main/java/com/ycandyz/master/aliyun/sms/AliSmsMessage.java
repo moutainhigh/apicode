@@ -52,7 +52,7 @@ public class AliSmsMessage {
      * @param telephone [\"1500000000\",\"1500000001\"]
      * @param message   {\"name\":\"Tom\", \"code\":\"123\"}
      */
-    public String sendMsg(List<String> telephone, String message, String templateCode){
+    public String sendMsg(List<Object> telephone, String message, String templateCode){
         if (telephone==null || telephone.size()==0){
             log.error("传入的手机号码不允许为空值!");
             return null;
@@ -72,7 +72,7 @@ public class AliSmsMessage {
             //修改数据交互格式
             request.setAcceptFormat(FormatType.JSON);
             //必填:待发送手机号。支持JSON格式的批量调用，批量上限为100个手机号码,批量调用相对于单条调用及时性稍有延迟,验证码类型的短信推荐使用单条调用的方式
-            JSONArray phoneArray = new JSONArray(Collections.singletonList(telephone));
+            JSONArray phoneArray = new JSONArray(telephone);
             request.setPhoneNumberJson(phoneArray.toJSONString());
             JSONArray signNameArray = new JSONArray();  //发送消息的签名jsonarray
             JSONArray msgArray = new JSONArray();       //发送消息中特殊字符的替换jsonarray
@@ -108,7 +108,7 @@ public class AliSmsMessage {
         return null;
     }
 
-    public List<QuerySendDetailsResponse.SmsSendDetailDTO> messageSendState(List<String> telephone, String bizId) {
+    public List<QuerySendDetailsResponse.SmsSendDetailDTO> messageSendState(List<Object> telephone, String bizId) {
         //可自助调整超时时间
         System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
@@ -118,12 +118,12 @@ public class AliSmsMessage {
             DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
             IAcsClient acsClient = new DefaultAcsClient(profile);
             List<QuerySendDetailsResponse.SmsSendDetailDTO> list = new ArrayList<>();
-            for (String phone : telephone){
+            for (Object phone : telephone){
 
                 //组装请求对象
                 QuerySendDetailsRequest request = new QuerySendDetailsRequest();
                 //必填-号码
-                request.setPhoneNumber(phone);
+                request.setPhoneNumber(phone.toString());
                 //可选-流水号
                 request.setBizId(bizId);
                 //必填-发送日期 支持30天内记录查询，格式yyyyMMdd

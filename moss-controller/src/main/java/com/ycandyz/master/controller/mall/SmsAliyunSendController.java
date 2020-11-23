@@ -1,4 +1,4 @@
-package com.ycandyz.master.service.quartz;
+package com.ycandyz.master.controller.mall;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
@@ -7,29 +7,28 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;
 import com.ycandyz.master.aliyun.sms.AliSmsMessage;
-import com.ycandyz.master.constant.KafkaConstant;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dao.sms.SmsSendQueueLogDao;
 import com.ycandyz.master.dto.organize.OrganizeDTO;
 import com.ycandyz.master.entities.sms.SmsSendQueueLog;
 import com.ycandyz.master.kafka.KafkaProducer;
 import com.ycandyz.master.kafka.Message;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@Configuration
-@EnableScheduling
-public class SMSALiJob {
+@RestController
+@RequestMapping("/sms")
+@Slf4j
+public class SmsAliyunSendController {
 
     @Value("${aliyun.sms.service-number}")
     private String serviceNumber;
@@ -55,10 +54,17 @@ public class SMSALiJob {
     @Autowired
     private SmsSendQueueLogDao smsSendQueueLogDao;
 
+    @GetMapping("/send/msg")
+    public ReturnResponse<String> sendShortMsg(){
+        smsSendToday();
+        smsSendSevenDay();
+        smsSendThirtyDay();
+        return ReturnResponse.success("成功");
+    }
+
     /**
      * u客用户发送短信，到期提醒，今天
      */
-    @Scheduled(cron = "0 30 16 * * ?")
     private void smsSendToday() {
 
         List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843");
@@ -70,20 +76,25 @@ public class SMSALiJob {
         Long serviceNowEnd = DateUtil.endOfDay(new Date()).getTime()/1000;
         List<OrganizeDTO> list = organizeDao.queryByServiceTime(serviceNowBegin,serviceNowEnd);
         if (list!=null && list.size()>0){
+            List<Object> phoneList = new ArrayList<>();
             jsonArray = new JSONArray();
             for (OrganizeDTO organizeDTO : list){
                 if (profileActive.equals("dev") || profileActive.equals("test")){
-                    if (!phone.contains(organizeDTO.getPhone())){
-                        return;
+                    if (phone.contains(organizeDTO.getPhone())){
+                        phoneList.add(organizeDTO.getPhone());
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("name",organizeDTO.getFullNname());
+                        jsonObject.put("msg","今日");
+                        jsonArray.add(jsonObject);
+
+                        phoneList.add(serviceNumber);
+                        JSONObject jsonObjectService = new JSONObject();
+                        jsonObjectService.put("name",organizeDTO.getFullNname());
+                        jsonObjectService.put("msg","今日");
+                        jsonArray.add(jsonObjectService);
                     }
                 }
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("name",organizeDTO.getFullNname());
-                jsonObject.put("msg","今日");
-                jsonArray.add(jsonObject);
             }
-            List<Object> phoneList = list.stream().map(OrganizeDTO::getPhone).collect(Collectors.toList());
-            phoneList.add(serviceNumber);
             String bizId = aliSmsMessage.sendMsg(phoneList,jsonArray.toJSONString(),templateCode);
             if (bizId!=null && !"".equals(bizId)) {
                 List<QuerySendDetailsResponse.SmsSendDetailDTO> responseList = aliSmsMessage.messageSendState(phoneList, bizId);
@@ -109,7 +120,7 @@ public class SMSALiJob {
                     smsSendQueueLog.setState(2);
                     //发送失败，提交kafka，准备二次发送
                     Message message = new Message();
-                    message.setId(topicId+"#"+UUID.randomUUID().toString());
+                    message.setId(topicId+"#"+ UUID.randomUUID().toString());
                     message.setTime(System.currentTimeMillis());
                     message.setMsg(smsSendQueueLog);
                     kafkaProducer.send(message,topicId);
@@ -125,7 +136,6 @@ public class SMSALiJob {
     /**
      * u客用户发送短信，到期提醒，前七天
      */
-    @Scheduled(cron = "0 0 8 * * ?")
     private void smsSendSevenDay() {
 
         List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843");
@@ -137,21 +147,26 @@ public class SMSALiJob {
         Long serviceSevenEnd = DateUtil.endOfDay(sevenDateTime).getTime()/1000;
         List<OrganizeDTO> sevenList = organizeDao.queryByServiceTime(serviceSevenBegin,serviceSevenEnd);
         if (sevenList!=null && sevenList.size()>0){
+            List<Object> sevenPhoneList = new ArrayList<>();
             jsonArray = new JSONArray();
             String msg = DateUtil.format(DateUtil.offsetDay(new Date(), 7),"yyyy年MM月dd日");
             for (OrganizeDTO organizeDTO : sevenList){
                 if (profileActive.equals("dev") || profileActive.equals("test")){
-                    if (!phone.contains(organizeDTO.getPhone())){
-                        return;
+                    if (phone.contains(organizeDTO.getPhone())){
+                        sevenPhoneList.add(organizeDTO.getPhone());
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("name",organizeDTO.getFullNname());
+                        jsonObject.put("msg",msg);
+                        jsonArray.add(jsonObject);
+
+                        sevenPhoneList.add(serviceNumber);
+                        JSONObject jsonObjectService = new JSONObject();
+                        jsonObjectService.put("name",organizeDTO.getFullNname());
+                        jsonObjectService.put("msg",msg);
+                        jsonArray.add(jsonObjectService);
                     }
                 }
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("name",organizeDTO.getFullNname());
-                jsonObject.put("msg",msg);
-                jsonArray.add(jsonObject);
             }
-            List<Object> sevenPhoneList = sevenList.stream().map(OrganizeDTO::getPhone).collect(Collectors.toList());
-            sevenPhoneList.add(serviceNumber);
             String bizId = aliSmsMessage.sendMsg(sevenPhoneList,jsonArray.toJSONString(),templateCode);
             if (bizId!=null && !"".equals(bizId)) {
                 List<QuerySendDetailsResponse.SmsSendDetailDTO> responseList = aliSmsMessage.messageSendState(sevenPhoneList, bizId);
@@ -163,7 +178,6 @@ public class SMSALiJob {
     /**
      * u客用户发送短信，到期提醒，前30天
      */
-    @Scheduled(cron = "0 0 8 * * ?")
     private void smsSendThirtyDay() {
 
         List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843");
@@ -175,16 +189,26 @@ public class SMSALiJob {
         Long serviceThirtyEnd = DateUtil.endOfDay(thirtyDateTime).getTime()/1000;
         List<OrganizeDTO> thirtyList = organizeDao.queryByServiceTime(serviceThirtyBegin,serviceThirtyEnd);
         if (thirtyList!=null && thirtyList.size()>0){
+            List<Object> thirtyPhoneList = new ArrayList<>();
             jsonArray = new JSONArray();
             String msg = DateUtil.format(DateUtil.offsetDay(new Date(), 30),"yyyy年MM月dd日");
             for (OrganizeDTO organizeDTO : thirtyList){
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("name",organizeDTO.getFullNname());
-                jsonObject.put("msg",msg);
-                jsonArray.add(jsonObject);
+                if (profileActive.equals("dev") || profileActive.equals("test")){
+                    if (phone.contains(organizeDTO.getPhone())){
+                        thirtyPhoneList.add(organizeDTO.getPhone());
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("name",organizeDTO.getFullNname());
+                        jsonObject.put("msg",msg);
+                        jsonArray.add(jsonObject);
+
+                        thirtyPhoneList.add(serviceNumber);
+                        JSONObject jsonObjectService = new JSONObject();
+                        jsonObjectService.put("name",organizeDTO.getFullNname());
+                        jsonObjectService.put("msg",msg);
+                        jsonArray.add(jsonObjectService);
+                    }
+                }
             }
-            List<Object> thirtyPhoneList = thirtyList.stream().map(OrganizeDTO::getPhone).collect(Collectors.toList());
-            thirtyPhoneList.add(serviceNumber);
             String bizId = aliSmsMessage.sendMsg(thirtyPhoneList,jsonArray.toJSONString(),templateCode);
             if (bizId!=null && !"".equals(bizId)) {
                 List<QuerySendDetailsResponse.SmsSendDetailDTO> responseList = aliSmsMessage.messageSendState(thirtyPhoneList, bizId);
