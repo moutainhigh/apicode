@@ -1,5 +1,6 @@
 package com.ycandyz.master.handler;
 
+import cn.hutool.core.util.StrUtil;
 import com.ycandyz.master.abstracts.AbstractHandler;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dao.organize.OrganizeNewsDao;
@@ -12,8 +13,12 @@ import com.ycandyz.master.enums.ReviewEnum;
 import com.ycandyz.master.enums.TabooOperateEnum;
 import com.ycandyz.master.utils.EnumUtil;
 import com.ycandyz.master.utils.MyCollectionUtils;
+import com.ycandyz.master.utils.PatternUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -77,11 +82,23 @@ public class OrganizeNewsHandler extends AbstractHandler {
                 String[] split = content.split("︵",-1);
                 contentReviewRep.setOabstracts(split[0]);
                 contentReviewRep.setOtitle(split[1]);
-                contentReviewRep.setOndContent(split[5]);
+                String text = split[5];
+                if (text != null){
+                    Document document = Jsoup.parse(text);
+                    String p = document.getElementsByTag("p").text();
+                    String s = StrUtil.cleanBlank(p);
+                    contentReviewRep.setOndContent(s);
+                }
                 String[] urls = new String[2];
                 urls[0] = split[2];
                 urls[1] = split[3];
-                contentReviewRep.setOImgUrls(MyCollectionUtils.removeNullString(urls));
+                List<String> list = MyCollectionUtils.removeNullString(urls);
+                //获取富文本中图片
+                List<String> imgStr = PatternUtils.getImgStr(text);
+                if (imgStr != null){
+                    list.addAll(imgStr);
+                }
+                contentReviewRep.setOImgUrls(list);
                 if (contentReviewDTO.getReviewAuditResult() == 2){
                     contentReviewRep.setAuditResult(Integer.valueOf(split[4]));
                 }else {

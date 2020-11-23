@@ -11,8 +11,10 @@ import com.ycandyz.master.enums.ReviewEnum;
 import com.ycandyz.master.enums.TabooOperateEnum;
 import com.ycandyz.master.utils.EnumUtil;
 import com.ycandyz.master.utils.MyCollectionUtils;
+import com.ycandyz.master.utils.PatternUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 
 @Component
@@ -77,11 +81,21 @@ public class MallItemHandler extends AbstractHandler {
             if (content != null){
                 String[] split = content.split("︵",-1);
                 contentReviewRep.setItemName(split[0]);
-                contentReviewRep.setItemText(split[5]);
+                String text = split[5];
+                if (text != null){
+                    Document document = Jsoup.parse(text);
+                    Elements p = document.getElementsByTag("p");
+                    contentReviewRep.setItemText(p.text());
+                }
                 contentReviewRep.setItemShareDescr(split[2]);
                 String banner = split[1];
                 List<String> list = MyCollectionUtils.parseIds(banner);
                 List<String> itemImgUrls = new ArrayList<>();
+                //获取富文本中图片
+                List<String> imgStr = PatternUtils.getImgStr(text);
+                if (imgStr != null){
+                    itemImgUrls.addAll(imgStr);
+                }
                 list.stream()
                         .filter(s->StringUtils.isNotBlank(s.replace("\"", "")))
                         .forEach(s->{
