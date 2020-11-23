@@ -53,13 +53,17 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     }
 
     @Override
-    public OrganizeMpConfigMenuVO selByOrGanizeMoudleId(Integer id) {
-        OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(id);
-        OrganizeMpConfigMenuVO organizeMpConfigMenuVO = new OrganizeMpConfigMenuVO();
-        if (organizeMpConfigPlanMenuDTO != null) {
-            BeanUtils.copyProperties(organizeMpConfigPlanMenuDTO, organizeMpConfigMenuVO);
+    public List<OrganizeMpConfigMenuVO> selByOrGanizeMoudleId(Integer id) {
+        List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(id);
+        List<OrganizeMpConfigMenuVO> lsit = new ArrayList<>();
+        if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
+            for (OrganizeMpConfigPlanMenuDTO o: organizeMpConfigPlanMenuDTOS) {
+                OrganizeMpConfigMenuVO organizeMpConfigMenuVO = new OrganizeMpConfigMenuVO();
+                BeanUtils.copyProperties(o, organizeMpConfigMenuVO);
+                lsit.add(organizeMpConfigMenuVO);
+            }
         }
-        return organizeMpConfigMenuVO;
+        return lsit;
     }
 
     @Override

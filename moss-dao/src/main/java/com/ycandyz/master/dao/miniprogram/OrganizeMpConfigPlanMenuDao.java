@@ -19,7 +19,7 @@ public interface OrganizeMpConfigPlanMenuDao extends BaseMapper<OrganizeMpConfig
 
     void selById(Integer id);
 
-    OrganizeMpConfigPlanMenuDTO selByOrGanizeMoudleId(Integer id);
+    List<OrganizeMpConfigPlanMenuDTO> selByOrGanizeMoudleId(Integer organizePlanId);
 
     OrganizeMpConfigPlanMenuDTO selectMenuById(Integer menuId);
 
