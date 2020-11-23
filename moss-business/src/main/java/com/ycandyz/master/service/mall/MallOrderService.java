@@ -9,6 +9,7 @@ import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.domain.query.mall.MallOrderUAppQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallOrder;
+import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallOrderVO;
 
 public interface MallOrderService extends IService<MallOrder> {
@@ -23,5 +24,7 @@ public interface MallOrderService extends IService<MallOrder> {
 
     ReturnResponse<String> verPickupNo(String pickupNo, String orderNo, UserVO userVO);
 
-    ReturnResponse<Page<MallOrderVO>> queryMallOrderListByUApp(RequestParams<MallOrderUAppQuery> requestParams, UserVO userVO);
+    ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long page_size, String mallOrderQuery, Integer status, UserVO userVO);
+
+    ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(String orderNo, UserVO userVO);
 }

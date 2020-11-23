@@ -11,6 +11,7 @@ import com.ycandyz.master.domain.query.mall.MallOrderUAppQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.enums.ExpressEnum;
+import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallOrderVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.mall.impl.MaillOrderServiceImpl;
@@ -109,7 +110,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     }
 
     /**
-     * 获取快递公司列表
+     * 获取快递公司列表,UApp
      * @return
      */
     @ApiOperation(value = "获取快递公司列表",notes = "获取快递公司列表",httpMethod = "GET")
@@ -120,17 +121,55 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     }
 
     /**
-     * UApp项目订单列表接口
-     * @param requestParams
+     * UApp项目订单列表接口,UApp
+     * @param page
+     * @param page_size
+     * @param mallOrderQuery
+     * @param status
      * @param userVO
      * @return
      */
-    @ApiOperation(value = "UApp项目订单列表接口",notes = "UApp项目订单列表接口",httpMethod = "POST")
-    @PostMapping("/u-app/order/page")
-    public ReturnResponse<Page<MallOrderVO>> queryMallOrderListByUApp(@RequestBody RequestParams<MallOrderUAppQuery> requestParams, @CurrentUser UserVO userVO){
-        if (requestParams.getT()==null){
+    @ApiOperation(value = "UApp项目订单列表接口",notes = "UApp项目订单列表接口",httpMethod = "GET")
+    @GetMapping("/u-app/order/page")
+    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("mallOrderQuery") String mallOrderQuery, @RequestParam("status") Integer status, @CurrentUser UserVO userVO){
+        if (page==null || page_size==null){
             return ReturnResponse.failed("请求入参为空");
         }
-        return mallOrderService.queryMallOrderListByUApp(requestParams,userVO);
+        if (mallOrderQuery!=null && !"".equals(mallOrderQuery)){
+            mallOrderQuery = mallOrderQuery.trim();
+        }
+        return mallOrderService.queryMallOrderListByUApp(page,page_size,mallOrderQuery,status,userVO);
+    }
+
+    /**
+     * 查看订单详情,UApp
+     * @param orderNo
+     * @return
+     */
+    @ApiOperation(value = "查看订单详情",notes = "查看订单详情",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String")
+    })
+    @GetMapping("/u-app/order/detail/{orderNo}")
+    public ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(@PathVariable("orderNo") String orderNo, @CurrentUser UserVO userVO){
+        return mallOrderService.queryOrderDetailByUApp(orderNo,userVO);
+    }
+
+    /**
+     * 通过提货码查询订单,UApp
+     * @param pickupNo
+     * @param userVO
+     * @return
+     */
+    @ApiOperation(value = "通过提货码查询订单",notes = "通过提货码查询订单",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
+    })
+    @GetMapping("/u-app/order/pickup/query")
+    public ReturnResponse<MallOrderVO> queryDetailByPickupNoUApp(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
+        if (pickupNo!=null){
+            pickupNo = pickupNo.trim();
+        }
+        return mallOrderService.queryDetailByPickupNo(pickupNo, orderNo, userVO);
     }
 }
