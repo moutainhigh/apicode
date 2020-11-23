@@ -65,6 +65,7 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
         baseTabooWords.setOperator(currentUser.getId());
         baseTabooWords.setTreatmentMethod(0);
         baseTabooWords.setFlag(1);
+        //baseTabooWordsDao.addBaseTabooWords(baseTabooWords);
         kafkaProducer.send(baseTabooWords, KafkaConstant.TABOOTOPIC);
         log.info("新增敏感词组发送kafka消息:topic:{};消息:{}", KafkaConstant.TABOOTOPIC, JSON.toJSON(baseTabooWords));
     }
@@ -181,18 +182,32 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     }
 
     @Override
-    public ReturnResponse selTabooWord(String[] tabooWords) {
-        List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
-        List<String> tabooList = new ArrayList<>();
-        if (tabooWordsForReviews != null && tabooWordsForReviews.size() > 0){
-            tabooWordsForReviews.stream().forEach(s->tabooList.addAll(MyCollectionUtils.parseIds(s.getTabooWords())));
-        }
-        for (String s: tabooWords) {
-            if (tabooList.contains(s)){
-                return ReturnResponse.failed("添加失败,敏感词已存在!");
+    public ReturnResponse selTabooWord(BaseTabooWordsVO baseTabooWordsVO) {
+        if (baseTabooWordsVO == null){
+            log.error("敏感词跟新入参为空");
+            return null;
+        }else{
+            Long id = baseTabooWordsVO.getId();
+            List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWord(id);
+            List<String> tabooList = new ArrayList<>();
+            List<String> nameList = new ArrayList<>();
+            if (tabooWordsForReviews != null && tabooWordsForReviews.size() > 0) {
+                tabooWordsForReviews.stream().forEach(s -> tabooList.addAll(MyCollectionUtils.parseIds(s.getTabooWords())));
+                tabooWordsForReviews.stream().forEach(s -> nameList.add(s.getPhraseName()));
+            }
+            String[] tabooWords = baseTabooWordsVO.getTabooWords();
+            String phraseName = baseTabooWordsVO.getPhraseName();
+            if (nameList != null && nameList.size()>0){
+                if (nameList.contains(phraseName)){
+                    return ReturnResponse.failed("更新失败,敏感词组名称已存在!");
+                }
+            }
+            for (String s : tabooWords) {
+                if (tabooList.contains(s)) {
+                    return ReturnResponse.failed("更新失败,敏感词已存在!");
+                }
             }
         }
         return ReturnResponse.success("敏感词组名称和敏感词不存在!");
     }
-
 }

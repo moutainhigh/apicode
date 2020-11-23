@@ -42,27 +42,27 @@ public class FootprintHandler extends AbstractHandler {
     @Transactional
     public ReturnResponse examine(ReviewParam reviewParam) {
         if (reviewParam == null ){
-            return ReturnResponse.success("商友圈更新数据为null");
+            return ReturnResponse.failed("数据不存在!");
         }
         String desc = EnumUtil.getByCode(TabooOperateEnum.class, reviewParam.getOper()).getDesc();
         Long id = reviewParam.getId();
         String contentId = contentreviewDao.selectById(id);
         FootprintQuery footprintQuery = footprintDao.selById(Long.valueOf(contentId));
         if (footprintQuery ==null){
-            String str=String.format("审核id为%d对应的商友圈id为%s的数据不存在",id,contentId, desc);
-            return  ReturnResponse.success(str);
+            String str=String.format("审核id为%d对应的商友圈item_no为%s的数据不存在",id,contentId, desc);
+            return  ReturnResponse.failed(str);
         }
         int i = footprintDao.updateOneFootprint(Long.valueOf(contentId),reviewParam.getOper());
         if (i > 0) {
             updateOrInsert(id,contentId, reviewParam.getType());
-            log.info("商友圈id为{}的数据审批{}成功",contentId,desc);
-            String str=String.format("商友圈id为%s的数据审批%s成功",contentId, desc);
-            insertAllcontentReviewLog(contentId,0, reviewParam.getOper(),2);
-            return ReturnResponse.success(str);
+            log.info("商友圈item_no为{}的数据审批{}成功",contentId,desc);
+            String str=String.format("商友圈item_no为%s的数据审批%s成功",contentId, desc);
+            insertAllcontentReviewLog(id,contentId,0, reviewParam.getOper(),2);
+            return ReturnResponse.failed(str);
         }
-        log.info("商友圈id为{}的数据审批{}失败",contentId,desc);
-        String str=String.format("商友圈id为%s的数据审批%s失败",contentId, desc);
-        return ReturnResponse.success(str);
+        log.info("商友圈item_no为{}的数据审批{}失败",contentId,desc);
+        String str=String.format("商友圈item_no为%s的数据审批%s失败",contentId, desc);
+        return ReturnResponse.failed(str);
     }
 
     @Override
@@ -79,16 +79,23 @@ public class FootprintHandler extends AbstractHandler {
             List<String> imgUrls = new ArrayList();
             String content = null;
             Integer auditResult = null;
-            if (StringUtils.isNoneEmpty(s)) {
+            if (StringUtils.isNotBlank(s)) {
                 String[] split = s.split(";",-1);
-                Arrays.stream(split).forEach(s1 -> imgUrls.add(PatternUtils.reg(s1)));
+                Arrays.stream(split)
+                        .filter(s1->StringUtils.isNotBlank(PatternUtils.reg(s1)))
+                        .forEach(s1 -> imgUrls.add(PatternUtils.reg(s1)));
                 content = split[0].split("https")[0];
                 auditResult = Integer.valueOf(split[0].substring(split[0].length()-1));
             }
             contentReviewRep.setId(contentReviewDTO.getId());
             contentReviewRep.setFcontent(content);
             contentReviewRep.setFphotoUrls(imgUrls);
-            contentReviewRep.setAuditResult(auditResult);
+            //contentReviewRep.setCreatedTime(contentReviewDTO.getCreatedTime());
+            if (contentReviewDTO.getReviewAuditResult() == 2){
+                contentReviewRep.setAuditResult(auditResult);
+            }else {
+                contentReviewRep.setAuditResult(null);
+            }
         }
     }
 
@@ -112,7 +119,7 @@ public class FootprintHandler extends AbstractHandler {
                 String contentId = contentreviewDao.selectById(id);
                 FootprintQuery footprintQuery = footprintDao.selById(Long.valueOf(contentId));
                 if (footprintQuery ==null){
-                    String str=String.format("审核id为%d对应的商友圈id为%s的数据不存在",id,contentId, desc);
+                    String str=String.format("审核id为%d对应的商友圈item_no为%s的数据不存在",id,contentId, desc);
                     return  ReturnResponse.success(str);
                 }
                 ids.add(Long.valueOf(contentId));
@@ -128,7 +135,7 @@ public class FootprintHandler extends AbstractHandler {
                 v.stream().forEach(id->{
                     String contentId = contentreviewDao.selectById(id);
                     updateOrInsert(id, contentId,1);
-                    insertAllcontentReviewLog(contentId,0, finalOper,2);
+                    insertAllcontentReviewLog(id,contentId,0, finalOper,2);
                 });
             });
             return ReturnResponse.success(str);

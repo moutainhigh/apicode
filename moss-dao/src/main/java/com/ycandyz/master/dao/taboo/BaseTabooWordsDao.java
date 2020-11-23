@@ -32,6 +32,8 @@ public interface BaseTabooWordsDao extends BaseMapper<BaseTabooWords> {
 
     List<TabooWordsForReview> selectWords();
 
+    List<TabooWordsForReview> selectWord(@Param("id") Long id);
+
     int updateBaseTabooWords(BaseTabooWords baseTabooWords);
 
     List<BaseTabooWords> selPhraseName(@Param("phraseName") String name);

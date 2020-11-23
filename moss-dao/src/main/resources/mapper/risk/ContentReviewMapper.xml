@@ -12,6 +12,7 @@
         <result column="audit_time" property="auditTime" />
         <result column="audit_result" property="auditResult" />
         <result column="content" property="content" />
+        <result column="audit_result" property="reviewAuditResult" />
     </resultMap>
 
     <insert id="insert" parameterType="com.ycandyz.master.entities.risk.ContentReview" >
@@ -31,7 +32,7 @@
             select * from (
             select concat_ws("︵",m.item_name,m.banners,m.share_descr,m.share_img,m.is_screen,m.item_text) as content,
             c.id,c.type ,c.created_time,
-            c.updated_time,c.auditor,c.audit_time
+            c.updated_time,c.auditor,c.audit_time,c.audit_result
             from content_review c
             inner join mall_item m
             on m.item_no = c.content_id
@@ -71,8 +72,8 @@
                 and m.is_screen = #{con.auditResult}
             </if>
             union
-            select group_concat(f.content,fp.photo_url,f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
-            c.updated_time,c.auditor,c.audit_time
+            select group_concat(f.content,ifnull(fp.photo_url,""),f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
+            c.updated_time,c.auditor,c.audit_time,c.audit_result
             from content_review c
             inner join footprint f
             on f.id = c.content_id
@@ -116,7 +117,7 @@
             group by c.content_id
             union
             select concat_ws("︵",ifnull(o.abstract,""),ifnull(o.title,""),ifnull(o.cover,""),ifnull(o.link_url,""),ifnull(o.is_screen,""),ifnull(ond.content,"")) as content,c.id,c.type,c.created_time,
-            c.updated_time,c.auditor,c.audit_time
+            c.updated_time,c.auditor,c.audit_time,c.audit_result
             from content_review c
             inner join organize_news o
             on o.id = c.content_id
@@ -170,7 +171,7 @@
     select count(1) from (
         select concat_ws("︵",m.item_name,m.banners,m.share_descr,m.share_img,m.is_screen,m.item_text) as content,
         c.id,c.type ,c.created_time,
-        c.updated_time,c.auditor,c.audit_time
+        c.updated_time,c.auditor,c.audit_time,c.audit_result
         from content_review c
         inner join mall_item m
         on m.item_no = c.content_id
@@ -210,8 +211,8 @@
             and m.is_screen = #{con.auditResult}
         </if>
         union
-        select group_concat(f.content,fp.photo_url,f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
-        c.updated_time,c.auditor,c.audit_time
+        select group_concat(f.content,ifnull(fp.photo_url,""),f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
+        c.updated_time,c.auditor,c.audit_time,c.audit_result
         from content_review c
         inner join footprint f
         on f.id = c.content_id
@@ -255,7 +256,7 @@
         group by c.content_id
         union
         select concat_ws("︵",ifnull(o.abstract,""),ifnull(o.title,""),ifnull(o.cover,""),ifnull(o.link_url,""),ifnull(o.is_screen,""),ifnull(ond.content,"")) as content,c.id,c.type,c.created_time,
-        c.updated_time,c.auditor,c.audit_time
+        c.updated_time,c.auditor,c.audit_time,c.audit_result
         from content_review c
         inner join organize_news o
         on o.id = c.content_id

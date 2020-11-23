@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.risk.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.ArrayListMultimap;
@@ -47,6 +48,7 @@ public class ContentReviewServiceImpl implements ContentReviewService {
 
     @Override
     public ReturnResponse<Page<ContentReviewRep>> list(RequestParams<ContentReviewQuery> requestParams) {
+        log.info("内容审核查询入参:{}", JSON.toJSONString(requestParams));
         ContentReviewQuery contentReviewQuery = requestParams.getT();
         Page<ContentReviewRep> page1 = new Page<>();
         List<ContentReviewRep> newlist = new ArrayList<>();
@@ -58,7 +60,6 @@ public class ContentReviewServiceImpl implements ContentReviewService {
                 //分页
                 List<ContentReviewDTO> list = contentreviewDao.list((requestParams.getPage() - 1) * requestParams.getPage_size(),
                         requestParams.getPage_size(), contentReviewQuery);
-                //List<ContentReviewDTO> list = contentreviewDao.list(contentReviewQuery);
                 List<Long> auditorList = list.stream().map(ContentReviewDTO::getAuditor).collect(Collectors.toList());
                 List<User> userList = userDao.selectBatchIds(auditorList);
                 Map<Long, String> map = userList.stream().collect(Collectors.toMap(User::getId,User::getName));
@@ -67,13 +68,14 @@ public class ContentReviewServiceImpl implements ContentReviewService {
                     AbstractHandler handler = HandlerContext.getHandler(s.getType());
                     handler.handleContentreview(s,contentReviewRep);
                     //add video
-//                    if(s.getType() == 0){
-//                        LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
-//                                .select(MallItemVideo::getId,MallItemVideo::getUrl,MallItemVideo::getImg)
-//                                .eq(MallItemVideo::getItemNo, s.getContentId());
-//                        List<MallItemVideo> videoList = mallItemVideoService.list(videoWrapper);
-//                        contentReviewRep.setVideo(videoList);
-//                    }
+                    if(s.getType() == 0){
+                        String conId = contentreviewDao.selectById(s.getId());
+                        LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                                .select(MallItemVideo::getId,MallItemVideo::getUrl,MallItemVideo::getImg)
+                                .eq(MallItemVideo::getItemNo,conId);
+                        List<MallItemVideo> videoList = mallItemVideoService.list(videoWrapper);
+                        contentReviewRep.setVideo(videoList);
+                    }
                     //拼接审核人姓名
                     contentReviewRep.setAuditorName(map.get(s.getAuditor()));
                     newlist.add(contentReviewRep);
@@ -83,11 +85,11 @@ public class ContentReviewServiceImpl implements ContentReviewService {
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }
-//        newlist.stream().forEach(i -> {
-//            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
-//                    .eq(MallItemVideo::getItemNo, i.getOndContent());
-//            mallItemVideoService.list();
-//        });
+        newlist.stream().forEach(i -> {
+            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                    .eq(MallItemVideo::getItemNo, i.getOndContent());
+            mallItemVideoService.list();
+        });
         page1.setPages(requestParams.getPage());
         page1.setCurrent(requestParams.getPage());
         page1.setRecords(newlist);
@@ -113,11 +115,6 @@ public class ContentReviewServiceImpl implements ContentReviewService {
         myMultimap.forEach((mk,mv)->{
             List<Long> ids = (List<Long>) myMultimap.get(mk);
             Map<Integer,List<Long>> maps = new HashMap<>();
-            //List<String> contentIds = new ArrayList<>();
-//            ids.stream().forEach(id->{
-//                String contentId = contentreviewDao.selectById(id);
-//                contentIds.add(contentId);
-//            });
             maps.put(oper,ids);
             allMaps.put(mk,maps);
         });
@@ -140,7 +137,6 @@ public class ContentReviewServiceImpl implements ContentReviewService {
             return null;
         }
         AbstractHandler handler = HandlerContext.getHandler(reviewParam.getType());
-
         ReturnResponse returnResponse = handler.examine(reviewParam);
         return returnResponse;
     }

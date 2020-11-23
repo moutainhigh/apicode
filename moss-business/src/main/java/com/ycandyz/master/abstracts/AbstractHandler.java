@@ -44,28 +44,14 @@ public abstract class AbstractHandler implements InitializingBean {
             contentReview.setContentId(contentId);
             contentreviewDao.insert(contentReview);
         }
-        //List<ContentReviewDTO>  contentReviewDTO = contentreviewDao.selectByContentId(contentId, type);
-//        if (contentReviewDTO != null && contentReviewDTO.size() >0){
-//            contentReviewDTO.stream().forEach(k->{
-//                if (contentReviewDTO != null){
-//                    contentreviewDao.updateAuditResult(String.valueOf(user.getId()), contentId, type);
-//                }else {
-//                    ContentReview contentReview = new ContentReview();
-//                    contentReview.setType(type);
-//                    contentReview.setAuditResult(2);
-//                    contentReview.setAuditor(user.getId());
-//                    contentReview.setContentId(contentId);
-//                    contentreviewDao.insert(contentReview);
-//                }
-//            });
-//        }
     }
 
     public abstract ReturnResponse handleExamine(Map<Integer,List<Long>> maps);
 
-    protected void insertAllcontentReviewLog(String contentId, int type, int contentResult, int auditResult){
+    protected void insertAllcontentReviewLog(Long id,String contentId, int type, int contentResult, int auditResult){
         UserVO user = UserRequest.getCurrentUser();
         ContentReviewLogVO contentReviewLogVO = new ContentReviewLogVO();
+        contentReviewLogVO.setContentReviewId(id);
         contentReviewLogVO.setContentId(contentId);
         contentReviewLogVO.setType(type);
         contentReviewLogVO.setAuditor(user.getId());
