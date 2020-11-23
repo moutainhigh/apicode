@@ -67,7 +67,7 @@ public class SmsAliyunSendController {
      */
     private void smsSendToday() {
 
-        List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843");
+        List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843","13522809059","15652228052");
 
         System.err.println("执行静态定时任务时间: " + LocalDateTime.now());
         JSONArray jsonArray = null;
@@ -138,7 +138,7 @@ public class SmsAliyunSendController {
      */
     private void smsSendSevenDay() {
 
-        List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843");
+        List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843","13522809059","15652228052");
 
         JSONArray jsonArray = null;
         //七天
@@ -180,7 +180,7 @@ public class SmsAliyunSendController {
      */
     private void smsSendThirtyDay() {
 
-        List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843");
+        List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843","13522809059","15652228052");
 
         JSONArray jsonArray = null;
         //30天
@@ -215,5 +215,12 @@ public class SmsAliyunSendController {
                 insertMysql(responseList,bizId);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        DateTime thirtyDateTime = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR, 30);
+        Long serviceThirtyBegin = DateUtil.beginOfDay(thirtyDateTime).getTime()/1000;
+        Long serviceThirtyEnd = DateUtil.endOfDay(thirtyDateTime).getTime()/1000;
+        System.out.println(serviceThirtyBegin+","+serviceThirtyEnd);
     }
 }
