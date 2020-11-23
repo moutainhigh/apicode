@@ -16,15 +16,16 @@
 
     <select id="queryByServiceTime" parameterType="java.lang.Long" resultType="com.ycandyz.master.dto.organize.OrganizeDTO">
         select
-            id,
-            `type`,
-            short_name as shortName,
-            full_name as fullNname,
-            phone as phone
-        from organize
+            o.id,
+            o.`type`,
+            o.short_name as shortName,
+            o.full_name as fullNname,
+            u.phone as phone
+        from organize o
+        left join user u on o.user_id=u.id
         where
-            is_disable=0 and is_del=0
+            o.is_disable=0 and o.is_del=0
             and
-            service_end &gt;= #{serviceEndDayBegin} and service_end &lt;= #{serviceEndDayEnd}
+            o.service_end &gt;= #{serviceEndDayBegin} and o.service_end &lt;= #{serviceEndDayEnd}
     </select>
 </mapper>

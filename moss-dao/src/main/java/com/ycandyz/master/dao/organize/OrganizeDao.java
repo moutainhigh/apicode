@@ -18,5 +18,5 @@ public interface OrganizeDao extends BaseMapper<Organize> {
      * @param serviceEndDayEnd  传入的结束时间
      * @return
      */
-    List<OrganizeDTO> queryByServiceTime(@Param("Long serviceEndDayBegin") Long serviceEndDayBegin, @Param("Long serviceEndDayEnd") Long serviceEndDayEnd);
+    List<OrganizeDTO> queryByServiceTime(@Param("serviceEndDayBegin") Long serviceEndDayBegin, @Param("serviceEndDayEnd") Long serviceEndDayEnd);
 }
