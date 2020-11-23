@@ -72,8 +72,7 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
     @PutMapping(value = "/updateBaseTabooWords")
     public ReturnResponse<Object> updateBaseTabooWords(@Validated(ValidatorContract.OnCreate.class) @RequestBody BaseTabooWordsVO baseTabooWordsVO) {
         log.info("编辑敏感字请求入参:{}", JSON.toJSONString(baseTabooWordsVO));
-        String[] tabooWords = baseTabooWordsVO.getTabooWords();
-        ReturnResponse returnResponse = baseTabooWordsService.selTabooWord(tabooWords);
+        ReturnResponse returnResponse = baseTabooWordsService.selTabooWord(baseTabooWordsVO);
         if (returnResponse != null && returnResponse.getCode() == 500){
             return returnResponse;
         }
