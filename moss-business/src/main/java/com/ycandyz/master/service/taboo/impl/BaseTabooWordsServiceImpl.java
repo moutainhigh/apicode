@@ -139,18 +139,19 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     }
 
     @Override
-    public ReturnResponse updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO) {
+    public ReturnResponse updateBaseTabooWords(Long id,BaseTabooWordsVO baseTabooWordsVO) {
         if (baseTabooWordsVO == null){
             log.error("当前更新的入参数据为空");
             return ReturnResponse.failed("当前更新的入参数据为空");
-        }else if (baseTabooWordsDao.selById(baseTabooWordsVO.getId()) == null){
+        }else if (baseTabooWordsDao.selById(id) == null){
             log.error("当前待更新的数据不存在");
             return ReturnResponse.failed("当前待更新的数据不存在");
         }
         UserVO currentUser = UserRequest.getCurrentUser();
         BaseTabooWords baseTabooWords = new BaseTabooWords();
         String tabooWords = MyCollectionUtils.PraseArraytoString(baseTabooWordsVO.getTabooWords());
-        BeanUtils.copyProperties(baseTabooWordsVO,baseTabooWords);
+        baseTabooWords.setId(id);
+        baseTabooWords.setPhraseName(baseTabooWordsVO.getPhraseName());
         baseTabooWords.setTabooWords(tabooWords);
         baseTabooWords.setOperator(currentUser.getId());
         baseTabooWords.setTreatmentMethod(0);
@@ -182,12 +183,11 @@ public class BaseTabooWordsServiceImpl extends BaseService<BaseTabooWordsDao, Ba
     }
 
     @Override
-    public ReturnResponse selTabooWord(BaseTabooWordsVO baseTabooWordsVO) {
-        if (baseTabooWordsVO == null){
+    public ReturnResponse selTabooWord(Long id,BaseTabooWordsVO baseTabooWordsVO) {
+        if (id == null || baseTabooWordsVO == null){
             log.error("敏感词跟新入参为空");
             return null;
         }else{
-            Long id = baseTabooWordsVO.getId();
             List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWord(id);
             if (tabooWordsForReviews != null){
                 List<String> tabooList = new ArrayList<>();

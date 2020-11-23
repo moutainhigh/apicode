@@ -31,9 +31,9 @@ public interface BaseTabooWordsService extends IService<BaseTabooWords>{
 
     Page<BaseTabooWordsRep> selectList(RequestParams<BaseTabooWordsQuery> requestParams);
 
-    ReturnResponse updateBaseTabooWords(BaseTabooWordsVO baseTabooWordsVO);
+    ReturnResponse updateBaseTabooWords(Long id,BaseTabooWordsVO baseTabooWordsVO);
 
     ReturnResponse selTabooWords(String phraseName, String[] tabooWords);
 
-    ReturnResponse selTabooWord(BaseTabooWordsVO baseTabooWordsVO);
+    ReturnResponse selTabooWord(Long id,BaseTabooWordsVO baseTabooWordsVO);
 }

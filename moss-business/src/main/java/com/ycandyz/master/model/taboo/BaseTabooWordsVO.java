@@ -21,8 +21,6 @@ import javax.validation.constraints.Size;
 @Setter
 public class BaseTabooWordsVO {
 
-    private Long id;
-
     @ApiModelProperty(value = "词组名称" ,required = true)
     @NotNull(message = "词组名称不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @Size(min = 1, max = 10, message = "词组名称长度要求1到10之间。",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
