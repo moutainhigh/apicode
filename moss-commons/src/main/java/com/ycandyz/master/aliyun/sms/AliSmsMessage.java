@@ -137,11 +137,21 @@ public class AliSmsMessage {
                 //hint 此处可能会抛出异常，注意catch
                 QuerySendDetailsResponse querySendDetailsResponse = acsClient.getAcsResponse(request);
                 log.info("阿里云短信发送状态：" + querySendDetailsResponse.toString());
-                list.add(querySendDetailsResponse.getSmsSendDetailDTOs().get(0));
+                if (querySendDetailsResponse.getSmsSendDetailDTOs()!=null && querySendDetailsResponse.getSmsSendDetailDTOs().size()>0){
+                    list.add(querySendDetailsResponse.getSmsSendDetailDTOs().get(0));
+                }else {
+                    Thread.sleep(100);
+                    querySendDetailsResponse = acsClient.getAcsResponse(request);
+                    if (querySendDetailsResponse.getSmsSendDetailDTOs()!=null && querySendDetailsResponse.getSmsSendDetailDTOs().size()>0){
+                        list.add(querySendDetailsResponse.getSmsSendDetailDTOs().get(0));
+                    }else {
+                        log.error("当前无发获取到短息发送状态。请检查阿里云短信配置中获取短信发送状态，手机号为："+phone);
+                    }
+                }
             }
             return list;
-        } catch (ClientException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
         }
         return null;
     }
