@@ -51,13 +51,6 @@ public class MpChooseStyleController {
         return CommonResult.success("成功");
     }
 
-//    @ApiOperation(value = "企业小程序编辑单个菜单页面样式" , tags = "企业小程序DIY配置",httpMethod = "PUT")
-//    @PutMapping("/organize/menupage")
-//    public CommonResult motifyPage(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
-//        mpChooseStyleService.motifyPage(organizeMenuMpRequestVO);
-//        return CommonResult.success("成功");
-//    }
-
     @ApiOperation(value = "企业小程序编辑/保存到草稿或保存页面" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize")
     public CommonResult saveAllPage(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
