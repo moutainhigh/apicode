@@ -28,7 +28,7 @@ public class MpChooseStyleController {
 
     @ApiOperation(value = "查询企业小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="id",value="查询企业小程序编号",required=true,dataType="Integer")
+            @ApiImplicitParam(name="id",value="查询企业小程序编号",dataType="Integer")
     })
     @GetMapping(value = "organize/{id}")
     public CommonResult<List<OrganizeMpConfigMenuVO>> select(@PathVariable("id") Integer id) {
@@ -62,7 +62,7 @@ public class MpChooseStyleController {
 
     @ApiOperation(value = "企业小程序编辑发布" , tags = "企业小程序DIY配置",httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="id",value="企业小程序草稿编号",required=true,dataType="Integer")
+            @ApiImplicitParam(name="id",value="企业小程序草稿编号",dataType="Integer")
     })
     @GetMapping("/organize/mp/{id}")
     //0 跳转选择模版
