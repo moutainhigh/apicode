@@ -21,5 +21,6 @@ public interface MpChooseStyleService {
 
     Integer get(Integer id);
 
-    //void motifyPage(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
+    List<OrganizeMpConfigMenuVO> select();
+
 }
