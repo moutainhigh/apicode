@@ -16,9 +16,11 @@ public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan
 
     OrganizeMpConfigPlan getOrganizePlan(@Param("organizeId") Long organizeId, @Param("id") Integer id);
 
-    OrganizeMpConfigPlan getOrganizePlanById(@Param("organizeId") Long organizeId, @Param("id") Integer id)
+    OrganizeMpConfigPlan getOrganizePlanById(@Param("organizeId") Long organizeId, @Param("id") Integer id);
 
     void insertSingle(OrganizeMpConfigPlan organizeMpConfigPlan1);
 
-    OrganizeMpConfigPlan selectByOrganizeId(Long organizeId););
+    OrganizeMpConfigPlan selectByOrganizeId(Long organizeId);
+
+    OrganizeMpConfigPlan getByOrganizeId(Long organizeId);
 }

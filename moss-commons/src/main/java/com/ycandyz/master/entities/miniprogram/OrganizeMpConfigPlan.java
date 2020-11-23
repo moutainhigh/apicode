@@ -54,5 +54,7 @@ public class OrganizeMpConfigPlan extends Model {
    @ApiModelProperty(value = "修改时间")
    private Date updateTime;
 
+   @ApiModelProperty(value = "状态 [0:草稿；1:发布中；")
+   private Integer status;
 
 }

@@ -21,7 +21,7 @@
     <insert id="insertSingle">
         insert into organize_mp_config_plan(id,organize_id, plan_name, mp_plan_id,
         logic_delete, current_using, create_time, update_time,status)
-        values (#{id},#{organizeId},#{planName},#{mpPlanId},0,0,now(),now(),0);
+        values (#{id},#{organizeId},#{planName},#{mpPlanId},0,0,now(),now(),#{status});
     </insert>
     <select id="getOrganizePlan" resultMap="BaseResultMap">
         select * from organize_mp_config_plan
@@ -33,6 +33,9 @@
     </select>
     <select id="selectByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where organize_id = #{organizeId}
+    </select>
+    <select id="getByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
+        select * from organize_mp_config_plan where organize_id = #{organizeId};
     </select>
 
 </mapper>

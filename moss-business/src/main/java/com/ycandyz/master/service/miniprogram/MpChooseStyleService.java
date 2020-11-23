@@ -16,4 +16,8 @@ public interface MpChooseStyleService {
     void saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
 
     void saveAll(OrganizeMpRequestVO organizeMpRequestVO);
+
+    Integer get(Integer id);
+
+    //void motifyPage(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
 }

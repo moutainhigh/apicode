@@ -2,6 +2,9 @@ package com.ycandyz.master.service.miniprogram;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpRelease;
+import com.ycandyz.master.model.miniprogram.OrganizeMpReleaseVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,5 +16,6 @@ import com.ycandyz.master.entities.miniprogram.OrganizeMpRelease;
  * @version 2.0
  */
 public interface IOrganizeMpReleaseService extends IService<OrganizeMpRelease>{
-	
+
+    List<OrganizeMpReleaseVO> listAll();
 }

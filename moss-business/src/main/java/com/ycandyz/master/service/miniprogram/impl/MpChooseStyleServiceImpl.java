@@ -1,11 +1,14 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
+import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanMenuQuery;
 import com.ycandyz.master.dto.miniprogram.MpConfigPlanPageBaseDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO;
+import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanMenu;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanPage;
@@ -50,8 +53,8 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     public OrganizeMpConfigMenuVO selByOrGanizeMoudleId(Integer id) {
         OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(id);
         OrganizeMpConfigMenuVO organizeMpConfigMenuVO = new OrganizeMpConfigMenuVO();
-        if (organizeMpConfigPlanMenuDTO != null){
-            BeanUtils.copyProperties(organizeMpConfigPlanMenuDTO,organizeMpConfigMenuVO);
+        if (organizeMpConfigPlanMenuDTO != null) {
+            BeanUtils.copyProperties(organizeMpConfigPlanMenuDTO, organizeMpConfigMenuVO);
         }
         return organizeMpConfigMenuVO;
     }
@@ -64,23 +67,23 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         result.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
         List<OrganizeMpConfigPageMenuVO> modules = new ArrayList<>();
-        for (OrganizeMpConfigPlanPageDTO dto: organizeMpConfigPlanPageDTOS) {
+        for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
             OrganizeMpConfigPageMenuVO module = new OrganizeMpConfigPageMenuVO();
             module.setModuleId(dto.getModuleId());
             module.setModuleName(dto.getModuleName());
             module.setSortModule(dto.getSortModule());
             module.setDisplayNum(dto.getDisplayNum());
             List<Integer> baseIds = new ArrayList<>();
-            if(dto.getModuleBaseIds() != null){
-                for(String id: dto.getModuleBaseIds().split(",")){
+            if (dto.getModuleBaseIds() != null) {
+                for (String id : dto.getModuleBaseIds().split(",")) {
                     baseIds.add(Integer.parseInt(id));
                 }
             }
-            List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = organizeMpConfigPlanPageDao.getMenuModuleElement(dto.getSortModule(),baseIds);
+            List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = organizeMpConfigPlanPageDao.getMenuModuleElement(dto.getSortModule(), baseIds);
             List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
-            for(MpConfigPlanPageBaseDTO dtoBase: configPlanPageBaseDTOList){
+            for (MpConfigPlanPageBaseDTO dtoBase : configPlanPageBaseDTOList) {
                 OrganizeMpConfigModuleBaseVO resp = new OrganizeMpConfigModuleBaseVO();
-                BeanUtil.copyProperties(dtoBase,resp);
+                BeanUtil.copyProperties(dtoBase, resp);
                 baseInfoList.add(resp);
                 module.setBaseInfo(baseInfoList);
             }
@@ -94,29 +97,30 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     public void saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
-        //先根据主键id查询企业小程序配置方案是否存在
         OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getOrganizePlanById(organizeId,organizeMenuMpRequestVO.getId());
         if (organizeMpConfigPlan == null){
+            //新增
             //plan表
             OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
-            organizeMpConfigPlan1.setMpPlanId(organizeMenuMpRequestVO.getId());
+            organizeMpConfigPlan1.setMpPlanId(organizeMenuMpRequestVO.getMpPlanId());
             organizeMpConfigPlan1.setPlanName(organizeMenuMpRequestVO.getPlanName());
             organizeMpConfigPlan1.setOrganizeId(organizeId);
+            organizeMpConfigPlan1.setStatus(0);
             organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
             //菜单表
             OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
             OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(organizeMenuMpRequestVO.getMenuId());
-            BeanUtils.copyProperties(organizeMpConfigPlanMenuDTO,organizeMpConfigPlanMenu);
+            BeanUtils.copyProperties(organizeMpConfigPlanMenuDTO, organizeMpConfigPlanMenu);
             OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByOrganizeId(organizeId);
             organizeMpConfigPlanMenu.setOrganizePlanId(organizeMpConfigPlan2.getId());
             organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
-            //单个菜单页表
+            //page表
             OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
             List<OrganizeMpConfigPlanPage> list = new ArrayList<>();
             List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
-            for (OrganizeMpConfigPageMenuVo o: modules) {
+            for (OrganizeMpConfigPageMenuVo o : modules) {
                 List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
-                for (OrganizeMpConfigModuleBaseVo omcmb:baseInfo) {
+                for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
                     organizeMpConfigPlanPage.setMenuId(organizeMenuMpRequestVO.getMenuId());
                     organizeMpConfigPlanPage.setModuleId(o.getModuleId());
                     organizeMpConfigPlanPage.setModuleBaseId(omcmb.getId());
@@ -127,16 +131,79 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     list.add(organizeMpConfigPlanPage);
                 }
             }
-            for (OrganizeMpConfigPlanPage o: list) {
+            for (OrganizeMpConfigPlanPage o : list) {
                 organizeMpConfigPlanPageDao.insertSingle(o);
             }
+        }else {
+            //修改
+
         }
-    }
+     }
 
     @Override
     public void saveAll(OrganizeMpRequestVO organizeMpRequestVO) {
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
+        //保存plan
+        OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
+        organizeMpConfigPlan1.setMpPlanId(organizeMpRequestVO.getMpPlanId());
+        organizeMpConfigPlan1.setPlanName(organizeMpRequestVO.getPlanName());
+        organizeMpConfigPlan1.setOrganizeId(organizeId);
+        organizeMpConfigPlan1.setStatus(organizeMpRequestVO.getStatus());
+        organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
 
+        List<OrganizeMenuMpRequestVO> organizeMenuMpRequestVOS = organizeMpRequestVO.getOrganizeMenuMpRequestVOS();
+        for (OrganizeMenuMpRequestVO omm : organizeMenuMpRequestVOS) {
+            //保存菜单
+            OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
+            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(omm.getMenuId());
+            BeanUtils.copyProperties(organizeMpConfigPlanMenuDTO, organizeMpConfigPlanMenu);
+            OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByOrganizeId(organizeId);
+            organizeMpConfigPlanMenu.setOrganizePlanId(organizeMpConfigPlan2.getId());
+            organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
+
+            OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
+            List<OrganizeMpConfigPlanPage> list = new ArrayList<>();
+            List<OrganizeMpConfigPageMenuVo> modules = omm.getModules();
+            for (OrganizeMpConfigPageMenuVo o : modules) {
+                List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
+                for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
+                    organizeMpConfigPlanPage.setMenuId(omm.getMenuId());
+                    organizeMpConfigPlanPage.setModuleId(o.getModuleId());
+                    organizeMpConfigPlanPage.setModuleBaseId(omcmb.getId());
+                    organizeMpConfigPlanPage.setShowLayout(omcmb.getShowLayout()); //暂存元素的展示样式
+                    organizeMpConfigPlanPage.setSortModule(o.getSortModule());
+                    organizeMpConfigPlanPage.setSortBase(omcmb.getSortBase());
+                    organizeMpConfigPlanPage.setBaseName(omcmb.getBaseName());
+                    list.add(organizeMpConfigPlanPage);
+                }
+            }
+            for (OrganizeMpConfigPlanPage o : list) {
+                organizeMpConfigPlanPageDao.insertSingle(o);
+            }
+        }
+
+    }
+
+    @Override
+    public Integer get(Integer id) {
+        UserVO currentUser = UserRequest.getCurrentUser();
+        Long organizeId = currentUser.getOrganizeId();
+        if (id == null) {
+            OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getByOrganizeId(organizeId);
+            if (organizeMpConfigPlan == null) {
+                return 0;
+            }
+//        }else{
+//            OrganizeMpConfigPlan organizePlan = organizeMpConfigPlanDao.getOrganizePlan(organizeId, id);
+//            if(organizePlan != null){
+//                Integer status = organizePlan.getStatus();
+//                if (status == 0){
+//                    return 1;
+//                }
+//            }
+//        }
+            return 1;
+        }
     }
 }
