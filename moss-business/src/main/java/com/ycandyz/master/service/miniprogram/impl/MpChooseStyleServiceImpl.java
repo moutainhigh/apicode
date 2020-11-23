@@ -97,8 +97,9 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     public void saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
-        OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getOrganizePlanById(organizeId,organizeMenuMpRequestVO.getId());
-        if (organizeMpConfigPlan == null){
+        Integer id = organizeMenuMpRequestVO.getId();
+        //OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getOrganizePlanById(organizeId,id);
+        if (id == null){
             //新增
             //plan表
             OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
@@ -136,7 +137,15 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             }
         }else {
             //修改
-
+            OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
+            List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
+            for (OrganizeMpConfigPageMenuVo o : modules) {
+                List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
+                for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
+                    String baseName = omcmb.getBaseName();
+                    //organizeMpConfigPlanPageDao.updateBaseNameById(,baseName);
+                }
+            }
         }
      }
 
