@@ -1027,4 +1027,39 @@
         left join mall_shop_shipping ship on mo.order_no=ship.order_no
         where mo.order_no = #{orderNo}
     </select>
+
+    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
+        select
+            mo.id,
+            mo.order_no,
+            mo.shop_no,
+            mo.cart_order_id,
+            mo.real_money,
+            mo.payed_at,
+            mo.buyer_remark,
+            mo.pick_up_address_name,
+            mo.pick_up_address_detail,
+            mo.pre_phone,
+            mo.status,
+            mo.sub_status,
+            mo.deliver_method,
+            mo.`after_sales_status`,
+            mo.`deliver_type`,
+            mo.total_money-mo.real_money as shippingMoney,
+            mo.shop_no,
+            mo.total_money-mo.real_money as discountMoney,
+            modetail.order_detail_no,
+            modetail.item_no,
+            modetail.goods_no,
+            modetail.sku_no,
+            modetail.item_name,
+            modetail.item_cover,
+            modetail.quantity as skuQuantity,
+            modetail.price as skuPrice,
+            modetail.total_money,
+            modetail.real_money
+        from mall_order mo
+        left join mall_order_detail modetail on mo.order_no=modetail.order_no
+        where mo.shop_no=#{shopNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
+    </select>
 </mapper>

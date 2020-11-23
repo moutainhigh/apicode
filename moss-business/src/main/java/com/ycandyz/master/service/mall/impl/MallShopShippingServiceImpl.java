@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
+import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
 import com.ycandyz.master.domain.shipment.query.*;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
@@ -15,7 +16,9 @@ import com.ycandyz.master.dto.mall.MallShopShippingDTO;
 import com.ycandyz.master.dto.mall.MallShopShippingLogDTO;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.enums.ExpressEnum;
+import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
+import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +54,9 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
 
     @Autowired
     private MallTempShippingDao mallTempShippingDao;
+
+    @Autowired
+    private MallOrderService mallOrderService;
 
     @Value("${kuaidi.autonumber.url}")
     private String autonumberUrl;
@@ -263,6 +269,123 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             }
         }
         return ShipmentResponseDataVO.success("更新成功");
+    }
+
+    @Transactional
+    @Override
+    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(MallShopShippingQuery mallShopShippingQuery, UserVO userVO) {
+        MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(mallShopShippingQuery.getOrderNo());
+        if (mallShopShippingDTO==null){
+            return ReturnResponse.failed("未查询到当前记录");
+        }
+        MallShopShipping mallShopShipping = new MallShopShipping();
+        mallShopShipping.setId(mallShopShippingDTO.getId());
+        mallShopShipping.setCompany(mallShopShippingQuery.getCompany());
+        mallShopShipping.setCompanyCode(mallShopShippingQuery.getCompanyCode());
+        mallShopShipping.setNumber(mallShopShippingQuery.getNumber());
+        mallShopShipping.setPollState(mallShopShippingDTO.getPollState());
+        mallShopShipping.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
+        mallShopShipping.setOrderNo(mallShopShippingDTO.getOrderNo());
+        mallShopShipping.setReceiver(mallShopShippingDTO.getReceiver());
+        mallShopShipping.setReceiverAddress(mallShopShippingDTO.getReceiverAddress());
+        mallShopShipping.setReceiverHeadimg(mallShopShippingDTO.getReceiverHeadimg());
+        mallShopShipping.setReceiverPhone(mallShopShippingDTO.getReceiverPhone());
+        mallShopShipping.setShippingMoney(mallShopShippingDTO.getShippingMoney());
+        mallShopShipping.setType(mallShopShippingDTO.getType());
+
+        if (mallShopShippingDTO.getType()==10) {        //快递
+            //调用快递订阅功能
+            PollShipmentParamQuery pollShipmentParamQuery = new PollShipmentParamQuery();
+            pollShipmentParamQuery.setCompany(mallShopShippingQuery.getCompanyCode());
+            pollShipmentParamQuery.setNumber(mallShopShippingQuery.getNumber());
+            pollShipmentParamQuery.setKey(kuaidiKey);
+            PollShipmentParametersQuery pollShipmentParametersQuery = new PollShipmentParametersQuery();
+            pollShipmentParametersQuery.setCallbackurl(kuaidiCallbackUrl);
+            pollShipmentParametersQuery.setAutoCom(0);
+            pollShipmentParametersQuery.setInterCom(0);
+            pollShipmentParametersQuery.setResultv2(1);
+            pollShipmentParamQuery.setParameters(pollShipmentParametersQuery);
+            Map<String, Object> params = new HashMap<>();
+            params.put("schema", "json");
+            params.put("param", JSONUtil.parseObj(pollShipmentParamQuery).toString());
+            PollShipmentRequest pollShipmentRequest = new PollShipmentRequest();
+            pollShipmentRequest.setSchema("json");
+            pollShipmentRequest.setParam(pollShipmentParamQuery);
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Content-Type", "application/x-www-form-urlencoded");
+            String str = com.alibaba.fastjson.JSONObject.toJSONString(pollShipmentParamQuery, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteMapNullValue);
+            String result = HttpUtil.createPost(kuaidiPollUrl).addHeaders(headers).form(params).execute().body();
+            log.info("快递订阅接口请求response返回" + result);
+            if (StringUtils.isNotEmpty(result)) {
+                JSONObject resultObject = JSONUtil.parseObj(result);
+                if (!resultObject.getBool("result")) {
+                    if (resultObject.getStr("returnCode").equals("501")){
+                        //重复订阅，需要额外处理
+                        List<MallShopShippingLogDTO> mallShopShippingLogs = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShipping.getShopShippingNo());
+                        if (mallShopShippingLogs!=null && mallShopShippingLogs.size()>0){
+                            //如果存在物流信息，无法重复订阅，需要认为的主动把该物流订单同步到新的订单物流中
+                            mallShopShippingLogs.forEach(shippinglog->{
+                                shippinglog.setId(null);
+                                shippinglog.setShippingMoney(mallShopShipping.getShippingMoney());
+                                shippinglog.setShopShippingNo(mallShopShipping.getShopShippingNo());
+                            });
+                            mallShopShippingLogDao.insertBatch(mallShopShippingLogs);
+                        }
+                    }
+
+                    //订阅失败
+                    //更新快递推送表poll_state字段
+                    mallShopShipping.setPollState(2);
+                    //记录日志表,后续做kafka队列任务处理相关信息
+                    MallShopShippingPollLog mallShopShippingPollLog = new MallShopShippingPollLog();
+                    mallShopShippingPollLog.setOrderNo(mallShopShippingDTO.getOrderNo());
+                    mallShopShippingPollLog.setNumber(mallShopShippingQuery.getNumber());
+                    mallShopShippingPollLog.setCode(0); //神州通项目code码传入0
+                    mallShopShippingPollLog.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
+                    mallShopShippingPollLog.setLog(resultObject.getStr("message"));
+                    mallShopShippingPollLog.setCreatedTime(new Date());
+                    mallShopShippingPollLogDao.insert(mallShopShippingPollLog);
+                    mallShopShipping.setPollState(2);
+                } else {
+                    //订阅成功，更新poll_state字段
+                    mallShopShipping.setPollState(1);
+                }
+            }
+            mallShopShippingDao.updateById(mallShopShipping);
+
+            //更新待收货临时表
+            MallTempOrderWaitReceive mallTempOrderWaitReceive = new MallTempOrderWaitReceive();
+            Long time = new Date().getTime() / 1000;
+            mallTempOrderWaitReceive.setCloseAt(time + 7 * 24 * 60 * 60);
+            mallTempOrderWaitReceive.setOrderNo(mallShopShippingQuery.getOrderNo());
+            mallTempOrderWaitReceive.setShopNo(mallShopShippingDTO.getShopShippingNo());
+            mallTempOrderWaitReceive.setTempOrderNo(String.valueOf(IDGeneratorUtils.getLongId()));
+            mallTempOrderWaitReceiveDao.insert(mallTempOrderWaitReceive);
+
+            //未签收的临时物流表
+            MallTempShipping mallTempShipping = mallTempShippingDao.selectOne(new QueryWrapper<MallTempShipping>().eq("com_code", mallShopShippingQuery.getCompanyCode()).eq("number", mallShopShippingQuery.getNumber()));
+            if (mallTempShipping == null) {
+                mallTempShipping = new MallTempShipping();
+                mallTempShipping.setComCode(mallShopShippingQuery.getCompanyCode());
+                mallTempShipping.setCompany(mallShopShippingQuery.getCompany());
+                mallTempShipping.setCreatedAt(time);
+                mallTempShipping.setNumber(mallShopShippingQuery.getNumber());
+                mallTempShippingDao.insert(mallTempShipping);
+            }
+        }
+
+        //更新订单表
+        MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no", mallShopShippingQuery.getOrderNo()));
+        if (mallOrder != null) {
+            mallOrder.setStatus(30);
+            mallOrder.setSubStatus(3010);
+            Long timeAt = new Date().getTime() / 1000;
+            mallOrder.setSendAt(timeAt.intValue()); //更新商家发货时间
+            mallOrderDao.updateById(mallOrder);
+        }
+
+        //查询订单详情，返回前端
+        return mallOrderService.queryOrderDetailByUApp(mallShopShippingQuery.getOrderNo(),userVO);
     }
 
 }

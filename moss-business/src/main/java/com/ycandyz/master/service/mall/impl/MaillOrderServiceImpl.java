@@ -1150,4 +1150,66 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         }
         return ReturnResponse.success(mallOrderVO);
     }
+
+    @Override
+    public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(String pickupNo, String orderNo, UserVO userVO) {
+        MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(pickupNo, userVO.getShopNo());
+        if (mallOrderDTO!=null){
+            //判断pickNo查询到订单是否是orderNo的订单
+            if (StringUtils.isNotEmpty(orderNo)){
+                //orderNo不为空，说明是订单详情中进行的订单校验
+                if (!orderNo.equals(mallOrderDTO.getOrderNo())){
+                    return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
+                }
+            }
+            MallOrderUAppVO mallOrderVO = new MallOrderUAppVO();
+            BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+
+            //order_at;payed_at;receive_at时间转换为字符串
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setOrderAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setPayedAtStr(orderAtStr);
+            }
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setReceiveAtStr(orderAtStr);
+            }
+
+            if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
+                List<String> orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
+                List<MallOrderDetailSpecDTO> specList = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);     //查询订单详情规格值表
+                Map<String, List<MallOrderDetailSpecVO>> map = null;
+                if (specList!=null){
+                    List<MallOrderDetailSpecVO> specVoList = new ArrayList<>();
+                    specList.forEach(spec->{
+                        MallOrderDetailSpecVO mallOrderDetailSpecVO = new MallOrderDetailSpecVO();
+                        BeanUtils.copyProperties(spec,mallOrderDetailSpecVO);
+                        specVoList.add(mallOrderDetailSpecVO);
+                    });
+                    map = specVoList.stream().collect(Collectors.groupingBy(input -> input.getOrderDetailNo()));        //吧specVO集合转换为map类型，方便下面做判断和取值
+                }else {
+                    map = new HashMap<>();
+                }
+                List<MallOrderDetailVO> list = new ArrayList<>();
+                for(MallOrderDetailDTO dto : mallOrderDTO.getDetails()){
+                    MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
+                    BeanUtils.copyProperties(dto,mallOrderDetailVO);
+                    if (map.containsKey(mallOrderDetailVO.getOrderDetailNo())){
+                        mallOrderDetailVO.setSpecs(map.get(mallOrderDetailVO.getOrderDetailNo()));
+                    }
+                    list.add(mallOrderDetailVO);
+                }
+                mallOrderVO.setDetails(list);
+            }
+            return ReturnResponse.success(mallOrderVO);
+        }
+        return ReturnResponse.failed("查询提货码未查询到订单");
+    }
 }

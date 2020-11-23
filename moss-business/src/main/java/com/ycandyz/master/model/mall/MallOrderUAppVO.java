@@ -1,5 +1,7 @@
 package com.ycandyz.master.model.mall;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ycandyz.master.dto.mall.MallOrderDetailDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -16,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @ApiModel(value="uapp订单列表", description="uapp订单列表查询DTO")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class MallOrderUAppVO {
 
     @ApiModelProperty(value = "id")
