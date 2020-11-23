@@ -34,7 +34,7 @@ public interface MpConfigPlanPageDao extends BaseMapper<MpConfigPlanPage> {
      * @param baseIds
      * @return
      */
-    List<MpConfigPlanPageBaseDTO> getMenuModuleElement(@Param("moduleSort") Integer moduleSort, @Param("baseIds") List<Integer> baseIds);
+    List<MpConfigPlanPageBaseDTO> getMenuModuleElement(@Param("menuId") Integer menuId, @Param("moduleSort") Integer moduleSort, @Param("baseIds") List<Integer> baseIds);
 
 
     /**
