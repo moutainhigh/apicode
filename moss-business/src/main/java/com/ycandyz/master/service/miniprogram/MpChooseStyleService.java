@@ -5,11 +5,13 @@ import com.ycandyz.master.model.miniprogram.OrganizeMpConfigMenuVO;
 import com.ycandyz.master.vo.OrganizeMenuMpRequestVO;
 import com.ycandyz.master.vo.OrganizeMpRequestVO;
 
+import java.util.List;
+
 public interface MpChooseStyleService {
 
     OrganizeMpConfigMenuVO selById(Integer id);
 
-    OrganizeMpConfigMenuVO selByOrGanizeMoudleId(Integer id);
+    List<OrganizeMpConfigMenuVO> selByOrGanizeMoudleId(Integer id);
 
     OrganizeChooseMpConfigPage selectMenuById(Integer menuid);
 

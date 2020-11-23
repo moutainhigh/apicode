@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("cms/mp/style/")
@@ -29,8 +31,8 @@ public class MpChooseStyleController {
             @ApiImplicitParam(name="id",value="查询企业小程序编号",required=true,dataType="Integer")
     })
     @GetMapping(value = "organize/{id}")
-    public CommonResult<OrganizeMpConfigMenuVO> select(@PathVariable("id") Integer id) {
-        OrganizeMpConfigMenuVO organizeMpConfigMenuVO = mpChooseStyleService.selByOrGanizeMoudleId(id);
+    public CommonResult<List<OrganizeMpConfigMenuVO>> select(@PathVariable("id") Integer id) {
+        List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.selByOrGanizeMoudleId(id);
         return CommonResult.success(organizeMpConfigMenuVO);
     }
 
