@@ -44,7 +44,7 @@ public class MpChooseStyleController {
         return CommonResult.success(organizeChooseMpConfigPage);
     }
 
-    @ApiOperation(value = "企业小程序保存单个菜单页面样式" , tags = "企业小程序DIY配置",httpMethod = "POST")
+    @ApiOperation(value = "企业小程序编辑/保存单个菜单页面样式" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize/menupage")
     public CommonResult saveSinglePage(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
         mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
@@ -58,7 +58,7 @@ public class MpChooseStyleController {
 //        return CommonResult.success("成功");
 //    }
 
-    @ApiOperation(value = "企业小程序保存到草稿或保存页面" , tags = "企业小程序DIY配置",httpMethod = "POST")
+    @ApiOperation(value = "企业小程序编辑/保存到草稿或保存页面" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize")
     public CommonResult saveAllPage(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
         mpChooseStyleService.saveAll(organizeMpRequestVO);

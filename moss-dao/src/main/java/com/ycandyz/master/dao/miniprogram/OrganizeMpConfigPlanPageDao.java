@@ -29,4 +29,6 @@ public interface OrganizeMpConfigPlanPageDao extends BaseMapper<OrganizeMpConfig
     List<MpConfigPlanPageBaseDTO> getMenuModuleElement(@Param("moduleSort") Integer moduleSort, @Param("baseIds") List<Integer> baseIds);
 
     void insertSingle(OrganizeMpConfigPlanPage o);
+
+    void updateBaseNameById(Integer id1, String baseName);
 }

@@ -4,6 +4,8 @@ import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * 企业小程序配置方案 Mapper 接口
@@ -20,7 +22,9 @@ public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan
 
     void insertSingle(OrganizeMpConfigPlan organizeMpConfigPlan1);
 
-    OrganizeMpConfigPlan selectByOrganizeId(Long organizeId);
+    List<OrganizeMpConfigPlan> selectByOrganizeId(Long organizeId);
+
+    List<OrganizeMpConfigPlan> selectByOrganizeIdStatus(Long organizeId);
 
     OrganizeMpConfigPlan getByOrganizeId(Long organizeId);
 }

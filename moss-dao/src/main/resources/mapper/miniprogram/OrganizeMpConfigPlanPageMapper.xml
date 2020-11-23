@@ -22,6 +22,9 @@
         insert into ( id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name)
         values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName})
     </insert>
+    <update id="updateBaseNameById">
+        update organize_mp_config_plan_page set base_name = #{baseName} where id = #{id}
+    </update>
 
     <select id="selectByMenuId" resultMap="BaseResultMap">
         SELECT p.id,p.menu_id,m.title as menu_name,p.module_id,d.module_name,

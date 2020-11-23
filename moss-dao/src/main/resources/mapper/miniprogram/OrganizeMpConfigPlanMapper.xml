@@ -32,10 +32,14 @@
         where id = #{id} and organize_id = #{organizeId}
     </select>
     <select id="selectByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-        select * from organize_mp_config_plan where organize_id = #{organizeId}
+        select * from organize_mp_config_plan where organize_id = #{organizeId};
     </select>
     <select id="getByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where organize_id = #{organizeId};
+    </select>
+    <select id="selectByOrganizeIdStatus"
+            resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and status = 0;
     </select>
 
 </mapper>

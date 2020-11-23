@@ -15,7 +15,7 @@ import lombok.Data;
 @Data
 public class OrganizeMpConfigModuleBaseVo {
 
-    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
+    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id,新增不传")
     private Integer id;
 
     @ApiModelProperty(value = "元素编码")
