@@ -1,6 +1,7 @@
 package com.ycandyz.master.controller.miniprogram;
 
 
+import com.alibaba.fastjson.JSON;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.model.miniprogram.OrganizeChooseMpConfigPage;
 import com.ycandyz.master.model.miniprogram.OrganizeMpConfigMenuVO;
@@ -55,27 +56,32 @@ public class MpChooseStyleController {
     @ApiOperation(value = "企业小程序编辑/保存单个菜单页面样式" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize/menupage")
     public CommonResult saveSinglePage(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
+<<<<<<< HEAD
         Integer id = mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
+=======
+        log.info("企业小程序编辑/保存单个菜单页面样式请求入参:{}", JSON.toJSONString(organizeMenuMpRequestVO));
+        Integer id = mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
+        log.info("企业小程序编辑/保存单个菜单页面样式请求出参:{}", JSON.toJSONString(CommonResult.success(id,"成功")));
+>>>>>>> dev-mp-lz
         return CommonResult.success(id,"成功");
     }
 
     @ApiOperation(value = "企业小程序编辑/保存到草稿或保存页面" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize")
     public CommonResult saveAllPage(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
+        log.info("企业小程序编辑/保存到草稿或保存页面请求入参:{}", JSON.toJSONString(organizeMpRequestVO));
         mpChooseStyleService.saveAll(organizeMpRequestVO);
+        log.info("企业小程序编辑/保存到草稿或保存页面请求出参:{}", JSON.toJSONString(CommonResult.success("成功")));
         return CommonResult.success("成功");
     }
 
     @ApiOperation(value = "企业小程序编辑发布" , tags = "企业小程序DIY配置",httpMethod = "GET")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="id",value="企业小程序草稿编号",dataType="Integer")
-    })
-    @GetMapping("/organize/mp/{id}")
+    @GetMapping("/organize/mp")
     //0 跳转选择模版
     //1 跳转编辑页面
-    public CommonResult<Integer> get(@PathVariable Integer id) {
-        Integer r = mpChooseStyleService.get(id);
-        return CommonResult.success(id);
+    public CommonResult<Integer> get() {
+        Integer r = mpChooseStyleService.get();
+        return CommonResult.success(r);
     }
 
 
