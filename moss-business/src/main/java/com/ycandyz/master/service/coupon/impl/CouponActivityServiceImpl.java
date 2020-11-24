@@ -52,13 +52,16 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public Page<CouponActivity> page(Page page, CouponActivityQuery query) {
-        AssertUtils.notNull(query.getShopNo(), "商店编号不能为空");
+        AssertUtils.notNull(getShopNo(), "商店编号不能为空");
+        query.setShopNo(getShopNo());
         if (null != query.getCreatedTimeS() && null != query.getCreatedTimeE() && query.getCreatedTimeS().equals(query.getCreatedTimeE())){
             query.setCreatedTime(query.getCreatedTimeS());
             query.setCreatedTimeS(null);
             query.setCreatedTimeE(null);
         }
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
+                .select(CouponActivity::getId,CouponActivity::getActivityNo,CouponActivity::getName,CouponActivity::getBeginTime,CouponActivity::getEndTime,
+                        CouponActivity::getStatus,CouponActivity::getJoinType,CouponActivity::getActivityNum,CouponActivity::getCreatedTime)
                 .apply(query.getCreatedTime() != null,
                         "date_format (created_time,'%Y-%m-%d') = date_format('" + DateUtil.formatDate(query.getCreatedTime()) + "','%Y-%m-%d')")
                 .apply(null != query.getCreatedTimeS(),
@@ -69,7 +72,20 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 .eq(CouponActivity::getShopNo, query.getShopNo())
                 //.eq(CouponActivity::getStatus, SpecialEnum.EnabledEnum.DISABLE.getCode())
                 .orderByDesc(CouponActivity::getCreatedTime,CouponActivity::getCreatedTime);
-        return (Page<CouponActivity>) baseMapper.selectPage(page, queryWrapper);
+        Page<CouponActivity> p = (Page<CouponActivity>) baseMapper.selectPage(page, queryWrapper);
+        p.getRecords().stream().forEach(f -> {
+            if(CouponActivityEnum.Status.TYPE_0.getCode().equals(f.getStatus())){
+                if(new Date().after(f.getBeginTime())){
+                    f.setStatus(CouponActivityEnum.Status.TYPE_1.getCode());
+                }
+                else if(new Date().before(f.getEndTime())){
+                    f.setStatus(CouponActivityEnum.Status.TYPE_3.getCode());
+                }else{
+                    f.setStatus(CouponActivityEnum.Status.TYPE_2.getCode());
+                }
+            }
+        });
+        return p;
     }
 
     @Override
@@ -80,7 +96,16 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         }
         CouponActivityResp vo = new CouponActivityResp();
         BeanUtils.copyProperties(entity,vo);
-        vo.setActivityTicketList(couponActivityTicketService.list(entity.getActivityNo()));
+        List<CouponActivityTicketResp> activityTicketList = couponActivityTicketService.list(entity.getActivityNo());
+        activityTicketList.stream().forEach(f -> {
+            if (f.getBeginAt() != null && f.getBeginAt() != 0){
+                f.setBeginTime(getCurrentDate(f.getBeginAt()));
+            }
+            if (f.getEndAt() != null && f.getEndAt() != 0){
+                f.setEndTime(getCurrentDate(f.getEndAt()));
+            }
+        });
+        vo.setActivityTicketList(activityTicketList);
         return vo;
     }
 
@@ -89,7 +114,9 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         AssertUtils.notNull(entity.getTicketList(), "优惠卷不能为空");
         // TODO 校验时间折叠
-        AssertUtils.isFalse(isEmpty(entity.getBeginTime(),entity.getEndTime(),null),"该时间区间存在已有活动,请更改时间区间");
+        AssertUtils.isFalse(entity.getEndTime().before(new Date()),"截止时间不能小于当前时间");
+        AssertUtils.isFalse(entity.getBeginTime().before(entity.getEndTime()),"截止时间不能大于开始时间");
+        AssertUtils.isFalse(isEmpty(entity),"该时间区间存在已有活动,请更改时间区间");
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
         t.setCreatedBy(getUserId());
@@ -110,7 +137,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         AssertUtils.notNull(entity.getTicketList(), "优惠卷不能为空");
         // TODO 校验时间折叠
-        AssertUtils.isFalse(isEmpty(entity.getBeginTime(),entity.getEndTime(),entity.getActivityNo()),"该时间区间存在已有活动,请更改时间区间");
+        AssertUtils.isFalse(entity.getBeginTime().before(entity.getEndTime()),"截止时间不能大于开始时间");
+        AssertUtils.isFalse(isEmpty(entity),"该时间区间存在已有活动,请更改时间区间");
         LambdaQueryWrapper<CouponActivityTicket> queryWrapper = new LambdaQueryWrapper<CouponActivityTicket>()
                 .eq(CouponActivityTicket::getActivityNo, entity.getActivityNo());
         couponActivityTicketService.remove(queryWrapper);
@@ -127,13 +155,13 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         return super.updateById(t);
     }
 
-    private boolean isEmpty(Date beginAt, Date endAt, String activityNo){
+    private boolean isEmpty(CouponActivityModel model){
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .eq(CouponActivity::getShopNo, getShopNo())
-                .and(obj -> obj.between(CouponActivity::getBeginTime, beginAt,endAt)
-                        .or(obj1 -> obj1.between(CouponActivity::getEndTime, beginAt,endAt))
+                .and(obj -> obj.between(CouponActivity::getBeginTime, model.getBeginTime(),model.getEndTime())
+                        .or(obj1 -> obj1.between(CouponActivity::getEndTime, model.getBeginTime(),model.getEndTime()))
                 )
-                .notIn(StrUtil.isNotEmpty(activityNo),CouponActivity::getActivityNo, activityNo);
+                .notIn(StrUtil.isNotEmpty(model.getActivityNo()),CouponActivity::getActivityNo, model.getActivityNo());
         List<CouponActivity> list = baseMapper.selectList(queryWrapper);
         if(CollectionUtil.isEmpty(list)){
             return false;
@@ -143,12 +171,18 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public boolean stopById(Long id) {
-        return this.retBool(baseMapper.updateStatusById(id, CouponActivityEnum.Status.TYPE_0.getCode()));
+        CouponActivity entity = new CouponActivity();
+        entity.setId(id);
+        entity.setStatus(CouponActivityEnum.Status.TYPE_4.getCode());
+        return this.retBool(baseMapper.updateStatusById(entity));
     }
 
     @Override
     public boolean startById(Long id) {
-        return this.retBool(baseMapper.updateStatusById(id, CouponActivityEnum.Status.TYPE_4.getCode()));
+        CouponActivity entity = new CouponActivity();
+        entity.setId(id);
+        entity.setStatus(CouponActivityEnum.Status.TYPE_0.getCode());
+        return this.retBool(baseMapper.updateStatusById(entity));
     }
 
     @Override
@@ -158,14 +192,16 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query) {
-        AssertUtils.notNull(getShopNo(), "商店编号不能为空");
+        AssertUtils.notNull(getShopNo(), "商店编号不存在");
+        AssertUtils.notNull(query.getActivityNo(), "活动编号不能为空");
         query.setShopNo(getShopNo());
         return couponActivityTicketService.selectTicketPage(page,query);
     }
 
     @Override
     public Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query) {
-        AssertUtils.notNull(getShopNo(), "商店编号不能为空");
+        AssertUtils.notNull(getShopNo(), "商店编号不存在");
+        AssertUtils.notNull(query.getActivityNo(), "活动编号不能为空");
         query.setShopNo(getShopNo());
         return couponActivityTicketService.selectActivityTicketPage(page,query);
     }

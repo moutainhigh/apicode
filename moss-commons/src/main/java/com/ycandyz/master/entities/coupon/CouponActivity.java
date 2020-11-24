@@ -59,12 +59,12 @@ public class CouponActivity extends Model {
    @ApiModelProperty(value = "活动入口名称")
    private String joinName;
 
-   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm",timezone = "GMT+8")
    @NotNull(message = "活动开始时间不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    @ApiModelProperty(value = "活动开始时间")
    private Date beginTime;
 
-   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm",timezone = "GMT+8")
    @NotNull(message = "活动结束时间不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    @ApiModelProperty(value = "活动结束时间")
    private Date endTime;
@@ -77,9 +77,9 @@ public class CouponActivity extends Model {
    @ApiModelProperty(value = "活动状态：0:默认，1:未开始，2:进行中，3:已结束，4:已停止")
    private Integer status;
 
-   @Range(min = 0, max = 2, message = "活动参与人类型必须为0-2之间", groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-   @NotNull(message = "活动参与人不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-   @ApiModelProperty(value = "活动参与人：0:全部用户，1:仅老用户，2:仅新用户")
+   @Range(min = 0, max = 2, message = "活动参与人群类型必须为0-2之间", groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+   @NotNull(message = "活动参与人群不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+   @ApiModelProperty(value = "活动参与人群：0:全部用户，1:仅老用户，2:仅新用户")
    private Integer joinType;
 
    @Range(min = 0, max = 2, message = "活页面设置必须为0-2之间", groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})

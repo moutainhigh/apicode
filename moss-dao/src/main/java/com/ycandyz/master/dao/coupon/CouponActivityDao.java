@@ -13,6 +13,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CouponActivityDao extends BaseMapper<CouponActivity> {
 
-    int updateStatusById(Long id,Integer status);
+    int updateStatusById(CouponActivity entity);
 
 }

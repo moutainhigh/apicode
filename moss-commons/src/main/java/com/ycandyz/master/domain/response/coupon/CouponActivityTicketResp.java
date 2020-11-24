@@ -38,11 +38,9 @@ public class CouponActivityTicketResp {
     @ApiModelProperty(value = "优惠卷剩余数量")
     private Integer remainNum;
 
-    @JsonIgnore
     @ApiModelProperty(value = "券生效开始时间")
     private Long beginAt;
 
-    @JsonIgnore
     @ApiModelProperty(value = "券生效结束时间")
     private Long endAt;
 

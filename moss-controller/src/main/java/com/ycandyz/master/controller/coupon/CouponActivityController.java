@@ -86,6 +86,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
         return CommonResult.success(new BasePageResult(service.selectTicketPage(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
 
+    @ApiImplicitParam(name="activity_no",value="活动编号",required=true,dataType="string")
     @ApiOperation(value = "全部优惠卷-分页")
     @GetMapping(value = "activity-ticket/page")
     @SuppressWarnings("unchecked")
