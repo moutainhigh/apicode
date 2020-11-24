@@ -3,12 +3,15 @@ package com.ycandyz.master.controller.mall;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ycandyz.master.api.ReturnResponse;
+import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.controller.base.BaseController;
+import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
 import com.ycandyz.master.domain.shipment.query.ShipmentParamLastResultQuery;
 import com.ycandyz.master.domain.shipment.query.ShipmentParamQuery;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.entities.mall.MallShopShipping;
+import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.service.mall.impl.MallShopShippingServiceImpl;
@@ -80,5 +83,23 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
         log.info("sign="+sign+",param="+param);
         ShipmentResponseDataVO shipmentResponseDataVO = mallShopShippingService.shipmentCallBack(param);
         return shipmentResponseDataVO;
+    }
+
+    /**
+     * 确认发货,UApp
+     * @param mallShopShippingQuery
+     * @return
+     */
+    @ApiOperation(value = "确认发货",notes = "确认发货",httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String"),
+            @ApiImplicitParam(name="company",value="快递公司名",required=true,dataType="String"),
+            @ApiImplicitParam(name="companyCode",value="快递公司编码",required=true,dataType="String"),
+            @ApiImplicitParam(name="number",value="快递单号",required=true,dataType="String")
+    })
+    @PostMapping("/u-app/order/shipment/enterShipping")
+    @ResponseBody
+    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(@RequestBody MallShopShippingQuery mallShopShippingQuery, @CurrentUser UserVO userVO){
+        return mallShopShippingService.enterShippingUApp(mallShopShippingQuery,userVO);
     }
 }

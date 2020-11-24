@@ -59,5 +59,18 @@ public interface MallOrderDao extends BaseMapper<MallOrder> {
      */
     List<MallOrderUAppDTO> getTrendMallOrderByPageUApp(@Param("page") long page, @Param("size") long size, @Param("p") MallOrderUAppQuery mallOrderQuery);
 
+    /**
+     * 获取订单详情，UApp
+     * @param orderNo
+     * @return
+     */
     MallOrderUAppDTO queryOrderDetailByUApp(@Param("orderNo") String orderNo);
+
+    /**
+     * 通过自提码获取订单详情，UApp
+     * @param pickupNo
+     * @param shopNo
+     * @return
+     */
+    MallOrderUAppDTO queryDetailByPickupNoUApp(@Param("pickupNo") String pickupNo, @Param("shopNo") String shopNo);
 }

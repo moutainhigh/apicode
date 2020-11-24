@@ -42,6 +42,10 @@
         SELECT p.id,b.id as module_base_id,b.base_name,b.base_code,p.sort_base,p.show_layout,b.display_num FROM mp_config_plan_page p
         left join mp_config_module_base b on p.module_base_id = b.id
         <where>
+            p.logic_delete = 0
+            <if test="menuId != null">
+                and p.menu_id = #{menuId}
+            </if>
             <if test="moduleSort != null">
                 and p.sort_module = #{moduleSort}
             </if>
