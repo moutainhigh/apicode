@@ -89,6 +89,9 @@
         </where>
     </select>
 
+    <delete id="deleteByMenuId" parameterType="java.lang.Integer">
+       delete from mp_config_plan_page where menu_id = #{menuId}
+    </delete>
 
 
 </mapper>
