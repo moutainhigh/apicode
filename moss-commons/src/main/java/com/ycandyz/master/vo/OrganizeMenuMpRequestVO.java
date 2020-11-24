@@ -26,10 +26,7 @@ public class OrganizeMenuMpRequestVO {
    @ApiModelProperty(value = "0：新增；1：修改")
    private Integer flag;
 
-<<<<<<< HEAD
-=======
    @ApiModelProperty(value = "是否删除[0：否；1：是]")
    private Integer isDel;
->>>>>>> dev-mp-lz
 
 }
