@@ -27,10 +27,11 @@
         #{sortNum},#{canLayout},#{canDelete},now(),now(),#{organizePlanId},0)
     </insert>
 
-    <select id="selById">
-<!--        select <include refid="Base_Column_List" />-->
-<!--        from organize_mp_config_plan_menu-->
-<!--        where organize_plan_id = #{organizePlanId}-->
+    <select id="selByIdAndName" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
+        select <include refid="Base_Column_List" />
+        from organize_mp_config_plan_menu
+        where organize_plan_id = #{organizePlanId}
+        and title = #{title}
     </select>
     <select id="selByOrGanizeMoudleId"
             resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">

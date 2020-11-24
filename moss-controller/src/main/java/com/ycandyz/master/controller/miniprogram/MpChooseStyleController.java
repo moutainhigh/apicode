@@ -55,8 +55,8 @@ public class MpChooseStyleController {
     @ApiOperation(value = "企业小程序编辑/保存单个菜单页面样式" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize/menupage")
     public CommonResult saveSinglePage(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
-        mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
-        return CommonResult.success("成功");
+        Integer id = mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
+        return CommonResult.success(id,"成功");
     }
 
     @ApiOperation(value = "企业小程序编辑/保存到草稿或保存页面" , tags = "企业小程序DIY配置",httpMethod = "POST")

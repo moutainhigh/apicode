@@ -1,6 +1,7 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
@@ -18,10 +19,7 @@ import com.ycandyz.master.model.miniprogram.OrganizeMpConfigModuleBaseVO;
 import com.ycandyz.master.model.miniprogram.OrganizeMpConfigPageMenuVO;
 import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.miniprogram.MpChooseStyleService;
-import com.ycandyz.master.vo.OrganizeMenuMpRequestVO;
-import com.ycandyz.master.vo.OrganizeMpConfigModuleBaseVo;
-import com.ycandyz.master.vo.OrganizeMpConfigPageMenuVo;
-import com.ycandyz.master.vo.OrganizeMpRequestVO;
+import com.ycandyz.master.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +43,6 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
 
     @Autowired
     private MpConfigPlanMenuDao mpConfigPlanMenuDao;
-
-    @Override
-    public OrganizeMpConfigMenuVO selById(Integer id) {
-        organizeMpConfigPlanMenuDao.selById(id);
-        return null;
-    }
 
     @Override
     public List<OrganizeMpConfigMenuVO> selByOrGanizeMoudleId(Integer organizePlanId) {
@@ -102,68 +94,102 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     }
 
     @Override
-    public void saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
+    public Integer saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
         Integer id = organizeMenuMpRequestVO.getId();
-        //OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getOrganizePlanById(organizeId,id);
-        if (id == null){
-            //第一次新增
-            //查询草稿
-            OrganizeMpConfigPlan organizeMpConfigPlan0 = organizeMpConfigPlanDao.selectByOrganizeIdStatus(organizeId,0,0);
-            if (organizeMpConfigPlan0 != null){
-                //删除之前的草稿
-                int i = organizeMpConfigPlanDao.setDelete(organizeMpConfigPlan0.getId());
-            }
-            //plan表
-            OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
-            organizeMpConfigPlan1.setMpPlanId(organizeMenuMpRequestVO.getMpPlanId());
-            organizeMpConfigPlan1.setPlanName(organizeMenuMpRequestVO.getPlanName());
-            organizeMpConfigPlan1.setOrganizeId(organizeId);
-            organizeMpConfigPlan1.setStatus(0);
-            organizeMpConfigPlan1.setLogicDelete(0);
-            organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
-            //菜单表
-            OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
-            MpConfigPlanMenu mpConfigPlanMenu = mpConfigPlanMenuDao.selectMenuById(organizeMenuMpRequestVO.getMenuId());
-            BeanUtils.copyProperties(mpConfigPlanMenu, organizeMpConfigPlanMenu);
-            OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByOrganizeIdStatus(organizeId,0,0);
-            organizeMpConfigPlanMenu.setOrganizePlanId(organizeMpConfigPlan2.getId());
-            organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
-            //page表
-            OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
-            List<OrganizeMpConfigPlanPage> list = new ArrayList<>();
-            List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
-            for (OrganizeMpConfigPageMenuVo o : modules) {
-                List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
-                for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
-                    organizeMpConfigPlanPage.setMenuId(organizeMenuMpRequestVO.getMenuId());
-                    organizeMpConfigPlanPage.setModuleId(o.getModuleId());
-                    organizeMpConfigPlanPage.setModuleBaseId(omcmb.getId());
-                    organizeMpConfigPlanPage.setShowLayout(omcmb.getShowLayout()); //暂存元素的展示样式
-                    organizeMpConfigPlanPage.setSortModule(o.getSortModule());
-                    organizeMpConfigPlanPage.setSortBase(omcmb.getSortBase());
-                    organizeMpConfigPlanPage.setBaseName(omcmb.getBaseName());
-                    list.add(organizeMpConfigPlanPage);
+        Integer flag = organizeMenuMpRequestVO.getFlag();
+            //新增
+            if (id == null){
+                //第一次新增
+                //查询草稿 未删 status:0
+                OrganizeMpConfigPlan organizeMpConfigPlan0 = organizeMpConfigPlanDao.selectByOrganizeIdStatus(organizeId);
+                if (organizeMpConfigPlan0 != null){
+                    //删除之前的草稿
+                    int i = organizeMpConfigPlanDao.setDelete(organizeMpConfigPlan0.getId());
+                }
+                //保存plan表
+                OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
+                organizeMpConfigPlan1.setMpPlanId(organizeMenuMpRequestVO.getMpPlanId());
+                organizeMpConfigPlan1.setPlanName(organizeMenuMpRequestVO.getPlanName());
+                organizeMpConfigPlan1.setOrganizeId(organizeId);
+                organizeMpConfigPlan1.setStatus(0);
+                organizeMpConfigPlan1.setLogicDelete(0);
+                organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
+                id = saveMenuAndPage(id,organizeMenuMpRequestVO, organizeId);
+                return id;
+            }else {
+                if (flag == null ){
+                    log.error("flag为空");
+                }
+                if (flag != null && flag == 0){
+                    //新增
+                    //查询草稿
+                    OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selectByIdStatus(id);
+                    if (organizeMpConfigPlan != null){
+                        saveMenuAndPage(id,organizeMenuMpRequestVO, organizeId);
+                    }else {
+                        log.error("企业小程序plan不存在:{}",id);
+                    }
+                }else if (flag != null && flag == 1){
+                    //修改
+                    OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selectById(id);
+                    if (organizeMpConfigPlan != null){
+                        List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
+                        for (OrganizeMpConfigPageMenuVo o : modules) {
+                            List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
+                            for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
+                                Integer id1 = omcmb.getOrganizeMpConfigPlanPageId();
+                                String baseName = omcmb.getBaseName();
+                                Integer sortModule = o.getSortModule();
+                                Integer sortBase = omcmb.getSortBase();
+                                organizeMpConfigPlanPageDao.updateBaseNameById(id1,baseName,sortModule,sortBase);
+                            }
+                        }
+                    }
                 }
             }
-            for (OrganizeMpConfigPlanPage o : list) {
-                organizeMpConfigPlanPageDao.insertSingle(o);
-            }
-        }else {
+            return null;
+        }
 
-            //修改
-            List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
-            for (OrganizeMpConfigPageMenuVo o : modules) {
-                List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
-                for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
-                    Integer id1 = omcmb.getId();
-                    String baseName = omcmb.getBaseName();
-                    organizeMpConfigPlanPageDao.updateBaseNameById(id1,baseName);
+    private Integer saveMenuAndPage(Integer id,OrganizeMenuMpRequestVO organizeMenuMpRequestVO, Long organizeId) {
+        //保存菜单表
+        OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
+        MpConfigPlanMenu mpConfigPlanMenu = mpConfigPlanMenuDao.selectMenuById(organizeMenuMpRequestVO.getMenuId());
+        if (mpConfigPlanMenu != null){
+            BeanUtils.copyProperties(mpConfigPlanMenu, organizeMpConfigPlanMenu);
+        }
+        if (id == null){
+            OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByOrganizeIdStatus(organizeId);
+            id = organizeMpConfigPlan2.getId();
+        }
+        organizeMpConfigPlanMenu.setOrganizePlanId(id);
+        organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
+        //保存page表
+        List<OrganizeMpConfigPlanPage> list = new ArrayList<>();
+        List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
+        OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByIdAndName(id, mpConfigPlanMenu.getTitle());
+        for (OrganizeMpConfigPageMenuVo o : modules) {
+            List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
+            for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
+                OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
+                if (organizeMpConfigPlanMenuDTO != null){
+                    organizeMpConfigPlanPage.setMenuId(organizeMpConfigPlanMenuDTO.getId());
                 }
+                organizeMpConfigPlanPage.setModuleId(o.getModuleId());
+                organizeMpConfigPlanPage.setModuleBaseId(omcmb.getId());
+                organizeMpConfigPlanPage.setShowLayout(omcmb.getShowLayout()); //暂存元素的展示样式
+                organizeMpConfigPlanPage.setSortModule(o.getSortModule());
+                organizeMpConfigPlanPage.setSortBase(omcmb.getSortBase());
+                organizeMpConfigPlanPage.setBaseName(omcmb.getBaseName());
+                list.add(organizeMpConfigPlanPage);
             }
         }
-     }
+        for (OrganizeMpConfigPlanPage o : list) {
+            organizeMpConfigPlanPageDao.insertSingle(o);
+        }
+        return id;
+    }
 
     @Override
     public void saveAll(OrganizeMpRequestVO organizeMpRequestVO) {
@@ -171,6 +197,11 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         Long organizeId = currentUser.getOrganizeId();
         Integer id = organizeMpRequestVO.getId();
         if (id == null){
+            OrganizeMpConfigPlan organizeMpConfigPlan0 = organizeMpConfigPlanDao.selectByOrganizeIdStatus(organizeId);
+            if (organizeMpConfigPlan0 != null){
+                //删除之前的草稿
+                int i = organizeMpConfigPlanDao.setDelete(organizeMpConfigPlan0.getId());
+            }
             //保存plan
             OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
             organizeMpConfigPlan1.setMpPlanId(organizeMpRequestVO.getMpPlanId());
@@ -179,53 +210,34 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             organizeMpConfigPlan1.setStatus(organizeMpRequestVO.getStatus());
             organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
 
-            List<OrganizeMenuMpRequestVO> organizeMenuMpRequestVOS = organizeMpRequestVO.getOrganizeMenuMpRequestVOS();
-            for (OrganizeMenuMpRequestVO omm : organizeMenuMpRequestVOS) {
-                //保存菜单
-                OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
-                OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(omm.getMenuId());
-                BeanUtils.copyProperties(organizeMpConfigPlanMenuDTO, organizeMpConfigPlanMenu);
-                //OrganizeMpConfigPlan> organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByOrganizeId(organizeId);
-                //organizeMpConfigPlanMenu.setOrganizePlanId(organizeMpConfigPlan2.getId());
-                organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
-
-                OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
-                List<OrganizeMpConfigPlanPage> list = new ArrayList<>();
-                List<OrganizeMpConfigPageMenuVo> modules = omm.getModules();
-                for (OrganizeMpConfigPageMenuVo o : modules) {
-                    List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
-                    for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
-                        organizeMpConfigPlanPage.setMenuId(omm.getMenuId());
-                        organizeMpConfigPlanPage.setModuleId(o.getModuleId());
-                        organizeMpConfigPlanPage.setModuleBaseId(omcmb.getId());
-                        organizeMpConfigPlanPage.setShowLayout(omcmb.getShowLayout()); //元素的展示样式
-                        organizeMpConfigPlanPage.setSortModule(o.getSortModule());
-                        organizeMpConfigPlanPage.setSortBase(omcmb.getSortBase());
-                        organizeMpConfigPlanPage.setBaseName(omcmb.getBaseName());
-                        list.add(organizeMpConfigPlanPage);
-                    }
+            List<OrganizeMenuMpVO> organizeMenuMpVOS = organizeMpRequestVO.getAllmenus();
+            for (OrganizeMenuMpVO omm : organizeMenuMpVOS) {
+                OrganizeMenuMpRequestVO organizeMenuMpRequestVO = new OrganizeMenuMpRequestVO();
+                if (organizeMenuMpRequestVO != null){
+                    BeanUtils.copyProperties(omm,organizeMenuMpRequestVO);
                 }
-                for (OrganizeMpConfigPlanPage o : list) {
-                    organizeMpConfigPlanPageDao.insertSingle(o);
-                }
+                saveMenuAndPage(id,organizeMenuMpRequestVO, organizeId);
             }
         }else{
             //修改
-            List<OrganizeMenuMpRequestVO> organizeMenuMpRequestVOS = organizeMpRequestVO.getOrganizeMenuMpRequestVOS();
-            for (OrganizeMenuMpRequestVO omm: organizeMenuMpRequestVOS) {
-                List<OrganizeMpConfigPageMenuVo> modules = omm.getModules();
-                for (OrganizeMpConfigPageMenuVo o : modules) {
-                    List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
-                    for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
-                        Integer id1 = omcmb.getId();
-                        String baseName = omcmb.getBaseName();
-                        organizeMpConfigPlanPageDao.updateBaseNameById(id1,baseName);
+            OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selectById(id);
+            if (organizeMpConfigPlan != null){
+                List<OrganizeMenuMpVO> organizeMenuMpVOS = organizeMpRequestVO.getAllmenus();
+                for (OrganizeMenuMpVO omm: organizeMenuMpVOS) {
+                    List<OrganizeMpConfigPageMenuVo> modules = omm.getModules();
+                    for (OrganizeMpConfigPageMenuVo o : modules) {
+                        List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
+                        for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
+                            Integer id1 = omcmb.getOrganizeMpConfigPlanPageId();
+                            String baseName = omcmb.getBaseName();
+                            Integer sortModule = o.getSortModule();
+                            Integer sortBase = omcmb.getSortBase();
+                            organizeMpConfigPlanPageDao.updateBaseNameById(id1,baseName,sortModule,sortBase);
+                        }
                     }
                 }
             }
         }
-
-
     }
 
     @Override
@@ -233,6 +245,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
         if (id == null) {
+            //查询全部
             OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getByOrganizeId(organizeId);
             if (organizeMpConfigPlan == null) {
                 return 0;
