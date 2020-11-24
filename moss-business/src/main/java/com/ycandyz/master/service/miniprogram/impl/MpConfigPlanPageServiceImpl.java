@@ -83,15 +83,14 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
     @Override
     public Boolean addBatch(PlanModuleModel model) {
 
+        //删除上一次菜单下数据
+        this.baseMapper.deleteByMenuId(model.getMenuId());
         List<ModuleWithinMenu> modules = model.getModules();
         List<MpConfigPlanPage> planPageList = new ArrayList<MpConfigPlanPage>();
         for(ModuleWithinMenu module: modules){
             List<ElementWithinModule> elements = module.getBaseInfo();
             for(ElementWithinModule element: elements){
                 MpConfigPlanPage planPage = new MpConfigPlanPage();
-                if(element.getId() != null){
-                    planPage.setId(element.getId());
-                }
                 planPage.setMenuId(model.getMenuId());
                 planPage.setModuleId(module.getModuleId());
                 planPage.setSortModule(module.getSortModule());
@@ -101,7 +100,7 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
                 planPageList.add(planPage);
             }
         }
-        return this.saveOrUpdateBatch(planPageList);
+        return this.saveBatch(planPageList);
     }
 
     @Override
