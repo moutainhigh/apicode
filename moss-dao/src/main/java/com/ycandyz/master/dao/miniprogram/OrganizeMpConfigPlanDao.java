@@ -24,11 +24,17 @@ public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan
 
     List<OrganizeMpConfigPlan> selectByOrganizeId(Long organizeId);
 
-    OrganizeMpConfigPlan selectByOrganizeIdStatus(@Param("organizeId") Long organizeId,@Param("status")Integer status,@Param("delete") Integer delete);
+    OrganizeMpConfigPlan selectByOrganizeIdStatus(@Param("organizeId") Long organizeId);
+
+    OrganizeMpConfigPlan selectByIdStatus (@Param("id") Integer id);
 
     OrganizeMpConfigPlan getByOrganizeId(Long organizeId);
 
     int setDelete(@Param("id") Integer id);
 
     OrganizeMpConfigPlan selByOrganizeId(Long organizeId);
+
+    OrganizeMpConfigPlan selectByIdUsing(Integer id);
+
+    OrganizeMpConfigPlan selectPlanById(Integer id);
 }

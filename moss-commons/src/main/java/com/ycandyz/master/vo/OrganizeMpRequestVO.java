@@ -18,7 +18,7 @@ public class OrganizeMpRequestVO {
    private String planName;
 
    @ApiModelProperty(value = "所有菜单页面全部数据")
-   private List<OrganizeMenuMpRequestVO> organizeMenuMpRequestVOS;
+   private List<OrganizeMenuMpVO> allmenus;
 
    @ApiModelProperty(value = "状态 [0:草稿；1:发布中]")
    private Integer status;

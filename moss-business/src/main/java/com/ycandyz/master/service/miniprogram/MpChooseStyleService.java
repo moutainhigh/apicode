@@ -9,13 +9,11 @@ import java.util.List;
 
 public interface MpChooseStyleService {
 
-    OrganizeMpConfigMenuVO selById(Integer id);
-
     List<OrganizeMpConfigMenuVO> selByOrGanizeMoudleId(Integer id);
 
     OrganizeChooseMpConfigPage selectMenuById(Integer menuid);
 
-    void saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
+    Integer saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
 
     void saveAll(OrganizeMpRequestVO organizeMpRequestVO);
 
