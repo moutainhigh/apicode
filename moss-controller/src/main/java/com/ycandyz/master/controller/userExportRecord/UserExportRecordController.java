@@ -69,6 +69,9 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
         userExportRecordQuery.setOperatorId(operatorId);
         userExportRecordQuery.setCreatedAtStart(createdAtStart);
         userExportRecordQuery.setCreatedAtEnd(createdAtEnd);
+        requestParams.setPage_size(page_size);
+        requestParams.setPage(page);
+        requestParams.setT(userExportRecordQuery);
 	    log.info("导出记录-用户导出记录查询分页请求入参:{}", JSON.toJSONString(requestParams));
         Page<UserExportRecordResp> userExportRecordRespPage = userExportRecordService.selectPages(requestParams);
         log.info("导出记录-用户导出记录查询分页请求响应:{}", JSON.toJSONString(ReturnResponse.success(userExportRecordRespPage)));

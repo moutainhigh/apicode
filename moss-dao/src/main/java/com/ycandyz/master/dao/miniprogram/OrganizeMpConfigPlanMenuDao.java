@@ -4,6 +4,7 @@ import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public interface OrganizeMpConfigPlanMenuDao extends BaseMapper<OrganizeMpConfigPlanMenu> {
 
-    void selById(Integer id);
+    OrganizeMpConfigPlanMenuDTO selByIdAndName(@Param("organizePlanId") Integer id,@Param("title") String name);
 
     List<OrganizeMpConfigPlanMenuDTO> selByOrGanizeMoudleId(Integer organizePlanId);
 

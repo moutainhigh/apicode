@@ -52,6 +52,10 @@ public class UserExportRecordServiceImpl extends BaseService<UserExportRecordDao
 
     @Override
     public Page<UserExportRecordResp> selectPages(RequestParams<UserExportRecordQuery> requestParams) {
+        if (requestParams == null && requestParams.getT() == null){
+            log.error("敏感词检测参数为空");
+            return null;
+        }
         UserExportRecordQuery userExportRecordQuery = requestParams.getT();
         Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
         Page<UserExportRecordResp> page = null;

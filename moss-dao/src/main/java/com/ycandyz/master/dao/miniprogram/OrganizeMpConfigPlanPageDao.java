@@ -30,5 +30,5 @@ public interface OrganizeMpConfigPlanPageDao extends BaseMapper<OrganizeMpConfig
 
     void insertSingle(OrganizeMpConfigPlanPage o);
 
-    void updateBaseNameById(Integer id1, String baseName);
+    void updateBaseNameById(@Param("id") Integer id, @Param("baseName") String baseName,@Param("sortModule") Integer sortModule,@Param("sortBase") Integer sortBase);
 }
