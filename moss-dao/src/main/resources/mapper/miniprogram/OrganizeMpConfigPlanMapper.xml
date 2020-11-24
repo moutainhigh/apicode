@@ -42,21 +42,13 @@
     </select>
     <select id="selectByOrganizeIdStatus"
             resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-<<<<<<< HEAD
-        select * from organize_mp_config_plan where organize_id = #{organizeId} and status = 0 and logic_delete = 0 and current_using = 0;
-=======
         select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0 and current_using = 0;
->>>>>>> dev-mp-lz
     </select>
     <select id="selByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 1 and logic_delete = 0 and status = 2;
     </select>
     <select id="selectByIdStatus" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-<<<<<<< HEAD
-        select * from organize_mp_config_plan where id = #{id} and status = 0 and logic_delete = 0 and current_using = 0;
-=======
         select * from organize_mp_config_plan where id = #{id} and logic_delete = 0 and current_using = 0;
->>>>>>> dev-mp-lz
     </select>
     <select id="selectByIdUsing" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where id = #{id} and status != 0 and logic_delete = 0;

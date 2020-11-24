@@ -56,13 +56,9 @@ public class MpChooseStyleController {
     @ApiOperation(value = "企业小程序编辑/保存单个菜单页面样式" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize/menupage")
     public CommonResult saveSinglePage(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
-<<<<<<< HEAD
-        Integer id = mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
-=======
         log.info("企业小程序编辑/保存单个菜单页面样式请求入参:{}", JSON.toJSONString(organizeMenuMpRequestVO));
         Integer id = mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
         log.info("企业小程序编辑/保存单个菜单页面样式请求出参:{}", JSON.toJSONString(CommonResult.success(id,"成功")));
->>>>>>> dev-mp-lz
         return CommonResult.success(id,"成功");
     }
 

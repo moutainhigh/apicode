@@ -36,13 +36,9 @@
         values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0)
     </insert>
     <update id="updateBaseNameById">
-<<<<<<< HEAD
-        update organize_mp_config_plan_page set base_name = #{baseName},sort_module = #{sortModule},sort_base = #{sortBase} where id = #{id}
-=======
         update organize_mp_config_plan_page
         set base_name = #{baseName},sort_module = #{sortModule},sort_base = #{sortBase} , logic_delete = #{isDel}
         where id = #{id}
->>>>>>> dev-mp-lz
     </update>
 
     <select id="selectByMenuId" resultMap="BaseResultMap">
