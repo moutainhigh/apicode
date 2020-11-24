@@ -273,7 +273,8 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
 
     @Transactional
     @Override
-    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(MallShopShippingQuery mallShopShippingQuery, UserVO userVO) {
+    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(MallShopShippingQuery mallShopShippingQuery) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(mallShopShippingQuery.getOrderNo());
         if (mallShopShippingDTO==null){
             return ReturnResponse.failed("未查询到当前记录");
@@ -385,7 +386,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         }
 
         //查询订单详情，返回前端
-        return mallOrderService.queryOrderDetailByUApp(mallShopShippingQuery.getOrderNo(),userVO);
+        return mallOrderService.queryOrderDetailByUApp(mallShopShippingQuery.getOrderNo());
     }
 
 }

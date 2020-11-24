@@ -22,11 +22,11 @@ import com.ycandyz.master.model.coupon.CouponTicketVO;
  */
 public interface ICouponTicketService extends IService<CouponTicket>{
 
-    ReturnResponse<Page<CouponTicketInfoVO>> selectPageList(RequestParams<CouponTicketQuery> requestParams, UserVO userVO);
+    ReturnResponse<Page<CouponTicketInfoVO>> selectPageList(RequestParams<CouponTicketQuery> requestParams);
 
-    ReturnResponse<String> auditState(Long id, Integer state, UserVO userVO);
+    ReturnResponse<String> auditState(Long id, Integer state);
 
-    ReturnResponse<CouponTicketInfoVO> ticketDetail(String ticketNo, UserVO userVO);
+    ReturnResponse<CouponTicketInfoVO> ticketDetail(String ticketNo);
 
-    ReturnResponse<String> saveTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO);
+    ReturnResponse<String> saveTicket(CouponTicketInfoQuery couponTicketInfoQuery);
 }

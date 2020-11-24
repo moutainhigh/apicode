@@ -3,11 +3,8 @@ package com.ycandyz.master.controller.mall;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
-import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.controller.base.BaseController;
-import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
-import com.ycandyz.master.domain.query.mall.MallOrderUAppQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.enums.ExpressEnum;
@@ -40,11 +37,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "订单列表",notes = "订单列表",httpMethod = "POST")
     @PostMapping("/order/list")
-    public ReturnResponse<Page<MallOrderVO>> queryMallOrderList(@RequestBody RequestParams<MallOrderQuery> requestParams, @CurrentUser UserVO userVO){
+    public ReturnResponse<Page<MallOrderVO>> queryMallOrderList(@RequestBody RequestParams<MallOrderQuery> requestParams){
         if (requestParams.getT()==null){
             return ReturnResponse.failed("请求入参为空");
         }
-        return mallOrderService.queryOrderList(requestParams,userVO);
+        return mallOrderService.queryOrderList(requestParams);
     }
 
     /**
@@ -53,8 +50,8 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "订单列表导出",notes = "订单列表导出",httpMethod = "POST")
     @PostMapping("/order/export")
-    public ReturnResponse<MallOrderExportResp> exportEXT(@RequestBody MallOrderQuery mallOrder, @CurrentUser UserVO userVO){
-        MallOrderExportResp s = mallOrderService.exportEXT(mallOrder, userVO);
+    public ReturnResponse<MallOrderExportResp> exportEXT(@RequestBody MallOrderQuery mallOrder){
+        MallOrderExportResp s = mallOrderService.exportEXT(mallOrder);
         return ReturnResponse.success(s);
     }
 
@@ -68,8 +65,8 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String")
     })
     @GetMapping("/order/detail")
-    public ReturnResponse<MallOrderVO> queryOrderDetail(@RequestParam("orderNo") String orderNo, @CurrentUser UserVO userVO){
-        return mallOrderService.queryOrderDetail(orderNo,userVO);
+    public ReturnResponse<MallOrderVO> queryOrderDetail(@RequestParam("orderNo") String orderNo){
+        return mallOrderService.queryOrderDetail(orderNo);
     }
 
     /**
@@ -83,11 +80,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
     })
     @GetMapping("/order/pickup/query")
-    public ReturnResponse<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
+    public ReturnResponse<MallOrderVO> queryDetailByPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo){
         if (pickupNo!=null){
             pickupNo = pickupNo.trim();
         }
-        return mallOrderService.queryDetailByPickupNo(pickupNo, orderNo, userVO);
+        return mallOrderService.queryDetailByPickupNo(pickupNo, orderNo);
     }
 
     /**
@@ -102,11 +99,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="orderNo",value="订单号",dataType="String")
     })
     @GetMapping("/order/pickup/verification")
-    public ReturnResponse<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
+    public ReturnResponse<String> verPickupNo(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo){
         if (pickupNo!=null){
             pickupNo = pickupNo.trim();
         }
-        return mallOrderService.verPickupNo(pickupNo,orderNo, userVO);
+        return mallOrderService.verPickupNo(pickupNo,orderNo);
     }
 
     /**
@@ -131,14 +128,14 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "UApp项目订单列表接口",notes = "UApp项目订单列表接口",httpMethod = "GET")
     @GetMapping("/u-app/order/page")
-    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("mallOrderQuery") String mallOrderQuery, @RequestParam("status") Integer status, @CurrentUser UserVO userVO){
+    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("mallOrderQuery") String mallOrderQuery, @RequestParam("status") Integer status){
         if (page==null || page_size==null){
             return ReturnResponse.failed("请求入参为空");
         }
         if (mallOrderQuery!=null && !"".equals(mallOrderQuery)){
             mallOrderQuery = mallOrderQuery.trim();
         }
-        return mallOrderService.queryMallOrderListByUApp(page,page_size,mallOrderQuery,status,userVO);
+        return mallOrderService.queryMallOrderListByUApp(page,page_size,mallOrderQuery,status);
     }
 
     /**
@@ -151,8 +148,8 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String")
     })
     @GetMapping("/u-app/order/detail/{orderNo}")
-    public ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(@PathVariable("orderNo") String orderNo, @CurrentUser UserVO userVO){
-        return mallOrderService.queryOrderDetailByUApp(orderNo,userVO);
+    public ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(@PathVariable("orderNo") String orderNo){
+        return mallOrderService.queryOrderDetailByUApp(orderNo);
     }
 
     /**
@@ -166,11 +163,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
     })
     @GetMapping("/u-app/order/pickup/query")
-    public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo, @CurrentUser UserVO userVO){
+    public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo){
         if (pickupNo!=null){
             pickupNo = pickupNo.trim();
         }
-        return mallOrderService.queryDetailByPickupNoUApp(pickupNo, orderNo, userVO);
+        return mallOrderService.queryDetailByPickupNoUApp(pickupNo, orderNo);
     }
 
 

@@ -89,7 +89,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     private int num;
 
     @Override
-    public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams, UserVO userVO) {
+    public ReturnResponse<Page<MallOrderVO>> queryOrderList(RequestParams<MallOrderQuery> requestParams) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         List<MallOrderVO> list = new ArrayList<>();
         Page<MallOrderVO> page1 = new Page<>();
         MallOrderQuery mallOrderQuery = (MallOrderQuery) requestParams.getT();  //请求入参
@@ -285,7 +286,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return ReturnResponse.success(page1);
     }
 
-    public MallOrderExportResp exportEXT(MallOrderQuery mallOrderQuery, UserVO userVO){
+    public MallOrderExportResp exportEXT(MallOrderQuery mallOrderQuery){
+        UserVO userVO = getUser();  //获取当前登陆用户
         //获取企业id
         if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
             mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
@@ -528,7 +530,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<MallOrderVO> queryOrderDetail(String orderNo, UserVO userVO) {
+    public ReturnResponse<MallOrderVO> queryOrderDetail(String orderNo) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderVO mallOrderVO = null;
         MallOrderDTO mallOrderDTO = mallOrderDao.queryOrderDetail(orderNo);
         if (mallOrderDTO != null){
@@ -715,7 +718,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<MallOrderVO> queryDetailByPickupNo(String pickupNo, String orderNo, UserVO userVO) {
+    public ReturnResponse<MallOrderVO> queryDetailByPickupNo(String pickupNo, String orderNo) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null){
             //判断pickNo查询到订单是否是orderNo的订单
@@ -777,7 +781,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<String> verPickupNo(String pickupNo, String orderNo, UserVO userVO) {
+    public ReturnResponse<String> verPickupNo(String pickupNo, String orderNo) {
+        UserVO userVO = getUser();  //获取当前登陆用户
 //        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByOrderNo(orderNo, userVO.getShopNo());
         MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null){
@@ -863,7 +868,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long page_size, String mallOrderQuery, Integer status, UserVO userVO) {
+    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long page_size, String mallOrderQuery, Integer status) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         List<MallOrderUAppVO> list = new ArrayList<>();
         Page<MallOrderUAppVO> page1 = new Page<>();
         MallOrderUAppQuery mallOrderUAppQuery = new MallOrderUAppQuery();  //请求入参
@@ -965,7 +971,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(String orderNo, UserVO userVO) {
+    public ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(String orderNo) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderUAppVO mallOrderVO = null;
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryOrderDetailByUApp(orderNo);
         if (mallOrderDTO != null){
@@ -1152,7 +1159,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(String pickupNo, String orderNo, UserVO userVO) {
+    public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(String pickupNo, String orderNo) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null){
             //判断pickNo查询到订单是否是orderNo的订单

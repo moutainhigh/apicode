@@ -1,14 +1,8 @@
 package com.ycandyz.master.controller.mall;
 
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.ycandyz.master.api.ReturnResponse;
-import com.ycandyz.master.auth.CurrentUser;
 import com.ycandyz.master.controller.base.BaseController;
-import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
-import com.ycandyz.master.domain.shipment.query.ShipmentParamLastResultQuery;
-import com.ycandyz.master.domain.shipment.query.ShipmentParamQuery;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.entities.mall.MallShopShipping;
 import com.ycandyz.master.model.mall.MallOrderUAppVO;
@@ -20,15 +14,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -99,7 +86,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
     })
     @PostMapping("/u-app/order/shipment/enterShipping")
     @ResponseBody
-    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(@RequestBody MallShopShippingQuery mallShopShippingQuery, @CurrentUser UserVO userVO){
-        return mallShopShippingService.enterShippingUApp(mallShopShippingQuery,userVO);
+    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(@RequestBody MallShopShippingQuery mallShopShippingQuery){
+        return mallShopShippingService.enterShippingUApp(mallShopShippingQuery);
     }
 }
