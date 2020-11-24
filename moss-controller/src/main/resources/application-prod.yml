@@ -77,6 +77,7 @@ ignored:
     - /mall/order/shipment/callback
     - /mall-buyer-shipping/mallBuyer/shipment/callback
     - /**/订单.xls
+    - /sms/send/msg
 
 #快递100相关参数
 kuaidi:
