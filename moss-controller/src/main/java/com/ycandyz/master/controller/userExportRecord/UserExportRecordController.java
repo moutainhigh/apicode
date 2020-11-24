@@ -78,7 +78,7 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
         return ReturnResponse.success(userExportRecordRespPage);
     }
 
-    @ApiOperation(value = "接入导出记录")
+    @ApiOperation(value = "接入导出记录-内部使用")
     @PostMapping
     public ReturnResponse insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody UserExportRecordReq userExportRecordReq) {
         log.info("导出记录-用户导出记录接入导出记录请求入参:{}", JSON.toJSONString(userExportRecordReq));
