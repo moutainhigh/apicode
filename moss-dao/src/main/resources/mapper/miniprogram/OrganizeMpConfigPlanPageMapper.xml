@@ -40,6 +40,9 @@
         set base_name = #{baseName},sort_module = #{sortModule},sort_base = #{sortBase} , logic_delete = #{isDel}
         where id = #{id}
     </update>
+    <delete id="delByMenuId">
+        delete from organize_mp_config_plan_page where menu_id = #{menuId} and logic_delete = 0;
+    </delete>
 
     <select id="selectByMenuId" resultMap="BaseResultMap">
         SELECT p.id,p.menu_id,m.title as menu_name,p.module_id,d.module_name,

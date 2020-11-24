@@ -36,9 +36,6 @@ public class OrganizeMpConfigPlan extends Model {
    @ApiModelProperty(value = "企业编号")
    private Long organizeId;
 
-   @ApiModelProperty(value = "小程序名称")
-   private String planName;
-
    @ApiModelProperty(value = "小程序模板方案编号")
    private Integer mpPlanId;
 
@@ -53,8 +50,5 @@ public class OrganizeMpConfigPlan extends Model {
 
    @ApiModelProperty(value = "修改时间")
    private Date updateTime;
-
-   @ApiModelProperty(value = "状态 [0:草稿；1:发布中；")
-   private Integer status;
 
 }

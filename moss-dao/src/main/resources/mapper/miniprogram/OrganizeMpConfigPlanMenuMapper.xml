@@ -26,6 +26,9 @@
         values (#{id},#{title},#{pictureSelect},#{colorSelect},#{pictureNotSelect},#{colorNotSelect},
         #{sortNum},#{canLayout},#{canDelete},now(),now(),#{organizePlanId},0)
     </insert>
+    <delete id="delById">
+        selete from organize_mp_config_plan_menu where id = #{menuId} and logic_delete = 0
+    </delete>
 
     <select id="selByIdAndName" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
         select <include refid="Base_Column_List" />
@@ -44,6 +47,12 @@
         select <include refid="Base_Column_List" />
         from organize_mp_config_plan_menu
         where id = #{menuId}
+    </select>
+    <select id="selIdByOrGanizeMoudleId" resultType="java.lang.Integer">
+        select id
+        from organize_mp_config_plan_menu
+        where organize_plan_id = #{organizePlanId}
+        and logic_delete = 0;
     </select>
 
 </mapper>

@@ -13,7 +13,7 @@ public interface MpChooseStyleService {
 
     OrganizeChooseMpConfigPage selectMenuById(Integer menuid);
 
-    Integer saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
+    //Integer saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
 
     void saveSingle2(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
 

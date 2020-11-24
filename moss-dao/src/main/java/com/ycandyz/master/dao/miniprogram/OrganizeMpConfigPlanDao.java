@@ -37,4 +37,6 @@ public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan
     OrganizeMpConfigPlan selectByIdUsing(Integer id);
 
     OrganizeMpConfigPlan selectPlanById(Integer id);
+
+    void updateByOrganizePlanId(OrganizeMpConfigPlan organizeMpConfigPlan1);
 }

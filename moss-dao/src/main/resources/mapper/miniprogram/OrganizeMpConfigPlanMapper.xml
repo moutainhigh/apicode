@@ -6,7 +6,6 @@
     <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         <id column="id" property="id" />
         <result column="organize_id" property="organizeId" />
-        <result column="plan_name" property="planName" />
         <result column="mp_plan_id" property="mpPlanId" />
         <result column="logic_delete" property="logicDelete" />
         <result column="current_using" property="currentUsing" />
@@ -26,6 +25,11 @@
     <update id="setDelete">
         update organize_mp_config_plan set logic_delete = 1 where id = #{id};
     </update>
+    <update id="updateByOrganizePlanId">
+        update organize_mp_config_plan set organize_id = #{organizeId},mp_plan_id = #{mpPlanId},
+        logic_delete = #{logicDelete}, current_using = #{currentUsing}, update_time = now()
+        where id = #{id}
+    </update>
     <select id="getOrganizePlan" resultMap="BaseResultMap">
         select * from organize_mp_config_plan
         where id = #{id} and organize_id = #{organizeId}
@@ -42,7 +46,7 @@
     </select>
     <select id="selectByOrganizeIdStatus"
             resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-        select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0 and current_using = 0;
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0 ;
     </select>
     <select id="selByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 1 and logic_delete = 0 and status = 2;
