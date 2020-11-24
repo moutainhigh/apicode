@@ -99,8 +99,11 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         Long organizeId = currentUser.getOrganizeId();
         Integer id = organizeMenuMpRequestVO.getId();
         Integer flag = organizeMenuMpRequestVO.getFlag();
+        if (flag == null ){
+            log.error("flag为空");
+        }
             //新增
-            if (id == null){
+            if (flag != null && flag == 0 && id == null){
                 //第一次新增
                 //查询草稿 未删 status:0
                 OrganizeMpConfigPlan organizeMpConfigPlan0 = organizeMpConfigPlanDao.selectByOrganizeIdStatus(organizeId);
@@ -111,17 +114,14 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 //保存plan表
                 OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
                 organizeMpConfigPlan1.setMpPlanId(organizeMenuMpRequestVO.getMpPlanId());
-                organizeMpConfigPlan1.setPlanName(organizeMenuMpRequestVO.getPlanName());
                 organizeMpConfigPlan1.setOrganizeId(organizeId);
-                organizeMpConfigPlan1.setStatus(0);
+                organizeMpConfigPlan1.setCurrentUsing(0);
                 organizeMpConfigPlan1.setLogicDelete(0);
+                log.info("企业小程序单个菜单页面-plan-保存草稿入参:{}",organizeMpConfigPlan1);
                 organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
                 id = saveMenuAndPage(id,organizeMenuMpRequestVO, organizeId);
                 return id;
             }else {
-                if (flag == null ){
-                    log.error("flag为空");
-                }
                 if (flag != null && flag == 0){
                     //新增
                     //查询草稿
@@ -143,7 +143,8 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                                 String baseName = omcmb.getBaseName();
                                 Integer sortModule = o.getSortModule();
                                 Integer sortBase = omcmb.getSortBase();
-                                organizeMpConfigPlanPageDao.updateBaseNameById(id1,baseName,sortModule,sortBase);
+                                Integer isDel = organizeMenuMpRequestVO.getIsDel();
+                                organizeMpConfigPlanPageDao.updateBaseNameById(id1,baseName,sortModule,sortBase,isDel);
                             }
                         }
                     }
@@ -164,6 +165,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             id = organizeMpConfigPlan2.getId();
         }
         organizeMpConfigPlanMenu.setOrganizePlanId(id);
+        log.info("企业小程序单个菜单页面-menu-保存草稿入参:{}",organizeMpConfigPlanMenu);
         organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
         //保存page表
         List<OrganizeMpConfigPlanPage> list = new ArrayList<>();
@@ -178,14 +180,16 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 }
                 organizeMpConfigPlanPage.setModuleId(o.getModuleId());
                 organizeMpConfigPlanPage.setModuleBaseId(omcmb.getId());
-                organizeMpConfigPlanPage.setShowLayout(omcmb.getShowLayout()); //暂存元素的展示样式
+                organizeMpConfigPlanPage.setShowLayout(omcmb.getShowLayout());
                 organizeMpConfigPlanPage.setSortModule(o.getSortModule());
                 organizeMpConfigPlanPage.setSortBase(omcmb.getSortBase());
                 organizeMpConfigPlanPage.setBaseName(omcmb.getBaseName());
+                organizeMpConfigPlanPage.setLogicDelete(o.getIsDel());
                 list.add(organizeMpConfigPlanPage);
             }
         }
         for (OrganizeMpConfigPlanPage o : list) {
+            log.info("企业小程序单个菜单页面-page-保存草稿入参:{}",o);
             organizeMpConfigPlanPageDao.insertSingle(o);
         }
         return id;
@@ -207,13 +211,13 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             organizeMpConfigPlan1.setMpPlanId(organizeMpRequestVO.getMpPlanId());
             organizeMpConfigPlan1.setPlanName(organizeMpRequestVO.getPlanName());
             organizeMpConfigPlan1.setOrganizeId(organizeId);
-            organizeMpConfigPlan1.setStatus(organizeMpRequestVO.getStatus());
+            organizeMpConfigPlan1.setCurrentUsing(organizeMpRequestVO.getStatus());
             organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
 
             List<OrganizeMenuMpVO> organizeMenuMpVOS = organizeMpRequestVO.getAllmenus();
             for (OrganizeMenuMpVO omm : organizeMenuMpVOS) {
                 OrganizeMenuMpRequestVO organizeMenuMpRequestVO = new OrganizeMenuMpRequestVO();
-                if (organizeMenuMpRequestVO != null){
+                if (omm != null){
                     BeanUtils.copyProperties(omm,organizeMenuMpRequestVO);
                 }
                 saveMenuAndPage(id,organizeMenuMpRequestVO, organizeId);
@@ -232,7 +236,8 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                             String baseName = omcmb.getBaseName();
                             Integer sortModule = o.getSortModule();
                             Integer sortBase = omcmb.getSortBase();
-                            organizeMpConfigPlanPageDao.updateBaseNameById(id1,baseName,sortModule,sortBase);
+                            Integer isDel = omm.getIsDel();
+                            organizeMpConfigPlanPageDao.updateBaseNameById(id1,baseName,sortModule,sortBase,isDel);
                         }
                     }
                 }
@@ -241,17 +246,23 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     }
 
     @Override
-    public Integer get(Integer id) {
+    public Integer get() {
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
-        if (id == null) {
             //查询全部
-            OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getByOrganizeId(organizeId);
-            if (organizeMpConfigPlan == null) {
-                return 0;
+        OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getByOrganizeId(organizeId);
+        if (organizeMpConfigPlan != null) {
+            Integer currentUsing = organizeMpConfigPlan.getCurrentUsing();
+            //草稿
+            if (currentUsing == 0){
+                return organizeMpConfigPlan.getId();
+            }
+            //正在应用
+            if (currentUsing == 1){
+                return organizeMpConfigPlan.getId();
             }
         }
-        return 1;
+        return null;
     }
 
     @Override

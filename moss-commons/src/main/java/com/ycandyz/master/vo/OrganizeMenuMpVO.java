@@ -17,4 +17,7 @@ public class OrganizeMenuMpVO {
    @ApiModelProperty(value = "模块")
    private List<OrganizeMpConfigPageMenuVo> modules;
 
+   @ApiModelProperty(value = "是否删除[0：否；1：是]")
+   private Integer isDel;
+
 }

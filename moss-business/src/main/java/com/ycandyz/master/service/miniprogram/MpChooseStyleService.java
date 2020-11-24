@@ -17,7 +17,7 @@ public interface MpChooseStyleService {
 
     void saveAll(OrganizeMpRequestVO organizeMpRequestVO);
 
-    Integer get(Integer id);
+    Integer get();
 
     List<OrganizeMpConfigMenuVO> select();
 
