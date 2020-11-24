@@ -30,4 +30,13 @@ public interface IMpConfigPlanService extends IService<MpConfigPlan>{
      * @return
      */
     Boolean initPlan(String planName);
+
+
+    /**
+     * 企业绑定模板
+     * @param organizeId
+     * @param planId
+     * @return
+     */
+    int organizeBindPlan(Integer organizeId,Integer planId);
 }

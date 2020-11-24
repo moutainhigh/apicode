@@ -84,4 +84,13 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
         return mpConfigPlanMenuService.saveBatch(configPlanMenuList);
     }
 
+    @Override
+    public int organizeBindPlan(Integer organizeId, Integer planId) {
+
+        //TODO 企业信息绑定方案编号
+        MpConfigPlan mpConfigPlan = this.baseMapper.selectById(planId);
+        mpConfigPlan.setOrganizeChooseNum(mpConfigPlan.getOrganizeChooseNum() + 1);
+        return this.baseMapper.updateById(mpConfigPlan);
+    }
+
 }
