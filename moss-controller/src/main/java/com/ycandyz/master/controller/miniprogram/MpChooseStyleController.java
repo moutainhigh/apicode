@@ -57,9 +57,9 @@ public class MpChooseStyleController {
     @PostMapping("/organize/menupage")
     public CommonResult saveSinglePage(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
         log.info("企业小程序编辑/保存单个菜单页面样式请求入参:{}", JSON.toJSONString(organizeMenuMpRequestVO));
-        Integer id = mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
-        log.info("企业小程序编辑/保存单个菜单页面样式请求出参:{}", JSON.toJSONString(CommonResult.success(id,"成功")));
-        return CommonResult.success(id,"成功");
+        mpChooseStyleService.saveSingle2(organizeMenuMpRequestVO);
+        log.info("企业小程序编辑/保存单个菜单页面样式请求出参:{}", JSON.toJSONString(CommonResult.success("成功")));
+        return CommonResult.success("成功");
     }
 
     @ApiOperation(value = "企业小程序编辑/保存到草稿或保存页面" , tags = "企业小程序DIY配置",httpMethod = "POST")
@@ -71,10 +71,8 @@ public class MpChooseStyleController {
         return CommonResult.success("成功");
     }
 
-    @ApiOperation(value = "企业小程序编辑发布" , tags = "企业小程序DIY配置",httpMethod = "GET")
+    @ApiOperation(value = "企业小程序编辑发布" ,notes = "是否有草稿[0 否；1 是]",tags = "企业小程序DIY配置",httpMethod = "GET")
     @GetMapping("/organize/mp")
-    //0 跳转选择模版
-    //1 跳转编辑页面
     public CommonResult<Integer> get() {
         Integer r = mpChooseStyleService.get();
         return CommonResult.success(r);

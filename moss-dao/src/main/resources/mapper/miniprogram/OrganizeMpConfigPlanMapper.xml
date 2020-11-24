@@ -38,7 +38,7 @@
         select * from organize_mp_config_plan where organize_id = #{organizeId};
     </select>
     <select id="getByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-        select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0;
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0 and current_using = 0;
     </select>
     <select id="selectByOrganizeIdStatus"
             resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
