@@ -3,6 +3,7 @@ package com.ycandyz.master.model.mall;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ycandyz.master.dto.mall.MallOrderDetailDTO;
+import com.ycandyz.master.model.mall.uApp.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -124,7 +125,7 @@ public class MallOrderUAppVO {
     private BigDecimal discountMoney;
     /**关联订单详情*/
     @ApiModelProperty(value = "关联订单详情")
-    private List<MallOrderDetailVO> details;
+    private List<MallOrderDetailUAppVO> details;
     /**售后*/
     @ApiModelProperty(value = "售后 100: 暂无：还在有效期内，目前还没有申请售后; 110: 否：超过有效期，但是没有申请售后; 111: 是：申请了售后就是，跟有效期无关")
     private Integer asStatus;
@@ -137,28 +138,28 @@ public class MallOrderUAppVO {
     private java.lang.Integer receiveAt;
     /**关联卖家物流日志表*/
     @ApiModelProperty(value = "关联卖家物流日志表")
-    private List<MallShopShippingLogVO> shopShippingLog;
+    private List<MallShopShippingLogUAppVO> shopShippingLog;
     /**关联买家寄出的快递表*/
     @ApiModelProperty(value = "关联买家寄出的快递表")
-    private List<MallBuyerShippingVO> buyerShipping;
+    private List<MallBuyerShippingUAppVO> buyerShipping;
     /**关联买家寄出的快递物流日志表*/
     @ApiModelProperty(value = "关联买家寄出的快递物流日志表")
-    private List<MallBuyerShippingLogVO> buyerShippingLog;
+    private List<MallBuyerShippingLogUAppVO> buyerShippingLog;
     /**关联佣金流水表*/
     @ApiModelProperty(value = "关联佣金流水表")
-    private List<MallSocialShareFlowVO> shareInfo;
+    private List<MallSocialShareFlowUAppVO> shareInfo;
     /**关联售后*/
     @ApiModelProperty(value = "关联售后")
-    private List<MallAfterSalesVO> afterSales;
+    private List<MallAfterSalesUAppVO> afterSales;
     /**关联售后日志*/
     @ApiModelProperty(value = "关联售后日志")
-    private List<MallAfterSalesLogVO> afterSalesLog;
+    private List<MallAfterSalesLogUAppVO> afterSalesLog;
     /**关联卖家物流表*/
     @ApiModelProperty(value = "关联卖家物流表")
-    private MallShopShippingVO shopShipping;
+    private MallShopShippingUAppVO shopShipping;
     /**关联商店*/
     @ApiModelProperty(value = "关联商店")
-    private MallShopVO shopInfo;
+    private MallShopUAppVO shopInfo;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")

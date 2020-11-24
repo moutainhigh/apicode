@@ -3,6 +3,7 @@ package com.ycandyz.master.service.mall;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
+import com.ycandyz.master.domain.query.mall.uApp.MallShopShippingUAppQuery;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.entities.mall.MallShopShipping;
 import com.ycandyz.master.model.mall.MallOrderUAppVO;
@@ -18,8 +19,8 @@ public interface MallShopShippingService extends IService<MallShopShipping> {
 
     /**
      * 发货按钮，UApp
-     * @param mallShopShippingQuery
+     * @param mallShopShippingUAppQuery
      * @return
      */
-    ReturnResponse<MallOrderUAppVO> enterShippingUApp(MallShopShippingQuery mallShopShippingQuery);
+    ReturnResponse<MallOrderUAppVO> enterShippingUApp(MallShopShippingUAppQuery mallShopShippingUAppQuery);
 }
