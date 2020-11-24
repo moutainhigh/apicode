@@ -55,13 +55,13 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
             @ApiImplicitParam(name="page",value="当前页",dataType="Long")
     })
     @GetMapping
-    public ReturnResponse<Page<UserExportRecordResp>> selectPage(@RequestParam(value = "terminal") Integer terminal,
-                                                                 @RequestParam(value = "organizeName") String organizeName,
-                                                                 @RequestParam(value = "operatorId") Long operatorId,
-                                                                 @RequestParam(value = "createdAtStart") Long createdAtStart,
-                                                                 @RequestParam(value = "createdAtEnd") Long createdAtEnd,
-                                                                 @RequestParam(value = "page_size",defaultValue = "10") Long page_size,
-                                                                 @RequestParam(value = "page",defaultValue = "1") Long page) {
+    public ReturnResponse<Page<UserExportRecordResp>> selectPage(@RequestParam(value = "terminal",required = false) Integer terminal,
+                                                                 @RequestParam(value = "organizeName",required = false) String organizeName,
+                                                                 @RequestParam(value = "operatorId",required = false) Long operatorId,
+                                                                 @RequestParam(value = "createdAtStart",required = false) Long createdAtStart,
+                                                                 @RequestParam(value = "createdAtEnd",required = false) Long createdAtEnd,
+                                                                 @RequestParam(value = "page_size",defaultValue = "10",required = false) Long page_size,
+                                                                 @RequestParam(value = "page",defaultValue = "1",required = false) Long page) {
         RequestParams<UserExportRecordQuery> requestParams = new RequestParams<>();
         UserExportRecordQuery userExportRecordQuery = new UserExportRecordQuery();
         userExportRecordQuery.setTerminal(terminal);

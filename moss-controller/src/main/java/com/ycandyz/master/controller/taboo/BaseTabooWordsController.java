@@ -93,12 +93,12 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
             @ApiImplicitParam(name="page",value="当前页",dataType="Long")
     })
     @GetMapping
-    public ReturnResponse<Page<BaseTabooWordsRep>> selectList(@RequestParam(value = "phraseName") String phraseName,
-                                                              @RequestParam(value = "tabooWord") String tabooWord,
-                                                              @RequestParam(value = "createdTimeStart") Long createdTimeStart,
-                                                              @RequestParam(value = "createdTimeEnd") Long createdTimeEnd,
-                                                              @RequestParam(value = "page_size",defaultValue = "10") Long page_size,
-                                                              @RequestParam(value = "page",defaultValue = "1") Long page) {
+    public ReturnResponse<Page<BaseTabooWordsRep>> selectList(@RequestParam(value = "phraseName",required = false) String phraseName,
+                                                              @RequestParam(value = "tabooWord",required = false) String tabooWord,
+                                                              @RequestParam(value = "createdTimeStart",required = false) Long createdTimeStart,
+                                                              @RequestParam(value = "createdTimeEnd",required = false) Long createdTimeEnd,
+                                                              @RequestParam(value = "page_size",defaultValue = "10",required = false) Long page_size,
+                                                              @RequestParam(value = "page",defaultValue = "1",required = false) Long page) {
         BaseTabooWordsQuery baseTabooWordsQuery = new BaseTabooWordsQuery();
         baseTabooWordsQuery.setPhraseName(phraseName);
         baseTabooWordsQuery.setTabooWord(tabooWord);
