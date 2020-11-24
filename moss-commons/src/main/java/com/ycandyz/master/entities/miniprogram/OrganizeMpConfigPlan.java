@@ -46,7 +46,7 @@ public class OrganizeMpConfigPlan extends Model {
    private Integer logicDelete;
 
    @ApiModelProperty(value = "当前应用0：未应用；1、应用")
-   private Boolean currentUsing;
+   private Integer currentUsing;
 
    @ApiModelProperty(value = "创建时间")
    private Date createTime;

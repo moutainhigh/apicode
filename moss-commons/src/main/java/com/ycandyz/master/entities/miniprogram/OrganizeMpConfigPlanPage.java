@@ -53,5 +53,7 @@ public class OrganizeMpConfigPlanPage extends Model {
    @ApiModelProperty(value = "元素名称")
    private String baseName;
 
+   @ApiModelProperty(value = "逻辑删除0：未删除，1：删除")
+   private Integer logicDelete;
 
 }
