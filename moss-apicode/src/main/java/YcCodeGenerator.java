@@ -8,11 +8,17 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ycandyz.master.annotation.Condition;
-import com.ycandyz.master.api.*;
-import com.ycandyz.master.controller.base.BaseController;
-import com.ycandyz.master.controller.base.BaseService;
+import com.ycandyz.master.api.BasePageResult;
+import com.ycandyz.master.api.BaseResult;
+import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.PageModel;
+import com.ycandyz.master.base.BaseController;
+import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.enums.ConditionEnum;
+import com.ycandyz.master.underline.Hump;
 import com.ycandyz.master.validation.ValidatorContract;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,18 +29,17 @@ import java.util.*;
 public class YcCodeGenerator {
 
 	protected static final Logger log = LoggerFactory.getLogger(YcCodeGenerator.class);
-	//表名
-	private static final String tableName = "coupon_activity_ticket";
-	//生成文件所在目录层级
+	
+	private static final String tableName = "coupon_user_ticket_info";
 	private static final String moduleName = "coupon";
-	//生成文件所在目录层级
-	private static final String daoName = "moss-dao";
-	private static final String serviceName = "moss-business";
-	private static final String controllerName = "moss-controller";
+	private static final boolean createController = false;
+	private static final String daoName = "api-dao";
+	private static final String serviceName = "api-business";
+	private static final String controllerName = "api-controller";
 	private static String module;
-	private static String projectName = "moss-commons";
+	private static String projectName = "api-commons";
 	private static final String commonModule = "domain";
-	private static final String packageName = "com.ycandyz.master";
+	private static final String packageName = "com.ycandyz.uke";
 	private static String parentPackageName;
 	private static final String[] tablePrefix = new String[] {"ad_","tb_"};
 	private static final String dtoSuffix = "DTO";
@@ -42,6 +47,7 @@ public class YcCodeGenerator {
 	private static final String querySuffix = "Query";
 	private static final String mapperSuffix = "Dao";
 	private static final String respSuffix = "Resp";
+	private static final String modelSuffix = "Model";
 
 
 	public static void main(String[] args) {
@@ -52,8 +58,10 @@ public class YcCodeGenerator {
 		daoRun();
 		projectName = serviceName;
 		serviceRun();
-		projectName = controllerName;
-		controllerRun();
+		if(createController){
+			projectName = controllerName;
+			controllerRun();
+		}
 	}
 
 	public static DataSourceConfig getJdbc() {
@@ -64,8 +72,8 @@ public class YcCodeGenerator {
 		dsc.setDriverName("com.mysql.cj.jdbc.Driver");
 		//dsc.setUsername("root");
 		//dsc.setPassword("root");
-		dsc.setUsername("root");
-		dsc.setPassword("9HzyhWj6Gcnijbki");
+		dsc.setUsername("project");
+		dsc.setPassword("lKURYZ7HQq8k4rCC");
 		return dsc;
 	}
 
@@ -140,12 +148,17 @@ public class YcCodeGenerator {
 				map.put("querySuffix", querySuffix);
 				map.put("resp", packageName+StringPool.DOT+commonModule+".response."+moduleName);
 				map.put("respSuffix", respSuffix);
+				map.put("model", packageName+StringPool.DOT+commonModule+".model."+moduleName);
+				map.put("modelSuffix", modelSuffix);
 				map.put("condition", Condition.class.getName());
 				map.put("conditionEnum", ConditionEnum.class.getName());
 				map.put("result", CommonResult.class.getName());
 				map.put("baseResult", BaseResult.class.getName());
 				map.put("basePageResult", BasePageResult.class.getName());
 				map.put("pageModel", PageModel.class.getName());
+				map.put("jsonNaming", JsonNaming.class.getName());
+				map.put("propertyNamingStrategy", PropertyNamingStrategy.class.getName());
+				map.put("hump", Hump.class.getName());
 				map.put("entity", packageName+".entities."+moduleName);
 				map.put("Mapper", packageName+".dao."+moduleName);
 				map.put("mapperSuffix", mapperSuffix);
@@ -225,14 +238,14 @@ public class YcCodeGenerator {
 		// 自定义输出配置
 		List<FileOutConfig> focList = new ArrayList<>();
 		// 自定义配置会被优先输出
-		focList.add(new FileOutConfig("/templates/vo.java.ftl") {
+		/*focList.add(new FileOutConfig("/templates/vo.java.ftl") {
 			@Override
 			public String outputFile(TableInfo tableInfo) {
 				return getProjectPath() + "/src/main/java/" + pc.getParent().replace(StringPool.DOT,StringPool.SLASH) +"/model/"+moduleName+"/" +tableInfo.getEntityName()+ voSuffix + StringPool.DOT_JAVA;
 			}
 		});
 		cfg.setFileOutConfigList(focList);
-		mpg.setCfg(cfg);
+		mpg.setCfg(cfg);*/
 
 		focList.add(new FileOutConfig("/templates/service.java.ftl") {
 			@Override
@@ -301,14 +314,14 @@ public class YcCodeGenerator {
 		cfg.setFileOutConfigList(focList);
 		mpg.setCfg(cfg);
 
-		focList.add(new FileOutConfig("/templates/dto.java.ftl") {
+		/*focList.add(new FileOutConfig("/templates/dto.java.ftl") {
 			@Override
 			public String outputFile(TableInfo tableInfo) {
 				return getProjectPath() + "/src/main/java/" + pc.getParent().replace(StringPool.DOT,StringPool.SLASH) + "/dto/"+moduleName+"/" +tableInfo.getEntityName()+ dtoSuffix + StringPool.DOT_JAVA;
 			}
 		});
 		cfg.setFileOutConfigList(focList);
-		mpg.setCfg(cfg);
+		mpg.setCfg(cfg);*/
 
 		// 配置模板
 		TemplateConfig tc = new TemplateConfig();
@@ -364,6 +377,15 @@ public class YcCodeGenerator {
 			@Override
 			public String outputFile(TableInfo tableInfo) {
 				return getProjectPath() + "/src/main/java/" + pc.getParent().replace(StringPool.DOT,StringPool.SLASH) + "/response/"+moduleName+"/" +tableInfo.getEntityName()+ respSuffix + StringPool.DOT_JAVA;
+			}
+		});
+		cfg.setFileOutConfigList(focList);
+		mpg.setCfg(cfg);
+
+		focList.add(new FileOutConfig("/templates/model.java.ftl") {
+			@Override
+			public String outputFile(TableInfo tableInfo) {
+				return getProjectPath() + "/src/main/java/" + pc.getParent().replace(StringPool.DOT,StringPool.SLASH) + "/model/"+moduleName+"/" +tableInfo.getEntityName()+ modelSuffix + StringPool.DOT_JAVA;
 			}
 		});
 		cfg.setFileOutConfigList(focList);

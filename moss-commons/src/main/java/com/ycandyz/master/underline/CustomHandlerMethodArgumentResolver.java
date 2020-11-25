@@ -27,7 +27,8 @@ public class CustomHandlerMethodArgumentResolver implements HandlerMethodArgumen
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         // 如果参数上标注了 UnderlineToHump 注解，则说明需要将下换线换驼峰
-        return methodParameter.hasParameterAnnotation(Hump.class);
+        //return methodParameter.hasParameterAnnotation(Hump.class);
+        return true;
     }
 
     @Override

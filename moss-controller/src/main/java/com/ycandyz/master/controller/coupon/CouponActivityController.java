@@ -3,11 +3,9 @@ package com.ycandyz.master.controller.coupon;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
-import com.ycandyz.master.underline.Hump;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +20,6 @@ import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.ycandyz.master.domain.query.coupon.CouponActivityQuery;
 import com.ycandyz.master.service.coupon.impl.CouponActivityServiceImpl;
 import com.ycandyz.master.controller.base.BaseController;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -42,13 +39,13 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 	
 	@ApiOperation(value="新增")
     @PostMapping
-	public CommonResult<CouponActivityModel> insert(@Validated(ValidatorContract.OnCreate.class) @Hump @RequestBody CouponActivityModel entity) {
+	public CommonResult<CouponActivityModel> insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody CouponActivityModel entity) {
 	    return result(service.insert(entity),entity,"保存失败!");
 	}
 	
 	@ApiOperation(value = "更新")
     @PutMapping(value = "{id}")
-	public CommonResult<CouponActivityModel> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) @Hump @RequestBody CouponActivityModel entity) {
+	public CommonResult<CouponActivityModel> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) @RequestBody CouponActivityModel entity) {
         entity.setId(id);
         return result(service.update(entity),entity,"更改失败!");
 	}
@@ -74,7 +71,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 	@ApiOperation(value = "查询分页")
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponActivity>> selectPage(@Hump PageModel page,@Hump CouponActivityQuery query) {
+    public CommonResult<BasePageResult<CouponActivity>> selectPage(PageModel page,CouponActivityQuery query) {
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
 
@@ -82,7 +79,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @ApiOperation(value = "已选优惠卷-分页")
     @GetMapping(value = "ticket/page")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponActivityTicketResp>> selectTicketPage(@Hump PageModel page,@Hump CouponActivityTicketQuery query) {
+    public CommonResult<BasePageResult<CouponActivityTicketResp>> selectTicketPage(PageModel page,CouponActivityTicketQuery query) {
         return CommonResult.success(new BasePageResult(service.selectTicketPage(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
 
@@ -90,7 +87,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @ApiOperation(value = "全部优惠卷-分页")
     @GetMapping(value = "activity-ticket/page")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponActivityTicketResp>> selectActivityTicketPage(@Hump PageModel page,@Hump CouponActivityTicketQuery query) {
+    public CommonResult<BasePageResult<CouponActivityTicketResp>> selectActivityTicketPage(PageModel page,CouponActivityTicketQuery query) {
         return CommonResult.success(new BasePageResult(service.selectActivityTicketPage(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
     
