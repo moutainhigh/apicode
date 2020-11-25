@@ -20,4 +20,7 @@ public class OrganizeMenuMpRequestVO {
    @ApiModelProperty(value = "模块")
    private List<OrganizeMpConfigPageMenuVo> modules;
 
+   @ApiModelProperty(value = "是否重新选择模版[0：否；1：是]")
+   private Integer reselectMoudle;
+
 }

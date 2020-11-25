@@ -22,6 +22,10 @@
         logic_delete, current_using, create_time, update_time)
         values (#{id},#{organizeId},#{mpPlanId},0,0,now(),now());
     </insert>
+    <insert id="insertVersion">
+        insert into organize_mp_config_plan(id,organize_id,create_time, update_time,version)
+        values (#{id},#{organizeId},now(),now(),#{version});
+    </insert>
     <update id="setDelete">
         update organize_mp_config_plan set logic_delete = 1 where id = #{id};
     </update>
@@ -49,13 +53,13 @@
         select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0 ;
     </select>
     <select id="selByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-        select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 1 and logic_delete = 0 and status = 2;
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 1 and logic_delete = 0;
     </select>
     <select id="selectByIdStatus" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where id = #{id} and logic_delete = 0 and current_using = 0;
     </select>
     <select id="selectByIdUsing" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-        select * from organize_mp_config_plan where id = #{id} and status != 0 and logic_delete = 0;
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0 and current_using = 1;
     </select>
     <select id="selectPlanById" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where id = #{id} and status = 0 and logic_delete = 0

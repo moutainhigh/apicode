@@ -57,7 +57,7 @@ public class MpChooseStyleController {
     @PostMapping("/organize/menupage")
     public CommonResult saveSinglePage(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
         log.info("企业小程序编辑/保存单个菜单页面样式请求入参:{}", JSON.toJSONString(organizeMenuMpRequestVO));
-        mpChooseStyleService.saveSingle2(organizeMenuMpRequestVO);
+        mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
         log.info("企业小程序编辑/保存单个菜单页面样式请求出参:{}", JSON.toJSONString(CommonResult.success("成功")));
         return CommonResult.success("成功");
     }
@@ -75,6 +75,7 @@ public class MpChooseStyleController {
     @GetMapping("/organize/mp")
     public CommonResult<Integer> get() {
         Integer r = mpChooseStyleService.get();
+        log.info("企业小程序编辑发布请求出参:{}", r);
         return CommonResult.success(r);
     }
 

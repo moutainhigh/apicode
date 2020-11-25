@@ -17,4 +17,6 @@ import java.util.List;
 public interface OrganizeMpReleaseDao extends BaseMapper<OrganizeMpRelease> {
 
     List<OrganizeMpReleaseDTO> listAll();
+
+    List<OrganizeMpReleaseDTO>  selByOrganizeId(Long organizeId);
 }
