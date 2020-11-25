@@ -2,6 +2,7 @@ package com.ycandyz.master.service.miniprogram;
 
 import com.ycandyz.master.model.miniprogram.OrganizeChooseMpConfigPage;
 import com.ycandyz.master.model.miniprogram.OrganizeMpConfigMenuVO;
+import com.ycandyz.master.model.miniprogram.OrganizeMpConfigPageMenuVO;
 import com.ycandyz.master.vo.OrganizeMenuMpRequestVO;
 import com.ycandyz.master.vo.OrganizeMpRequestVO;
 
@@ -11,7 +12,7 @@ public interface MpChooseStyleService {
 
     List<OrganizeMpConfigMenuVO> selByOrGanizeMoudleId(Integer id);
 
-    OrganizeChooseMpConfigPage selectMenuById(Integer menuid);
+    List<OrganizeMpConfigPageMenuVO> selectMenuById(Integer menuid);
 
     void saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
 

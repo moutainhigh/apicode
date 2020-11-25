@@ -36,6 +36,6 @@ public class OrganizeMpConfigPageMenuVo {
     private Integer isDel;
 
     @ApiModelProperty(value = "一级分类图片")
-        private String moudleImgUrl;
+    private String replacePicUrl;
 
 }

@@ -14,7 +14,7 @@
         <result column="sort_module" property="sortModule" />
         <result column="sort_base" property="sortBase" />
         <result column="base_name" property="baseName" />
-        <result column="moudle_img_url" property="moudleImgUrl" />
+        <result column="replace_pic_url" property="replacePicUrl" />
     </resultMap>
 
     <resultMap id="BaseResultMap2" type="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO">
@@ -48,8 +48,8 @@
 
     <select id="selectByMenuId" resultMap="BaseResultMap">
         SELECT p.id,p.menu_id,m.title as menu_name,p.module_id,d.module_name,
-        p.sort_module,d.display_num,
-        p.module_base_id as module_base_ids,p.base_name,p.moudle_img_url
+        p.sort_module,p.sort_base,p.show_layout,d.display_num,
+        p.module_base_id as module_base_ids,p.base_name,p.replace_pic_url
         FROM organize_mp_config_plan_page p
         left join organize_mp_config_plan_menu m on p.menu_id = m.id
         left join mp_config_module d on p.module_id = d.id

@@ -17,5 +17,8 @@
     <sql id="Base_Column_List">
         id, module_id, base_name, base_code, show_layout, replace_pic_url, display_num
     </sql>
+    <select id="selectByBaseId" resultType="com.ycandyz.master.entities.miniprogram.MpConfigModuleBase">
+         select * from mp_config_module_base where id = #{id}
+    </select>
 
 </mapper>

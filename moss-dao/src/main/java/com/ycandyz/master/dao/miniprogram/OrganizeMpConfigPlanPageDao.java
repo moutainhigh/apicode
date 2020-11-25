@@ -1,6 +1,5 @@
 package com.ycandyz.master.dao.miniprogram;
 
-import com.ycandyz.master.dto.miniprogram.MpConfigPlanPageBaseDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanPage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
