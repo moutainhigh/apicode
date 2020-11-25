@@ -1,10 +1,7 @@
-package com.ycandyz.master.dto.miniprogram;
+package com.ycandyz.master.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.ycandyz.master.entities.miniprogram.OrganizeMpRelease;
 import com.baomidou.mybatisplus.annotation.TableName;
-
+import com.ycandyz.master.entities.miniprogram.OrganizeMpRelease;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +10,7 @@ import java.util.Date;
 
 /**
  * <p>
- * @Description 企业小程序发布记录 实体类
+ * @Description 企业小程序发布记录 VO
  * </p>
  *
  * @author SanGang
@@ -23,9 +20,12 @@ import java.util.Date;
 @Getter
 @Setter
 @TableName("organize_mp_release")
-public class OrganizeMpReleaseDTO extends OrganizeMpRelease {
+public class OrganizeMpReleaseParamVO extends OrganizeMpRelease {
 
-    @ApiModelProperty(value = "小程序模板方案编号")
+    @ApiModelProperty(value = "organizeId")
+    private Long organizeId;
+
+    @ApiModelProperty(value = "planId")
     private Integer planId;
 
     @ApiModelProperty(value = "申请发布时间")
@@ -36,4 +36,5 @@ public class OrganizeMpReleaseDTO extends OrganizeMpRelease {
 
     @ApiModelProperty(value = "版本")
     private String version;
+
 }

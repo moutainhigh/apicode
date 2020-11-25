@@ -31,6 +31,7 @@ public class OrganizeMpConfigPageMenuVO {
     @ApiModelProperty(value = "元素")
     private List<OrganizeMpConfigModuleBaseVO> baseInfo;
 
-
+    @ApiModelProperty(value = "一级分类图片")
+    private String moudleImgUrl;
 
 }

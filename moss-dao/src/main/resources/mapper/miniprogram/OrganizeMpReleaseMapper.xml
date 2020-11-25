@@ -3,9 +3,7 @@
 <mapper namespace="com.ycandyz.master.dao.miniprogram.OrganizeMpReleaseDao">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.miniprogram.OrganizeMpRelease">
-        <id column="id" property="id" />
-        <result column="plan_name" property="planName" />
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO">
         <result column="plan_id" property="planId" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
@@ -16,8 +14,15 @@
     <sql id="Base_Column_List">
         id, plan_name, plan_id, create_time, update_time, organize_category
     </sql>
+        <insert id="insertVersion">
+        insert into organize_mp_release(id,organize_id,plan_id,create_time, update_time,version)
+        values (#{id},#{organizeId},#{planId},now(),now(),#{version});
+    </insert>
     <select id="listAll" resultMap="BaseResultMap">
-        select create_time,update_time,version from organize_mp_release;
+        select create_time,update_time,version from organize_mp_release where organize_id = #{organizeId} order by create_time desc;
+    </select>
+    <select id="selByOrganizeId" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO">
+        select * from organize_mp_release where organize_id = #{organizeId} order by create_time desc;
     </select>
 
 </mapper>

@@ -55,5 +55,9 @@ public class OrganizeMpConfigPlanPageDTO extends OrganizeMpConfigPlanPage {
     @ApiModelProperty(value = "菜单模块元素编号")
     private String moduleBaseIds;
 
+    @ApiModelProperty(value = "菜单模块元素编号")
+    private String moudleImgUrl;
+
+
 
 }

@@ -3,6 +3,7 @@ package com.ycandyz.master.dao.miniprogram;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpRelease;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ycandyz.master.vo.OrganizeMpReleaseParamVO;
 
 import java.util.List;
 
@@ -16,5 +17,9 @@ import java.util.List;
  */
 public interface OrganizeMpReleaseDao extends BaseMapper<OrganizeMpRelease> {
 
-    List<OrganizeMpReleaseDTO> listAll();
+    List<OrganizeMpReleaseDTO> listAll(Long organizeId);
+
+    List<OrganizeMpReleaseDTO>  selByOrganizeId(Long organizeId);
+
+    void insertVersion(OrganizeMpReleaseParamVO organizeMpReleaseParamVO);
 }

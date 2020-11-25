@@ -32,4 +32,10 @@ public class OrganizeMpConfigPageMenuVo {
     @ApiModelProperty(value = "元素")
     private List<OrganizeMpConfigModuleBaseVo> baseInfo;
 
+    @ApiModelProperty(value = "是否删除[0：否；1：是]")
+    private Integer isDel;
+
+    @ApiModelProperty(value = "一级分类图片")
+        private String moudleImgUrl;
+
 }

@@ -32,6 +32,9 @@
          update mall_category set category_name = #{mallCategoryVO.categoryName,jdbcType=VARCHAR},category_img = #{mallCategoryVO.categoryImg,jdbcType=VARCHAR},updated_time = now()
          where category_no = #{mallCategoryVO.categoryNo,jdbcType=VARCHAR} and parent_category_no = #{mallCategoryVO.parentCategoryNo,jdbcType=VARCHAR} and shop_no = #{shopNo,jdbcType=VARCHAR};
     </update>
+    <update id="updateMallCategoryImg">
+        update mall_category set category_img = #{imgUrl} where category_no = #{categoryNo}
+    </update>
 
     <delete id="delCategoryByCategoryNo" parameterType="java.lang.String">
         delete from mall_category where shop_no = #{shopNo,jdbcType=VARCHAR} and category_no = #{categoryNo,jdbcType=VARCHAR};

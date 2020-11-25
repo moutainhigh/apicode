@@ -63,4 +63,5 @@ public interface MpConfigPlanPageDao extends BaseMapper<MpConfigPlanPage> {
     Boolean deleteByMenuId(@Param("menuId") Integer menuId);
 
 
+    List<MpConfigPlanPage> selByMenuId(Integer id);
 }
