@@ -32,5 +32,5 @@ public interface MallOrderService extends IService<MallOrder> {
 
     ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(MallPickupUAppQuery mallPickupUAppQuery);
 
-    ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(String orderNo);
+    ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(Long page, Long page_size, String orderNo);
 }

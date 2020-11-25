@@ -2,5 +2,61 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ycandyz.master.dao.mall.MallOrderDetailDao">
 
+    <resultMap id="BasePlusResultMap" type="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="order_no" property="orderNo" />
+        <result column="item_no" property="itemNo" />
+        <result column="goods_no" property="goodsNo" />
+        <result column="sku_no" property="skuNo" />
+        <result column="item_name" property="itemName" />
+        <result column="item_cover" property="itemCover" />
+        <result column="is_enable_share" property="isEnableShare" />
+        <result column="skuQuantity" property="skuQuantity" />
+        <result column="skuPrice" property="skuPrice" />
+        <result column="total_money" property="totalMoney" />
+        <result column="real_money" property="realMoney" />
+        <collection property="specs" ofType="com.ycandyz.master.dto.mall.MallOrderDetailSpecDTO">
+            <result column="spec_name" property="specName" />
+            <result column="spec_value" property="specValue" />
+        </collection>
+        <collection property="shareFlowInfo" ofType="com.ycandyz.master.dto.mall.MallSocialShareFlowDTO">
+            <result column="user_name" property="userName" />
+            <result column="phone_no" property="phoneNo" />
+            <result column="amount" property="amount" />
+        </collection>
+    </resultMap>
 
+    <select id="queryDetailListByOrderNos" resultMap="BasePlusResultMap">
+        select
+            mo.order_no,
+            modetail.item_no,
+            modetail.item_name,
+            modetail.goods_no,
+            modetail.sku_no,
+            modetail.quantity AS skuQuantity,
+            modetail.item_cover,
+            modetail.is_enable_share,
+            modetail.share_user_id,
+            modetail.total_money,
+            modetail.real_money,
+            spec.spec_name,
+            spec.spec_value,
+            uu.`name` AS user_name,
+            uu.phone AS phone_no,
+            flow.amount AS amount
+        from
+        mall_order mo
+        left join mall_order_detail modetail on mo.order_no = modetail.order_no
+        left join mall_order_detail_spec spec on spec.order_detail_no = modetail.order_detail_no
+        left join mall_social_share_flow flow on IF(mo.order_type=2, flow.order_detail_no = modetail.order_detail_no , flow.order_no = mo.order_no )
+        AND flow.share_type = 0
+        LEFT JOIN user uu ON uu.id = flow.user_id
+        where
+            mo.order_no in
+            <foreach  item="item" collection="list" index="index"  open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        GROUP BY modetail.order_detail_no
+        order by mo.order_at DESC
+    </select>
 </mapper>

@@ -19,11 +19,13 @@ import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.enums.ExpressEnum;
 import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
+import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -388,6 +390,20 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
 
         //查询订单详情，返回前端
         return mallOrderService.queryOrderDetailByUApp(mallShopShippingUAppQuery.getOrderNo());
+    }
+
+    @Override
+    public ReturnResponse<List<MallShopShippingUAppVO>> queryShippingLogListByNo(String companyCode, String number) {
+        List<MallShopShippingDTO> mallShopShippingDTOS = mallShopShippingDao.queryByCodeAndNum(companyCode,number);
+        List<MallShopShippingUAppVO> list = new ArrayList<>();
+        if (mallShopShippingDTOS!=null && mallShopShippingDTOS.size()>0){
+            mallShopShippingDTOS.forEach(dto->{
+                MallShopShippingUAppVO mallShopShippingUAppVO = new MallShopShippingUAppVO();
+                BeanUtils.copyProperties(dto,mallShopShippingUAppVO);
+                list.add(mallShopShippingUAppVO);
+            });
+        }
+        return ReturnResponse.success(list);
     }
 
 }

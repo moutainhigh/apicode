@@ -87,6 +87,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Autowired
     private OrganizeDao organizeDao;
 
+    @Autowired
+    private MallOrderDetailDao mallOrderDetailDao;
+
     @Value("${excel.sheet}")
     private int num;
 
@@ -1257,22 +1260,67 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(String orderNo) {
+    public ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(Long page, Long page_size, String orderNo) {
         UserVO userVO = getUser();  //获取当前登陆用户
-        Page<MallOrderVO> page1 = new Page<>();
-        MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",orderNo));
-        if (mallOrder!=null){
-            //传入的为订单编号
-            if (!mallOrder.getShopNo().equals(userVO.getShopNo())){
-                return ReturnResponse.failed("当前用户无法查看其他企业的订单");
+        Page<MallOrderDetailUAppVO> page1 = new Page<>();
+        Page<MallOrderDetailDTO> mallOrderDetailDTOPage = null;
+        Page pageQuery = new Page(page, page_size);
+        List<MallOrderDetailUAppVO> list = new ArrayList<>();
+        try {
+            List<String> orderNoList = new ArrayList<>();
+            MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",orderNo));
+            if (mallOrder!=null){
+                //传入的为订单编号
+                if (!mallOrder.getShopNo().equals(userVO.getShopNo())){
+                    return ReturnResponse.failed("当前用户无法查看其他企业的订单");
+                }
+                orderNoList.add(orderNo);
+            }else {
+                List<MallOrder> mallOrderList = mallOrderDao.selectList(new QueryWrapper<MallOrder>().eq("cart_order_sn",orderNo));
+                if (mallOrderList!=null && mallOrderList.size()>0){
+                    mallOrderList.forEach(order->{
+                        orderNoList.add(order.getOrderNo());
+                    });
+                }
             }
 
-        }else {
-            List<MallOrder> mallOrderList = mallOrderDao.selectList(new QueryWrapper<MallOrder>().eq("cart_order_sn",orderNo));
-            if (mallOrderList!=null && mallOrderList.size()>0){
-
+            mallOrderDetailDTOPage = mallOrderDetailDao.queryDetailListByOrderNos(pageQuery,orderNoList);
+            if (mallOrderDetailDTOPage.getRecords() != null && mallOrderDetailDTOPage.getRecords().size() > 0) {
+                MallOrderDetailUAppVO mallOrderDetailUAppVO = null;
+                for (MallOrderDetailDTO mallOrderDetailDTO : mallOrderDetailDTOPage.getRecords()){
+                    mallOrderDetailUAppVO = new MallOrderDetailUAppVO();
+                    BeanUtils.copyProperties(mallOrderDetailDTO,mallOrderDetailUAppVO);
+                    //分销佣金保存
+                    if (mallOrderDetailDTO.getShareFlowInfo() != null && mallOrderDetailDTO.getShareFlowInfo().size() > 0) {
+                        List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
+                        mallOrderDetailDTO.getShareFlowInfo().forEach(dto -> {
+                            MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
+                            BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
+                            flowList.add(mallSocialShareFlowVO);
+                        });
+                        mallOrderDetailUAppVO.setShareFlowInfo(flowList);
+                    }
+                    //产品规格保存
+                    if (mallOrderDetailDTO.getSpecs()!=null && mallOrderDetailDTO.getSpecs().size()>0){
+                        List<MallOrderDetailSpecUAppVO> specList = new ArrayList<>();
+                        mallOrderDetailDTO.getSpecs().forEach(spec->{
+                            MallOrderDetailSpecUAppVO mallOrderDetailSpecUAppVO = new MallOrderDetailSpecUAppVO();
+                            BeanUtils.copyProperties(spec, mallOrderDetailSpecUAppVO);
+                            specList.add(mallOrderDetailSpecUAppVO);
+                        });
+                        mallOrderDetailUAppVO.setSpecs(specList);
+                    }
+                }
+                list.add(mallOrderDetailUAppVO);
             }
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
         }
-        return null;
+        page1.setTotal(mallOrderDetailDTOPage.getTotal());
+        page1.setSize(mallOrderDetailDTOPage.getSize());
+        page1.setRecords(list);
+        page1.setCurrent(mallOrderDetailDTOPage.getCurrent());
+        page1.setPages(mallOrderDetailDTOPage.getPages());
+        return ReturnResponse.success(page1);
     }
 }

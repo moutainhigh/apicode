@@ -178,7 +178,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @return
      */
     @ApiOperation(value = "验证提货码,出货",notes = "验证提货码,出货",httpMethod = "PUT")
-    @PutMapping("/u-app/order/pickup/verification")
+    @PutMapping("/u-app/order/pickup")
     public ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(@RequestBody MallPickupUAppQuery mallPickupUAppQuery){
         if (mallPickupUAppQuery == null || mallPickupUAppQuery.getOrderNo()==null || !"".equals(mallPickupUAppQuery.getOrderNo())){
             return ReturnResponse.failed("请求参数为空");
@@ -188,17 +188,20 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     }
 
     /**
-     * 通过订单编号或购物车编号获取分佣列表
+     * 通过订单编号或购物车编号获取分佣列表,UApp
      * @param orderNo
      * @return
      */
     @ApiOperation(value = "分佣列表",notes = "通过订单编号或购物车编号获取分佣列表",httpMethod = "GET")
     @GetMapping("/u-app/order/commission")
-    public ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(@RequestParam("orderNo") String orderNo){
+    public ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("orderNo") String orderNo){
+        if (page==null || page_size==null){
+            return ReturnResponse.failed("分页参数为空");
+        }
         if (orderNo==null || !"".equals(orderNo)){
             return ReturnResponse.failed("传入参数为空");
         }
         orderNo = orderNo.trim();
-        return mallOrderService.queryOrderDetailShareFlowListByNo(orderNo);
+        return mallOrderService.queryOrderDetailShareFlowListByNo(page,page_size,orderNo);
     }
 }

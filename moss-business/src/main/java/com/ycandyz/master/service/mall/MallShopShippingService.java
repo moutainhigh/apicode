@@ -8,6 +8,9 @@ import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.entities.mall.MallShopShipping;
 import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
+import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
+
+import java.util.List;
 
 public interface MallShopShippingService extends IService<MallShopShipping> {
 
@@ -23,4 +26,6 @@ public interface MallShopShippingService extends IService<MallShopShipping> {
      * @return
      */
     ReturnResponse<MallOrderUAppVO> enterShippingUApp(MallShopShippingUAppQuery mallShopShippingUAppQuery);
+
+    ReturnResponse<List<MallShopShippingUAppVO>> queryShippingLogListByNo(String companyCode, String number);
 }

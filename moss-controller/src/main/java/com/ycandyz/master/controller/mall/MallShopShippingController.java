@@ -8,6 +8,7 @@ import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.entities.mall.MallShopShipping;
 import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
+import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.service.mall.impl.MallShopShippingServiceImpl;
 import io.swagger.annotations.Api;
@@ -17,6 +18,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -79,9 +82,26 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
      * @return
      */
     @ApiOperation(value = "确认发货",notes = "确认发货",httpMethod = "POST")
-    @PostMapping("/u-app/order/shipment/enterShipping")
+    @PostMapping("/u-app/order/shipment")
     @ResponseBody
     public ReturnResponse<MallOrderUAppVO> enterShippingUApp(@RequestBody MallShopShippingUAppQuery mallShopShippingUAppQuery){
         return mallShopShippingService.enterShippingUApp(mallShopShippingUAppQuery);
+    }
+
+    /**
+     * 通过物流编号获取物流信息列表
+     * @param companyCode
+     * @param number
+     * @return
+     */
+    @ApiOperation(value = "物流信息",notes = "通过订单编号或购物车编号获取分佣列表",httpMethod = "GET")
+    @GetMapping("/u-app/order/shipment")
+    public ReturnResponse<List<MallShopShippingUAppVO>> queryShippingLogListByNo(@RequestParam("company_code") String companyCode, @RequestParam("number") String number){
+        if (number==null || !"".equals(number) || companyCode==null || !"".equals(companyCode)){
+            return ReturnResponse.failed("传入参数为空");
+        }
+        number = number.trim();
+        companyCode = companyCode.trim();
+        return mallShopShippingService.queryShippingLogListByNo(companyCode,number);
     }
 }
