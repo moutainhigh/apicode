@@ -286,7 +286,7 @@ public class Organize extends Model {
    private String tlBizUserId;
 
    @ApiModelProperty(value = "应用小程序方案模板编号")
-   private String planId;
+   private Integer planId;
 
 
 }
