@@ -1,5 +1,6 @@
 package com.ycandyz.master.controller.miniprogram;
 
+import com.ycandyz.master.api.BaseResult;
 import com.ycandyz.master.model.miniprogram.OrganizeMpReleaseVO;
 import com.ycandyz.master.service.miniprogram.IOrganizeMpReleaseService;
 import com.ycandyz.master.service.miniprogram.MpChooseStyleService;
@@ -50,9 +51,9 @@ public class OrganizeMpReleaseController extends BaseController<OrganizeMpReleas
 
     @ApiOperation(value = "查询企业小程序全部发布记录", tags = "企业小程序DIY配置")
     @GetMapping
-    public CommonResult<List<OrganizeMpReleaseVO>> list() {
+    public CommonResult<BaseResult<List<OrganizeMpReleaseVO>>> list() {
         List<OrganizeMpReleaseVO> list = organizeMpReleaseService.listAll();
-        return CommonResult.success(list);
+        return CommonResult.success(new BaseResult<>(list));
     }
 
 }
