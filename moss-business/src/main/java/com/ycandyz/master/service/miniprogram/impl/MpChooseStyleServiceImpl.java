@@ -1,6 +1,5 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
@@ -65,10 +64,13 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     }
 
     @Override
-    public List<OrganizeMpConfigPageMenuVO> selectMenuById(Integer menuId) {
-
-        List<OrganizeMpConfigPageMenuVO> list = new ArrayList<>();
+    public OrganizeMpConfigPageSingleMenuVO selectMenuById(Integer menuId) {
+        OrganizeMpConfigPageSingleMenuVO organizeMpConfigPageSingleMenuVO = new OrganizeMpConfigPageSingleMenuVO();
+        organizeMpConfigPageSingleMenuVO.setMenuId(menuId);
         OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
+        organizeMpConfigPageSingleMenuVO.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
+
+        List<OrganizeMpConfigModuleVO> moudles = new ArrayList<>();
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
         for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
             List<Integer> baseIds = new ArrayList<>();
@@ -78,29 +80,30 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     baseIds.add(Integer.parseInt(id));
                     MpConfigModuleBase mpConfigModuleBase = mpConfigModuleBaseDao.selectByBaseId(Integer.parseInt(id));
                     if (mpConfigModuleBase != null){
-                        OrganizeMpConfigPageMenuVO organizeMpConfigPageMenuVO = new OrganizeMpConfigPageMenuVO();
-                        organizeMpConfigPageMenuVO.setMenuId(menuId);
-                        organizeMpConfigPageMenuVO.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
-                        organizeMpConfigPageMenuVO.setModuleId(dto.getModuleId());
-                        organizeMpConfigPageMenuVO.setModuleName(dto.getModuleName());
-                        organizeMpConfigPageMenuVO .setSortModule(dto.getSortModule());
+                        OrganizeMpConfigModuleVO organizeMpConfigModuleVO = new OrganizeMpConfigModuleVO();
+                        organizeMpConfigModuleVO.setModuleId(dto.getModuleId());
+                        organizeMpConfigModuleVO.setModuleName(dto.getModuleName());
+                        organizeMpConfigModuleVO.setSortModule(dto.getSortModule());
+                        organizeMpConfigModuleVO.setDisplayNum(dto.getDisplayNum());
                         OrganizeMpConfigModuleBaseVO organizeMpConfigModuleBaseVO = new OrganizeMpConfigModuleBaseVO();
                         organizeMpConfigModuleBaseVO.setBaseCode(mpConfigModuleBase.getBaseCode());
                         organizeMpConfigModuleBaseVO.setBaseName(dto.getBaseName());
                         organizeMpConfigModuleBaseVO.setSortBase(dto.getSortBase());
                         organizeMpConfigModuleBaseVO.setShowLayout(dto.getShowLayout());
                         organizeMpConfigModuleBaseVO.setDisplayNum(mpConfigModuleBase.getDisplayNum());
-                        organizeMpConfigModuleBaseVO.setOrganizeMpConfigPlanPageId(dto.getId());
+                        organizeMpConfigModuleBaseVO.setId(dto.getId());
                         organizeMpConfigModuleBaseVO.setReplacePicUrl(dto.getReplacePicUrl());
-                        baseInfoList.add(organizeMpConfigModuleBaseVO);
-                        organizeMpConfigPageMenuVO.setDisplayNum(dto.getDisplayNum());
-                        organizeMpConfigPageMenuVO.setBaseInfo(baseInfoList);
-                        list.add(organizeMpConfigPageMenuVO);
+                        organizeMpConfigModuleBaseVO.setModuleBaseId(mpConfigModuleBase.getId());
+                        //baseInfoList.add(organizeMpConfigModuleBaseVO);
+                        organizeMpConfigModuleVO.setBaseInfo(organizeMpConfigModuleBaseVO);
+                        //baseInfoList.add(organizeMpConfigModuleBaseVO);
+                        moudles.add(organizeMpConfigModuleVO);
                     }
                 }
             }
+            organizeMpConfigPageSingleMenuVO.setModules(moudles);
         }
-        return list;
+        return organizeMpConfigPageSingleMenuVO;
     }
 
     @Override

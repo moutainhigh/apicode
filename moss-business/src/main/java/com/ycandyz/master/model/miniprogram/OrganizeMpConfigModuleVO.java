@@ -24,10 +24,8 @@ import java.util.List;
 @TableName("mp_config_module")
 public class OrganizeMpConfigModuleVO extends MpConfigModule {
 
-
     @ApiModelProperty(value = "编号")
-    @Condition(field = "id", condition = ConditionEnum.EQ)
-    private Integer id;
+    private Integer moduleId;
 
     @ApiModelProperty(value = "元素模版名称")
     private String moduleName;
@@ -35,8 +33,8 @@ public class OrganizeMpConfigModuleVO extends MpConfigModule {
     @ApiModelProperty(value = "限制展示数量")
     private Integer displayNum;
 
-    @ApiModelProperty(value = "元素名称")
-    private String baseName;
+    @ApiModelProperty(value = "模块排序")
+    private Integer sortModule;
 
-    private List<OrganizeMpConfigModuleBaseVO> organizeMpConfigModuleBaseVOS;
+    private OrganizeMpConfigModuleBaseVO baseInfo;
 }

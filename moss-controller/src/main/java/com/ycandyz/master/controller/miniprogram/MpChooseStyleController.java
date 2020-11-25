@@ -4,9 +4,8 @@ package com.ycandyz.master.controller.miniprogram;
 import com.alibaba.fastjson.JSON;
 import com.ycandyz.master.api.BaseResult;
 import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.model.miniprogram.OrganizeChooseMpConfigPage;
 import com.ycandyz.master.model.miniprogram.OrganizeMpConfigMenuVO;
-import com.ycandyz.master.model.miniprogram.OrganizeMpConfigPageMenuVO;
+import com.ycandyz.master.model.miniprogram.OrganizeMpConfigPageSingleMenuVO;
 import com.ycandyz.master.service.miniprogram.MpChooseStyleService;
 import com.ycandyz.master.vo.OrganizeMenuMpRequestVO;
 import com.ycandyz.master.vo.OrganizeMpRequestVO;
@@ -33,6 +32,7 @@ public class MpChooseStyleController {
     @GetMapping(value = "organize")
     public CommonResult<BaseResult<List<OrganizeMpConfigMenuVO>>> select() {
         List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.select();
+        log.info("查询企业正在使用的小程序全部菜单请求响应:{}", JSON.toJSONString(CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO))));
         return CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO));
     }
 
@@ -42,7 +42,9 @@ public class MpChooseStyleController {
             @ApiImplicitParam(name="id",value="企业小程序编号",required=true,dataType="Integer")
     })
     public CommonResult<BaseResult<List<OrganizeMpConfigMenuVO>>> select(@PathVariable("id") Integer id) {
+        log.info("查询企业小程序全部菜单样式请求响应:{}", id);
         List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.selByOrGanizeMoudleId(id);
+        log.info("查询企业小程序全部菜单样式请求响应:{}", JSON.toJSONString(CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO))));
         return CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO));
     }
 
@@ -51,9 +53,11 @@ public class MpChooseStyleController {
             @ApiImplicitParam(name="menuid",value="企业小程序菜单编号",required=true,dataType="Integer")
     })
     @GetMapping(value = "organize/menu/{menuId}")
-    public CommonResult<BaseResult<List<OrganizeMpConfigPageMenuVO>>> selectOrgainizeMenu(@PathVariable("menuId") Integer menuId) {
-        List<OrganizeMpConfigPageMenuVO> organizeMpConfigPageMenuVOS = mpChooseStyleService.selectMenuById(menuId);
-        return CommonResult.success(new BaseResult<>(organizeMpConfigPageMenuVOS));
+    public CommonResult<BaseResult<OrganizeMpConfigPageSingleMenuVO>> selectOrgainizeMenu(@PathVariable("menuId") Integer menuId) {
+        log.info("查询企业小程序单个菜单样式请求入参:{}", menuId);
+        OrganizeMpConfigPageSingleMenuVO organizeMpConfigPageSingleMenuVO = mpChooseStyleService.selectMenuById(menuId);
+        log.info("查询企业小程序单个菜单样式请求响应:{}", JSON.toJSONString(CommonResult.success(new BaseResult<>(organizeMpConfigPageSingleMenuVO))));
+        return CommonResult.success(new BaseResult<>(organizeMpConfigPageSingleMenuVO));
     }
 
     @ApiOperation(value = "企业小程序编辑/保存单个菜单页面样式" , tags = "企业小程序DIY配置",httpMethod = "POST")
