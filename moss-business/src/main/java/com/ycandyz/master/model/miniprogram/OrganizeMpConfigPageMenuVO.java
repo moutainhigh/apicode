@@ -16,22 +16,27 @@ import java.util.List;
 @Data
 public class OrganizeMpConfigPageMenuVO {
 
+    @ApiModelProperty(value = "编号")
+    private Integer id;
+
+    @ApiModelProperty(value = "menuId")
+    private Integer menuId;
+
+    @ApiModelProperty(value = "menuName")
+    private String menuName;
+
     @ApiModelProperty(value = "模块编号")
     private Integer moduleId;
 
     @ApiModelProperty(value = "模块名称")
     private String moduleName;
 
-    @ApiModelProperty(value = "排序")
-    private Integer sortModule;
-
     @ApiModelProperty(value = "展示数量限制")
     private Integer displayNum;
 
+    @ApiModelProperty(value = "排序")
+    private Integer sortModule;
+
     @ApiModelProperty(value = "元素")
     private List<OrganizeMpConfigModuleBaseVO> baseInfo;
-
-    @ApiModelProperty(value = "一级分类图片")
-    private String moudleImgUrl;
-
 }

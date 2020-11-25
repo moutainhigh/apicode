@@ -13,7 +13,6 @@ import com.ycandyz.master.service.miniprogram.MpChooseStyleService;
 import com.ycandyz.master.vo.*;
 import com.ycandyz.master.vo.OrganizeMpReleaseParamVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,40 +65,42 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     }
 
     @Override
-    public OrganizeChooseMpConfigPage selectMenuById(Integer menuId) {
-        OrganizeChooseMpConfigPage result = new OrganizeChooseMpConfigPage();
-        OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
-        result.setMenuId(menuId);
-        result.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
+    public List<OrganizeMpConfigPageMenuVO> selectMenuById(Integer menuId) {
 
+        List<OrganizeMpConfigPageMenuVO> list = new ArrayList<>();
+        OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
-        List<OrganizeMpConfigPageMenuVO> modules = new ArrayList<>();
         for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
-            OrganizeMpConfigPageMenuVO module = new OrganizeMpConfigPageMenuVO();
-            module.setModuleId(dto.getModuleId());
-            module.setModuleName(dto.getModuleName());
-            module.setSortModule(dto.getSortModule());
-            module.setDisplayNum(dto.getDisplayNum());
-            module.setMoudleImgUrl(dto.getMoudleImgUrl());
             List<Integer> baseIds = new ArrayList<>();
+            List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
             if (dto.getModuleBaseIds() != null) {
                 for (String id : dto.getModuleBaseIds().split(",")) {
                     baseIds.add(Integer.parseInt(id));
+                    MpConfigModuleBase mpConfigModuleBase = mpConfigModuleBaseDao.selectByBaseId(Integer.parseInt(id));
+                    if (mpConfigModuleBase != null){
+                        OrganizeMpConfigPageMenuVO organizeMpConfigPageMenuVO = new OrganizeMpConfigPageMenuVO();
+                        organizeMpConfigPageMenuVO.setMenuId(menuId);
+                        organizeMpConfigPageMenuVO.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
+                        organizeMpConfigPageMenuVO.setModuleId(dto.getModuleId());
+                        organizeMpConfigPageMenuVO.setModuleName(dto.getModuleName());
+                        organizeMpConfigPageMenuVO .setSortModule(dto.getSortModule());
+                        OrganizeMpConfigModuleBaseVO organizeMpConfigModuleBaseVO = new OrganizeMpConfigModuleBaseVO();
+                        organizeMpConfigModuleBaseVO.setBaseCode(mpConfigModuleBase.getBaseCode());
+                        organizeMpConfigModuleBaseVO.setBaseName(dto.getBaseName());
+                        organizeMpConfigModuleBaseVO.setSortBase(dto.getSortBase());
+                        organizeMpConfigModuleBaseVO.setShowLayout(dto.getShowLayout());
+                        organizeMpConfigModuleBaseVO.setDisplayNum(mpConfigModuleBase.getDisplayNum());
+                        organizeMpConfigModuleBaseVO.setOrganizeMpConfigPlanPageId(dto.getId());
+                        organizeMpConfigModuleBaseVO.setReplacePicUrl(dto.getReplacePicUrl());
+                        baseInfoList.add(organizeMpConfigModuleBaseVO);
+                        organizeMpConfigPageMenuVO.setDisplayNum(dto.getDisplayNum());
+                        organizeMpConfigPageMenuVO.setBaseInfo(baseInfoList);
+                        list.add(organizeMpConfigPageMenuVO);
+                    }
                 }
             }
-            List<OrganizeMpConfigPlanPageDTO> configPlanPageBaseDTOList = organizeMpConfigPlanPageDao.getMenuModuleElement(dto.getSortModule(), baseIds);
-            List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
-            for (OrganizeMpConfigPlanPageDTO dtoBase : configPlanPageBaseDTOList) {
-                OrganizeMpConfigModuleBaseVO resp = new OrganizeMpConfigModuleBaseVO();
-                BeanUtil.copyProperties(dtoBase, resp);
-                resp.setId(dtoBase.getModuleBaseId());
-                baseInfoList.add(resp);
-                module.setBaseInfo(baseInfoList);
-            }
-            modules.add(module);
         }
-        result.setModules(modules);
-        return result;
+        return list;
     }
 
     @Override
@@ -210,7 +211,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                         organizeMpConfigPlanPage.setSortBase(omcmb.getSortBase());
                         organizeMpConfigPlanPage.setBaseName(omcmb.getBaseName());
                         organizeMpConfigPlanPage.setLogicDelete(o.getIsDel());
-                        organizeMpConfigPlanPage.setMoudleImgUrl(o.getMoudleImgUrl());
+                        organizeMpConfigPlanPage.setReplacePicUrl(o.getReplacePicUrl());
                         log.info("企业小程序单个菜单页面-page-保存当前菜单页面入参:{}", o);
                         organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
                     }
