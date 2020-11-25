@@ -3,6 +3,7 @@ package com.ycandyz.master.controller.mall;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
+import com.ycandyz.master.domain.query.mall.uApp.MallShopShippingUAppQuery;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.entities.mall.MallShopShipping;
 import com.ycandyz.master.model.mall.MallOrderUAppVO;
@@ -74,19 +75,13 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
 
     /**
      * 确认发货,UApp
-     * @param mallShopShippingQuery
+     * @param mallShopShippingUAppQuery
      * @return
      */
     @ApiOperation(value = "确认发货",notes = "确认发货",httpMethod = "POST")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String"),
-            @ApiImplicitParam(name="company",value="快递公司名",required=true,dataType="String"),
-            @ApiImplicitParam(name="companyCode",value="快递公司编码",required=true,dataType="String"),
-            @ApiImplicitParam(name="number",value="快递单号",required=true,dataType="String")
-    })
     @PostMapping("/u-app/order/shipment/enterShipping")
     @ResponseBody
-    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(@RequestBody MallShopShippingQuery mallShopShippingQuery){
-        return mallShopShippingService.enterShippingUApp(mallShopShippingQuery);
+    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(@RequestBody MallShopShippingUAppQuery mallShopShippingUAppQuery){
+        return mallShopShippingService.enterShippingUApp(mallShopShippingUAppQuery);
     }
 }

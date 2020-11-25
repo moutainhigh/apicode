@@ -10,6 +10,7 @@ import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
+import com.ycandyz.master.domain.query.mall.uApp.MallShopShippingUAppQuery;
 import com.ycandyz.master.domain.shipment.query.*;
 import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.dto.mall.MallShopShippingDTO;
@@ -273,17 +274,17 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
 
     @Transactional
     @Override
-    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(MallShopShippingQuery mallShopShippingQuery) {
+    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(MallShopShippingUAppQuery mallShopShippingUAppQuery) {
         UserVO userVO = getUser();  //获取当前登陆用户
-        MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(mallShopShippingQuery.getOrderNo());
+        MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(mallShopShippingUAppQuery.getOrderNo());
         if (mallShopShippingDTO==null){
             return ReturnResponse.failed("未查询到当前记录");
         }
         MallShopShipping mallShopShipping = new MallShopShipping();
         mallShopShipping.setId(mallShopShippingDTO.getId());
-        mallShopShipping.setCompany(mallShopShippingQuery.getCompany());
-        mallShopShipping.setCompanyCode(mallShopShippingQuery.getCompanyCode());
-        mallShopShipping.setNumber(mallShopShippingQuery.getNumber());
+        mallShopShipping.setCompany(mallShopShippingUAppQuery.getCompany());
+        mallShopShipping.setCompanyCode(mallShopShippingUAppQuery.getCompanyCode());
+        mallShopShipping.setNumber(mallShopShippingUAppQuery.getNumber());
         mallShopShipping.setPollState(mallShopShippingDTO.getPollState());
         mallShopShipping.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
         mallShopShipping.setOrderNo(mallShopShippingDTO.getOrderNo());
@@ -297,8 +298,8 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         if (mallShopShippingDTO.getType()==10) {        //快递
             //调用快递订阅功能
             PollShipmentParamQuery pollShipmentParamQuery = new PollShipmentParamQuery();
-            pollShipmentParamQuery.setCompany(mallShopShippingQuery.getCompanyCode());
-            pollShipmentParamQuery.setNumber(mallShopShippingQuery.getNumber());
+            pollShipmentParamQuery.setCompany(mallShopShippingUAppQuery.getCompanyCode());
+            pollShipmentParamQuery.setNumber(mallShopShippingUAppQuery.getNumber());
             pollShipmentParamQuery.setKey(kuaidiKey);
             PollShipmentParametersQuery pollShipmentParametersQuery = new PollShipmentParametersQuery();
             pollShipmentParametersQuery.setCallbackurl(kuaidiCallbackUrl);
@@ -340,7 +341,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                     //记录日志表,后续做kafka队列任务处理相关信息
                     MallShopShippingPollLog mallShopShippingPollLog = new MallShopShippingPollLog();
                     mallShopShippingPollLog.setOrderNo(mallShopShippingDTO.getOrderNo());
-                    mallShopShippingPollLog.setNumber(mallShopShippingQuery.getNumber());
+                    mallShopShippingPollLog.setNumber(mallShopShippingUAppQuery.getNumber());
                     mallShopShippingPollLog.setCode(0); //神州通项目code码传入0
                     mallShopShippingPollLog.setShopShippingNo(mallShopShippingDTO.getShopShippingNo());
                     mallShopShippingPollLog.setLog(resultObject.getStr("message"));
@@ -358,25 +359,25 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             MallTempOrderWaitReceive mallTempOrderWaitReceive = new MallTempOrderWaitReceive();
             Long time = new Date().getTime() / 1000;
             mallTempOrderWaitReceive.setCloseAt(time + 7 * 24 * 60 * 60);
-            mallTempOrderWaitReceive.setOrderNo(mallShopShippingQuery.getOrderNo());
+            mallTempOrderWaitReceive.setOrderNo(mallShopShippingUAppQuery.getOrderNo());
             mallTempOrderWaitReceive.setShopNo(mallShopShippingDTO.getShopShippingNo());
             mallTempOrderWaitReceive.setTempOrderNo(String.valueOf(IDGeneratorUtils.getLongId()));
             mallTempOrderWaitReceiveDao.insert(mallTempOrderWaitReceive);
 
             //未签收的临时物流表
-            MallTempShipping mallTempShipping = mallTempShippingDao.selectOne(new QueryWrapper<MallTempShipping>().eq("com_code", mallShopShippingQuery.getCompanyCode()).eq("number", mallShopShippingQuery.getNumber()));
+            MallTempShipping mallTempShipping = mallTempShippingDao.selectOne(new QueryWrapper<MallTempShipping>().eq("com_code", mallShopShippingUAppQuery.getCompanyCode()).eq("number", mallShopShippingUAppQuery.getNumber()));
             if (mallTempShipping == null) {
                 mallTempShipping = new MallTempShipping();
-                mallTempShipping.setComCode(mallShopShippingQuery.getCompanyCode());
-                mallTempShipping.setCompany(mallShopShippingQuery.getCompany());
+                mallTempShipping.setComCode(mallShopShippingUAppQuery.getCompanyCode());
+                mallTempShipping.setCompany(mallShopShippingUAppQuery.getCompany());
                 mallTempShipping.setCreatedAt(time);
-                mallTempShipping.setNumber(mallShopShippingQuery.getNumber());
+                mallTempShipping.setNumber(mallShopShippingUAppQuery.getNumber());
                 mallTempShippingDao.insert(mallTempShipping);
             }
         }
 
         //更新订单表
-        MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no", mallShopShippingQuery.getOrderNo()));
+        MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no", mallShopShippingUAppQuery.getOrderNo()));
         if (mallOrder != null) {
             mallOrder.setStatus(30);
             mallOrder.setSubStatus(3010);
@@ -386,7 +387,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         }
 
         //查询订单详情，返回前端
-        return mallOrderService.queryOrderDetailByUApp(mallShopShippingQuery.getOrderNo());
+        return mallOrderService.queryOrderDetailByUApp(mallShopShippingUAppQuery.getOrderNo());
     }
 
 }

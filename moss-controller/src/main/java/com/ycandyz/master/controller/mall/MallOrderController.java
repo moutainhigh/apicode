@@ -72,7 +72,6 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     /**
      * 通过提货码查询订单
      * @param pickupNo
-     * @param userVO
      * @return
      */
     @ApiOperation(value = "通过提货码查询订单",notes = "通过提货码查询订单",httpMethod = "GET")
@@ -90,7 +89,6 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     /**
      * 验证提货码，出货
      * @param pickupNo
-     * @param userVO
      * @return
      */
     @ApiOperation(value = "验证提货码,出货",notes = "验证提货码,出货",httpMethod = "GET")
@@ -111,7 +109,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @return
      */
     @ApiOperation(value = "获取快递公司列表",notes = "获取快递公司列表",httpMethod = "GET")
-    @GetMapping("/delivery/company/list")
+    @GetMapping("/u-app/delivery/company/list")
     public ReturnResponse<List<Map<String, String>>> getDeliveryCompanyList(){
         List<Map<String, String>> list = ExpressEnum.getMap();
         return ReturnResponse.success(list);
@@ -123,12 +121,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @param page_size
      * @param mallOrderQuery
      * @param status
-     * @param userVO
      * @return
      */
     @ApiOperation(value = "UApp项目订单列表接口",notes = "UApp项目订单列表接口",httpMethod = "GET")
     @GetMapping("/u-app/order/page")
-    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("mallOrderQuery") String mallOrderQuery, @RequestParam("status") Integer status){
+    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("mall_order_query") String mallOrderQuery, @RequestParam("status") Integer status){
         if (page==null || page_size==null){
             return ReturnResponse.failed("请求入参为空");
         }
@@ -147,15 +144,14 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     @ApiImplicitParams({
             @ApiImplicitParam(name="orderNo",value="订单编号",required=true,dataType="String")
     })
-    @GetMapping("/u-app/order/detail/{orderNo}")
-    public ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(@PathVariable("orderNo") String orderNo){
+    @GetMapping("/u-app/order/detail/{order_no}")
+    public ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(@PathVariable("order_no") String orderNo){
         return mallOrderService.queryOrderDetailByUApp(orderNo);
     }
 
     /**
      * 通过提货码查询订单,UApp
      * @param pickupNo
-     * @param userVO
      * @return
      */
     @ApiOperation(value = "通过提货码查询订单",notes = "通过提货码查询订单",httpMethod = "GET")
@@ -163,12 +159,28 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
     })
     @GetMapping("/u-app/order/pickup/query")
-    public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(@RequestParam("pickupNo") String pickupNo, @RequestParam(value = "orderNo", required = false) String orderNo){
+    public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(@RequestParam("pickup_no") String pickupNo, @RequestParam(value = "order_no", required = false) String orderNo){
         if (pickupNo!=null){
             pickupNo = pickupNo.trim();
         }
         return mallOrderService.queryDetailByPickupNoUApp(pickupNo, orderNo);
     }
 
-
+    /**
+     * 验证提货码，出货
+     * @param pickupNo
+     * @return
+     */
+    @ApiOperation(value = "验证提货码,出货",notes = "验证提货码,出货",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String"),
+            @ApiImplicitParam(name="orderNo",value="订单号",dataType="String")
+    })
+    @GetMapping("/u-app/order/pickup/verification")
+    public ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(@RequestParam("pickup_no") String pickupNo, @RequestParam(value = "order_no", required = false) String orderNo){
+        if (pickupNo!=null){
+            pickupNo = pickupNo.trim();
+        }
+        return mallOrderService.verPickupNoByUApp(pickupNo,orderNo);
+    }
 }

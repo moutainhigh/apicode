@@ -27,4 +27,6 @@ public interface MallOrderService extends IService<MallOrder> {
     ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(String orderNo);
 
     ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(String pickupNo, String orderNo);
+
+    ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(String pickupNo, String orderNo);
 }
