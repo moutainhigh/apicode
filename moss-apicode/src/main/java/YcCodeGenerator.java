@@ -32,14 +32,15 @@ public class YcCodeGenerator {
 	
 	private static final String tableName = "coupon_user_ticket_info";
 	private static final String moduleName = "coupon";
-	private static final boolean createController = false;
-	private static final String daoName = "api-dao";
-	private static final String serviceName = "api-business";
-	private static final String controllerName = "api-controller";
+	private static final boolean createController = true;
+	//生成文件所在目录层级
+	private static final String daoName = "moss-dao";
+	private static final String serviceName = "moss-business";
+	private static final String controllerName = "moss-controller";
 	private static String module;
-	private static String projectName = "api-commons";
+	private static String projectName = "moss-commons";
 	private static final String commonModule = "domain";
-	private static final String packageName = "com.ycandyz.uke";
+	private static final String packageName = "com.ycandyz.master";
 	private static String parentPackageName;
 	private static final String[] tablePrefix = new String[] {"ad_","tb_"};
 	private static final String dtoSuffix = "DTO";
