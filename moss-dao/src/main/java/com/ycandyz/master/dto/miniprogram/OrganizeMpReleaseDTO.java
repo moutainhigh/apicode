@@ -24,12 +24,6 @@ import java.util.Date;
 @Setter
 @TableName("organize_mp_release")
 public class OrganizeMpReleaseDTO extends OrganizeMpRelease {
-    @ApiModelProperty(value = "编号")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
-
-    @ApiModelProperty(value = "小程序名称")
-    private String planName;
 
     @ApiModelProperty(value = "小程序模板方案编号")
     private Integer planId;

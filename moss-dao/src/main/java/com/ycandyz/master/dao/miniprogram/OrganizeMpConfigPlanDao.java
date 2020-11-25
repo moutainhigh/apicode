@@ -25,10 +25,6 @@ public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan
 
     List<OrganizeMpConfigPlan> selectByOrganizeId(Long organizeId);
 
-    OrganizeMpConfigPlan selectByOrganizeIdStatus(@Param("organizeId") Long organizeId);
-
-    OrganizeMpConfigPlan selectByIdStatus (@Param("id") Integer id);
-
     OrganizeMpConfigPlan getByOrganizeId(Long organizeId);
 
     int setDelete(@Param("id") Integer id);
@@ -37,9 +33,6 @@ public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan
 
     OrganizeMpConfigPlan selectByIdUsing(Long organizeId);
 
-    OrganizeMpConfigPlan selectPlanById(Integer id);
-
     void updateByOrganizePlanId(OrganizeMpConfigPlan organizeMpConfigPlan1);
 
-    void insertVersion(OrganizeMpReleaseParamVO organizeMpReleaseParamVO);
 }

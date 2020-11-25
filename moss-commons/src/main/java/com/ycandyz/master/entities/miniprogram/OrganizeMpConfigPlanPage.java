@@ -56,4 +56,7 @@ public class OrganizeMpConfigPlanPage extends Model {
    @ApiModelProperty(value = "逻辑删除0：未删除，1：删除")
    private Integer logicDelete;
 
+   @ApiModelProperty(value = "一级分类图片")
+   private String moudleImgUrl;
+
 }

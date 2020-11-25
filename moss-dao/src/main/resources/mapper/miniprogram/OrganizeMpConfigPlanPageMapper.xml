@@ -6,17 +6,19 @@
     <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO">
         <id column="id" property="id" />
         <result column="menu_id" property="menuId" />
+        <result column="menu_name" property="menuName" />
         <result column="module_id" property="moduleId" />
-        <result column="module_base_id" property="moduleBaseId" />
+        <result column="module_name" property="moduleName" />
+        <result column="module_base_ids" property="moduleBaseIds" />
         <result column="show_layout" property="showLayout" />
         <result column="sort_module" property="sortModule" />
         <result column="sort_base" property="sortBase" />
         <result column="base_name" property="baseName" />
+        <result column="moudle_img_url" property="moudleImgUrl" />
     </resultMap>
 
     <resultMap id="BaseResultMap2" type="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO">
         <id column="id" property="id" />
-        <result column="omcpp_id" property="omcppId" />
         <result column="menu_id" property="menuId" />
         <result column="module_id" property="moduleId" />
         <result column="module_base_id" property="moduleBaseId" />
@@ -29,11 +31,11 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name
+        id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,moudle_img_url
     </sql>
     <insert id="insertSingle">
-        insert into organize_mp_config_plan_page(id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,logic_delete)
-        values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0)
+        insert into organize_mp_config_plan_page(id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,logic_delete,moudle_img_url)
+        values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0,#{moudleImgUrl})
     </insert>
     <update id="updateBaseNameById">
         update organize_mp_config_plan_page
@@ -46,7 +48,8 @@
 
     <select id="selectByMenuId" resultMap="BaseResultMap">
         SELECT p.id,p.menu_id,m.title as menu_name,p.module_id,d.module_name,
-        p.sort_module,d.display_num,group_concat(p.module_base_id separator ',') as module_base_ids,p.base_name
+        p.sort_module,d.display_num,
+        p.module_base_id as module_base_ids,p.base_name,p.moudle_img_url
         FROM organize_mp_config_plan_page p
         left join organize_mp_config_plan_menu m on p.menu_id = m.id
         left join mp_config_module d on p.module_id = d.id
@@ -56,7 +59,6 @@
                 and p.menu_id = #{menuId}
             </if>
         </where>
-        group by p.sort_module
     </select>
 
     <select id="getMenuModuleElement" resultMap="BaseResultMap2" >
@@ -65,7 +67,7 @@
         left join mp_config_module_base b on p.module_base_id = b.id
         <where>
             <if test="moduleSort != null">
-                and p.sort_module = #{moduleSort}
+                p.sort_module = #{moduleSort}
             </if>
 
             <if test="baseIds != null ">

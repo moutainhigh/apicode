@@ -1,10 +1,12 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
+import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpRelease;
 import com.ycandyz.master.domain.query.miniprogram.OrganizeMpReleaseQuery;
 import com.ycandyz.master.dao.miniprogram.OrganizeMpReleaseDao;
 import com.ycandyz.master.model.miniprogram.OrganizeMpReleaseVO;
+import com.ycandyz.master.request.UserRequest;
 import com.ycandyz.master.service.miniprogram.IOrganizeMpReleaseService;
 import com.ycandyz.master.controller.base.BaseService;
 
@@ -34,7 +36,9 @@ public class OrganizeMpReleaseServiceImpl extends BaseService<OrganizeMpReleaseD
 
     @Override
     public List<OrganizeMpReleaseVO> listAll() {
-        List<OrganizeMpReleaseDTO> organizeMpReleaseDTOS = organizeMpReleaseDao.listAll();
+        UserVO currentUser = UserRequest.getCurrentUser();
+        Long organizeId = currentUser.getOrganizeId();
+        List<OrganizeMpReleaseDTO> organizeMpReleaseDTOS = organizeMpReleaseDao.listAll(organizeId);
         List<OrganizeMpReleaseVO> list = new ArrayList<>();
         if (organizeMpReleaseDTOS != null && organizeMpReleaseDTOS.size() > 0){
             for (OrganizeMpReleaseDTO o:organizeMpReleaseDTOS) {

@@ -25,6 +25,8 @@ public class OrganizeMpReleaseParamVO extends OrganizeMpRelease {
     @ApiModelProperty(value = "organizeId")
     private Long organizeId;
 
+    @ApiModelProperty(value = "planId")
+    private Integer planId;
 
     @ApiModelProperty(value = "申请发布时间")
     private Date createTime;

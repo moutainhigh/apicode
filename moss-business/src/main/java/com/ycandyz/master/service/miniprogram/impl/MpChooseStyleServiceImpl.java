@@ -1,32 +1,27 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
-import com.ycandyz.master.controller.base.BaseService;
-import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
-import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanMenuQuery;
-import com.ycandyz.master.dto.miniprogram.MpConfigPlanPageBaseDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO;
-import com.ycandyz.master.entities.mall.MallCategory;
 import com.ycandyz.master.entities.miniprogram.*;
 import com.ycandyz.master.model.miniprogram.*;
 import com.ycandyz.master.request.UserRequest;
-import com.ycandyz.master.service.miniprogram.IOrganizeMpReleaseService;
 import com.ycandyz.master.service.miniprogram.MpChooseStyleService;
 import com.ycandyz.master.vo.*;
 import com.ycandyz.master.vo.OrganizeMpReleaseParamVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.lang.Float.parseFloat;
 
 @Slf4j
 @Service
@@ -54,9 +49,6 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     private MpConfigModuleBaseDao mpConfigModuleBaseDao;
 
     @Autowired
-    private MallCategoryDao mallCategoryDao;
-
-    @Autowired
     private OrganizeMpReleaseDao organizeMpReleaseDao;
 
     @Override
@@ -79,6 +71,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
         result.setMenuId(menuId);
         result.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
+
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
         List<OrganizeMpConfigPageMenuVO> modules = new ArrayList<>();
         for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
@@ -87,6 +80,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             module.setModuleName(dto.getModuleName());
             module.setSortModule(dto.getSortModule());
             module.setDisplayNum(dto.getDisplayNum());
+            module.setMoudleImgUrl(dto.getMoudleImgUrl());
             List<Integer> baseIds = new ArrayList<>();
             if (dto.getModuleBaseIds() != null) {
                 for (String id : dto.getModuleBaseIds().split(",")) {
@@ -216,6 +210,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                         organizeMpConfigPlanPage.setSortBase(omcmb.getSortBase());
                         organizeMpConfigPlanPage.setBaseName(omcmb.getBaseName());
                         organizeMpConfigPlanPage.setLogicDelete(o.getIsDel());
+                        organizeMpConfigPlanPage.setMoudleImgUrl(o.getMoudleImgUrl());
                         log.info("企业小程序单个菜单页面-page-保存当前菜单页面入参:{}", o);
                         organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
                     }
@@ -296,31 +291,46 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         }else {
             OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selectByIdUsing(organizeId);
             if (organizeMpConfigPlan != null) {
-                //有发布的记录
+                //有发布的记录则删除
                 organizeMpConfigPlanDao.setDelete(organizeMpConfigPlan.getId());
             }
-            //保存plan表
+            //当前plan还是为草稿;
+            //另保存当前plan为一份新的plan:正在使用
             OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
             organizeMpConfigPlan1.setMpPlanId(organizeMpRequestVO.getMpPlanId());
             organizeMpConfigPlan1.setOrganizeId(organizeId);
             organizeMpConfigPlan1.setCurrentUsing(1);
             organizeMpConfigPlan1.setLogicDelete(0);
-            log.info("企业小程序单个菜单页面-plan-保存发布草稿入参:{}",organizeMpConfigPlan1);
+            log.info("企业小程序单个菜单页面-plan-保存发布草稿为正在使用入参:{}",organizeMpConfigPlan1);
             organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
-            saveAllPage(allmenus, mpPlanId,organizeId ,null);
+            OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selectByIdUsing(organizeId);
+            Integer organizePlanId = 0;
+            if (organizeMpConfigPlan2 != null){
+                organizePlanId = organizeMpConfigPlan2.getId();
+            }
+            saveAllPage(allmenus, mpPlanId,organizeId ,organizePlanId);
             //保存发布记录
             List<OrganizeMpReleaseDTO> organizeMpReleaseDTOS = organizeMpReleaseDao.selByOrganizeId(organizeId);
             if (organizeMpReleaseDTOS == null || (organizeMpReleaseDTOS != null && organizeMpReleaseDTOS.size() == 0)){
                 OrganizeMpReleaseParamVO organizeMpReleaseParamVO = new OrganizeMpReleaseParamVO();
                 organizeMpReleaseParamVO.setOrganizeId(organizeId);
-                organizeMpReleaseParamVO.setVersion("1");
-                organizeMpConfigPlanDao.insertVersion(organizeMpReleaseParamVO);
+                organizeMpReleaseParamVO.setVersion(Float.toString(1.0f));
+                organizeMpReleaseParamVO.setPlanId(organizePlanId);
+                log.info("企业小程序第一次保存发布入参:{}",organizeMpConfigPlan1);
+                organizeMpReleaseDao.insertVersion(organizeMpReleaseParamVO);
             }else {
-//                    String version = organizeMpReleaseDTO.getVersion();
-//                    OrganizeMpReleaseParamVO organizeMpReleaseParamVO = new OrganizeMpReleaseParamVO();
-//                    organizeMpReleaseParamVO.setOrganizeId(organizeId);
-//                    organizeMpReleaseParamVO.setVersion(version+1);
-//                    organizeMpConfigPlanDao.insertVersion(organizeMpReleaseParamVO);
+                String version = organizeMpReleaseDTOS.get(0).getVersion();
+                float v = 0.0f;
+                if (version != null){
+                    v = parseFloat(version) + 0.1f;
+                }
+                String versionStr = Float.toString(v);
+                OrganizeMpReleaseParamVO organizeMpReleaseParamVO = new OrganizeMpReleaseParamVO();
+                organizeMpReleaseParamVO.setOrganizeId(organizeId);
+                organizeMpReleaseParamVO.setVersion(versionStr);
+                organizeMpReleaseParamVO.setPlanId(organizePlanId);
+                log.info("企业小程序保存发布入参:{}",organizeMpConfigPlan1);
+                organizeMpReleaseDao.insertVersion(organizeMpReleaseParamVO);
             }
 
         }
