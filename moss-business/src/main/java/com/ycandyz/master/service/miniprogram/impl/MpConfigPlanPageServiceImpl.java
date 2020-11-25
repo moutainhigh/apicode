@@ -2,6 +2,7 @@ package com.ycandyz.master.service.miniprogram.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.StrUtil;
 import com.ycandyz.master.domain.model.miniprogram.ElementWithinModule;
 import com.ycandyz.master.domain.model.miniprogram.ModuleWithinMenu;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanPageModel;
@@ -97,6 +98,9 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
                 planPage.setModuleBaseId(element.getModuleBaseId());
                 planPage.setShowLayout(element.getShowLayout());
                 planPage.setSortBase(element.getSortBase());
+                if(StrUtil.isNotEmpty(element.getReplacePicUrl())){
+                    planPage.setReplacePicUrl(element.getReplacePicUrl());
+                }
                 planPageList.add(planPage);
             }
         }

@@ -45,7 +45,7 @@ public class MpConfigModuleBaseResp implements Serializable {
     @ApiModelProperty(value = "显示数量")
     private Integer displayNum;
 
-    @ApiModelProperty(value = "元素图片")
+    @ApiModelProperty(value = "图文按钮替换图片")
     private String replacePicUrl;
 
 

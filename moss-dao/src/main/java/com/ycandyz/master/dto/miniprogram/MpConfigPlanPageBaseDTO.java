@@ -40,4 +40,7 @@ public class MpConfigPlanPageBaseDTO {
     @ApiModelProperty(value = "元素显示数量")
     private Integer displayNum;
 
+    @ApiModelProperty(value = "图文按钮替换图片")
+    private String replacePicUrl;
+
 }

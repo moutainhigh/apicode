@@ -28,4 +28,7 @@ public class ElementWithinModule {
 
     @ApiModelProperty(value = "元素排序")
     private Integer sortBase;
+
+    @ApiModelProperty(value = "图文按钮替换图片")
+    private String replacePicUrl;
 }
