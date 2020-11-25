@@ -18,4 +18,5 @@ import java.util.List;
 public interface IOrganizeMpReleaseService extends IService<OrganizeMpRelease>{
 
     List<OrganizeMpReleaseVO> listAll();
+
 }

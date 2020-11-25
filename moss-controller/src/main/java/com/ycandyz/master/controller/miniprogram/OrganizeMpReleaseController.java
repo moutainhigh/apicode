@@ -48,7 +48,7 @@ public class OrganizeMpReleaseController extends BaseController<OrganizeMpReleas
 //        return CommonResult.success(r);
 //    }
 
-    @ApiOperation(value = "查询全部发布记录", tags = "企业小程序DIY配置")
+    @ApiOperation(value = "查询企业小程序全部发布记录", tags = "企业小程序DIY配置")
     @GetMapping
     public CommonResult<List<OrganizeMpReleaseVO>> list() {
         List<OrganizeMpReleaseVO> list = organizeMpReleaseService.listAll();

@@ -15,6 +15,8 @@ public interface MallCategoryDao extends BaseMapper<MallCategory> {
 
     void addMallCategory(MallCategory mallCategory);
 
+    void updateMallCategoryImg(String imgUrl, String categoryNo);
+
     MallCategory selCategoryByCategoryNo(@Param("shopNo") String shopNo,@Param("categoryNo") String categoryNo);
 
     MallParentCategory selParentCategoryByCategoryNo(@Param("shopNo") String shopNo, @Param("categoryNo") String categoryNo);

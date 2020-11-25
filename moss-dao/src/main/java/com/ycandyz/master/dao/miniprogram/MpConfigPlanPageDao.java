@@ -55,6 +55,7 @@ public interface MpConfigPlanPageDao extends BaseMapper<MpConfigPlanPage> {
     List<MpConfigPlanPage> getMenuSortModule(@Param("menuId") Integer menuId, @Param("moduleSort") Integer moduleSort, @Param("moduleId") Integer moduleId);
 
 
+    List<MpConfigPlanPage> selByMenuId(Integer id);
     /**
      * 删除菜单下配置模块
      * @param menuId
