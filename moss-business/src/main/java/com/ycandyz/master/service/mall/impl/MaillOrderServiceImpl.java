@@ -14,6 +14,7 @@ import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.domain.query.mall.MallOrderUAppQuery;
+import com.ycandyz.master.domain.query.mall.uApp.MallPickupUAppQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.dto.mall.*;
 import com.ycandyz.master.entities.mall.MallAfterSales;
@@ -1223,14 +1224,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(String pickupNo, String orderNo) {
+    public ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(MallPickupUAppQuery mallPickupUAppQuery) {
         UserVO userVO = getUser();
-        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
+        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(mallPickupUAppQuery.getPickupNo(), userVO.getShopNo());
         if (mallOrderDTO!=null){
             //判断pickNo查询到订单是否是orderNo的订单
-            if (StringUtils.isNotEmpty(orderNo)){
+            if (StringUtils.isNotEmpty(mallPickupUAppQuery.getOrderNo())){
                 //orderNo不为空，说明是订单详情中进行的订单校验
-                if (!orderNo.equals(mallOrderDTO.getOrderNo())){
+                if (!mallPickupUAppQuery.getOrderNo().equals(mallOrderDTO.getOrderNo())){
                     return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
                 }
             }
@@ -1250,8 +1251,28 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             Long timeAt = new Date().getTime()/1000;
             mallOrder.setReceiveAt(timeAt.intValue());  //更新收货时间
             mallOrderDao.updateById(mallOrder);
-            return queryOrderDetailByUApp(orderNo); //更新成功，返回订单详情
+            return queryOrderDetailByUApp(mallPickupUAppQuery.getOrderNo()); //更新成功，返回订单详情
         }
         return ReturnResponse.failed("未查询到待自提订单");
+    }
+
+    @Override
+    public ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(String orderNo) {
+        UserVO userVO = getUser();  //获取当前登陆用户
+        Page<MallOrderVO> page1 = new Page<>();
+        MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",orderNo));
+        if (mallOrder!=null){
+            //传入的为订单编号
+            if (!mallOrder.getShopNo().equals(userVO.getShopNo())){
+                return ReturnResponse.failed("当前用户无法查看其他企业的订单");
+            }
+
+        }else {
+            List<MallOrder> mallOrderList = mallOrderDao.selectList(new QueryWrapper<MallOrder>().eq("cart_order_sn",orderNo));
+            if (mallOrderList!=null && mallOrderList.size()>0){
+
+            }
+        }
+        return null;
     }
 }

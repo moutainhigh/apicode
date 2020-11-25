@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
+import com.ycandyz.master.domain.query.mall.uApp.MallPickupUAppQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallOrderVO;
+import com.ycandyz.master.model.mall.uApp.MallOrderDetailUAppVO;
 
 public interface MallOrderService extends IService<MallOrder> {
 
@@ -28,5 +30,7 @@ public interface MallOrderService extends IService<MallOrder> {
 
     ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(String pickupNo, String orderNo);
 
-    ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(String pickupNo, String orderNo);
+    ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(MallPickupUAppQuery mallPickupUAppQuery);
+
+    ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(String orderNo);
 }
