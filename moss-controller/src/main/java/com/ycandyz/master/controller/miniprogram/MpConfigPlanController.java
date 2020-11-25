@@ -52,6 +52,7 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
 	@ApiOperation(value = "查询根据ID")
     @GetMapping(value = "{id}")
 	public CommonResult<MpConfigPlan> getById(@PathVariable Integer id) {
+	    this.service.organizeBindPlan(100,1);
         return CommonResult.success(service.getById(id));
     }
     

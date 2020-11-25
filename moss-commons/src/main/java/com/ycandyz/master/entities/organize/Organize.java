@@ -285,5 +285,8 @@ public class Organize extends Model {
    @ApiModelProperty(value = "通联设置账号")
    private String tlBizUserId;
 
+   @ApiModelProperty(value = "应用小程序方案模板编号")
+   private Integer planId;
+
 
 }
