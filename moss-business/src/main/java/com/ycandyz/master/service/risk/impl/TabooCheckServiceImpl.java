@@ -41,18 +41,20 @@ public class TabooCheckServiceImpl implements TabooCheckService {
     public List<String> check(String txt) {
         List<String> lists = new ArrayList<>();
         List<String> allTaboosLists = null;
-        if (redisUtil.get(CommonConstant.TABOO_LIST_GROUP)!=null){
-            allTaboosLists = (List<String>) redisUtil.get(CommonConstant.TABOO_LIST_GROUP);
+        if (redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList")!=null){
+            allTaboosLists = (List<String>) redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList");
         }
         Map<Object, Object> Taboomaps = null;
         if (redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps")!=null){
             Taboomaps = redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps");
         }
-        List<String> list = TabooCheck.check(allTaboosLists, txt);
-        for(Map.Entry<Object, Object> it : Taboomaps.entrySet()){
-            for (String s:list) {
-                if (it.getValue().toString().contains(s)){
-                    lists.add(it.getKey().toString());
+        if (allTaboosLists!=null && allTaboosLists.size()>0) {
+            List<String> list = TabooCheck.check(allTaboosLists, txt);
+            for (Map.Entry<Object, Object> it : Taboomaps.entrySet()) {
+                for (String s : list) {
+                    if (it.getValue().toString().contains(s)) {
+                        lists.add(it.getKey().toString());
+                    }
                 }
             }
         }
@@ -65,10 +67,25 @@ public class TabooCheckServiceImpl implements TabooCheckService {
         List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
         tabooWordsForReviews.forEach(s->map.put(s.getPhraseName(),s.getTabooWords()));
         Map<Object, Object> Taboomaps = null;
-        if (redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP)!=null){
-            Taboomaps = redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP);
-            map.forEach((k,v)->{Taboomaps.put(k,MyCollectionUtils.parseIds(v));});
+        if (redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps")!=null){
+            Taboomaps = redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps");
+        }else {
+            Taboomaps = new HashMap<>();
         }
+        for (Map.Entry<String,String> entry : map.entrySet()){
+            Taboomaps.put(entry.getKey(),MyCollectionUtils.parseIds(entry.getValue()));
+        }
+        redisUtil.hmset(CommonConstant.TABOO_MAP_GROUP+"Taboomaps",Taboomaps);
+        List<String> allTaboosLists = null;
+        if (redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList")!=null){
+            allTaboosLists = (List<String>) redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList");
+        }else {
+            allTaboosLists = new ArrayList<>();
+        }
+        for (Map.Entry<Object,Object> entry : Taboomaps.entrySet()){
+            allTaboosLists.addAll((Collection<? extends String>) entry.getValue());
+        }
+        redisUtil.set(CommonConstant.TABOO_LIST_GROUP+"TabooList",allTaboosLists);
     }
 
 //    @PostConstruct

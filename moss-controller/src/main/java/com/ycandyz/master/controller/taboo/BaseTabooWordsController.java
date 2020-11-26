@@ -127,7 +127,9 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
         return ReturnResponse.success(returnResponse);
     }
 
-//    public ReturnResponse<String> getAllToRedis(){
-//        tabooCheckService.
-//    }
+    @GetMapping("/all-data-redis")
+    public ReturnResponse<String> getAllToRedis(){
+        tabooCheckService.getAllToRedis();
+        return ReturnResponse.success("成功");
+    }
 }
