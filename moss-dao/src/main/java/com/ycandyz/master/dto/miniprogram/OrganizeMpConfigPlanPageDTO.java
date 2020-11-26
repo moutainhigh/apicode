@@ -1,13 +1,12 @@
 package com.ycandyz.master.dto.miniprogram;
 
-import com.ycandyz.master.annotation.Condition;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanPage;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import com.ycandyz.master.enums.ConditionEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * <p>
@@ -66,7 +65,5 @@ public class OrganizeMpConfigPlanPageDTO extends OrganizeMpConfigPlanPage {
 
     @ApiModelProperty(value = "baseName")
     private String baseName;
-
-
 
 }
