@@ -64,6 +64,9 @@
     <select id="selCategoryByParentCategoryNo" resultMap="BaseResultMap" parameterType="java.lang.String">
         select * from mall_category where shop_no = #{shopNo,jdbcType=VARCHAR} and parent_category_no = #{parentCategoryNo,jdbcType=VARCHAR} and layer = 1;
     </select>
+    <select id="selectByShopNo" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryDTO">
+        select id,category_no,category_name from mall_category where shop_no = #{shopNo} and status = 1 and layer = 0;
+    </select>
 
 </mapper>
 

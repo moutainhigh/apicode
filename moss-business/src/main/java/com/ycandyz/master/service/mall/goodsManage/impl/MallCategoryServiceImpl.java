@@ -4,6 +4,7 @@ package com.ycandyz.master.service.mall.goodsManage.impl;
 import com.google.common.collect.Lists;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.dto.mall.MallCategoryDTO;
+import com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryDTO;
 import com.ycandyz.master.enums.LayerEnum;
 import com.ycandyz.master.enums.SortValueEnum;
 import com.ycandyz.master.enums.StatusEnum;
@@ -84,6 +85,15 @@ public class MallCategoryServiceImpl implements MallCategoryService {
             }
         }
         return mallCategoryDTO;
+    }
+
+    //查询一级分类
+    @Override
+    public OrganizeMallCategoryDTO selectCategory() {
+        UserVO userVO = UserRequest.getCurrentUser();
+        String shopNo = userVO.getShopNo();
+        OrganizeMallCategoryDTO organizeMallCategoryDTO = mallCategoryDao.selectByShopNo(shopNo);
+        return organizeMallCategoryDTO;
     }
 
     /**
