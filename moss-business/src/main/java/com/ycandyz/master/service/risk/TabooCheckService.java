@@ -10,4 +10,6 @@ import java.util.List;
 public interface TabooCheckService {
 
     List<String> check(String txt);
+
+    void getAllToRedis();
 }

@@ -9,6 +9,7 @@ import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
 import com.ycandyz.master.domain.response.risk.BaseTabooWordsRep;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
 import com.ycandyz.master.model.taboo.BaseTabooWordsVO;
+import com.ycandyz.master.service.risk.impl.TabooCheckServiceImpl;
 import com.ycandyz.master.service.taboo.BaseTabooWordsService;
 import com.ycandyz.master.service.taboo.impl.BaseTabooWordsServiceImpl;
 import com.ycandyz.master.validation.ValidatorContract;
@@ -41,6 +42,9 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
 
     @Autowired
     private BaseTabooWordsService baseTabooWordsService;
+
+    @Autowired
+    private TabooCheckServiceImpl tabooCheckService;
 
     @ApiOperation(value="新增敏感字")
     @PostMapping
@@ -123,4 +127,7 @@ public class BaseTabooWordsController extends BaseController<BaseTabooWordsServi
         return ReturnResponse.success(returnResponse);
     }
 
+//    public ReturnResponse<String> getAllToRedis(){
+//        tabooCheckService.
+//    }
 }

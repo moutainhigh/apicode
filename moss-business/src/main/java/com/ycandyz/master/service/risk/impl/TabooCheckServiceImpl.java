@@ -59,6 +59,18 @@ public class TabooCheckServiceImpl implements TabooCheckService {
        return lists;
     }
 
+    @Override
+    public void getAllToRedis() {
+        Map<String,String> map = new HashMap<>();
+        List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
+        tabooWordsForReviews.forEach(s->map.put(s.getPhraseName(),s.getTabooWords()));
+        Map<Object, Object> Taboomaps = null;
+        if (redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP)!=null){
+            Taboomaps = redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP);
+            map.forEach((k,v)->{Taboomaps.put(k,MyCollectionUtils.parseIds(v));});
+        }
+    }
+
 //    @PostConstruct
 //    public void init(){
 //        Map<String,String> map = new HashMap<>();
@@ -78,7 +90,7 @@ public class TabooCheckServiceImpl implements TabooCheckService {
 //    }
 
     //新增敏感词消费kafka消息
-    @KafkaListener(topics = KafkaConstant.TABOOTOPIC, groupId = "group_kafka_taboo")
+    @KafkaListener(topics = KafkaConstant.TABOOTOPIC, groupId = "group_kafka_taboo-test")
     public void addTaboo(ConsumerRecord<?, ?> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         Optional message = Optional.ofNullable(record.value());
         if (message.isPresent()) {
