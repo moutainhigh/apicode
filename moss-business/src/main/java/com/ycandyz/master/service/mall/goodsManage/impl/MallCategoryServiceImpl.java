@@ -89,11 +89,11 @@ public class MallCategoryServiceImpl implements MallCategoryService {
 
     //查询一级分类
     @Override
-    public OrganizeMallCategoryDTO selectCategory() {
+    public List<OrganizeMallCategoryDTO> selectCategory() {
         UserVO userVO = UserRequest.getCurrentUser();
         String shopNo = userVO.getShopNo();
-        OrganizeMallCategoryDTO organizeMallCategoryDTO = mallCategoryDao.selectByShopNo(shopNo);
-        return organizeMallCategoryDTO;
+        List<OrganizeMallCategoryDTO> organizeMallCategoryDTOs = mallCategoryDao.selectByShopNo(shopNo);
+        return organizeMallCategoryDTOs;
     }
 
     /**

@@ -2,6 +2,7 @@ package com.ycandyz.master.service.miniprogram.impl;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
@@ -42,7 +43,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     private MpConfigPlanDao mpConfigPlanDao;
 
     @Autowired
-    private MpConfigPlanPageDao mpConfigPlanPageDao;
+    private MallCategoryDao mallCategoryDao;
 
     @Autowired
     private MpConfigModuleBaseDao mpConfigModuleBaseDao;
@@ -162,6 +163,11 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             log.info("企业小程序单个菜单页面-plan-保存草稿入参:{}",organizeMpConfigPlan1);
             organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
             saveMenuAndPage(null,organizeMenuMpRequestVO,organizeId,2);
+        }
+        //保存一级图片
+        List<OrganizeMallCategoryVO> organizeMallCategoryVO = organizeMenuMpRequestVO.getOrganizeMallCategoryVO();
+        if (organizeMallCategoryVO != null){
+            mallCategoryDao.updateParentCategoryImg(organizeMallCategoryVO);
         }
 
     }

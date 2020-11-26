@@ -1,5 +1,6 @@
 package com.ycandyz.master.vo;
 
+import com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,5 +17,8 @@ public class OrganizeMpRequestVO {
 
    @ApiModelProperty(value = "状态 [0:草稿；1:发布成功]")
    private Integer status;
+
+   @ApiModelProperty(value = "一级分类")
+   private OrganizeMallCategoryVO organizeMallCategoryVO;
 
 }

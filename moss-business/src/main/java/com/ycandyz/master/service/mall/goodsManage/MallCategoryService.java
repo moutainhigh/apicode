@@ -21,7 +21,7 @@ public interface MallCategoryService {
 
     MallCategoryDTO select(String categoryNo);
 
-    OrganizeMallCategoryDTO selectCategory();
+    List<OrganizeMallCategoryDTO> selectCategory();
 
     int delete(String categoryNo);
 

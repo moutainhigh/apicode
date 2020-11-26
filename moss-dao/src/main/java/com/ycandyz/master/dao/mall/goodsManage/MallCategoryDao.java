@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.entities.mall.goodsManage.MallParentCategory;
 import com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryDTO;
+import com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryVO;
 import com.ycandyz.master.vo.MallCategoryVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -36,5 +37,7 @@ public interface MallCategoryDao extends BaseMapper<MallCategory> {
 
     int updateMallCategory(@Param("mallCategoryVO") MallCategoryVO mallCategoryVO, @Param("shopNo") String shopNo);
 
-    OrganizeMallCategoryDTO selectByShopNo(String shopNo);
+    List<OrganizeMallCategoryDTO> selectByShopNo(String shopNo);
+
+    int  updateParentCategoryImg(List<OrganizeMallCategoryVO> organizeMallCategoryVO);
 }

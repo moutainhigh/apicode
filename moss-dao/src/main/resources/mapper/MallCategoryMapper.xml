@@ -35,6 +35,9 @@
     <update id="updateMallCategoryImg">
         update mall_category set category_img = #{imgUrl} where category_no = #{categoryNo}
     </update>
+    <update id="updateParentCategoryImg">
+        update mall_category set category_img = #{categoryImg} where category_no = #{categoryNo}
+    </update>
 
     <delete id="delCategoryByCategoryNo" parameterType="java.lang.String">
         delete from mall_category where shop_no = #{shopNo,jdbcType=VARCHAR} and category_no = #{categoryNo,jdbcType=VARCHAR};

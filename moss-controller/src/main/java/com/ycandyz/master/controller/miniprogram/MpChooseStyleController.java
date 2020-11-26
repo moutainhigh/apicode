@@ -98,10 +98,10 @@ public class MpChooseStyleController {
 
     @ApiOperation(value = "查询商城一级分类",notes = "查询",tags = "企业小程序DIY配置",httpMethod = "GET")
     @GetMapping("/organize/category")
-    public CommonResult<BaseResult<OrganizeMallCategoryDTO>> selectCategory(){
-        OrganizeMallCategoryDTO organizeMallCategoryDTO = mallCategoryService.selectCategory();
-        log.info("查询一级分类请求出参:{}",organizeMallCategoryDTO);
-        return CommonResult.success(new BaseResult<>(organizeMallCategoryDTO));
+    public CommonResult<BaseResult<List<OrganizeMallCategoryDTO>>> selectCategory(){
+        List<OrganizeMallCategoryDTO> organizeMallCategoryDTOs = mallCategoryService.selectCategory();
+        log.info("查询一级分类请求出参:{}",organizeMallCategoryDTOs);
+        return CommonResult.success(new BaseResult<>(organizeMallCategoryDTOs));
     }
 
 
