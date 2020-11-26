@@ -130,18 +130,19 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="page_size",value="条数",required=true,dataType="Long"),
             @ApiImplicitParam(name="mall_order_query",value="查询条件",dataType="String"),
             @ApiImplicitParam(name="status",value="状态：全部传空，10-待支付  20-待发货 30-待收货 40-已收货  50-已取消",dataType="Integer"),
+            @ApiImplicitParam(name="deliver_type",value="发货方式 全部传空:1-配送 2-自提",dataType="Integer"),
             @ApiImplicitParam(name="order_at_begin",value="下单开始时间",dataType="Long"),
             @ApiImplicitParam(name="order_at_end",value="下单结束时间",dataType="Long")
     })
     @GetMapping("/u-app/order")
-    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam(value = "mall_order_query", required = false) String mallOrderQuery, @RequestParam(value = "status", required = false) Integer status, @RequestParam(value = "order_at_begin", required = false) Long orderAtBegin, @RequestParam(value = "order_at_end", required = false) Long orderAtEnd){
+    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam(value = "mall_order_query", required = false) String mallOrderQuery, @RequestParam(value = "status", required = false) Integer status, @RequestParam(value = "deliver_type", required = false) Integer deliverType, @RequestParam(value = "order_at_begin", required = false) Long orderAtBegin, @RequestParam(value = "order_at_end", required = false) Long orderAtEnd){
         if (page==null || pageSize==null){
             return CommonResult.failed("请求入参为空");
         }
         if (mallOrderQuery!=null && !"".equals(mallOrderQuery)){
             mallOrderQuery = mallOrderQuery.trim();
         }
-        return mallOrderService.queryMallOrderListByUApp(page,pageSize,mallOrderQuery,status,orderAtBegin,orderAtEnd);
+        return mallOrderService.queryMallOrderListByUApp(page,pageSize,mallOrderQuery,status,deliverType,orderAtBegin,orderAtEnd);
     }
 
     /**
