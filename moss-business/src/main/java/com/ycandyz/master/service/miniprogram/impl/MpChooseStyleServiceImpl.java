@@ -164,10 +164,12 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
             saveMenuAndPage(null,organizeMenuMpRequestVO,organizeId,2);
         }
-        //保存一级图片
-        List<OrganizeMallCategoryVO> organizeMallCategoryVO = organizeMenuMpRequestVO.getImgurls();
-        if (organizeMallCategoryVO != null){
-            mallCategoryDao.updateParentCategoryImg(organizeMallCategoryVO);
+        //保存分类一级图片
+        List<OrganizeMallCategoryVO> organizeMallCategoryVOs = organizeMenuMpRequestVO.getImgurls();
+        if (organizeMallCategoryVOs !=  null && organizeMallCategoryVOs.size() > 0){
+            for (OrganizeMallCategoryVO o:organizeMallCategoryVOs) {
+                mallCategoryDao.updateParentCategoryImg(o);
+            }
         }
 
     }
