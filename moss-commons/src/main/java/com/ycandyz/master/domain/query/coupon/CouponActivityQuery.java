@@ -48,7 +48,7 @@ public class CouponActivityQuery implements Serializable {
     @Condition(condition = ConditionEnum.EQ)
     private String name;
 
-    @ApiModelProperty(value = "创建时间")
+    @ApiModelProperty(name = "created_time",value = "创建时间")
     @Condition(field = "created_time", condition = ConditionEnum.EQ)
     private Date createdTime;
 
