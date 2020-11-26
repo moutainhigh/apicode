@@ -165,7 +165,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             saveMenuAndPage(null,organizeMenuMpRequestVO,organizeId,2);
         }
         //保存一级图片
-        List<OrganizeMallCategoryVO> organizeMallCategoryVO = organizeMenuMpRequestVO.getOrganizeMallCategoryVO();
+        List<OrganizeMallCategoryVO> organizeMallCategoryVO = organizeMenuMpRequestVO.getImgurls();
         if (organizeMallCategoryVO != null){
             mallCategoryDao.updateParentCategoryImg(organizeMallCategoryVO);
         }

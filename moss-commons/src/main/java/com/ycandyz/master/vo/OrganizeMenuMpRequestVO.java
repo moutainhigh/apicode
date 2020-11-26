@@ -25,6 +25,6 @@ public class OrganizeMenuMpRequestVO {
    private Integer reselectMoudle;
 
    @ApiModelProperty(value = "一级分类")
-   private List<OrganizeMallCategoryVO> organizeMallCategoryVO;
+   private List<OrganizeMallCategoryVO> imgurls;
 
 }

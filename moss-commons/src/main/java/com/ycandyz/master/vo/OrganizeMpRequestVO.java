@@ -19,6 +19,6 @@ public class OrganizeMpRequestVO {
    private Integer status;
 
    @ApiModelProperty(value = "一级分类")
-   private OrganizeMallCategoryVO organizeMallCategoryVO;
+   private List<OrganizeMallCategoryVO> imgurls;
 
 }

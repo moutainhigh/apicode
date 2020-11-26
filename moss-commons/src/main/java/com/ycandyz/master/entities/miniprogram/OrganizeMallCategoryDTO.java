@@ -1,6 +1,5 @@
 package com.ycandyz.master.entities.miniprogram;
 
-import com.ycandyz.master.entities.mall.goodsManage.MallParentCategory;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -21,5 +20,8 @@ public class OrganizeMallCategoryDTO {
 
     @ApiModelProperty(value = "分类名称")
     private String categoryName;
+
+    @ApiModelProperty(value = "分类名称")
+    private String categoryImg;
 
 }
