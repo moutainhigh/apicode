@@ -95,18 +95,21 @@ public class UserExportRecordServiceImpl extends BaseService<UserExportRecordDao
         }
         try {
             UserExportRecord userExportRecord = new UserExportRecord();
+            BeanUtils.copyProperties(userExportRecordReq,userExportRecord);
             if (userExportRecordReq.getOrganizeId() != null){
                 OrganizeDTO organizeDTO = organizeDao.queryName(userExportRecordReq.getOrganizeId());
                 if (organizeDTO != null){
                     userExportRecord.setOrganizeName(organizeDTO.getShortName());
                 }
+            }else {
+                userExportRecord.setOrganizeId(0L);
+                userExportRecord.setOrganizeName("");
             }
             UserForExport userForExport = userDao.selectForExport(userExportRecordReq.getOperatorId());
             if (userForExport != null){
                 userExportRecord.setOperatorName(userForExport.getName());
                 userExportRecord.setOperatorPhone(userForExport.getPhone());
             }
-            BeanUtils.copyProperties(userExportRecordReq,userExportRecord);
             log.info("导出记录导入数据{}",userExportRecord);
             userExportRecordDao.insertUserExportRecord(userExportRecord);
             return ReturnResponse.success("导出记录导入数据成功");
