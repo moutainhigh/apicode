@@ -31,11 +31,11 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,moudle_img_url
+        id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,replace_pic_url
     </sql>
     <insert id="insertSingle">
-        insert into organize_mp_config_plan_page(id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,logic_delete,moudle_img_url)
-        values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0,#{moudleImgUrl})
+        insert into organize_mp_config_plan_page(id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,logic_delete,replace_pic_url)
+        values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0,#{replacePicUrl})
     </insert>
     <update id="updateBaseNameById">
         update organize_mp_config_plan_page
@@ -59,6 +59,7 @@
                 and p.menu_id = #{menuId}
             </if>
         </where>
+        order by p.sort_module asc,p.sort_base asc;
     </select>
 
     <select id="getMenuModuleElement" resultMap="BaseResultMap2" >

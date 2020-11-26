@@ -235,17 +235,18 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
                 for (OrganizeMpConfigPageMenuVo o : modules) {
                     List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
-                    for (OrganizeMpConfigModuleBaseVo omcmb : baseInfo) {
+                    for (OrganizeMpConfigModuleBaseVo base : baseInfo) {
                         OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
                         organizeMpConfigPlanPage.setMenuId(menuId2);
                         organizeMpConfigPlanPage.setModuleId(o.getModuleId());
-                        organizeMpConfigPlanPage.setModuleBaseId(omcmb.getId());
-                        organizeMpConfigPlanPage.setShowLayout(omcmb.getShowLayout());
+                        organizeMpConfigPlanPage.setModuleBaseId(base.getId());
+                        organizeMpConfigPlanPage.setShowLayout(base.getShowLayout());
                         organizeMpConfigPlanPage.setSortModule(o.getSortModule());
-                        organizeMpConfigPlanPage.setSortBase(omcmb.getSortBase());
-                        organizeMpConfigPlanPage.setBaseName(omcmb.getBaseName());
+                        organizeMpConfigPlanPage.setSortBase(base.getSortBase());
+                        organizeMpConfigPlanPage.setBaseName(base.getBaseName());
                         organizeMpConfigPlanPage.setLogicDelete(o.getIsDel());
                         organizeMpConfigPlanPage.setReplacePicUrl(o.getReplacePicUrl());
+                        //organizeMpConfigPlanPage.setId(base.getOrganizeMpConfigPlanPageId());
                         log.info("企业小程序单个菜单页面-page-保存当前菜单页面入参:{}", o);
                         organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
                     }
