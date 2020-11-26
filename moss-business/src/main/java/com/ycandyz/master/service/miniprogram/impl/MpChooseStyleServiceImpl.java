@@ -72,6 +72,10 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
         if (organizeMpConfigPlanMenuDTO != null){
             organizeMpConfigPageSingleMenuVO.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
+            OrganizeMpConfigPlan organizePlan = organizeMpConfigPlanDao.getOrganizePlanByPlanId(organizeMpConfigPlanMenuDTO.getOrganizePlanId());
+            if (organizePlan != null){
+                organizeMpConfigPageSingleMenuVO.setMpPlanId(organizePlan.getMpPlanId());
+            }
         }
         List<OrganizeMpConfigModuleVO> moudles = new ArrayList<>();
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
@@ -94,9 +98,10 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                         organizeMpConfigModuleBaseVO.setSortBase(dto.getSortBase());
                         organizeMpConfigModuleBaseVO.setShowLayout(dto.getShowLayout());
                         organizeMpConfigModuleBaseVO.setDisplayNum(mpConfigModuleBase.getDisplayNum());
-                        organizeMpConfigModuleBaseVO.setId(dto.getId());
+                        //organizeMpConfigModuleBaseVO.setId(dto.getId());
                         organizeMpConfigModuleBaseVO.setReplacePicUrl(dto.getReplacePicUrl());
-                        organizeMpConfigModuleBaseVO.setModuleBaseId(mpConfigModuleBase.getId());
+                        //organizeMpConfigModuleBaseVO.setModuleBaseId(mpConfigModuleBase.getId());
+                        organizeMpConfigModuleBaseVO.setId(mpConfigModuleBase.getId());
                         baseInfoList.add(organizeMpConfigModuleBaseVO);
                     }
                 }
@@ -141,6 +146,10 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
 
     @Override
     public void saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
+        boolean have = check(organizeMenuMpRequestVO);
+        if (have){
+            log.error("企业小程序单页保存参数为空");
+        }
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
         OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getByOrganizeId(organizeId);
@@ -172,6 +181,19 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             }
         }
 
+    }
+
+    private boolean check(OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
+        if (organizeMenuMpRequestVO == null){
+            return true;
+        }
+        if (organizeMenuMpRequestVO.getMenuName() == null){
+            return true;
+        }
+        if (organizeMenuMpRequestVO.getMpPlanId() == null){
+            return true;
+        }
+        return false;
     }
 
     private void selAndUpdatePlan(Integer mpPlanId, Long organizeId, Integer organizePlanId,Integer reselectMoudle) {
@@ -219,6 +241,22 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
                     BeanUtils.copyProperties(m, organizeMpConfigPlanMenu);
                     organizeMpConfigPlanMenu.setOrganizePlanId(finalOrganizePlanId);
+                    if (m.getCanDelete()== false){
+                        organizeMpConfigPlanMenu.setCanDelete(1);
+                    }else {
+                        organizeMpConfigPlanMenu.setCanDelete(0);
+                    }
+                    if (m.getCanLayout()== false){
+                        organizeMpConfigPlanMenu.setCanLayout(1);
+                    }else {
+                        organizeMpConfigPlanMenu.setCanLayout(0);
+                    }
+                    if (m.getLogicDelete()== false){
+                        organizeMpConfigPlanMenu.setLogicDelete(1);
+                    }else {
+                        organizeMpConfigPlanMenu.setLogicDelete(0);
+                    }
+
                     if (organizeMpConfigPlanMenuDTO != null){
                         organizeMpConfigPlanMenu.setId(organizeMpConfigPlanMenuDTO.getId());
                     }else {
