@@ -1,10 +1,7 @@
 package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.api.BasePageResult;
-import com.ycandyz.master.api.CommonResult;
-import com.ycandyz.master.api.RequestParams;
-import com.ycandyz.master.api.ReturnResponse;
+import com.ycandyz.master.api.*;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.domain.query.mall.uApp.MallPickupUAppQuery;
@@ -114,15 +111,15 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "获取快递公司列表",notes = "获取快递公司列表",httpMethod = "GET")
     @GetMapping("/u-app/delivery/company")
-    public ReturnResponse<List<Map<String, String>>> getDeliveryCompanyList(){
+    public CommonResult<BaseResult<List<Map<String, String>>>> getDeliveryCompanyList(){
         List<Map<String, String>> list = ExpressEnum.getMap();
-        return ReturnResponse.success(list);
+        return CommonResult.success(new BaseResult<List<Map<String, String>>>(list));
     }
 
     /**
      * UApp项目订单列表接口,UApp
      * @param page
-     * @param page_size
+     * @param pageSize
      * @param mallOrderQuery
      * @param status
      * @return
