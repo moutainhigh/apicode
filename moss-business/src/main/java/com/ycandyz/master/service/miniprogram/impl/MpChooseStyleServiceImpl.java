@@ -1,7 +1,6 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import com.alibaba.fastjson.JSON;
 import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
@@ -169,7 +168,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             organizeMpConfigPlan1.setOrganizeId(organizeId);
             organizeMpConfigPlan1.setCurrentUsing(0);
             organizeMpConfigPlan1.setLogicDelete(0);
-            log.info("企业小程序单个菜单页面-plan-保存草稿入参:{}",organizeMpConfigPlan1);
+            log.info("企业小程序单个菜单页面-plan-保存草稿入参:{}", JSON.toJSONString(organizeMpConfigPlan1));
             organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
             saveMenuAndPage(null,organizeMenuMpRequestVO,organizeId,2);
         }
@@ -215,7 +214,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         organizeMpConfigPlan1.setOrganizeId(organizeId);
         organizeMpConfigPlan1.setCurrentUsing(0);
         organizeMpConfigPlan1.setLogicDelete(0);
-        log.info("企业小程序单个菜单页面-plan-更新草稿入参:{}",organizeMpConfigPlan1);
+        log.info("企业小程序单个菜单页面-plan-更新草稿入参:{}",JSON.toJSONString(organizeMpConfigPlan1));
         organizeMpConfigPlanDao.updateByOrganizePlanId(organizeMpConfigPlan1);
     }
 
@@ -242,19 +241,19 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     BeanUtils.copyProperties(m, organizeMpConfigPlanMenu);
                     organizeMpConfigPlanMenu.setOrganizePlanId(finalOrganizePlanId);
                     if (m.getCanDelete()== false){
-                        organizeMpConfigPlanMenu.setCanDelete(1);
-                    }else {
                         organizeMpConfigPlanMenu.setCanDelete(0);
+                    }else {
+                        organizeMpConfigPlanMenu.setCanDelete(1);
                     }
                     if (m.getCanLayout()== false){
-                        organizeMpConfigPlanMenu.setCanLayout(1);
-                    }else {
                         organizeMpConfigPlanMenu.setCanLayout(0);
+                    }else {
+                        organizeMpConfigPlanMenu.setCanLayout(1);
                     }
                     if (m.getLogicDelete()== false){
-                        organizeMpConfigPlanMenu.setLogicDelete(1);
-                    }else {
                         organizeMpConfigPlanMenu.setLogicDelete(0);
+                    }else {
+                        organizeMpConfigPlanMenu.setLogicDelete(1);
                     }
 
                     if (organizeMpConfigPlanMenuDTO != null){
@@ -262,19 +261,20 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     }else {
                         organizeMpConfigPlanMenu.setId(null);
                     }
-                    log.info("企业小程序单个菜单页面-menu-保存全部菜单页面入参:{}", organizeMpConfigPlanMenu);
+                    log.info("企业小程序单个菜单页面-menu-保存全部菜单页面入参:{}", JSON.toJSONString(organizeMpConfigPlanMenu));
                     organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
                 }
                 //保存page
                 //1。先清除当前要保存的单个菜单page
                 //根据planid和title查询menuid
-                OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO2 = organizeMpConfigPlanMenuDao.selByIdAndName(finalOrganizePlanId, organizeMenuMpRequestVO.getMenuName());
-                Integer menuId2 = 0;
-                if (organizeMpConfigPlanMenuDTO2 != null) {
-                    menuId2 = organizeMpConfigPlanMenuDTO2.getId();
-                }
+//                OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO2 = organizeMpConfigPlanMenuDao.selByIdAndName(finalOrganizePlanId, organizeMenuMpRequestVO.getMenuName());
+//                Integer menuId2 = 0;
+//                if (organizeMpConfigPlanMenuDTO2 != null) {
+//                    menuId2 = organizeMpConfigPlanMenuDTO2.getId();
+//                }
                 //根据menuid查询page,清除page
-                List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selectByMenuId(menuId2);
+                Integer menuId2 = organizeMenuMpRequestVO.getMenuId();
+                        List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selectByMenuId(menuId2);
                 if (organizeMpConfigPlanPageDTOS2 != null && organizeMpConfigPlanPageDTOS2.size() > 0) {
                     organizeMpConfigPlanPageDao.delByMenuId(menuId2);
                 }
@@ -294,7 +294,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                         organizeMpConfigPlanPage.setLogicDelete(o.getIsDel());
                         organizeMpConfigPlanPage.setReplacePicUrl(o.getReplacePicUrl());
                         //organizeMpConfigPlanPage.setId(base.getOrganizeMpConfigPlanPageId());
-                        log.info("企业小程序单个菜单页面-page-保存当前菜单页面入参:{}", o);
+                        log.info("企业小程序单个菜单页面-page-保存当前菜单页面入参:{}", JSON.toJSONString(organizeMpConfigPlanPage));
                         organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
                     }
                 }
