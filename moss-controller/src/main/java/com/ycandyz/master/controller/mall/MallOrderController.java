@@ -127,14 +127,14 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "UApp项目订单列表接口",notes = "UApp项目订单列表接口",httpMethod = "GET")
     @GetMapping("/u-app/order")
-    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("mall_order_query") String mallOrderQuery, @RequestParam("status") Integer status){
+    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("mall_order_query") String mallOrderQuery, @RequestParam("status") Integer status, @RequestParam("orderAtBegin") Long orderAtBegin, @RequestParam("orderAtEnd") Long orderAtEnd){
         if (page==null || page_size==null){
             return ReturnResponse.failed("请求入参为空");
         }
         if (mallOrderQuery!=null && !"".equals(mallOrderQuery)){
             mallOrderQuery = mallOrderQuery.trim();
         }
-        return mallOrderService.queryMallOrderListByUApp(page,page_size,mallOrderQuery,status);
+        return mallOrderService.queryMallOrderListByUApp(page,page_size,mallOrderQuery,status,orderAtBegin,orderAtEnd);
     }
 
     /**
@@ -194,7 +194,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "分佣列表",notes = "通过订单编号或购物车编号获取分佣列表",httpMethod = "GET")
     @GetMapping("/u-app/order/commission")
-    public ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("orderNo") String orderNo){
+    public ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("order_no") String orderNo){
         if (page==null || page_size==null){
             return ReturnResponse.failed("分页参数为空");
         }
