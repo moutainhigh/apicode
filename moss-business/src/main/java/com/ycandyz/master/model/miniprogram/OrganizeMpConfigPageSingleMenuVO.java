@@ -3,6 +3,7 @@ package com.ycandyz.master.model.miniprogram;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -24,5 +25,5 @@ public class OrganizeMpConfigPageSingleMenuVO {
     private String menuName;
 
     @ApiModelProperty(value = "modules")
-    private  List<OrganizeMpConfigModuleVO>  modules;
+    private List<OrganizeMpConfigModuleVO> modules;
 }

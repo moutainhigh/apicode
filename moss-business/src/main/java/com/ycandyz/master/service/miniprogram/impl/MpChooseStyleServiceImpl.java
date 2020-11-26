@@ -1,5 +1,7 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
@@ -16,8 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Float.parseFloat;
 
@@ -74,17 +75,17 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
         for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
             List<Integer> baseIds = new ArrayList<>();
-            List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
+            OrganizeMpConfigModuleVO organizeMpConfigModuleVO = new OrganizeMpConfigModuleVO();
+            organizeMpConfigModuleVO.setModuleId(dto.getModuleId());
+            organizeMpConfigModuleVO.setModuleName(dto.getModuleName());
+            organizeMpConfigModuleVO.setSortModule(dto.getSortModule());
+            organizeMpConfigModuleVO.setDisplayNum(dto.getDisplayNum());
             if (dto.getModuleBaseIds() != null) {
+                List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
                 for (String id : dto.getModuleBaseIds().split(",")) {
                     baseIds.add(Integer.parseInt(id));
                     MpConfigModuleBase mpConfigModuleBase = mpConfigModuleBaseDao.selectByBaseId(Integer.parseInt(id));
                     if (mpConfigModuleBase != null){
-                        OrganizeMpConfigModuleVO organizeMpConfigModuleVO = new OrganizeMpConfigModuleVO();
-                        organizeMpConfigModuleVO.setModuleId(dto.getModuleId());
-                        organizeMpConfigModuleVO.setModuleName(dto.getModuleName());
-                        organizeMpConfigModuleVO.setSortModule(dto.getSortModule());
-                        organizeMpConfigModuleVO.setDisplayNum(dto.getDisplayNum());
                         OrganizeMpConfigModuleBaseVO organizeMpConfigModuleBaseVO = new OrganizeMpConfigModuleBaseVO();
                         organizeMpConfigModuleBaseVO.setBaseCode(mpConfigModuleBase.getBaseCode());
                         organizeMpConfigModuleBaseVO.setBaseName(dto.getBaseName());
@@ -94,15 +95,45 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                         organizeMpConfigModuleBaseVO.setId(dto.getId());
                         organizeMpConfigModuleBaseVO.setReplacePicUrl(dto.getReplacePicUrl());
                         organizeMpConfigModuleBaseVO.setModuleBaseId(mpConfigModuleBase.getId());
-                        //baseInfoList.add(organizeMpConfigModuleBaseVO);
-                        organizeMpConfigModuleVO.setBaseInfo(organizeMpConfigModuleBaseVO);
-                        //baseInfoList.add(organizeMpConfigModuleBaseVO);
-                        moudles.add(organizeMpConfigModuleVO);
+                        baseInfoList.add(organizeMpConfigModuleBaseVO);
                     }
                 }
+                organizeMpConfigModuleVO.setBaseInfo(baseInfoList);
             }
-            organizeMpConfigPageSingleMenuVO.setModules(moudles);
+            moudles.add(organizeMpConfigModuleVO);
         }
+        Map<Integer,List<OrganizeMpConfigModuleBaseVO>> map = new HashMap<>();
+        for (OrganizeMpConfigModuleVO o: moudles) {
+            if (map.containsKey(o.getModuleId())){
+                List<OrganizeMpConfigModuleBaseVO> baseInfos2 = map.get(o.getModuleId());
+                baseInfos2.addAll(o.getBaseInfo());
+                map.put(o.getModuleId(),baseInfos2);
+            }else {
+                map.put(o.getModuleId(),o.getBaseInfo());
+            }
+        }
+
+        List<OrganizeMpConfigModuleVO> moudles2 = new ArrayList<>();
+        for (OrganizeMpConfigModuleVO o: moudles) {
+            OrganizeMpConfigModuleVO organizeMpConfigModuleVO = new OrganizeMpConfigModuleVO();
+            if (map.get(o.getModuleId()) != null){
+                organizeMpConfigModuleVO.setModuleId(o.getModuleId());
+                organizeMpConfigModuleVO.setModuleName(o.getModuleName());
+                organizeMpConfigModuleVO.setDisplayNum(o.getDisplayNum());
+                organizeMpConfigModuleVO.setSortModule(o.getSortModule());
+                organizeMpConfigModuleVO.setBaseInfo(map.get(o.getModuleId()));
+            }
+            moudles2.add(organizeMpConfigModuleVO);
+        }
+        Map<Integer,OrganizeMpConfigModuleVO> map2 = new HashMap<>();
+        for (OrganizeMpConfigModuleVO o: moudles2) {
+                map2.put(o.getModuleId(),o);
+        }
+        List<OrganizeMpConfigModuleVO> moudles3 = new ArrayList<>();
+        for (Map.Entry<Integer,OrganizeMpConfigModuleVO> mapsss: map2.entrySet()) {
+            moudles3.add(mapsss.getValue());
+        }
+        organizeMpConfigPageSingleMenuVO.setModules(moudles3);
         return organizeMpConfigPageSingleMenuVO;
     }
 
