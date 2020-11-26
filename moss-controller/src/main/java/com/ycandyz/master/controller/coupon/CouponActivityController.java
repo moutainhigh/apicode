@@ -71,7 +71,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 	@ApiOperation(value = "查询分页")
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponActivity>> selectPage(PageModel page,CouponActivityQuery query) {
+    public CommonResult<BasePageResult<CouponActivity>> getPage(PageModel page,CouponActivityQuery query) {
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
 
@@ -79,7 +79,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @ApiOperation(value = "已选优惠卷-分页")
     @GetMapping(value = "ticket/page")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponActivityTicketResp>> selectTicketPage(PageModel page,CouponActivityTicketQuery query) {
+    public CommonResult<BasePageResult<CouponActivityTicketResp>> getTicketPage(PageModel page,CouponActivityTicketQuery query) {
         return CommonResult.success(new BasePageResult(service.selectTicketPage(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
 
@@ -87,7 +87,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @ApiOperation(value = "全部优惠卷-分页")
     @GetMapping(value = "activity-ticket/page")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponActivityTicketResp>> selectActivityTicketPage(PageModel page,CouponActivityTicketQuery query) {
+    public CommonResult<BasePageResult<CouponActivityTicketResp>> getActivityTicketPage(PageModel page,CouponActivityTicketQuery query) {
         return CommonResult.success(new BasePageResult(service.selectActivityTicketPage(new Page(page.getPageNum(),page.getPageSize()),query)));
     }
     

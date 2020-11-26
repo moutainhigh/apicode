@@ -23,6 +23,7 @@ import com.ycandyz.master.service.coupon.ICouponActivityService;
 import com.ycandyz.master.controller.base.BaseService;
 
 import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.DateUtils;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import com.ycandyz.master.utils.QueryUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +68,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 .apply(null != query.getCreatedTimeS(),
                         "date_format (created_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreatedTimeS()) + "','%Y-%m-%d')")
                 .apply(null != query.getCreatedTimeE(),
-                        "date_format (created_time,'%Y-%m-%d') <= date_format('" + queryEndDate(query.getCreatedTimeE())+ "','%Y-%m-%d')")
+                        "date_format (created_time,'%Y-%m-%d') <= date_format('" + DateUtils.queryEndDate(query.getCreatedTimeE())+ "','%Y-%m-%d')")
                 .like(StrUtil.isNotEmpty(query.getName()),CouponActivity::getName,query.getName())
                 .eq(CouponActivity::getShopNo, query.getShopNo())
                 //.eq(CouponActivity::getStatus, SpecialEnum.EnabledEnum.DISABLE.getCode())
@@ -99,10 +100,10 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         List<CouponActivityTicketResp> activityTicketList = couponActivityTicketService.list(entity.getActivityNo());
         activityTicketList.stream().forEach(f -> {
             if (f.getBeginAt() != null && f.getBeginAt() != 0){
-                f.setBeginTime(getCurrentDate(f.getBeginAt()));
+                f.setBeginTime(DateUtils.getCurrentDate(f.getBeginAt()));
             }
             if (f.getEndAt() != null && f.getEndAt() != 0){
-                f.setEndTime(getCurrentDate(f.getEndAt()));
+                f.setEndTime(DateUtils.getCurrentDate(f.getEndAt()));
             }
         });
         vo.setActivityTicketList(activityTicketList);

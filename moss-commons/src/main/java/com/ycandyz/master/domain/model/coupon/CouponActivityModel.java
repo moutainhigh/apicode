@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -39,16 +41,16 @@ public class CouponActivityModel {
     private Long id;
 
     @ApiModelProperty(name = "activity_no",value = "活动编号")
-    @NotNull(message = "活动编号不能为空",groups = {ValidatorContract.OnUpdate.class})
+    @NotBlank(message = "活动编号不能为空",groups = {ValidatorContract.OnUpdate.class})
     private String activityNo;
 
     @Size(max = 40, message = "活动名称不能大于20个字。",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-    @NotNull(message = "活动名称不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+    @NotBlank(message = "活动名称不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(value = "活动名称")
     private String name;
 
     @Size(max = 8, message = "活动入口名称不能大于4个字。",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-    @NotNull(message = "活动入口名称不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+    @NotBlank(message = "活动入口名称不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "join_name",value = "活动入口名称")
     private String joinName;
 
@@ -76,7 +78,7 @@ public class CouponActivityModel {
     @ApiModelProperty(name = "page_type",value = "页面设置：0店铺页面")
     private Integer pageType;
 
-    @NotNull(message = "优惠卷编号不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+    @NotEmpty(message = "优惠卷编号不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "ticket_list",value = "优惠卷编号")
     private List<String> ticketList;
 

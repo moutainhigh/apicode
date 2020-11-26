@@ -1,6 +1,8 @@
 package com.ycandyz.master.utils;
 
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import org.springframework.stereotype.Component;
 
@@ -58,5 +60,36 @@ public class DateUtils {
 
         calendar.add(Calendar.DAY_OF_MONTH, i);
         return calendar.getTime();
+    }
+
+    public static Date getCurrentDate(){
+        return new Date();
+    }
+
+    /**
+     * 获取当前时间Long类型
+     */
+    public static Long getCurrentSeconds() {
+        return DateUtil.currentSeconds();
+    }
+
+    /**
+     * 10位long类型转Date
+     */
+    public static Date getCurrentDate(Long dateSeconds){
+        return DateTime.of(dateSeconds*1000L);
+    }
+
+    public static Long getCloseAt(Long closeAt) {
+        AssertUtils.notNull(closeAt, "时间不能为空");
+        DateTime dateTimeReceive = DateUtil.offset(DateTime.of(closeAt*1000L), DateField.DAY_OF_WEEK, 0);
+        return DateUtil.between(dateTimeReceive,DateTime.now(), DateUnit.SECOND);
+    }
+
+    public static String queryEndDate(Date date){
+        if(null == date){
+            return null;
+        }
+        return DateUtil.formatDate(DateUtil.offset(date, DateField.DAY_OF_WEEK, 1));
     }
 }

@@ -9,6 +9,7 @@ import com.ycandyz.master.dao.coupon.CouponActivityTicketDao;
 import com.ycandyz.master.service.coupon.ICouponActivityTicketService;
 import com.ycandyz.master.controller.base.BaseService;
 
+import com.ycandyz.master.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -37,10 +38,10 @@ public class CouponActivityTicketServiceImpl extends BaseService<CouponActivityT
         Page<CouponActivityTicketResp> p = baseMapper.selectTicketPage(page,query);
         p.getRecords().stream().forEach(f -> {
             if (f.getBeginAt() != null && f.getBeginAt() != 0){
-                f.setBeginTime(getCurrentDate(f.getBeginAt()));
+                f.setBeginTime(DateUtils.getCurrentDate(f.getBeginAt()));
             }
             if (f.getEndAt() != null && f.getEndAt() != 0){
-                f.setEndTime(getCurrentDate(f.getEndAt()));
+                f.setEndTime(DateUtils.getCurrentDate(f.getEndAt()));
             }
         });
         return p;
@@ -51,10 +52,10 @@ public class CouponActivityTicketServiceImpl extends BaseService<CouponActivityT
         Page<CouponActivityTicketResp> p = baseMapper.selectActivityTicketPage(page,query);
         p.getRecords().stream().forEach(f -> {
             if (f.getBeginAt() != null && f.getBeginAt() != 0){
-                f.setBeginTime(getCurrentDate(f.getBeginAt()));
+                f.setBeginTime(DateUtils.getCurrentDate(f.getBeginAt()));
             }
             if (f.getEndAt() != null && f.getEndAt() != 0){
-                f.setEndTime(getCurrentDate(f.getEndAt()));
+                f.setEndTime(DateUtils.getCurrentDate(f.getEndAt()));
             }
         });
         return p;

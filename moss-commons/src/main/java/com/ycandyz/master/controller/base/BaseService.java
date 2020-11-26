@@ -39,56 +39,25 @@ import java.util.List;
 public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> extends ServiceImpl<M, T> {
 
     @Autowired
-    public HttpServletRequest request;
+    protected HttpServletRequest request;
 
-    public UserVO getUser() {
+    protected UserVO getUser() {
         return (UserVO)request.getSession().getAttribute(SecurityConstant.USER_TOKEN_HEADER);
     }
 
-    public Long getUserId() {
+    protected Long getUserId() {
         return getUser().getId();
     }
 
-    public String getUsername() {
+    protected String getUsername() {
         return getUser().getName();
     }
 
     /**
      * 获取当前用户登录的店铺编号
      */
-    public String getShopNo() {
+    protected String getShopNo() {
         return getUser().getShopNo();
-    }
-
-    public Date getCurrentDate(){
-        return new Date();
-    }
-
-    /**
-     * 获取当前时间Long类型
-     */
-    public Long getCurrentSeconds() {
-        return DateUtil.currentSeconds();
-    }
-
-    /**
-     * 10位long类型转Date
-     */
-    public Date getCurrentDate(Long dateSeconds){
-        return DateTime.of(dateSeconds*1000L);
-    }
-
-    public Long getCloseAt(Long closeAt) {
-        AssertUtils.notNull(closeAt, "时间不能为空");
-        DateTime dateTimeReceive = DateUtil.offset(DateTime.of(closeAt*1000L), DateField.DAY_OF_WEEK, 0);
-        return DateUtil.between(dateTimeReceive,DateTime.now(), DateUnit.SECOND);
-    }
-
-    public String queryEndDate(Date date){
-        if(null == date){
-            return null;
-        }
-        return DateUtil.formatDate(DateUtil.offset(date, DateField.DAY_OF_WEEK, 1));
     }
 
     public boolean remove(Wrapper wrapper) {
