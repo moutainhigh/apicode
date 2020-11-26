@@ -56,12 +56,11 @@ public interface MpConfigPlanPageDao extends BaseMapper<MpConfigPlanPage> {
 
 
     List<MpConfigPlanPage> selByMenuId(Integer id);
+
     /**
      * 删除菜单下配置模块
      * @param menuId
      * @return
      */
     Boolean deleteByMenuId(@Param("menuId") Integer menuId);
-
-
 }

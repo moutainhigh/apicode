@@ -51,7 +51,7 @@ public class MpConfigPlanMenuServiceImpl extends BaseService<MpConfigPlanMenuDao
 
     @Override
     public Boolean addBatch(PlanMenuModel model) {
-
+        this.baseMapper.deleteByPlanId(model.getPlanId());
         List<MenuWithinPlan> menus = model.getMenus();
         List<MpConfigPlanMenu> planMenuList = new ArrayList<MpConfigPlanMenu>();
         for(MenuWithinPlan menu: menus){
