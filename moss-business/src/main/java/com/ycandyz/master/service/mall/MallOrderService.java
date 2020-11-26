@@ -2,6 +2,8 @@ package com.ycandyz.master.service.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.api.BasePageResult;
+import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
@@ -24,7 +26,7 @@ public interface MallOrderService extends IService<MallOrder> {
 
     ReturnResponse<String> verPickupNo(String pickupNo, String orderNo);
 
-    ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long page_size, String mallOrderQuery, Integer status, Long orderAtBegin, Long orderAtEnd);
+    CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long pageSize, String mallOrderQuery, Integer status, Long orderAtBegin, Long orderAtEnd);
 
     ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(String orderNo);
 
@@ -32,5 +34,5 @@ public interface MallOrderService extends IService<MallOrder> {
 
     ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(MallPickupUAppQuery mallPickupUAppQuery);
 
-    ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(Long page, Long page_size, String orderNo);
+    CommonResult<BasePageResult<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(Long page, Long pageSize, String orderNo);
 }
