@@ -89,12 +89,16 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
     }
 
     /**
-     * 通过物流编号获取物流信息列表
+     * 通过物流编号获取物流信息列表，UApp
      * @param companyCode
      * @param number
      * @return
      */
     @ApiOperation(value = "物流信息",notes = "通过订单编号或购物车编号获取分佣列表",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="company_code",value="快递公司编码",required=true,dataType="String"),
+            @ApiImplicitParam(name="number",value="快递单号",required=true,dataType="String")
+    })
     @GetMapping("/u-app/order/shipment")
     public ReturnResponse<List<MallShopShippingUAppVO>> queryShippingLogListByNo(@RequestParam("company_code") String companyCode, @RequestParam("number") String number){
         if (number==null || !"".equals(number) || companyCode==null || !"".equals(companyCode)){
