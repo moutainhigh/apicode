@@ -30,8 +30,8 @@ public class UserExportRecordQuery implements Serializable {
     @ApiModelProperty(value = "企业名称")
     private String organizeName;
 
-    @ApiModelProperty(value = "操作人id")
-    private Long operatorId;
+    @ApiModelProperty(value = "操作人姓名")
+    private String operatorName;
 
     @ApiModelProperty(value = "导出时间起")
     private Long createdAtStart;

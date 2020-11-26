@@ -58,7 +58,7 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
     @GetMapping
     public ReturnResponse<Page<UserExportRecordVo>> selectPage(@RequestParam(value = "terminal",required = false) Integer terminal,
                                                                  @RequestParam(value = "organizeName",required = false) String organizeName,
-                                                                 @RequestParam(value = "operatorId",required = false) Long operatorId,
+                                                                 @RequestParam(value = "operatorName",required = false) String operatorName,
                                                                  @RequestParam(value = "createdAtStart",required = false) Long createdAtStart,
                                                                  @RequestParam(value = "createdAtEnd",required = false) Long createdAtEnd,
                                                                  @RequestParam(value = "page_size",defaultValue = "10",required = false) Long page_size,
@@ -67,7 +67,7 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
         UserExportRecordQuery userExportRecordQuery = new UserExportRecordQuery();
         userExportRecordQuery.setTerminal(terminal);
         userExportRecordQuery.setOrganizeName(organizeName);
-        userExportRecordQuery.setOperatorId(operatorId);
+        userExportRecordQuery.setOperatorName(operatorName);
         userExportRecordQuery.setCreatedAtStart(createdAtStart);
         userExportRecordQuery.setCreatedAtEnd(createdAtEnd);
         requestParams.setPage_size(page_size);
