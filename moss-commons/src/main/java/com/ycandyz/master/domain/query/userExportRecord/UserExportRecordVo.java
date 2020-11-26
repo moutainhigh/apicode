@@ -1,6 +1,7 @@
 package com.ycandyz.master.domain.query.userExportRecord;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -46,6 +47,7 @@ public class UserExportRecordVo{
     @ApiModelProperty(value = "导出文件链接")
     private String exportFileUrl;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "导出时间")
     private Date createdTime;
 }

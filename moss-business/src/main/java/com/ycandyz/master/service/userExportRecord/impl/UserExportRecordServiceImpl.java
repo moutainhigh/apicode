@@ -96,14 +96,14 @@ public class UserExportRecordServiceImpl extends BaseService<UserExportRecordDao
         try {
             UserExportRecord userExportRecord = new UserExportRecord();
             BeanUtils.copyProperties(userExportRecordReq,userExportRecord);
-            if (userExportRecordReq.getOrganizeId() != null){
+            if (userExportRecordReq.getOrganizeId() == null || userExportRecordReq.getOrganizeId() == 0L){
+                userExportRecord.setOrganizeId(0L);
+                userExportRecord.setOrganizeName("");
+            }else {
                 OrganizeDTO organizeDTO = organizeDao.queryName(userExportRecordReq.getOrganizeId());
                 if (organizeDTO != null){
                     userExportRecord.setOrganizeName(organizeDTO.getShortName());
                 }
-            }else {
-                userExportRecord.setOrganizeId(0L);
-                userExportRecord.setOrganizeName("");
             }
             UserForExport userForExport = userDao.selectForExport(userExportRecordReq.getOperatorId());
             if (userForExport != null){

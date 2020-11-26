@@ -54,7 +54,7 @@
             created_time <= FROM_UNIXTIME(#{u.createdAtEnd}, '%Y-%m-%d %H:%i:%S')
             ]]>-->
         </if>
-
+            order by created_time desc
     </select>
     <insert id="insertUserExportRecord">
         insert into user_export_record(terminal,organize_id,organize_name,operator_id,operator_name,operator_phone,
