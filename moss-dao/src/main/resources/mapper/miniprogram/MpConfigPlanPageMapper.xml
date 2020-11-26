@@ -88,14 +88,14 @@
             </if>
         </where>
     </select>
-    <select id="selByMenuId" resultType="com.ycandyz.master.entities.miniprogram.MpConfigPlanPage">
-        select * from mp_config_plan_page
-        where menu_id = #{menuId} and logic_delete = 0;
-    </select>
 
     <delete id="deleteByMenuId" parameterType="java.lang.Integer">
        delete from mp_config_plan_page where menu_id = #{menuId}
     </delete>
 
+    <select id="selByMenuId" resultType="com.ycandyz.master.entities.miniprogram.MpConfigPlanPage">
+        select * from mp_config_plan_page
+        where menu_id = #{menuId} and logic_delete = 0;
+    </select>
 
 </mapper>

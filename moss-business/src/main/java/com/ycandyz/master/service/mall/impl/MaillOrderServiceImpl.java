@@ -4,6 +4,8 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ycandyz.master.api.BasePageResult;
+import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.constant.CommonConstant;
@@ -873,21 +875,22 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long page_size, String mallOrderQuery, Integer status) {
+    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long pageSize, String mallOrderQuery, Integer status, Long orderAtBegin, Long orderAtEnd) {
         UserVO userVO = getUser();  //获取当前登陆用户
         List<MallOrderUAppVO> list = new ArrayList<>();
-        Page<MallOrderUAppVO> page1 = new Page<>();
+        Integer count = null;   //总条数
         MallOrderUAppQuery mallOrderUAppQuery = new MallOrderUAppQuery();  //请求入参
         mallOrderUAppQuery.setStatus(status);
         mallOrderUAppQuery.setMallOrderQuery(mallOrderQuery);
         mallOrderUAppQuery.setShopNo(userVO.getShopNo());
+        mallOrderUAppQuery.setOrderAtBegin(orderAtBegin);
+        mallOrderUAppQuery.setOrderAtEnd(orderAtEnd);
         try {
             //获取总条数
-            Integer count = mallOrderDao.getTrendMallOrderByUAppPageSize(mallOrderUAppQuery);
-            page1.setTotal(count);
+            count = mallOrderDao.getTrendMallOrderByUAppPageSize(mallOrderUAppQuery);
             if (count!=null && count>0) {
                 //分页
-                List<MallOrderUAppDTO> mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp((page - 1) * page_size, page_size, mallOrderUAppQuery);
+                List<MallOrderUAppDTO> mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp((page - 1) * pageSize, pageSize, mallOrderUAppQuery);
                 //page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
                 MallOrderUAppVO mallOrderVo = null;
                 if (mallDTOList != null && mallDTOList.size() > 0) {
@@ -968,11 +971,12 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         }catch (Exception e){
             log.error(e.getMessage(),e);
         }
-        page1.setPages(page);
-        page1.setCurrent(page);
-        page1.setRecords(list);
-        page1.setSize(page_size);
-        return ReturnResponse.success(page1);
+        BasePageResult<MallOrderUAppVO> basePageResult = new BasePageResult<>();
+        basePageResult.setPage(page);
+        basePageResult.setPageSize(pageSize);
+        basePageResult.setTotal(count);
+        basePageResult.setResult(list);
+        return CommonResult.success(basePageResult);
     }
 
     @Override
@@ -1260,11 +1264,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(Long page, Long page_size, String orderNo) {
+    public CommonResult<BasePageResult<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(Long page, Long pageSize, String orderNo) {
         UserVO userVO = getUser();  //获取当前登陆用户
-        Page<MallOrderDetailUAppVO> page1 = new Page<>();
         Page<MallOrderDetailDTO> mallOrderDetailDTOPage = null;
-        Page pageQuery = new Page(page, page_size);
+        Page pageQuery = new Page(page, pageSize);
         List<MallOrderDetailUAppVO> list = new ArrayList<>();
         try {
             List<String> orderNoList = new ArrayList<>();
@@ -1272,7 +1275,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             if (mallOrder!=null){
                 //传入的为订单编号
                 if (!mallOrder.getShopNo().equals(userVO.getShopNo())){
-                    return ReturnResponse.failed("当前用户无法查看其他企业的订单");
+                    return CommonResult.failed("当前用户无法查看其他企业的订单");
                 }
                 orderNoList.add(orderNo);
             }else {
@@ -1316,11 +1319,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         }catch (Exception e){
             log.error(e.getMessage(),e);
         }
-        page1.setTotal(mallOrderDetailDTOPage.getTotal());
-        page1.setSize(mallOrderDetailDTOPage.getSize());
-        page1.setRecords(list);
-        page1.setCurrent(mallOrderDetailDTOPage.getCurrent());
-        page1.setPages(mallOrderDetailDTOPage.getPages());
-        return ReturnResponse.success(page1);
+        return CommonResult.success(new BasePageResult(mallOrderDetailDTOPage));
     }
 }

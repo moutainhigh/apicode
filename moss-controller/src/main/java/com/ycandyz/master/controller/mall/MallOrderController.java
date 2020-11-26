@@ -1,8 +1,7 @@
 package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.api.RequestParams;
-import com.ycandyz.master.api.ReturnResponse;
+import com.ycandyz.master.api.*;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.domain.query.mall.uApp.MallPickupUAppQuery;
@@ -112,29 +111,37 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      */
     @ApiOperation(value = "获取快递公司列表",notes = "获取快递公司列表",httpMethod = "GET")
     @GetMapping("/u-app/delivery/company")
-    public ReturnResponse<List<Map<String, String>>> getDeliveryCompanyList(){
+    public CommonResult<BaseResult<List<Map<String, String>>>> getDeliveryCompanyList(){
         List<Map<String, String>> list = ExpressEnum.getMap();
-        return ReturnResponse.success(list);
+        return CommonResult.success(new BaseResult<List<Map<String, String>>>(list));
     }
 
     /**
      * UApp项目订单列表接口,UApp
      * @param page
-     * @param page_size
+     * @param pageSize
      * @param mallOrderQuery
      * @param status
      * @return
      */
     @ApiOperation(value = "UApp项目订单列表接口",notes = "UApp项目订单列表接口",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="page",value="当前页",required=true,dataType="Long"),
+            @ApiImplicitParam(name="page_size",value="条数",required=true,dataType="Long"),
+            @ApiImplicitParam(name="mall_order_query",value="查询条件",dataType="String"),
+            @ApiImplicitParam(name="status",value="状态：全部传空，10-待支付  20-待发货 30-待收货 40-已收货  50-已取消",dataType="Integer"),
+            @ApiImplicitParam(name="order_at_begin",value="下单开始时间",dataType="Long"),
+            @ApiImplicitParam(name="order_at_end",value="下单结束时间",dataType="Long")
+    })
     @GetMapping("/u-app/order")
-    public ReturnResponse<Page<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("mall_order_query") String mallOrderQuery, @RequestParam("status") Integer status){
-        if (page==null || page_size==null){
-            return ReturnResponse.failed("请求入参为空");
+    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam(value = "mall_order_query", required = false) String mallOrderQuery, @RequestParam(value = "status", required = false) Integer status, @RequestParam(value = "order_at_begin", required = false) Long orderAtBegin, @RequestParam(value = "order_at_end", required = false) Long orderAtEnd){
+        if (page==null || pageSize==null){
+            return CommonResult.failed("请求入参为空");
         }
         if (mallOrderQuery!=null && !"".equals(mallOrderQuery)){
             mallOrderQuery = mallOrderQuery.trim();
         }
-        return mallOrderService.queryMallOrderListByUApp(page,page_size,mallOrderQuery,status);
+        return mallOrderService.queryMallOrderListByUApp(page,pageSize,mallOrderQuery,status,orderAtBegin,orderAtEnd);
     }
 
     /**
@@ -157,9 +164,11 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @param pickupNo
      * @return
      */
-    @ApiOperation(value = "通过提货码查询订单",notes = "通过提货码查询订单",httpMethod = "GET")
+    @ApiOperation(value = "通过提货码查询订单,UApp",notes = "通过提货码查询订单",httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="pickupNo",value="提货码",required=true,dataType="String")
+            @ApiImplicitParam(name="type",value="类型，写死query",required=true,dataType="String"),
+            @ApiImplicitParam(name="pickup_no",value="提货码",required=true,dataType="String"),
+            @ApiImplicitParam(name="order_no",value="订单编号",dataType="String")
     })
     @GetMapping("/u-app/order/pickup")
     public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(@RequestParam("type") String type, @RequestParam("pickup_no") String pickupNo, @RequestParam(value = "order_no", required = false) String orderNo){
@@ -173,7 +182,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     }
 
     /**
-     * 验证提货码，出货
+     * 验证提货码，出货，UApp
      * @param mallPickupUAppQuery
      * @return
      */
@@ -193,15 +202,20 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
      * @return
      */
     @ApiOperation(value = "分佣列表",notes = "通过订单编号或购物车编号获取分佣列表",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="page",value="当前页",required=true,dataType="Long"),
+            @ApiImplicitParam(name="page_size",value="条数",required=true,dataType="Long"),
+            @ApiImplicitParam(name="order_no",value="订单编号",dataType="String")
+    })
     @GetMapping("/u-app/order/commission")
-    public ReturnResponse<Page<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(@RequestParam("page") Long page, @RequestParam("page_size") Long page_size, @RequestParam("orderNo") String orderNo){
-        if (page==null || page_size==null){
-            return ReturnResponse.failed("分页参数为空");
+    public CommonResult<BasePageResult<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(@RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam("order_no") String orderNo){
+        if (page==null || pageSize==null){
+            return CommonResult.failed("分页参数为空");
         }
         if (orderNo==null || !"".equals(orderNo)){
-            return ReturnResponse.failed("传入参数为空");
+            return CommonResult.failed("传入参数为空");
         }
         orderNo = orderNo.trim();
-        return mallOrderService.queryOrderDetailShareFlowListByNo(page,page_size,orderNo);
+        return mallOrderService.queryOrderDetailShareFlowListByNo(page,pageSize,orderNo);
     }
 }

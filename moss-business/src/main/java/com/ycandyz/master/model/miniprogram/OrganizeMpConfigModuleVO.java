@@ -36,5 +36,6 @@ public class OrganizeMpConfigModuleVO extends MpConfigModule {
     @ApiModelProperty(value = "模块排序")
     private Integer sortModule;
 
-    private OrganizeMpConfigModuleBaseVO baseInfo;
+    private List<OrganizeMpConfigModuleBaseVO> baseInfo;
+
 }

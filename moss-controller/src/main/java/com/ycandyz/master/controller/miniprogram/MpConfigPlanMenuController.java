@@ -1,6 +1,7 @@
 package com.ycandyz.master.controller.miniprogram;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.ycandyz.master.domain.model.miniprogram.MenuWithinPlan;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanMenuModel;
 import com.ycandyz.master.domain.model.miniprogram.PlanMenuModel;
 import io.swagger.annotations.Api;
@@ -42,6 +43,13 @@ public class MpConfigPlanMenuController extends BaseController<MpConfigPlanMenuS
     @ApiOperation(value="✓配置方案内菜单", tags = "企业小程序DIY配置")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResult<Boolean> createBatch(@Validated(ValidatorContract.OnCreate.class) @RequestBody PlanMenuModel model) {
+        List<MenuWithinPlan> menus = model.getMenus();
+        if(menus.size() > 5){
+            return CommonResult.validateFailed("当前最多可添加5个菜单");
+        }
+        if(menus.size() < 2){
+            return CommonResult.validateFailed("当前至少要添加2个菜单");
+        }
         return CommonResult.success(service.addBatch(model));
     }
 

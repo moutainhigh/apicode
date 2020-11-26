@@ -1,6 +1,8 @@
 package com.ycandyz.master.api;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class BasePageResult<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,12 +38,12 @@ public class BasePageResult<T> implements Serializable {
     /**
      * 当前页
      */
-    private long pageNum = 1;
+    private long page = 1;
 
     public BasePageResult(Page page) {
         this.result = page.getRecords();
         this.total = page.getTotal();
         this.pageSize = page.getSize();
-        this.pageNum = page.getCurrent();
+        this.page = page.getCurrent();
     }
 }

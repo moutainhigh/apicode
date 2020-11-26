@@ -44,4 +44,8 @@
         select *  from mp_config_plan_menu where plan_id = #{planId}
     </select>
 
+    <delete id="deleteByPlanId" parameterType="java.lang.Integer">
+       delete from mp_config_plan_menu where plan_id = #{planId} and can_delete = 1
+    </delete>
+
 </mapper>

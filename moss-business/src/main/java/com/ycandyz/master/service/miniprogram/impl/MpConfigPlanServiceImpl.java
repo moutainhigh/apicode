@@ -8,11 +8,13 @@ import com.ycandyz.master.entities.miniprogram.MpConfigPlan;
 import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanQuery;
 import com.ycandyz.master.dao.miniprogram.MpConfigPlanDao;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
+import com.ycandyz.master.entities.organize.Organize;
 import com.ycandyz.master.service.miniprogram.IMpConfigMenuService;
 import com.ycandyz.master.service.miniprogram.IMpConfigPlanMenuService;
 import com.ycandyz.master.service.miniprogram.IMpConfigPlanService;
 import com.ycandyz.master.controller.base.BaseService;
 
+import com.ycandyz.master.service.organize.IOrganizeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,8 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
     private IMpConfigPlanMenuService mpConfigPlanMenuService;
     @Resource
     private IMpConfigMenuService configMenuService;
+    @Resource
+    private IOrganizeService organizeService;
 
     @Override
     public MpConfigPlan add(ConfigPlanAndMenuModel model) {
@@ -87,7 +91,10 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
     @Override
     public int organizeBindPlan(Integer organizeId, Integer planId) {
 
-        //TODO 企业信息绑定方案编号
+        Organize updateParam = new Organize();
+        updateParam.setId(organizeId);
+        updateParam.setPlanId(planId);
+        organizeService.updateById(updateParam);
         MpConfigPlan mpConfigPlan = this.baseMapper.selectById(planId);
         mpConfigPlan.setOrganizeChooseNum(mpConfigPlan.getOrganizeChooseNum() + 1);
         return this.baseMapper.updateById(mpConfigPlan);

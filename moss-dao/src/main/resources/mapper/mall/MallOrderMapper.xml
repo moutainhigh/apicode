@@ -856,6 +856,14 @@
         <if test="p.status != null">
             and mo.status=#{p.status}
         </if>
+        <if test="p.orderAtBegin != null">
+            and
+            mo.order_at &gt;= #{p.orderAtBegin} /**下单时间*/
+        </if>
+        <if test="p.orderAtEnd != null">
+            and
+            mo.order_at &lt;= #{p.orderAtEnd} /**下单时间*/
+        </if>
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
         GROUP BY mo.order_no) total
@@ -967,6 +975,14 @@
         </if>
         <if test="p.status != null">
             and mo.status=#{p.status}
+        </if>
+        <if test="p.orderAtBegin != null">
+            and
+            mo.order_at &gt;= #{p.orderAtBegin} /**下单时间*/
+        </if>
+        <if test="p.orderAtEnd != null">
+            and
+            mo.order_at &lt;= #{p.orderAtEnd} /**下单时间*/
         </if>
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
