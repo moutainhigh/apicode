@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.coupon.CouponActivityDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.coupon.CouponActivity">
+        <id column="id" property="id" />
+        <result column="activity_no" property="activityNo" />
+        <result column="shop_no" property="shopNo" />
+        <result column="name" property="name" />
+        <result column="begin_at" property="beginAt" />
+        <result column="end_at" property="endAt" />
+        <result column="height_limit" property="heightLimit" />
+        <result column="status" property="status" />
+        <result column="join_type" property="joinType" />
+        <result column="activity_num" property="activityNum" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="created_by" property="createdBy" />
+        <result column="updated_by" property="updatedBy" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, activity_no, shop_no, name, begin_at, end_at, height_limit, status, join_type, activity_num, created_at, updated_at, created_by, updated_by
+    </sql>
+
+</mapper>

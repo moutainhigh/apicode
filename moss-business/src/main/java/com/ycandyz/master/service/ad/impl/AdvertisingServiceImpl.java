@@ -218,6 +218,7 @@ public class AdvertisingServiceImpl extends BaseService<AdvertisingDao,Advertisi
         if(type.getCode().equals(AdvertisingEnum.Type.GOODS.getCode())){
             //获取商品是否存在,不存在测去掉
             LambdaQueryWrapper<MallItem> mallItemWrapper = new LambdaQueryWrapper<MallItem>()
+                    .eq(MallItem::getIsScreen,MallItemEnum.IsScreen.START_0.getCode())
                     .eq(MallItem::getItemNo,f.getItemNo())
                     .in(MallItem::getStatus, MallItemEnum.Status.START_10.getCode(),MallItemEnum.Status.START_30.getCode());
             MallItem mallItem = mallHomeItemService.getOne(mallItemWrapper);

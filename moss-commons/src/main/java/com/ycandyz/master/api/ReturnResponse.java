@@ -59,6 +59,15 @@ public class ReturnResponse<T> {
 
     /**
      * 失败返回结果
+     *
+     * @param data 获取的数据
+     */
+    public static <T> ReturnResponse<T> failed(T data) {
+        return new ReturnResponse<T>(ResultCode.FAILED.getCode(), ResultCode.FAILED.getMessage(), new Date().getTime()/1000, data);
+    }
+
+    /**
+     * 失败返回结果
      * @param message 提示信息
      */
     public static <T> ReturnResponse<T> failed(String message) {

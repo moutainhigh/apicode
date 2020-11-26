@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.taboo.BaseTabooWordsDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.taboo.BaseTabooWords">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="phrase_name" property="phraseName" jdbcType="VARCHAR" />
+        <result column="taboo_words" property="tabooWords" jdbcType="VARCHAR" />
+        <result column="treatment_method" property="treatmentMethod" jdbcType="INTEGER" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, phrase_name, taboo_words, treatment_method, operator, created_time, updated_time
+    </sql>
+    <insert id="addBaseTabooWords" >
+        insert into base_taboo_words(id, phrase_name, taboo_words, treatment_method, operator, created_time, updated_time)
+        values (#{id,jdbcType=INTEGER},#{phraseName,jdbcType=VARCHAR},
+        #{tabooWords,jdbcType=VARCHAR},#{treatmentMethod,jdbcType=INTEGER},#{operator,jdbcType=VARCHAR},
+       DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s'),DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s'));
+    </insert>
+    <update id="updateBaseTabooWords">
+        update base_taboo_words set phrase_name = #{phraseName}, taboo_words = #{tabooWords},treatment_method = #{treatmentMethod},
+        operator = #{operator},updated_time = DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s') where id = #{id};
+    </update>
+    <delete id="delById" parameterType="java.lang.Long">
+        delete from base_taboo_words where id = #{id,jdbcType=BIGINT};
+    </delete>
+    <select id="selById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select id,phrase_name,taboo_words,treatment_method,operator,created_time,updated_time
+         from base_taboo_words where id = #{id,jdbcType=BIGINT};
+    </select>
+    <select id="selectList" resultMap="BaseResultMap" parameterType="com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery">
+        select id,phrase_name,taboo_words,treatment_method,operator,created_time,updated_time
+        from base_taboo_words
+        where
+        1=1
+        <if test="bt != null and bt.phraseName != null">
+            and phrase_name  like concat('%',#{bt.phraseName},'%')
+        </if>
+        <if test="bt != null and bt.tabooWord != null">
+            and
+            taboo_words like concat('%',#{bt.tabooWord},'%')
+        </if>
+        <if test="bt != null and bt.createdTimeStart != null">
+            <![CDATA[
+            and
+            created_time >= FROM_UNIXTIME(#{bt.createdTimeStart}, '%Y-%m-%d %H:%i:%s')
+            ]]>
+        </if>
+        <if test="bt != null and bt.createdTimeEnd != null">
+            <![CDATA[
+            and
+            created_time <= FROM_UNIXTIME(#{bt.createdTimeEnd}, '%Y-%m-%d %H:%i:%s')
+            ]]>
+        </if>
+            order by updated_time desc,id desc
+    </select>
+    <select id="select" resultType="com.ycandyz.master.entities.taboo.BaseTabooWords">
+        select Base_Column_List from base_taboo_words;
+    </select>
+    <select id="selectWords" resultType="com.ycandyz.master.domain.query.risk.TabooWordsForReview">
+        select phrase_name,taboo_words,treatment_method from base_taboo_words;
+    </select>
+
+    <select id="selectWord" resultType="com.ycandyz.master.domain.query.risk.TabooWordsForReview">
+        select id, phrase_name,taboo_words,treatment_method from base_taboo_words
+        where
+        <if test="id != null">
+            <![CDATA[ id <> #{id} ]]>
+        </if>
+    </select>
+    <select id="selPhraseName" resultType="com.ycandyz.master.entities.taboo.BaseTabooWords">
+        select id from base_taboo_words
+        where phrase_name = #{phraseName};
+    </select>
+
+</mapper>

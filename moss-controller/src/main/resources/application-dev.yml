@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /youchuan-master
 
+enabled: true #为true时不做sing与redis校验 方便本地调试
+
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver           # mysql驱动包
@@ -89,6 +91,7 @@ ignored:
     - /**/订单.xls
     - /base-bank/**
     - /kafka/**/**
+    - /sys/audit/content/sensitive-word-group/all-data-redis
 
 DEFAULT_TOKEN: eyJhZ2VudF9pZCI6ICIwIiwgImVtcGxveWVlX2lkIjogMzk0LCAiZW52IjogImRldiIsICJleHAiOiAxNjAyNzYyNzAxLCAiaWF0IjogMTYwMjc1NTUwMSwgImlzX2Jvc3MiOiAxLCAib3JnYW5pemVfaWQiOiAiNDQ4IiwgInBsYXRmb3JtIjogNSwgInJvbGUiOiAiMCIsICJzaG9wX25vIjogImJlaXF1YW5fc3RvcmUiLCAidXNlcl9pZCI6ICIxMDQwMSIsICJ3eG1pbmlfb3Blbl9pZCI6ICIiLCAianRpIjogIjkzZWU5NWFjMzdiZjBmZTE2MjRhZmE2N2FiODI5OWQ0In0
 
@@ -125,6 +128,10 @@ aliyun:
     domain: dysmsapi.aliyuncs.com
     product: Dysmsapi
     sign: 有传科技4
-    template_code: SMS_203190683
+    template_code: SMS_205575167
     #有传客服电话
     service-number: 13714366094
+
+#kafka topic配置
+topic:
+  sms: ALI_SMS_TOPIC

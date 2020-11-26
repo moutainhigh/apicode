@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.userExportRecord.UserExportRecordDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.userExportRecord.UserExportRecord">
+        <id column="id" property="id" />
+        <result column="terminal" property="terminal" />
+        <result column="organize_id" property="organizeId" />
+        <result column="organize_name" property="organizeName" />
+        <result column="operator_id" property="operatorId" />
+        <result column="operator_name" property="operatorName" />
+        <result column="operator_phone" property="operatorPhone" />
+        <result column="operator_ip" property="operatorIp" />
+        <result column="opertor_system" property="opertorSystem" />
+        <result column="opertor_browser" property="opertorBrowser" />
+        <result column="export_file_name" property="exportFileName" />
+        <result column="export_file_url" property="exportFileUrl" />
+        <result column="created_at" property="createdAt" />
+        <result column="created_time" property="createdTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, terminal, organize_id, organize_name, operator_id, operator_name, operator_phone, operator_ip, opertor_system, opertor_browser,
+        export_file_name, export_file_url, created_at, created_time
+    </sql>
+
+    <select id="selectPages"  resultMap="BaseResultMap" parameterType="com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery">
+        select
+        <include refid="Base_Column_List" />
+        from user_export_record
+        where
+        1=1
+        <if test="u != null and u.terminal != null">
+           and  terminal  = #{u.terminal}
+        </if>
+        <if test="u != null and u.organizeName != null">
+            and
+            organize_name like concat('%',#{u.organizeName},'%')
+        </if>
+        <if test="u != null and u.operatorId != null">
+            and operator_id  = #{u.operatorId}
+        </if>
+        <if test="u != null and u.createdAtStart != null">
+            <![CDATA[-->
+            and
+            created_time >= FROM_UNIXTIME(#{u.createdAtStart}, '%Y-%m-%d %H:%i:%S')
+            ]]>-->
+        </if>
+        <if test="u != null and u.createdAtEnd != null">
+            <![CDATA[-->
+            and
+            created_time <= FROM_UNIXTIME(#{u.createdAtEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>-->
+        </if>
+
+    </select>
+    <insert id="insertUserExportRecord">
+        insert into user_export_record(terminal,organize_id,organize_name,operator_id,operator_name,operator_phone,
+            operator_ip,opertor_system,opertor_browser,export_file_name,export_file_url,created_at,created_time)
+        values(#{terminal},#{organizeId},#{organizeName},#{operatorId},#{operatorName},#{operatorPhone},
+        #{operatorIp},#{opertorSystem},#{opertorBrowser},#{exportFileName},#{exportFileUrl},unix_timestamp(now()),now())
+
+    </insert>
+</mapper>

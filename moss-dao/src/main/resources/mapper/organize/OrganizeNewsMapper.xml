@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.organize.OrganizeNewsDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.organize.OrganizeNews">
+        <id column="id" property="id" />
+        <result column="organize_id" property="organizeId" />
+        <result column="type" property="type" />
+        <result column="title" property="title" />
+        <result column="abstract" property="abstracts" />
+        <result column="cover" property="cover" />
+        <result column="link_url" property="linkUrl" />
+        <result column="like_num" property="likeNum" />
+        <result column="view_num" property="viewNum" />
+        <result column="status" property="status" />
+        <result column="share_num" property="shareNum" />
+        <result column="published_at" property="publishedAt" />
+        <result column="disabled_at" property="disabledAt" />
+        <result column="disable_reason" property="disableReason" />
+        <result column="is_del" property="isDel" />
+        <result column="del_reason" property="delReason" />
+        <result column="deleted_at" property="deletedAt" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="origin_user_id" property="originUserId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, organize_id, `type`, title, `abstract`, cover, link_url, like_num, view_num, status, share_num,
+        published_at, disabled_at, disable_reason, is_del, del_reason, deleted_at, created_at, updated_at, origin_user_id
+    </sql>
+    <update id="updateOneOrganizeNews">
+        update organize_news set is_screen = #{oper} where id = #{contentId};
+    </update>
+    <update id="handleExamine">
+        update organize_news
+        <set>
+            is_screen = #{oper},
+            updated_at = unix_timestamp(now())
+            where id in
+            <foreach item="item" collection="ids" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </set>
+    </update>
+    <select id="selectFootprintQuery" resultType="com.ycandyz.master.domain.query.organize.OrganizeNewsQuery" parameterType="java.lang.Integer">
+        select id,organizeId,title,`abstract` from organize_news limit #{pageOffset},#{pageSize};
+    </select>
+    <select id="selById" resultType="com.ycandyz.master.domain.query.organize.OrganizeNewsQuery">
+        select id from organize_news where id = #{id}
+    </select>
+
+</mapper>

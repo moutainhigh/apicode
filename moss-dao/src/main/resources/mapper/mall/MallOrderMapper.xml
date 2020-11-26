@@ -28,6 +28,7 @@
         <result column="payedAtStr" property="payedAtStr" />
         <result column="orderAtStr" property="orderAtStr" />
         <result column="receiveAtStr" property="receiveAtStr" />
+        <result column="discountMoney" property="discountMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -66,6 +67,7 @@
             mo.receive_at,
             mo.order_type,
             mo.all_money,
+            mo.total_money-mo.real_money as discountMoney,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
@@ -202,6 +204,7 @@
             ship.receiver_address AS receiverAddress,
             mo.receive_at,
             mo.order_type,
+            mo.total_money-mo.real_money as discountMoney,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
@@ -371,6 +374,7 @@
         <result column="payedAtStr" property="payedAtStr" />
         <result column="orderAtStr" property="orderAtStr" />
         <result column="receiveAtStr" property="receiveAtStr" />
+        <result column="discountMoney" property="discountMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -404,6 +408,7 @@
             mo.`deliver_type`,
             mo.total_money-mo.real_money as shippingMoney,
             mo.shop_no,
+            mo.total_money-mo.real_money as discountMoney,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
@@ -451,6 +456,7 @@
         <result column="payedAtStr" property="payedAtStr" />
         <result column="orderAtStr" property="orderAtStr" />
         <result column="receiveAtStr" property="receiveAtStr" />
+        <result column="discountMoney" property="discountMoney" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -496,6 +502,7 @@
             mo.all_money-mo.real_money as shippingMoney,
             mo.all_money,
             mo.shop_no,
+            mo.total_money-mo.real_money as discountMoney,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
@@ -654,6 +661,7 @@
         a.`after_sales_end_at`,
         a.shippingMoney,
         a.shop_no,
+        a.total_money-a.real_money as discountMoney,
         concat( u.`name`, ' ', u.phone ) AS payuser,
         concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
         ship.receiver_address AS receiverAddress,
@@ -827,5 +835,253 @@
         LEFT JOIN user AS uu ON uu.id = s.user_id
         LEFT JOIN mall_after_sales sales ON IF(a.order_type=2, sales.order_detail_no = modetail.order_detail_no , sales.order_no = a.order_no )
         ORDER BY a.order_at DESC
+    </select>
+
+    <select id="getTrendMallOrderByUAppPageSize" parameterType="com.ycandyz.master.domain.query.mall.MallOrderUAppQuery" resultType="java.lang.Integer">
+        select count(1) from (SELECT
+        mo.id
+        FROM
+        mall_order mo
+        LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
+        LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
+        LEFT JOIN user	u ON mo.user_id = u.id
+        LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
+        WHERE
+        mo.shop_no=#{p.shopNo}
+        and mo.is_del=0
+        <if test="p.mallOrderQuery != null and p.mallOrderQuery != ''">
+            and
+            (mo.order_no  like concat('%',#{p.mallOrderQuery},'%') or mo.cart_order_sn like concat('%',#{p.mallOrderQuery},'%') or u.`name` like concat('%',#{p.mallOrderQuery},'%') OR u.phone like concat('%',#{p.mallOrderQuery},'%') or ship.receiver like concat('%',#{p.mallOrderQuery},'%') OR ship.receiver_phone like concat('%',#{p.mallOrderQuery},'%') or mo.pre_phone like concat('%',#{p.mallOrderQuery},'%'))	/**子订单编号或母订单编号*/
+        </if>
+        <if test="p.status != null">
+            and mo.status=#{p.status}
+        </if>
+        <if test="p.deliverType != null">
+            and mo.deliver_type=#{p.deliverType}
+        </if>
+        <if test="p.orderAtBegin != null">
+            and
+            mo.order_at &gt;= #{p.orderAtBegin} /**下单时间*/
+        </if>
+        <if test="p.orderAtEnd != null">
+            and
+            mo.order_at &lt;= #{p.orderAtEnd} /**下单时间*/
+        </if>
+        /**group by mo.id*/
+        /*order by mo.order_at DESC*/
+        GROUP BY mo.order_no) total
+    </select>
+
+    <resultMap id="BaseOrderListResultUAppMap" type="com.ycandyz.master.dto.mall.MallOrderUAppDTO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="order_sn" property="cartOrderSn" />
+        <result column="order_no" property="orderNo" />
+        <result column="shop_no" property="shopNo" />
+        <result column="cart_order_id" property="cartOrderSn" />
+        <result column="real_money" property="realMoney" />
+        <result column="total_money" property="totalMoney" />
+        <result column="payed_at" property="payedAt" />
+        <result column="status" property="status" />
+        <result column="pay_type" property="payType" />
+        <result column="payuser" property="payuser" />
+        <result column="receiverName" property="receiverName" />
+        <result column="order_at" property="orderAt" />
+        <result column="deliver_type" property="deliverType" />
+        <result column="deliver_method" property="deliverMethod" />
+        <result column="shippingMoney" property="shippingMoney" />
+        <result column="order_type" property="orderType" />
+        <result column="all_money" property="allMoney" />
+        <result column="payedAtStr" property="payedAtStr" />
+        <result column="orderAtStr" property="orderAtStr" />
+        <result column="receiveAtStr" property="receiveAtStr" />
+        <result column="discountMoney" property="discountMoney" />
+        <result column="receive_at" property="receiveAt" />
+        <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
+            <result column="order_detail_no" property="orderDetailNo" />
+            <result column="seller_user_id" property="shareUserId" />
+            <result column="seller_user_phone" property="sellerUserPhone" />
+            <result column="seller_user_name" property="sellerUserName" />
+            <result column="shareAmount" property="shareAmount" />
+            <result column="is_enable_share" property="isEnableShare" />
+            <result column="goods_no" property="goodsNo" />
+            <result column="sku_no" property="skuNo" />
+            <result column="item_no" property="itemNo" />
+            <result column="item_name" property="itemName" />
+            <result column="item_cover" property="itemCover" />
+            <result column="skuQuantity" property="skuQuantity" />
+        </collection>
+    </resultMap>
+
+    <select id="getTrendMallOrderByPageUApp" parameterType="com.ycandyz.master.domain.query.mall.MallOrderUAppQuery" resultMap="BaseOrderListResultUAppMap">
+        SELECT
+        a.id,
+        cart.order_sn,
+        a.order_no,
+        a.real_money,
+        a.total_money,
+        a.payed_at,
+        a.order_at,
+        a.pay_type,
+        a.`status`,
+        a.`deliver_type`,
+        a.`deliver_method`,
+        a.`after_sales_end_at`,
+        a.shippingMoney,
+        a.shop_no,
+        a.total_money-a.real_money as discountMoney,
+        concat( u.`name`, ' ', u.phone ) AS payuser,
+        concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
+        a.order_type,
+        a.all_money,
+        modetail.item_no,
+        modetail.item_name,
+        modetail.goods_no,
+        modetail.sku_no,
+        modetail.quantity AS skuQuantity,
+        modetail.item_cover,
+        modetail.is_enable_share,
+        modetail.share_user_id
+        FROM
+        (
+        SELECT
+        mo.id,
+        mo.cart_order_id,
+        mo.cart_order_sn,
+        cart.order_sn,
+        mo.order_no,
+        mo.user_id,
+        mo.real_money,
+        mo.total_money,
+        mo.payed_at,
+        mo.order_at,
+        mo.pay_type,
+        mo.`status`,
+        mo.`deliver_type`,
+        mo.`deliver_method`,
+        mo.`after_sales_end_at`,
+        mo.all_money - mo.real_money AS shippingMoney,
+        mo.order_type,
+        mo.all_money,
+        mo.shop_no
+        FROM
+        mall_order mo
+        LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
+        LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
+        LEFT JOIN user	u ON mo.user_id = u.id
+        LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
+        WHERE
+        mo.shop_no=#{p.shopNo}
+        and mo.is_del=0
+        <if test="p.mallOrderQuery != null and p.mallOrderQuery != ''">
+            and
+            (mo.order_no  like concat('%',#{p.mallOrderQuery},'%') or mo.cart_order_sn like concat('%',#{p.mallOrderQuery},'%') or u.`name` like concat('%',#{p.mallOrderQuery},'%') OR u.phone like concat('%',#{p.mallOrderQuery},'%') or ship.receiver like concat('%',#{p.mallOrderQuery},'%') OR ship.receiver_phone like concat('%',#{p.mallOrderQuery},'%') or mo.pre_phone like concat('%',#{p.mallOrderQuery},'%'))	/**子订单编号或母订单编号*/
+        </if>
+        <if test="p.status != null">
+            and mo.status=#{p.status}
+        </if>
+        <if test="p.deliverType != null">
+            and mo.deliver_type=#{p.deliverType}
+        </if>
+        <if test="p.orderAtBegin != null">
+            and
+            mo.order_at &gt;= #{p.orderAtBegin} /**下单时间*/
+        </if>
+        <if test="p.orderAtEnd != null">
+            and
+            mo.order_at &lt;= #{p.orderAtEnd} /**下单时间*/
+        </if>
+        /**group by mo.id*/
+        /*order by mo.order_at DESC*/
+        GROUP BY mo.order_no
+        ORDER BY mo.order_at DESC
+        LIMIT #{page},#{size}) a
+        LEFT JOIN mall_cart_order cart ON cart.id = a.cart_order_id
+        LEFT JOIN mall_order_detail modetail ON a.order_no = modetail.order_no
+        LEFT JOIN user u ON a.user_id = u.id
+        LEFT JOIN mall_shop_shipping ship ON ship.order_no = a.order_no
+        ORDER BY a.order_at DESC
+    </select>
+
+    <select id="queryOrderDetailByUApp" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
+        select
+            mo.id,
+            mo.order_no,
+            mo.cart_order_sn,
+            mo.real_money,
+            mo.payed_at,
+            mo.buyer_remark,
+            mo.status,
+            mo.sub_status,
+            mo.deliver_method,
+            ship.receiver,
+            ship.receiver_phone,
+            mo.total_money,
+            mo.buyer_remark,
+            mo.order_at,
+            mo.pay_type,
+            mo.order_type,
+            mo.trade_no,
+            mo.send_at,
+            mo.receive_at,
+            mo.cancel_at,
+            mo.cancel_reason,
+            mo.`deliver_type`,
+            mo.pick_up_address_name,
+            mo.pick_up_address_detail,
+            mo.pre_phone,
+            mo.all_money-mo.real_money as shippingMoney,
+            mo.all_money,
+            mo.shop_no,
+            mo.total_money-mo.real_money as discountMoney,
+            modetail.order_detail_no,
+            modetail.item_no,
+            modetail.goods_no,
+            modetail.sku_no,
+            modetail.item_name,
+            modetail.item_cover,
+            modetail.is_enable_share,
+            modetail.quantity as skuQuantity,
+            modetail.price as skuPrice,
+            modetail.total_money,
+            modetail.real_money
+        from mall_order mo
+        left join mall_order_detail modetail on mo.order_no=modetail.order_no
+        left join mall_shop_shipping ship on mo.order_no=ship.order_no
+        where mo.order_no = #{orderNo}
+    </select>
+
+    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
+        select
+            mo.id,
+            mo.order_no,
+            mo.shop_no,
+            mo.cart_order_id,
+            mo.real_money,
+            mo.payed_at,
+            mo.buyer_remark,
+            mo.pick_up_address_name,
+            mo.pick_up_address_detail,
+            mo.pre_phone,
+            mo.status,
+            mo.sub_status,
+            mo.deliver_method,
+            mo.`after_sales_status`,
+            mo.`deliver_type`,
+            mo.total_money-mo.real_money as shippingMoney,
+            mo.shop_no,
+            mo.total_money-mo.real_money as discountMoney,
+            modetail.order_detail_no,
+            modetail.item_no,
+            modetail.goods_no,
+            modetail.sku_no,
+            modetail.item_name,
+            modetail.item_cover,
+            modetail.quantity as skuQuantity,
+            modetail.price as skuPrice,
+            modetail.total_money,
+            modetail.real_money
+        from mall_order mo
+        left join mall_order_detail modetail on mo.order_no=modetail.order_no
+        where mo.shop_no=#{shopNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
     </select>
 </mapper>

@@ -7,6 +7,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;
 import com.ycandyz.master.aliyun.sms.AliSmsMessage;
+<<<<<<< HEAD
+=======
+import com.ycandyz.master.constant.KafkaConstant;
+>>>>>>> test
 import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dao.sms.SmsSendQueueLogDao;
 import com.ycandyz.master.dto.organize.OrganizeDTO;

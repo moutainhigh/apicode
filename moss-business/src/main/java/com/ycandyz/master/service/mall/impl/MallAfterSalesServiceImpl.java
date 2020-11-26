@@ -23,7 +23,7 @@ import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.enums.SalesEnum;
 import com.ycandyz.master.model.mall.*;
 import com.ycandyz.master.service.mall.MallAfterSalesService;
-import com.ycandyz.master.service.user.IUserExportRecordService;
+import com.ycandyz.master.service.userExportRecord.IUserExportRecordService;
 import com.ycandyz.master.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -94,7 +94,8 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     private int num;
 
     @Override
-    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO) {
+    public ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         Page<MallAfterSalesVO> mallPage = new Page<>();
         List<MallAfterSalesVO> list = new ArrayList<>();
         MallafterSalesQuery mallafterSalesQuery = requestParams.getT();
@@ -231,7 +232,8 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     }
 
     @Override
-    public ReturnResponse<MallAfterSalesVO> querySalesDetail(String afterSalesNo, UserVO userVO) {
+    public ReturnResponse<MallAfterSalesVO> querySalesDetail(String afterSalesNo) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         MallAfterSalesVO mallAfterSalesVO = null;
         MallAfterSalesDTO mallAfterSalesDTO = mallAfterSalesDao.querySalesDetail(afterSalesNo);
         if (mallAfterSalesDTO!=null){
@@ -451,7 +453,8 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
     @Transactional
     @Override
-    public boolean refundAuditFirst(MallafterSalesQuery mallafterSalesQuery, UserVO userVO) {
+    public boolean refundAuditFirst(MallafterSalesQuery mallafterSalesQuery) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         boolean flag = false;
         MallAfterSales mallAfterSales = mallAfterSalesDao.selectById(mallafterSalesQuery.getId());
         if (mallAfterSales!=null){
@@ -481,7 +484,8 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     }
 
     @Override
-    public MallOrderExportResp exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO) {
+    public MallOrderExportResp exportEXT(MallafterSalesQuery mallafterSalesQuery) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         if (mallafterSalesQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
             mallafterSalesQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
         }else if (mallafterSalesQuery.getIsGroup().equals("1")){ //集团
@@ -660,7 +664,8 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
     }
 
     @Override
-    public ReturnResponse<String> refundDetail(String orderNo, UserVO userVO) {
+    public ReturnResponse<String> refundDetail(String orderNo) {
+        UserVO userVO = getUser();  //获取当前登陆用户
         MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",orderNo).eq("shop_no",userVO.getShopNo()));
         if (mallOrder!=null){
             BigDecimal shippingMoney = mallOrder.getAllMoney().subtract(mallOrder.getRealMoney());  //运费

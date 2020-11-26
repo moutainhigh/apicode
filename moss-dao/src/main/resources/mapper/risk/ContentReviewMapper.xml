@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.risk.ContentreviewDao">
+
+
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        <result column="id" property="id" />
+        <result column="type" property="type" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updateTime" />
+        <result column="auditor" property="auditor" />
+        <result column="audit_time" property="auditTime" />
+        <result column="audit_result" property="auditResult" />
+        <result column="content" property="content" />
+        <result column="audit_result" property="reviewAuditResult" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.ycandyz.master.entities.risk.ContentReview" >
+        insert into content_review(id,content_id,`type`,created_time,updated_time,audit_result)
+        values(#{id},#{contentId},#{type},now(),now(),#{auditResult});
+    </insert>
+    <update id="updateAuditResult">
+        update content_review set auditor = #{auditor} ,audit_result = 2,audit_time = now() where content_id = #{contentId} and `type` = #{type};
+    </update>
+
+    <update id="updateAudit">
+        update content_review set auditor = #{auditor} ,audit_result = 2,audit_time = now() where id = #{id};
+    </update>
+
+        <select id="list" resultMap="BaseResultMap" parameterType="com.ycandyz.master.domain.query.risk.ContentReviewQuery">
+
+            select * from (
+            select concat_ws("︵",m.item_name,m.banners,m.share_descr,m.share_img,m.is_screen,m.item_text) as content,
+            c.id,c.type ,c.created_time,
+            c.updated_time,c.auditor,c.audit_time,c.audit_result
+            from content_review c
+            inner join mall_item m
+            on m.item_no = c.content_id
+            where
+            <![CDATA[ m.status <> 50]]>
+            and c.type = 0
+            <if test="con != null and con.type != null">
+                and c.type = #{con.type}
+            </if>
+            <if test="con != null and con.auditor != null">
+                and c.auditor = #{con.auditor}
+            </if>
+            <if test="con != null and con.updateTimeStart != null">
+                <![CDATA[
+                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+            </if>
+            <if test="con != null and con.updateTimeEnd != null">
+                <![CDATA[
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+            </if>
+            <if test="con != null and con.auditTimeStart != null">
+                <![CDATA[
+                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+            </if>
+            <if test="con != null and con.auditTimeEnd != null">
+                <![CDATA[
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+            </if>
+            <if test="con != null and con.reviewAuditResult != null">
+                and c.audit_result = #{con.reviewAuditResult}
+            </if>
+            <if test="con != null and con.auditResult != null">
+                and m.is_screen = #{con.auditResult}
+            </if>
+            union
+            select group_concat(f.content,ifnull(fp.photo_url,""),f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
+            c.updated_time,c.auditor,c.audit_time,c.audit_result
+            from content_review c
+            inner join footprint f
+            on f.id = c.content_id
+            left join footprint_photo fp
+            on fp.footprint_id = c.content_id
+            where
+            is_del = 0
+            and c.type = 1
+            <if test="con != null and con.type != null">
+                and c.type = #{con.type}
+            </if>
+            <if test="con != null and con.auditor != null">
+                and c.auditor = #{con.auditor}
+            </if>
+            <if test="con != null and con.updateTimeStart != null">
+                <![CDATA[
+                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+            </if>
+            <if test="con != null and con.updateTimeEnd != null">
+                <![CDATA[
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+            </if>
+            <if test="con != null and con.auditTimeStart != null">
+                <![CDATA[
+                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+            </if>
+            <if test="con != null and con.auditTimeEnd != null">
+                <![CDATA[
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+            </if>
+            <if test="con != null and con.reviewAuditResult != null">
+                and c.audit_result = #{con.reviewAuditResult}
+            </if>
+            <if test="con != null and con.auditResult != null">
+                and f.is_screen = #{con.auditResult}
+            </if>
+            group by c.content_id
+            union
+            select concat_ws("︵",ifnull(o.abstract,""),ifnull(o.title,""),ifnull(o.cover,""),ifnull(o.link_url,""),ifnull(o.is_screen,""),ifnull(ond.content,"")) as content,c.id,c.type,c.created_time,
+            c.updated_time,c.auditor,c.audit_time,c.audit_result
+            from content_review c
+            inner join organize_news o
+            on o.id = c.content_id
+            left join organize_news_detail ond
+            on ond.organize_news_id = c.content_id
+            where
+            is_del = 0
+            and c.type = 2
+            <if test="con != null and con.type != null">
+                and c.type = #{con.type}
+            </if>
+            <if test="con != null and con.auditor != null">
+                and c.auditor = #{con.auditor}
+            </if>
+            <if test="con != null and con.updateTimeStart != null">
+                <![CDATA[
+                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+            </if>
+            <if test="con != null and con.updateTimeEnd != null">
+                <![CDATA[
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+            </if>
+            <if test="con != null and con.auditTimeStart != null">
+                <![CDATA[
+                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+            </if>
+            <if test="con != null and con.auditTimeEnd != null">
+                <![CDATA[
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+            </if>
+            <if test="con != null and con.reviewAuditResult != null">
+                and c.audit_result = #{con.reviewAuditResult}
+            </if>
+            <if test="con != null and con.auditResult != null">
+                and o.is_screen = #{con.auditResult}
+            </if>
+            ) as allcr
+            LIMIT #{page},#{size}
+    </select>
+
+    <select id="selectByContentId" resultType="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        select content_id,`type`,created_time,updated_time,auditor,audit_time,audit_result
+        from content_review
+        where content_id = #{contentId} and `type` = #{type};
+    </select>
+    <select id="getReviewCount" resultType="java.lang.Integer">
+    select count(1) from (
+        select concat_ws("︵",m.item_name,m.banners,m.share_descr,m.share_img,m.is_screen,m.item_text) as content,
+        c.id,c.type ,c.created_time,
+        c.updated_time,c.auditor,c.audit_time,c.audit_result
+        from content_review c
+        inner join mall_item m
+        on m.item_no = c.content_id
+        where
+        <![CDATA[ m.status <> 50]]>
+        and c.type = 0
+        <if test="con != null and con.type != null">
+            and c.type = #{con.type}
+        </if>
+        <if test="con != null and con.auditor != null">
+            and c.auditor = #{con.auditor}
+        </if>
+        <if test="con != null and con.updateTimeStart != null">
+            <![CDATA[
+                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con != null and con.updateTimeEnd != null">
+            <![CDATA[
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con != null and con.auditTimeStart != null">
+            <![CDATA[
+                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con != null and con.auditTimeEnd != null">
+            <![CDATA[
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con != null and con.reviewAuditResult != null">
+            and c.audit_result = #{con.reviewAuditResult}
+        </if>
+        <if test="con != null and con.auditResult != null">
+            and m.is_screen = #{con.auditResult}
+        </if>
+        union
+        select group_concat(f.content,ifnull(fp.photo_url,""),f.is_screen SEPARATOR ';') as content,c.id,c.type,c.created_time,
+        c.updated_time,c.auditor,c.audit_time,c.audit_result
+        from content_review c
+        inner join footprint f
+        on f.id = c.content_id
+        left join footprint_photo fp
+        on fp.footprint_id = c.content_id
+        where
+        is_del = 0
+        and c.type = 1
+        <if test="con != null and con.type != null">
+            and c.type = #{con.type}
+        </if>
+        <if test="con != null and con.auditor != null">
+            and c.auditor = #{con.auditor}
+        </if>
+        <if test="con != null and con.updateTimeStart != null">
+            <![CDATA[
+                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con != null and con.updateTimeEnd != null">
+            <![CDATA[
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con != null and con.auditTimeStart != null">
+            <![CDATA[
+                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con != null and con.auditTimeEnd != null">
+            <![CDATA[
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con != null and con.reviewAuditResult != null">
+            and c.audit_result = #{con.reviewAuditResult}
+        </if>
+        <if test="con != null and con.auditResult != null">
+            and f.is_screen = #{con.auditResult}
+        </if>
+        group by c.content_id
+        union
+        select concat_ws("︵",ifnull(o.abstract,""),ifnull(o.title,""),ifnull(o.cover,""),ifnull(o.link_url,""),ifnull(o.is_screen,""),ifnull(ond.content,"")) as content,c.id,c.type,c.created_time,
+        c.updated_time,c.auditor,c.audit_time,c.audit_result
+        from content_review c
+        inner join organize_news o
+        on o.id = c.content_id
+        left join organize_news_detail ond
+        on ond.organize_news_id = c.content_id
+        where
+        is_del = 0
+        and c.type = 2
+        <if test="con != null and con.type != null">
+            and c.type = #{con.type}
+        </if>
+        <if test="con != null and con.auditor != null">
+            and c.auditor = #{con.auditor}
+        </if>
+        <if test="con != null and con.updateTimeStart != null">
+            <![CDATA[
+                and c.updated_time >= FROM_UNIXTIME(#{con.updateTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con != null and con.updateTimeEnd != null">
+            <![CDATA[
+                and c.updated_time < FROM_UNIXTIME(#{con.updateTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con != null and con.auditTimeStart != null">
+            <![CDATA[
+                and c.audit_time >= FROM_UNIXTIME(#{con.auditTimeStart}, '%Y-%m-%d %H:%i:%S')
+             ]]>
+        </if>
+        <if test="con != null and con.auditTimeEnd != null">
+            <![CDATA[
+                and c.audit_time < FROM_UNIXTIME(#{con.auditTimeEnd}, '%Y-%m-%d %H:%i:%S')
+            ]]>
+        </if>
+        <if test="con != null and con.reviewAuditResult != null">
+            and c.audit_result = #{con.reviewAuditResult}
+        </if>
+        <if test="con != null and con.auditResult != null">
+            and o.is_screen = #{con.auditResult}
+        </if>
+         ) as total
+    </select>
+    <select id="selectById" resultType="java.lang.String">
+        select content_id from content_review where id =#{id};
+    </select>
+    <select id="selectByIdE" resultType="com.ycandyz.master.dto.risk.ContentReviewDTO">
+        select * from content_review where id =#{id};
+    </select>
+
+</mapper>
