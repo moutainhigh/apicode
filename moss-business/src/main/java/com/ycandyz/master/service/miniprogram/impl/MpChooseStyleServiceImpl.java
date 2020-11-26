@@ -69,8 +69,9 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         OrganizeMpConfigPageSingleMenuVO organizeMpConfigPageSingleMenuVO = new OrganizeMpConfigPageSingleMenuVO();
         organizeMpConfigPageSingleMenuVO.setMenuId(menuId);
         OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
-        organizeMpConfigPageSingleMenuVO.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
-
+        if (organizeMpConfigPlanMenuDTO != null){
+            organizeMpConfigPageSingleMenuVO.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
+        }
         List<OrganizeMpConfigModuleVO> moudles = new ArrayList<>();
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
         for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
