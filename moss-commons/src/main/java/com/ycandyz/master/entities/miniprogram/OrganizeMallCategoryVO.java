@@ -15,7 +15,7 @@ public class OrganizeMallCategoryVO {
     @ApiModelProperty(value = "一级分类编号")
     private String categoryNo;
 
-    @ApiModelProperty(value = "一级分类图片地址")
-    private String imgUrl;
+    @ApiModelProperty(value = "一级分类图片")
+    private String categoryImg;
 
 }

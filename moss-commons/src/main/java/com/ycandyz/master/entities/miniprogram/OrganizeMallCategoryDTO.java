@@ -19,9 +19,6 @@ public class OrganizeMallCategoryDTO {
     private String categoryNo;
 
     @ApiModelProperty(value = "分类名称")
-    private String categoryName;
-
-    @ApiModelProperty(value = "分类名称")
     private String categoryImg;
 
 }
