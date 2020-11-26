@@ -10,12 +10,15 @@ import com.ycandyz.master.dao.userExportRecord.UserExportRecordDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordReq;
+import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordVo;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
 import com.ycandyz.master.dto.organize.OrganizeDTO;
 import com.ycandyz.master.dto.user.UserForExport;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
+import com.ycandyz.master.enums.TerminalEnum;
 import com.ycandyz.master.service.userExportRecord.IUserExportRecordService;
+import com.ycandyz.master.utils.EnumUtil;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;
@@ -27,6 +30,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -51,21 +56,35 @@ public class UserExportRecordServiceImpl extends BaseService<UserExportRecordDao
     private UserDao userDao;
 
     @Override
-    public Page<UserExportRecordResp> selectPages(RequestParams<UserExportRecordQuery> requestParams) {
+    public Page<UserExportRecordVo> selectPages(RequestParams<UserExportRecordQuery> requestParams) {
         if (requestParams == null && requestParams.getT() == null){
             log.error("敏感词检测参数为空");
             return null;
         }
         UserExportRecordQuery userExportRecordQuery = requestParams.getT();
         Page pageQuery = new Page(requestParams.getPage(),requestParams.getPage_size());
-        Page<UserExportRecordResp> page = null;
+        Page<UserExportRecord> page = null;
+        Page<UserExportRecordVo> page1 = new Page<>();
         try {
             page = userExportRecordDao.selectPages(pageQuery, userExportRecordQuery);
+            List<UserExportRecord> records = page.getRecords();
+            List<UserExportRecordVo> newrecords = new ArrayList<>();
+            for (UserExportRecord k: records) {
+                UserExportRecordVo userExportRecordVo = new UserExportRecordVo();
+                if (k != null){
+                    BeanUtils.copyProperties(k,userExportRecordVo);
+                }
+                String desc = EnumUtil.getByCode(TerminalEnum.class, k.getTerminal()).getDesc();
+                userExportRecordVo.setTerminal(desc);
+                newrecords.add(userExportRecordVo);
+            }
+            BeanUtils.copyProperties(page,page1);
+            page1.setRecords(newrecords);
         }catch (Exception e){
             log.error("error:{}",e.getMessage());
-            page = new Page<>(0,10,0);
+            page1 = new Page<>(0,10,0);
         }
-        return page;
+        return page1;
     }
 
     @Override
