@@ -37,13 +37,22 @@ public class MpChooseStyleController {
     private MallCategoryService mallCategoryService;
 
 
-    @ApiOperation(value = "查询企业正在使用的小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
+//    @ApiOperation(value = "查询企业正在使用的小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
+//    @GetMapping(value = "organize")
+//    public CommonResult<BaseResult<List<OrganizeMpConfigMenuVO>>> select() {
+//        List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.select();
+//        log.info("查询企业正在使用的小程序全部菜单请求响应:{}", JSON.toJSONString(CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO))));
+//        return CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO));
+//    }
+
+    @ApiOperation(value = "查询企业正在编辑的草稿小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
     @GetMapping(value = "organize")
     public CommonResult<BaseResult<List<OrganizeMpConfigMenuVO>>> select() {
-        List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.select();
+        List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.select2();
         log.info("查询企业正在使用的小程序全部菜单请求响应:{}", JSON.toJSONString(CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO))));
         return CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO));
     }
+
 
     @ApiOperation(value = "查询企业小程序全部菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
     @GetMapping(value = "organize/{id}")
@@ -80,9 +89,9 @@ public class MpChooseStyleController {
 
     @ApiOperation(value = "企业小程序编辑/保存到草稿或保存发布页面" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize")
-    public CommonResult saveAllPage(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
+    public CommonResult saveAndePublish(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
         log.info("企业小程序编辑/保存到草稿或保存页面请求入参:{}", JSON.toJSONString(organizeMpRequestVO));
-        mpChooseStyleService.saveAll(organizeMpRequestVO);
+        mpChooseStyleService.saveAndePublish();
         log.info("企业小程序编辑/保存到草稿或保存页面请求出参:{}", JSON.toJSONString(CommonResult.success("成功")));
         return CommonResult.success("成功");
     }

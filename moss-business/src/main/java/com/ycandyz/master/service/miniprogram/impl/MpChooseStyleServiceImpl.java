@@ -424,4 +424,34 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         }
         return null;
     }
+    @Override
+    public List<OrganizeMpConfigMenuVO> select2() {
+        UserVO currentUser = UserRequest.getCurrentUser();
+        Long organizeId = currentUser.getOrganizeId();
+        OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeIdNotUse(organizeId);
+        if (organizeMpConfigPlan != null){
+            List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(organizeMpConfigPlan.getId());
+            List<OrganizeMpConfigMenuVO> lsit = new ArrayList<>();
+            if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
+                for (OrganizeMpConfigPlanMenuDTO o: organizeMpConfigPlanMenuDTOS) {
+                    OrganizeMpConfigMenuVO organizeMpConfigMenuVO = new OrganizeMpConfigMenuVO();
+                    BeanUtils.copyProperties(o, organizeMpConfigMenuVO);
+                    lsit.add(organizeMpConfigMenuVO);
+                }
+            }
+            return lsit;
+        }
+        return null;
+    }
+
+    @Override
+    public void saveAndePublish() {
+        //保存草稿
+        UserVO currentUser = UserRequest.getCurrentUser();
+        Long organizeId = currentUser.getOrganizeId();
+
+
+        //保存发布
+    }
+
 }

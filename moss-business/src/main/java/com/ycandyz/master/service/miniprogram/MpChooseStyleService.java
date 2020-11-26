@@ -21,4 +21,7 @@ public interface MpChooseStyleService {
 
     List<OrganizeMpConfigMenuVO> select();
 
+    List<OrganizeMpConfigMenuVO> select2();
+
+    void saveAndePublish();
 }

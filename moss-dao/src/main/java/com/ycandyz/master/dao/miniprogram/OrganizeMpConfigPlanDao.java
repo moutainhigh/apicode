@@ -29,6 +29,8 @@ public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan
 
     int setDelete(@Param("id") Integer id);
 
+    OrganizeMpConfigPlan selByOrganizeIdNotUse(Long organizeId);
+
     OrganizeMpConfigPlan selByOrganizeId(Long organizeId);
 
     OrganizeMpConfigPlan selectByIdUsing(Long organizeId);
