@@ -35,6 +35,9 @@
     <update id="updateMallCategoryImg">
         update mall_category set category_img = #{imgUrl} where category_no = #{categoryNo}
     </update>
+    <update id="updateParentCategoryImg">
+        update mall_category set category_img = #{categoryImg} where category_no = #{categoryNo}
+    </update>
 
     <delete id="delCategoryByCategoryNo" parameterType="java.lang.String">
         delete from mall_category where shop_no = #{shopNo,jdbcType=VARCHAR} and category_no = #{categoryNo,jdbcType=VARCHAR};
@@ -63,6 +66,9 @@
 
     <select id="selCategoryByParentCategoryNo" resultMap="BaseResultMap" parameterType="java.lang.String">
         select * from mall_category where shop_no = #{shopNo,jdbcType=VARCHAR} and parent_category_no = #{parentCategoryNo,jdbcType=VARCHAR} and layer = 1;
+    </select>
+    <select id="selectByShopNo" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryDTO">
+        select id,category_no,category_name,category_img from mall_category where shop_no = #{shopNo} and status = 1 and layer = 0;
     </select>
 
 </mapper>

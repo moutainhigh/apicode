@@ -856,6 +856,9 @@
         <if test="p.status != null">
             and mo.status=#{p.status}
         </if>
+        <if test="p.deliverType != null">
+            and mo.deliver_type=#{p.deliverType}
+        </if>
         <if test="p.orderAtBegin != null">
             and
             mo.order_at &gt;= #{p.orderAtBegin} /**下单时间*/
@@ -975,6 +978,9 @@
         </if>
         <if test="p.status != null">
             and mo.status=#{p.status}
+        </if>
+        <if test="p.deliverType != null">
+            and mo.deliver_type=#{p.deliverType}
         </if>
         <if test="p.orderAtBegin != null">
             and

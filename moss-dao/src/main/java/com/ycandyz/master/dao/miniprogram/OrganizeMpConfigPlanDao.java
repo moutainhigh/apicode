@@ -17,9 +17,7 @@ import java.util.List;
  */
 public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan> {
 
-    OrganizeMpConfigPlan getOrganizePlan(@Param("organizeId") Long organizeId, @Param("id") Integer id);
-
-    OrganizeMpConfigPlan getOrganizePlanById(@Param("organizeId") Long organizeId, @Param("id") Integer id);
+    OrganizeMpConfigPlan getOrganizePlanByPlanId(@Param("organizePlanId") Integer organizePlanId);
 
     void insertSingle(OrganizeMpConfigPlan organizeMpConfigPlan1);
 
@@ -28,6 +26,8 @@ public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan
     OrganizeMpConfigPlan getByOrganizeId(Long organizeId);
 
     int setDelete(@Param("id") Integer id);
+
+    OrganizeMpConfigPlan selByOrganizeIdNotUse(Long organizeId);
 
     OrganizeMpConfigPlan selByOrganizeId(Long organizeId);
 

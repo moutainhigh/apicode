@@ -875,12 +875,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long pageSize, String mallOrderQuery, Integer status, Long orderAtBegin, Long orderAtEnd) {
+    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long pageSize, String mallOrderQuery, Integer status, Integer deliverType, Long orderAtBegin, Long orderAtEnd) {
         UserVO userVO = getUser();  //获取当前登陆用户
         List<MallOrderUAppVO> list = new ArrayList<>();
         Integer count = null;   //总条数
         MallOrderUAppQuery mallOrderUAppQuery = new MallOrderUAppQuery();  //请求入参
         mallOrderUAppQuery.setStatus(status);
+        mallOrderUAppQuery.setDeliverType(deliverType);
         mallOrderUAppQuery.setMallOrderQuery(mallOrderQuery);
         mallOrderUAppQuery.setShopNo(userVO.getShopNo());
         mallOrderUAppQuery.setOrderAtBegin(orderAtBegin);

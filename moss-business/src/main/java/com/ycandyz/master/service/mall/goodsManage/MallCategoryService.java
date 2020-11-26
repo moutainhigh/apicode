@@ -2,6 +2,7 @@ package com.ycandyz.master.service.mall.goodsManage;
 
 
 import com.ycandyz.master.dto.mall.MallCategoryDTO;
+import com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryDTO;
 import com.ycandyz.master.vo.MallCategoryVO;
 
 import java.util.List;
@@ -19,6 +20,8 @@ public interface MallCategoryService {
     List<MallCategoryDTO> insert(MallCategoryVO mallCategoryVO);
 
     MallCategoryDTO select(String categoryNo);
+
+    List<OrganizeMallCategoryDTO> selectCategory();
 
     int delete(String categoryNo);
 

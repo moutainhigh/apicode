@@ -26,7 +26,7 @@ public interface MallOrderService extends IService<MallOrder> {
 
     ReturnResponse<String> verPickupNo(String pickupNo, String orderNo);
 
-    CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long pageSize, String mallOrderQuery, Integer status, Long orderAtBegin, Long orderAtEnd);
+    CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long pageSize, String mallOrderQuery, Integer status, Integer deliverType, Long orderAtBegin, Long orderAtEnd);
 
     ReturnResponse<MallOrderUAppVO> queryOrderDetailByUApp(String orderNo);
 

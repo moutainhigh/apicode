@@ -15,11 +15,14 @@ import lombok.Data;
 @Data
 public class OrganizeMpConfigModuleBaseVO {
 
-    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
+    @ApiModelProperty(value = "id")
     private Integer id;
 
-    @ApiModelProperty(value = "id")
-    private Integer moduleBaseId;
+//    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
+//    private Integer id;
+
+//    @ApiModelProperty(value = "id")
+//    private Integer moduleBaseId;
 
     @ApiModelProperty(value = "元素编码")
     private String baseCode;

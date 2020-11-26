@@ -2,6 +2,7 @@ package com.ycandyz.master.service.miniprogram.impl;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
@@ -42,7 +43,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     private MpConfigPlanDao mpConfigPlanDao;
 
     @Autowired
-    private MpConfigPlanPageDao mpConfigPlanPageDao;
+    private MallCategoryDao mallCategoryDao;
 
     @Autowired
     private MpConfigModuleBaseDao mpConfigModuleBaseDao;
@@ -71,6 +72,10 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
         if (organizeMpConfigPlanMenuDTO != null){
             organizeMpConfigPageSingleMenuVO.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
+            OrganizeMpConfigPlan organizePlan = organizeMpConfigPlanDao.getOrganizePlanByPlanId(organizeMpConfigPlanMenuDTO.getOrganizePlanId());
+            if (organizePlan != null){
+                organizeMpConfigPageSingleMenuVO.setMpPlanId(organizePlan.getMpPlanId());
+            }
         }
         List<OrganizeMpConfigModuleVO> moudles = new ArrayList<>();
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
@@ -93,9 +98,10 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                         organizeMpConfigModuleBaseVO.setSortBase(dto.getSortBase());
                         organizeMpConfigModuleBaseVO.setShowLayout(dto.getShowLayout());
                         organizeMpConfigModuleBaseVO.setDisplayNum(mpConfigModuleBase.getDisplayNum());
-                        organizeMpConfigModuleBaseVO.setId(dto.getId());
+                        //organizeMpConfigModuleBaseVO.setId(dto.getId());
                         organizeMpConfigModuleBaseVO.setReplacePicUrl(dto.getReplacePicUrl());
-                        organizeMpConfigModuleBaseVO.setModuleBaseId(mpConfigModuleBase.getId());
+                        //organizeMpConfigModuleBaseVO.setModuleBaseId(mpConfigModuleBase.getId());
+                        organizeMpConfigModuleBaseVO.setId(mpConfigModuleBase.getId());
                         baseInfoList.add(organizeMpConfigModuleBaseVO);
                     }
                 }
@@ -140,6 +146,10 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
 
     @Override
     public void saveSingle(OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
+        boolean have = check(organizeMenuMpRequestVO);
+        if (have){
+            log.error("企业小程序单页保存参数为空");
+        }
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
         OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.getByOrganizeId(organizeId);
@@ -163,7 +173,27 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlan1);
             saveMenuAndPage(null,organizeMenuMpRequestVO,organizeId,2);
         }
+        //保存分类一级图片
+        List<OrganizeMallCategoryVO> organizeMallCategoryVOs = organizeMenuMpRequestVO.getImgurls();
+        if (organizeMallCategoryVOs !=  null && organizeMallCategoryVOs.size() > 0){
+            for (OrganizeMallCategoryVO o:organizeMallCategoryVOs) {
+                mallCategoryDao.updateParentCategoryImg(o);
+            }
+        }
 
+    }
+
+    private boolean check(OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
+        if (organizeMenuMpRequestVO == null){
+            return true;
+        }
+        if (organizeMenuMpRequestVO.getMenuName() == null){
+            return true;
+        }
+        if (organizeMenuMpRequestVO.getMpPlanId() == null){
+            return true;
+        }
+        return false;
     }
 
     private void selAndUpdatePlan(Integer mpPlanId, Long organizeId, Integer organizePlanId,Integer reselectMoudle) {
@@ -211,6 +241,22 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
                     BeanUtils.copyProperties(m, organizeMpConfigPlanMenu);
                     organizeMpConfigPlanMenu.setOrganizePlanId(finalOrganizePlanId);
+                    if (m.getCanDelete()== false){
+                        organizeMpConfigPlanMenu.setCanDelete(1);
+                    }else {
+                        organizeMpConfigPlanMenu.setCanDelete(0);
+                    }
+                    if (m.getCanLayout()== false){
+                        organizeMpConfigPlanMenu.setCanLayout(1);
+                    }else {
+                        organizeMpConfigPlanMenu.setCanLayout(0);
+                    }
+                    if (m.getLogicDelete()== false){
+                        organizeMpConfigPlanMenu.setLogicDelete(1);
+                    }else {
+                        organizeMpConfigPlanMenu.setLogicDelete(0);
+                    }
+
                     if (organizeMpConfigPlanMenuDTO != null){
                         organizeMpConfigPlanMenu.setId(organizeMpConfigPlanMenuDTO.getId());
                     }else {
@@ -418,4 +464,34 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         }
         return null;
     }
+    @Override
+    public List<OrganizeMpConfigMenuVO> select2() {
+        UserVO currentUser = UserRequest.getCurrentUser();
+        Long organizeId = currentUser.getOrganizeId();
+        OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeIdNotUse(organizeId);
+        if (organizeMpConfigPlan != null){
+            List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(organizeMpConfigPlan.getId());
+            List<OrganizeMpConfigMenuVO> lsit = new ArrayList<>();
+            if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
+                for (OrganizeMpConfigPlanMenuDTO o: organizeMpConfigPlanMenuDTOS) {
+                    OrganizeMpConfigMenuVO organizeMpConfigMenuVO = new OrganizeMpConfigMenuVO();
+                    BeanUtils.copyProperties(o, organizeMpConfigMenuVO);
+                    lsit.add(organizeMpConfigMenuVO);
+                }
+            }
+            return lsit;
+        }
+        return null;
+    }
+
+    @Override
+    public void saveAndePublish() {
+        //保存草稿
+        UserVO currentUser = UserRequest.getCurrentUser();
+        Long organizeId = currentUser.getOrganizeId();
+
+
+        //保存发布
+    }
+
 }

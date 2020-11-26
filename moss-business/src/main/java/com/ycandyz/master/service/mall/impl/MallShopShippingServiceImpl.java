@@ -410,4 +410,21 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
         return ReturnResponse.success(list);
     }
 
+    @Override
+    public ReturnResponse<MallShopShippingUAppVO> verShipmentNoByUApp(String shipNumber) {
+        String result = HttpUtil.get(autonumberUrl.replace("NUM",shipNumber).replace("KEY",kuaidiKey));
+        JSONObject jsonObject = JSONUtil.parseArray(result).getJSONObject(0);
+        if (jsonObject!=null) {
+            if (jsonObject.getStr("comCode") != null && !"".equals(jsonObject.getStr("comCode"))) {
+                String value = ExpressEnum.getValue(jsonObject.getStr("comCode"));
+                MallShopShippingUAppVO mallShopShippingVO = new MallShopShippingUAppVO();
+                mallShopShippingVO.setCompany(value);
+                mallShopShippingVO.setCompanyCode(jsonObject.getStr("comCode"));
+                mallShopShippingVO.setNumber(shipNumber);
+                return ReturnResponse.success(mallShopShippingVO);
+            }
+        }
+        return ReturnResponse.failed("为查询到快递记录。");
+    }
+
 }

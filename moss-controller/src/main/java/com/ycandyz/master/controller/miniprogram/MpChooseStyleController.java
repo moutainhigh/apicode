@@ -4,8 +4,12 @@ package com.ycandyz.master.controller.miniprogram;
 import com.alibaba.fastjson.JSON;
 import com.ycandyz.master.api.BaseResult;
 import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.ReturnResponse;
+import com.ycandyz.master.dto.mall.MallCategoryDTO;
+import com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryDTO;
 import com.ycandyz.master.model.miniprogram.OrganizeMpConfigMenuVO;
 import com.ycandyz.master.model.miniprogram.OrganizeMpConfigPageSingleMenuVO;
+import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
 import com.ycandyz.master.service.miniprogram.MpChooseStyleService;
 import com.ycandyz.master.vo.OrganizeMenuMpRequestVO;
 import com.ycandyz.master.vo.OrganizeMpRequestVO;
@@ -17,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Slf4j
@@ -28,13 +33,26 @@ public class MpChooseStyleController {
     @Autowired
     private MpChooseStyleService mpChooseStyleService;
 
-    @ApiOperation(value = "查询企业正在使用的小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
+    @Resource
+    private MallCategoryService mallCategoryService;
+
+
+//    @ApiOperation(value = "查询企业正在使用的小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
+//    @GetMapping(value = "organize")
+//    public CommonResult<BaseResult<List<OrganizeMpConfigMenuVO>>> select() {
+//        List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.select();
+//        log.info("查询企业正在使用的小程序全部菜单请求响应:{}", JSON.toJSONString(CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO))));
+//        return CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO));
+//    }
+
+    @ApiOperation(value = "查询企业正在编辑的草稿小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
     @GetMapping(value = "organize")
     public CommonResult<BaseResult<List<OrganizeMpConfigMenuVO>>> select() {
-        List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.select();
+        List<OrganizeMpConfigMenuVO> organizeMpConfigMenuVO = mpChooseStyleService.select2();
         log.info("查询企业正在使用的小程序全部菜单请求响应:{}", JSON.toJSONString(CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO))));
         return CommonResult.success(new BaseResult<>(organizeMpConfigMenuVO));
     }
+
 
     @ApiOperation(value = "查询企业小程序全部菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
     @GetMapping(value = "organize/{id}")
@@ -71,9 +89,9 @@ public class MpChooseStyleController {
 
     @ApiOperation(value = "企业小程序编辑/保存到草稿或保存发布页面" , tags = "企业小程序DIY配置",httpMethod = "POST")
     @PostMapping("/organize")
-    public CommonResult saveAllPage(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
+    public CommonResult saveAndePublish(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
         log.info("企业小程序编辑/保存到草稿或保存页面请求入参:{}", JSON.toJSONString(organizeMpRequestVO));
-        mpChooseStyleService.saveAll(organizeMpRequestVO);
+        mpChooseStyleService.saveAndePublish();
         log.info("企业小程序编辑/保存到草稿或保存页面请求出参:{}", JSON.toJSONString(CommonResult.success("成功")));
         return CommonResult.success("成功");
     }
@@ -85,5 +103,16 @@ public class MpChooseStyleController {
         log.info("企业小程序编辑发布请求出参:{}", r);
         return CommonResult.success(r);
     }
+
+
+    @ApiOperation(value = "查询商城一级分类",notes = "查询",tags = "企业小程序DIY配置",httpMethod = "GET")
+    @GetMapping("/organize/category")
+    public CommonResult<BaseResult<List<OrganizeMallCategoryDTO>>> selectCategory(){
+        List<OrganizeMallCategoryDTO> organizeMallCategoryDTOs = mallCategoryService.selectCategory();
+        log.info("查询一级分类请求出参:{}",organizeMallCategoryDTOs);
+        return CommonResult.success(new BaseResult<>(organizeMallCategoryDTOs));
+    }
+
+
 
 }

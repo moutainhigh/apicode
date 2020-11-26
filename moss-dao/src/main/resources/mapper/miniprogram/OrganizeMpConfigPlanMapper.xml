@@ -31,14 +31,11 @@
         logic_delete = #{logicDelete}, current_using = #{currentUsing}, update_time = now()
         where id = #{id}
     </update>
-    <select id="getOrganizePlan" resultMap="BaseResultMap">
+    <select id="getOrganizePlanByPlanId" resultMap="BaseResultMap">
         select * from organize_mp_config_plan
-        where id = #{id} and organize_id = #{organizeId}
+        where id = #{organizePlanId} and logic_delete = 0 and current_using = 0;
     </select>
-    <select id="getOrganizePlanById" resultMap="BaseResultMap">
-         select * from organize_mp_config_plan
-        where id = #{id} and organize_id = #{organizeId}
-    </select>
+
     <select id="selectByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where organize_id = #{organizeId};
     </select>
@@ -48,6 +45,10 @@
     <select id="selByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 1 and logic_delete = 0;
     </select>
+    <select id="selByOrganizeIdNotUse" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 0 and logic_delete = 0;
+    </select>
+
     <select id="selectByIdUsing" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
         select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0 and current_using = 1;
     </select>

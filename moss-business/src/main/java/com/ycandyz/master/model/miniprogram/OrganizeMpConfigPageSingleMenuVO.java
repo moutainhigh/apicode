@@ -24,6 +24,9 @@ public class OrganizeMpConfigPageSingleMenuVO {
     @ApiModelProperty(value = "menuName")
     private String menuName;
 
+    @ApiModelProperty(value = "小程序模版id")
+    private Integer mpPlanId;
+
     @ApiModelProperty(value = "modules")
     private List<OrganizeMpConfigModuleVO> modules;
 }
