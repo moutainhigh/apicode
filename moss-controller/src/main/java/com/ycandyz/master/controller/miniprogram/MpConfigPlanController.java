@@ -1,6 +1,7 @@
 package com.ycandyz.master.controller.miniprogram;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.ycandyz.master.api.*;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanModel;
@@ -39,8 +40,14 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
 	
 	@ApiOperation(value="✓创建方案", tags = "企业小程序DIY配置")
     @PostMapping
-	public CommonResult<String> create(@RequestParam String planName) {
-        return result(service.initPlan(planName),planName,"创建失败!");
+	public CommonResult<Boolean> create(@RequestParam String planName) {
+	    if(StrUtil.isEmpty(planName)){
+            return CommonResult.validateFailed("方案名称不能为空");
+        }
+	    if(planName.length() > 10){
+            return CommonResult.validateFailed("方案名称长度不能大于10个字符");
+        }
+        return result(service.initPlan(planName),true,"创建失败!");
 	}
 
 	
