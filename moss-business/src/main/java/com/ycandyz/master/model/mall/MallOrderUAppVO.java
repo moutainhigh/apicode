@@ -27,6 +27,9 @@ public class MallOrderUAppVO {
     /**商店编号*/
     @ApiModelProperty(value = "商店编号")
     private String shopNo;
+    /**交易流水*/
+    @ApiModelProperty(value = "交易流水")
+    private String tradeNo;
     /**下单用户id*/
     @ApiModelProperty(value = "下单用户id")
     private Integer userId;

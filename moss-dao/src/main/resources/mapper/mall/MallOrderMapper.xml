@@ -899,6 +899,7 @@
         <result column="payuserName" property="payuserName" />
         <result column="payuserPhone" property="payuserPhone" />
         <result column="payuserHeading" property="payuserHeading" />
+        <result column="trade_no" property="tradeNo" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -932,6 +933,7 @@
         a.`after_sales_end_at`,
         a.shippingMoney,
         a.shop_no,
+        a.trade_no,
         a.total_money-a.real_money as discountMoney,
         concat( u.`name`, ' ', u.phone ) AS payuser,
         u.name as payuserName,
