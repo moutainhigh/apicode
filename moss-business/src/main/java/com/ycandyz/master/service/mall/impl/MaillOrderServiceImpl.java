@@ -1012,40 +1012,38 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<MallOrderDetailUAppVO> detailVOList = new ArrayList<>();
-                mallOrderDTO.getDetails().forEach(orderDetail->{
+                BigDecimal manageMoney = new BigDecimal(0);
+                BigDecimal distributionMoney = new BigDecimal(0);
+                for(MallOrderDetailDTO orderDetail : mallOrderDTO.getDetails()){
                     MallOrderDetailUAppVO mallOrderDetailVO = new MallOrderDetailUAppVO();
                     BeanUtils.copyProperties(orderDetail,mallOrderDetailVO);
 
                     if (mallOrderDTO.getOrderType()!=null) {
-                        if (mallOrderDTO.getOrderType() == 2) { //新订单，神州通的
-                            //查询佣金流水表
-                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderDetailNo(mallOrderDetailVO.getOrderDetailNo());
-                            if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
-                                List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
-                                mallSocialShareFlowDTOs.forEach(dto -> {
-                                    MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
-                                    BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
-                                    flowList.add(mallSocialShareFlowVO);
-                                });
-                                mallOrderDetailVO.setShareFlowInfo(flowList);
-                            }
-                        }else if (mallOrderDTO.getOrderType() == 1){    //老订单，商城的
+                        if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10){  //已取消订单不展示分销人相关信息
+
                             //查询佣金流水表
                             List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
                             if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
                                 List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
-                                mallSocialShareFlowDTOs.forEach(dto -> {
+                                for(MallSocialShareFlowDTO dto : mallSocialShareFlowDTOs) {
                                     MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
                                     BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
                                     flowList.add(mallSocialShareFlowVO);
-                                });
+                                    if (dto.getShareType()==0){ //分销佣金
+                                        distributionMoney = distributionMoney.add(dto.getAmount());
+                                    }else if (dto.getShareType()==1){   //管理佣金
+                                        manageMoney = manageMoney.add(dto.getAmount());
+                                    }
+                                }
                                 mallOrderDetailVO.setShareFlowInfo(flowList);
                             }
                         }
                         detailVOList.add(mallOrderDetailVO);
                     }
-                });
+                }
                 mallOrderVO.setDetails(detailVOList);
+                mallOrderVO.setShareManageMoney(manageMoney);
+                mallOrderVO.setShareDistributionMoney(distributionMoney);
             }
 
             //查看商店

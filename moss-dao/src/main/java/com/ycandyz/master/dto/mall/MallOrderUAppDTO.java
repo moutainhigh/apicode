@@ -131,6 +131,9 @@ public class MallOrderUAppDTO {
     /**receiveAt*/
     @ApiModelProperty(value = "receiveAt")
     private java.lang.Integer receiveAt;
+    /**交易流水（对外展示的）*/
+    @ApiModelProperty(value = "交易流水（对外展示的）")
+    private String tradeNo;
     /**关联卖家物流日志表*/
     @ApiModelProperty(value = "关联卖家物流日志表")
     private List<MallShopShippingLogDTO> shopShippingLog;

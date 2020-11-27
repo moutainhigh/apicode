@@ -972,7 +972,8 @@
         mo.all_money - mo.real_money AS shippingMoney,
         mo.order_type,
         mo.all_money,
-        mo.shop_no
+        mo.shop_no,
+        mo.trade_no
         FROM
         mall_order mo
         LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id

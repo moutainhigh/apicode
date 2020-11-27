@@ -172,6 +172,10 @@ public class MallOrderUAppVO {
     /**下单用户头像*/
     @ApiModelProperty(value = "下单用户头像")
     private String payuserHeading;
+    @ApiModelProperty(value = "管理佣金")
+    private BigDecimal shareManageMoney;
+    @ApiModelProperty(value = "分销佣金")
+    private BigDecimal shareDistributionMoney;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")
