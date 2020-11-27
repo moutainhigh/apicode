@@ -59,7 +59,7 @@
                 and p.menu_id = #{menuId}
             </if>
         </where>
-        order by p.sort_module asc,p.sort_base asc;
+        order by p.sort_module desc,p.sort_base asc;
     </select>
 
     <select id="getMenuModuleElement" resultMap="BaseResultMap2" >
