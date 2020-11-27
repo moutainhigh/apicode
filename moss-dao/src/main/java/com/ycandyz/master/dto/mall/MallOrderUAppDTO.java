@@ -155,6 +155,16 @@ public class MallOrderUAppDTO {
     /**关联商店*/
     @ApiModelProperty(value = "关联商店")
     private MallShopDTO shopInfo;
+    /**下单用户名*/
+    @ApiModelProperty(value = "下单用户名")
+    private String payuserName;
+    /**下单用户手机号*/
+    @ApiModelProperty(value = "下单用户手机号")
+    private String payuserPhone;
+    /**下单用户头像*/
+    @ApiModelProperty(value = "下单用户头像")
+    private String payuserHeading;
+
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")
