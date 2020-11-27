@@ -95,12 +95,6 @@ public class ${table.controllerName} {
         return result(service.removeById(id),null,"删除失败!");
 	}
 
-    @ApiImplicitParam(name="ids",value="ID集合(1,2,3)",required=true,allowMultiple=true,dataType="int")
-   	@ApiOperation(value = "通过ids批量删除")
-    @DeleteMapping(value = "delete")
-	public CommonResult deleteBatch(String ids) {
-        return result(service.deleteByIds(Convert.toLongArray(ids)),null,"删除失败!");
-	}
     
 }
 </#if>

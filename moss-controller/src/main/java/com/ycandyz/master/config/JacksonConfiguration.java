@@ -50,7 +50,6 @@ public class JacksonConfiguration {
         javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_FORMAT)));
         javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(TIME_FORMAT)));
         return Jackson2ObjectMapperBuilder.json()
-                //全局驼峰转下划线
                 //.propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
