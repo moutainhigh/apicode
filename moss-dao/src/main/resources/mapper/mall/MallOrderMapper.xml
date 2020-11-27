@@ -912,6 +912,7 @@
             <result column="item_name" property="itemName" />
             <result column="item_cover" property="itemCover" />
             <result column="skuQuantity" property="skuQuantity" />
+            <result column="skuPrice" property="skuPrice" />
         </collection>
     </resultMap>
 
@@ -946,7 +947,8 @@
         modetail.quantity AS skuQuantity,
         modetail.item_cover,
         modetail.is_enable_share,
-        modetail.share_user_id
+        modetail.share_user_id,
+        modetail.price as skuPrice
         FROM
         (
         SELECT
