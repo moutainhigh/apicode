@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 public class PageModel<T> {
 
     @ApiModelProperty(name="page_num",value = "页码")
-    private long pageNum = 1;
+    private long page = 1;
     @ApiModelProperty(name="page_size",value = "页长")
     private long pageSize = 10;
 

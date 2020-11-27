@@ -67,7 +67,7 @@ public class MsgNotifyRelationController extends BaseController<MsgNotifyRelatio
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<MsgNotifyRelation>> selectPage(PageModel page, MsgNotifyRelationQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "查询全部")

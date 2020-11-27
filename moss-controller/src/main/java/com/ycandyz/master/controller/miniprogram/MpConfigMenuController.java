@@ -66,7 +66,7 @@ public class MpConfigMenuController extends BaseController<MpConfigMenuServiceIm
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<MpConfigMenu>> selectPage(PageModel page, MpConfigMenuQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "✓列表查询-默认菜单", tags = "企业小程序DIY配置")

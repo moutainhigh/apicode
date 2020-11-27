@@ -72,7 +72,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponActivity>> getPage(PageModel page,CouponActivityQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
     @ApiImplicitParam(name="activity_no",value="活动编号",required=true,dataType="string")
@@ -80,14 +80,14 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @GetMapping(value = "ticket/page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponActivityTicketResp>> getTicketPage(PageModel page,CouponActivityTicketQuery query) {
-        return CommonResult.success(new BasePageResult(service.selectTicketPage(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.selectTicketPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
     @ApiOperation(value = "活动参与人-分页")
     @GetMapping(value = "user/page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponActivityTicketResp>> getUserPage(PageModel page,CouponActivityTicketQuery query) {
-        return CommonResult.success(new BasePageResult(service.selectTicketPage(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.selectTicketPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
     @ApiImplicitParam(name="activity_no",value="活动编号",required=true,dataType="string")
@@ -95,7 +95,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @GetMapping(value = "activity-ticket/page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponActivityTicketResp>> getActivityTicketPage(PageModel page,CouponActivityTicketQuery query) {
-        return CommonResult.success(new BasePageResult(service.selectActivityTicketPage(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.selectActivityTicketPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "删除发卷宝的-优惠卷")
