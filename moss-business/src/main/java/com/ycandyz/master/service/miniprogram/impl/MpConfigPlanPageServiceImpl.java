@@ -2,6 +2,7 @@ package com.ycandyz.master.service.miniprogram.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.StrUtil;
 import com.ycandyz.master.domain.model.miniprogram.ElementWithinModule;
 import com.ycandyz.master.domain.model.miniprogram.ModuleWithinMenu;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanPageModel;
@@ -68,7 +69,7 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
                 baseIds.add(Integer.parseInt(id));
             }
         }
-        List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = this.baseMapper.getMenuModuleElement(moduleSort,baseIds);
+        List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = this.baseMapper.getMenuModuleElement(menuId,moduleSort,baseIds);
         List<MpConfigModuleBaseResp> baseInfoList = new ArrayList<MpConfigModuleBaseResp>();
         for(MpConfigPlanPageBaseDTO base: configPlanPageBaseDTOList){
             MpConfigModuleBaseResp resp = new MpConfigModuleBaseResp();
@@ -83,25 +84,27 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
     @Override
     public Boolean addBatch(PlanModuleModel model) {
 
+        //删除上一次菜单下数据
+        this.baseMapper.deleteByMenuId(model.getMenuId());
         List<ModuleWithinMenu> modules = model.getModules();
         List<MpConfigPlanPage> planPageList = new ArrayList<MpConfigPlanPage>();
         for(ModuleWithinMenu module: modules){
             List<ElementWithinModule> elements = module.getBaseInfo();
             for(ElementWithinModule element: elements){
                 MpConfigPlanPage planPage = new MpConfigPlanPage();
-                if(element.getId() != null){
-                    planPage.setId(element.getId());
-                }
                 planPage.setMenuId(model.getMenuId());
                 planPage.setModuleId(module.getModuleId());
                 planPage.setSortModule(module.getSortModule());
                 planPage.setModuleBaseId(element.getModuleBaseId());
                 planPage.setShowLayout(element.getShowLayout());
                 planPage.setSortBase(element.getSortBase());
+                if(StrUtil.isNotEmpty(element.getReplacePicUrl())){
+                    planPage.setReplacePicUrl(element.getReplacePicUrl());
+                }
                 planPageList.add(planPage);
             }
         }
-        return this.saveOrUpdateBatch(planPageList);
+        return this.saveBatch(planPageList);
     }
 
     @Override
@@ -127,7 +130,7 @@ public class MpConfigPlanPageServiceImpl extends BaseService<MpConfigPlanPageDao
                     baseIds.add(Integer.parseInt(id));
                 }
             }
-            List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = this.baseMapper.getMenuModuleElement(dto.getSortModule(),baseIds);
+            List<MpConfigPlanPageBaseDTO> configPlanPageBaseDTOList = this.baseMapper.getMenuModuleElement(menuId,dto.getSortModule(),baseIds);
             List<MpConfigModuleBaseResp> baseInfoList = new ArrayList<MpConfigModuleBaseResp>();
             for(MpConfigPlanPageBaseDTO dtoBase: configPlanPageBaseDTOList){
                 MpConfigModuleBaseResp resp = new MpConfigModuleBaseResp();

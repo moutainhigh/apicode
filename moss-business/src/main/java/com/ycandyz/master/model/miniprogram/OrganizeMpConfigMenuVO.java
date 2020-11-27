@@ -24,10 +24,10 @@ import java.util.List;
 @TableName("organize_mp_config_module")
 public class OrganizeMpConfigMenuVO extends MpConfigModule {
 
-    @ApiModelProperty(value = "编号")
+    @ApiModelProperty(value = "菜单编号")
     private Integer id;
 
-    @ApiModelProperty(value = "名称")
+    @ApiModelProperty(value = "菜单名称")
     private String title;
 
     @ApiModelProperty(value = "选中图片地址")
@@ -46,5 +46,8 @@ public class OrganizeMpConfigMenuVO extends MpConfigModule {
     private Integer sortNum;
 
     @ApiModelProperty(value = "是否可布局0：不可布局；1、可布局")
-    private Boolean canLayout;
+    private Integer canLayout;
+
+    @ApiModelProperty(value = "是否可删除0：不可删除；1、可删除")
+    private Integer canDelete;
 }

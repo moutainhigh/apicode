@@ -54,8 +54,8 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
      */
 	@ApiOperation(value = "查询分页")
     @GetMapping(value = "page")
-    public ReturnResponse<Page<CouponTicketInfoVO>> selectPageList(@RequestBody RequestParams<CouponTicketQuery> requestParams, @CurrentUser UserVO userVO) {
-        return iCouponTicketService.selectPageList(requestParams,userVO);
+    public ReturnResponse<Page<CouponTicketInfoVO>> selectPageList(@RequestBody RequestParams<CouponTicketQuery> requestParams) {
+        return iCouponTicketService.selectPageList(requestParams);
     }
 
     /**
@@ -66,11 +66,11 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
      */
     @ApiOperation(value = "优惠券启用停用")
     @GetMapping(value = "/audit")
-	public ReturnResponse<String> auditState(@RequestParam("id") Long id, @RequestParam("state") Integer state, @CurrentUser UserVO userVO) {
+	public ReturnResponse<String> auditState(@RequestParam("id") Long id, @RequestParam("state") Integer state) {
         if (id==null || id==0 || state==null){
             return ReturnResponse.failed("传入参数为空");
         }
-        return iCouponTicketService.auditState(id,state,userVO);
+        return iCouponTicketService.auditState(id,state);
 	}
 
     /**
@@ -80,11 +80,11 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
      */
     @ApiOperation(value = "优惠券启用停用")
     @GetMapping(value = "/detail")
-    public ReturnResponse<CouponTicketInfoVO> ticketDetail(@RequestParam("ticketNo") String ticketNo, @CurrentUser UserVO userVO) {
+    public ReturnResponse<CouponTicketInfoVO> ticketDetail(@RequestParam("ticketNo") String ticketNo) {
         if (ticketNo==null || "".equals(ticketNo)){
             return ReturnResponse.failed("传入参数为空");
         }
-        return iCouponTicketService.ticketDetail(ticketNo,userVO);
+        return iCouponTicketService.ticketDetail(ticketNo);
     }
 
     /**
@@ -94,8 +94,8 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
      */
     @ApiOperation(value = "优惠券的新增或修改")
     @PutMapping(value = "/ticket")
-    public ReturnResponse<String> saveTicket(@RequestBody CouponTicketInfoQuery couponTicketInfoQuery, @CurrentUser UserVO userVO){
-        ReturnResponse<String> returnResponse = iCouponTicketService.saveTicket(couponTicketInfoQuery,userVO);
+    public ReturnResponse<String> saveTicket(@RequestBody CouponTicketInfoQuery couponTicketInfoQuery){
+        ReturnResponse<String> returnResponse = iCouponTicketService.saveTicket(couponTicketInfoQuery);
         return returnResponse;
     }
     

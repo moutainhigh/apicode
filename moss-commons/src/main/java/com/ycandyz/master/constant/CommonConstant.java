@@ -216,4 +216,14 @@ public interface CommonConstant {
 	String MINI_ACCESS_TOKEN = "accessToken";
 
 	String SLASH = "/";
+
+	/**
+	 * 敏感词，list
+	 */
+	String TABOO_LIST_GROUP = "TABOO_LIST_GROUP:";
+
+	/**
+	 * 敏感词，map
+	 */
+	String TABOO_MAP_GROUP = "TABOO_MAP_GROUP:";
 }

@@ -23,4 +23,15 @@ public interface MpConfigPlanMenuDao extends BaseMapper<MpConfigPlanMenu> {
      * @return
      */
     List<MpConfigPlanMenu> getMenusByPlanId(@Param("planId") Integer planId, @Param("logicDelete") Boolean logicDelete);
+
+    MpConfigPlanMenu selectMenuById(Integer menuId);
+
+    List<MpConfigPlanMenu> selByPlanId(Integer planId);
+
+    /**
+     * 删除菜单下配置模块
+     * @param planId
+     * @return
+     */
+    Boolean deleteByPlanId(@Param("planId") Integer planId);
 }

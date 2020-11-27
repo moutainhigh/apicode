@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author SanGang
- * @since 2020-11-12
+ * @since 2020-11-24
  */
 public interface SmsSendQueueLogDao extends BaseMapper<SmsSendQueueLog> {
 

@@ -19,7 +19,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserExportRecordDao extends BaseMapper<UserExportRecord> {
 
-    Page<UserExportRecordResp> selectPages(Page pageQuery,@Param("u") UserExportRecordQuery userExportRecordQuery);
+    Page<UserExportRecord> selectPages(Page pageQuery,@Param("u") UserExportRecordQuery userExportRecordQuery);
 
     void insertUserExportRecord(UserExportRecord userExportRecord);
 }

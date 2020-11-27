@@ -23,7 +23,10 @@ public class ContentReviewLogVO {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "'商友圈id/商品详情Id/企业动态id'")
+    @ApiModelProperty(value = "content_review主键id")
+    private Long contentReviewId;
+
+    @ApiModelProperty(value = "'商友圈item_no/商品详情Id/企业动态id'")
     private String contentId;
 
     @ApiModelProperty(value = "内容模块[0:商品详情;1:商友圈;2:企业动态]")

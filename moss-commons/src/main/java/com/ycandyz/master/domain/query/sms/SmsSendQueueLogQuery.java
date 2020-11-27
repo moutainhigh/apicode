@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author SanGang
- * @since 2020-11-12
+ * @since 2020-11-24
  * @version 2.0
  */
 @Data
@@ -45,7 +45,7 @@ public class SmsSendQueueLogQuery implements Serializable {
     private String bizId;
 
     @ApiModelProperty(value = "0:推送中；1:成功；2:失败")
-    private String state;
+    private Integer state;
 
     @ApiModelProperty(value = "短信发送队列返回错误日志")
     private String log;

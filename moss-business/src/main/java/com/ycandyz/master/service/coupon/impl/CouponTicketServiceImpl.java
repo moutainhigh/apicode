@@ -16,6 +16,7 @@ import com.ycandyz.master.domain.query.coupon.CouponTicketQuery;
 import com.ycandyz.master.dao.coupon.CouponTicketDao;
 import com.ycandyz.master.entities.coupon.CouponTicketInfo;
 import com.ycandyz.master.entities.coupon.CouponTicketInfoItem;
+import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.model.coupon.CouponTicketInfoVO;
 import com.ycandyz.master.model.coupon.CouponTicketVO;
 import com.ycandyz.master.model.mall.MallAfterSalesVO;
@@ -57,7 +58,8 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
     private CouponTicketInfoItemDao couponTicketInfoItemDao;
 
     @Override
-    public ReturnResponse<Page<CouponTicketInfoVO>> selectPageList(RequestParams<CouponTicketQuery> requestParams, UserVO userVO) {
+    public ReturnResponse<Page<CouponTicketInfoVO>> selectPageList(RequestParams<CouponTicketQuery> requestParams) {
+        UserVO userVO = getUser();  //当前登陆用户
         if (userVO==null || userVO.getShopNo()==null || "".equals(userVO.getShopNo())){
             return ReturnResponse.failed("无门店信息");
         }
@@ -98,7 +100,8 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
     }
 
     @Override
-    public ReturnResponse<String> auditState(Long id, Integer state, UserVO userVO) {
+    public ReturnResponse<String> auditState(Long id, Integer state) {
+        UserVO userVO = getUser();  //当前登陆用户
         CouponTicket couponTicket = couponTicketDao.selectById(id);
         if (couponTicket==null){
             return ReturnResponse.failed("传入id无法查询到优惠券");
@@ -116,7 +119,8 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
     }
 
     @Override
-    public ReturnResponse<CouponTicketInfoVO> ticketDetail(String ticketNo, UserVO userVO) {
+    public ReturnResponse<CouponTicketInfoVO> ticketDetail(String ticketNo) {
+        UserVO userVO = getUser();  //当前登陆用户
         CouponTicketInfoDTO couponTicketInfoDTO = couponTicketDao.queryTicketDetailByTicketNo(ticketNo,userVO.getShopNo());
         CouponTicketInfoVO couponTicketInfoVO = null;
         if (couponTicketInfoDTO!=null){
@@ -136,17 +140,17 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
     }
 
     @Override
-    public ReturnResponse<String> saveTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO) {
-
+    public ReturnResponse<String> saveTicket(CouponTicketInfoQuery couponTicketInfoQuery) {
         if (couponTicketInfoQuery.getTicketNo()!=null && !"".equals(couponTicketInfoQuery.getTicketNo())){
-            return updateTicket(couponTicketInfoQuery,userVO);
+            return updateTicket(couponTicketInfoQuery);
         }else {
-            return insertTicket(couponTicketInfoQuery,userVO);
+            return insertTicket(couponTicketInfoQuery);
         }
     }
 
     @Transactional
-    public ReturnResponse<String> updateTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO){
+    public ReturnResponse<String> updateTicket(CouponTicketInfoQuery couponTicketInfoQuery){
+        UserVO userVO = getUser();  //当前登陆用户
         //更新ticket表
         CouponTicket couponTicket = couponTicketDao.selectOne(new QueryWrapper<CouponTicket>().eq("ticketNo",couponTicketInfoQuery.getTicketNo()));
         if (couponTicket!=null){
@@ -219,7 +223,8 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
     }
 
     @Transactional
-    public ReturnResponse<String> insertTicket(CouponTicketInfoQuery couponTicketInfoQuery, UserVO userVO) {
+    public ReturnResponse<String> insertTicket(CouponTicketInfoQuery couponTicketInfoQuery) {
+        UserVO userVO = getUser();  //当前登陆用户
         Long current = System.currentTimeMillis()/1000;
         String ticketInfoNo = String.valueOf(IDGeneratorUtils.getLongId());
         String ticketNo = String.valueOf(IDGeneratorUtils.getLongId());

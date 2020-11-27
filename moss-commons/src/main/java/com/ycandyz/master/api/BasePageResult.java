@@ -38,12 +38,12 @@ public class BasePageResult<T> implements Serializable {
     /**
      * 当前页
      */
-    private long pageNum = 1;
+    private long page = 1;
 
     public BasePageResult(Page page) {
         this.result = page.getRecords();
         this.total = page.getTotal();
         this.pageSize = page.getSize();
-        this.pageNum = page.getCurrent();
+        this.page = page.getCurrent();
     }
 }

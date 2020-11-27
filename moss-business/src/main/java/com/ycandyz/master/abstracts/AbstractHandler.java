@@ -48,9 +48,10 @@ public abstract class AbstractHandler implements InitializingBean {
 
     public abstract ReturnResponse handleExamine(Map<Integer,List<Long>> maps);
 
-    protected void insertAllcontentReviewLog(String contentId, int type, int contentResult, int auditResult){
+    protected void insertAllcontentReviewLog(Long id,String contentId, int type, int contentResult, int auditResult){
         UserVO user = UserRequest.getCurrentUser();
         ContentReviewLogVO contentReviewLogVO = new ContentReviewLogVO();
+        contentReviewLogVO.setContentReviewId(id);
         contentReviewLogVO.setContentId(contentId);
         contentReviewLogVO.setType(type);
         contentReviewLogVO.setAuditor(user.getId());

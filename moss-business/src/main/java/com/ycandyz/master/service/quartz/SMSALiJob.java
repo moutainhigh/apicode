@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;
 import com.ycandyz.master.aliyun.sms.AliSmsMessage;
-import com.ycandyz.master.constant.KafkaConstant;
 import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dao.sms.SmsSendQueueLogDao;
 import com.ycandyz.master.dto.organize.OrganizeDTO;
@@ -21,9 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -39,6 +36,9 @@ public class SMSALiJob {
     @Value("${topic.sms}")
     private String topicId;
 
+    @Value("${spring.profiles.active}")
+    private String profileActive;
+
     @Autowired
     private OrganizeDao organizeDao;
 
@@ -52,10 +52,13 @@ public class SMSALiJob {
     private SmsSendQueueLogDao smsSendQueueLogDao;
 
     /**
-     * u客用户发送短信，到期提醒
+     * u客用户发送短信，到期提醒，今天
      */
     @Scheduled(cron = "0 0 8 * * ?")
-    private void configureTasks() {
+    private void smsSendToday() {
+
+        List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843");
+
         System.err.println("执行静态定时任务时间: " + LocalDateTime.now());
         JSONArray jsonArray = null;
         //当天
@@ -63,65 +66,30 @@ public class SMSALiJob {
         Long serviceNowEnd = DateUtil.endOfDay(new Date()).getTime()/1000;
         List<OrganizeDTO> list = organizeDao.queryByServiceTime(serviceNowBegin,serviceNowEnd);
         if (list!=null && list.size()>0){
-            jsonArray = new JSONArray();
             for (OrganizeDTO organizeDTO : list){
+                if (profileActive.equals("dev") || profileActive.equals("test") || profileActive.equals("pre")){
+                    if (!phone.contains(organizeDTO.getPhone())){
+                        continue;
+                    }
+                }
+                List<Object> phoneList = new ArrayList<>();
+                jsonArray = new JSONArray();
+                phoneList.add(organizeDTO.getPhone());
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("name",organizeDTO.getFullNname());
                 jsonObject.put("msg","今日");
                 jsonArray.add(jsonObject);
-            }
-            List<String> phoneList = list.stream().map(OrganizeDTO::getPhone).collect(Collectors.toList());
-            phoneList.add(serviceNumber);
-            String bizId = aliSmsMessage.sendMsg(phoneList,jsonArray.toJSONString(),templateCode);
-            if (bizId!=null && !"".equals(bizId)) {
-                List<QuerySendDetailsResponse.SmsSendDetailDTO> responseList = aliSmsMessage.messageSendState(phoneList, bizId);
-                insertMysql(responseList,bizId);
-            }
-        }
 
-        //七天
-        DateTime sevenDateTime = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR, 7);
-        Long serviceSevenBegin = DateUtil.beginOfDay(sevenDateTime).getTime()/1000;
-        Long serviceSevenEnd = DateUtil.endOfDay(sevenDateTime).getTime()/1000;
-        List<OrganizeDTO> sevenList = organizeDao.queryByServiceTime(serviceSevenBegin,serviceSevenEnd);
-        if (sevenList!=null && sevenList.size()>0){
-            jsonArray = new JSONArray();
-            String msg = DateUtil.format(DateUtil.offsetDay(new Date(), 7),"yyyy年MM月dd日");
-            for (OrganizeDTO organizeDTO : sevenList){
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("name",organizeDTO.getFullNname());
-                jsonObject.put("msg",msg);
-                jsonArray.add(jsonObject);
-            }
-            List<String> sevenPhoneList = sevenList.stream().map(OrganizeDTO::getPhone).collect(Collectors.toList());
-            sevenPhoneList.add(serviceNumber);
-            String bizId = aliSmsMessage.sendMsg(sevenPhoneList,jsonArray.toJSONString(),templateCode);
-            if (bizId!=null && !"".equals(bizId)) {
-                List<QuerySendDetailsResponse.SmsSendDetailDTO> responseList = aliSmsMessage.messageSendState(sevenPhoneList, bizId);
-                insertMysql(responseList,bizId);
-            }
-        }
-
-        //30天
-        DateTime thirtyDateTime = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR, 30);
-        Long serviceThirtyBegin = DateUtil.beginOfDay(thirtyDateTime).getTime()/1000;
-        Long serviceThirtyEnd = DateUtil.endOfDay(thirtyDateTime).getTime()/1000;
-        List<OrganizeDTO> thirtyList = organizeDao.queryByServiceTime(serviceThirtyBegin,serviceThirtyEnd);
-        if (thirtyList!=null && thirtyList.size()>0){
-            jsonArray = new JSONArray();
-            String msg = DateUtil.format(DateUtil.offsetDay(new Date(), 30),"yyyy年MM月dd日");
-            for (OrganizeDTO organizeDTO : sevenList){
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("name",organizeDTO.getFullNname());
-                jsonObject.put("msg",msg);
-                jsonArray.add(jsonObject);
-            }
-            List<String> thirtyPhoneList = thirtyList.stream().map(OrganizeDTO::getPhone).collect(Collectors.toList());
-            thirtyPhoneList.add(serviceNumber);
-            String bizId = aliSmsMessage.sendMsg(thirtyPhoneList,jsonArray.toJSONString(),templateCode);
-            if (bizId!=null && !"".equals(bizId)) {
-                List<QuerySendDetailsResponse.SmsSendDetailDTO> responseList = aliSmsMessage.messageSendState(thirtyPhoneList, bizId);
-                insertMysql(responseList,bizId);
+                phoneList.add(serviceNumber);
+                JSONObject jsonObjectService = new JSONObject();
+                jsonObjectService.put("name",organizeDTO.getFullNname());
+                jsonObjectService.put("msg","今日");
+                jsonArray.add(jsonObjectService);
+                String bizId = aliSmsMessage.sendMsg(phoneList,jsonArray.toJSONString(),templateCode);
+                if (bizId!=null && !"".equals(bizId)) {
+                    List<QuerySendDetailsResponse.SmsSendDetailDTO> responseList = aliSmsMessage.messageSendState(phoneList, bizId);
+                    insertMysql(responseList,bizId);
+                }
             }
         }
     }
@@ -152,6 +120,95 @@ public class SMSALiJob {
                     smsSendQueueLog.setState(0);
                 }
                 smsSendQueueLogDao.insert(smsSendQueueLog);
+            }
+        }
+    }
+
+    /**
+     * u客用户发送短信，到期提醒，前七天
+     */
+    @Scheduled(cron = "0 0 8 * * ?")
+    private void smsSendSevenDay() {
+
+        List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843");
+
+        JSONArray jsonArray = null;
+        //七天
+        DateTime sevenDateTime = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR, 7);
+        Long serviceSevenBegin = DateUtil.beginOfDay(sevenDateTime).getTime()/1000;
+        Long serviceSevenEnd = DateUtil.endOfDay(sevenDateTime).getTime()/1000;
+        List<OrganizeDTO> sevenList = organizeDao.queryByServiceTime(serviceSevenBegin,serviceSevenEnd);
+        if (sevenList!=null && sevenList.size()>0){
+            String msg = DateUtil.format(DateUtil.offsetDay(new Date(), 7),"yyyy年MM月dd日");
+            for (OrganizeDTO organizeDTO : sevenList){
+                if (profileActive.equals("dev") || profileActive.equals("test") || profileActive.equals("pre")){
+                    if (!phone.contains(organizeDTO.getPhone())){
+                        continue;
+                    }
+                }
+                List<Object> sevenPhoneList = new ArrayList<>();
+                jsonArray = new JSONArray();
+                sevenPhoneList.add(organizeDTO.getPhone());
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("name",organizeDTO.getFullNname());
+                jsonObject.put("msg",msg);
+                jsonArray.add(jsonObject);
+
+                sevenPhoneList.add(serviceNumber);
+                JSONObject jsonObjectService = new JSONObject();
+                jsonObjectService.put("name",organizeDTO.getFullNname());
+                jsonObjectService.put("msg",msg);
+                jsonArray.add(jsonObjectService);
+                String bizId = aliSmsMessage.sendMsg(sevenPhoneList,jsonArray.toJSONString(),templateCode);
+                if (bizId!=null && !"".equals(bizId)) {
+                    List<QuerySendDetailsResponse.SmsSendDetailDTO> responseList = aliSmsMessage.messageSendState(sevenPhoneList, bizId);
+                    insertMysql(responseList,bizId);
+                }
+            }
+        }
+    }
+
+    /**
+     * u客用户发送短信，到期提醒，前30天
+     */
+    @Scheduled(cron = "0 0 8 * * ?")
+    private void smsSendThirtyDay() {
+
+        List<String> phone = Arrays.asList("13715249609","17666013575","15986727355","18923798099","15920087843");
+
+        JSONArray jsonArray = null;
+        //30天
+        DateTime thirtyDateTime = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR, 30);
+        Long serviceThirtyBegin = DateUtil.beginOfDay(thirtyDateTime).getTime()/1000;
+        Long serviceThirtyEnd = DateUtil.endOfDay(thirtyDateTime).getTime()/1000;
+        List<OrganizeDTO> thirtyList = organizeDao.queryByServiceTime(serviceThirtyBegin,serviceThirtyEnd);
+        if (thirtyList!=null && thirtyList.size()>0){
+            jsonArray = new JSONArray();
+            String msg = DateUtil.format(DateUtil.offsetDay(new Date(), 30),"yyyy年MM月dd日");
+            for (OrganizeDTO organizeDTO : thirtyList){
+                if (profileActive.equals("dev") || profileActive.equals("test") || profileActive.equals("pre")){
+                    if (!phone.contains(organizeDTO.getPhone())){
+                        continue;
+                    }
+                }
+                List<Object> thirtyPhoneList = new ArrayList<>();
+                jsonArray = new JSONArray();
+                thirtyPhoneList.add(organizeDTO.getPhone());
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("name",organizeDTO.getFullNname());
+                jsonObject.put("msg",msg);
+                jsonArray.add(jsonObject);
+
+                thirtyPhoneList.add(serviceNumber);
+                JSONObject jsonObjectService = new JSONObject();
+                jsonObjectService.put("name",organizeDTO.getFullNname());
+                jsonObjectService.put("msg",msg);
+                jsonArray.add(jsonObjectService);
+                String bizId = aliSmsMessage.sendMsg(thirtyPhoneList,jsonArray.toJSONString(),templateCode);
+                if (bizId!=null && !"".equals(bizId)) {
+                    List<QuerySendDetailsResponse.SmsSendDetailDTO> responseList = aliSmsMessage.messageSendState(thirtyPhoneList, bizId);
+                    insertMysql(responseList,bizId);
+                }
             }
         }
     }

@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(description="基础商品表-检索参数")
+@ApiModel(description="敏感词全部展示入参")
 public class BaseTabooWordsQuery implements Serializable {
 
 

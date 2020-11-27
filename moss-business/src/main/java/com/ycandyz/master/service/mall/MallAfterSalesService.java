@@ -12,15 +12,15 @@ import com.ycandyz.master.model.mall.MallAfterSalesVO;
 
 public interface MallAfterSalesService extends IService<MallAfterSales> {
 
-    ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams, UserVO userVO);
+    ReturnResponse<Page<MallAfterSalesVO>> querySalesListPage(RequestParams<MallafterSalesQuery> requestParams);
 
-    ReturnResponse<MallAfterSalesVO> querySalesDetail(String afterSalesNo, UserVO userVO);
+    ReturnResponse<MallAfterSalesVO> querySalesDetail(String afterSalesNo);
 
-    boolean refundAuditFirst(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
+    boolean refundAuditFirst(MallafterSalesQuery mallafterSalesQuery);
 
-    MallOrderExportResp exportEXT(MallafterSalesQuery mallafterSalesQuery, UserVO userVO);
+    MallOrderExportResp exportEXT(MallafterSalesQuery mallafterSalesQuery);
 
-    ReturnResponse<String> refundDetail(String orderNo, UserVO userVO);
+    ReturnResponse<String> refundDetail(String orderNo);
 
     void processSubStatus();
 

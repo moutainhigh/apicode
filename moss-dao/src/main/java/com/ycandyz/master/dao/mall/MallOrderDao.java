@@ -6,6 +6,7 @@ import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.domain.query.mall.MallOrderUAppQuery;
 import com.ycandyz.master.dto.mall.MallOrderDTO;
 import com.ycandyz.master.dto.mall.MallOrderDetailDTO;
+import com.ycandyz.master.dto.mall.MallOrderUAppDTO;
 import com.ycandyz.master.entities.mall.MallOrder;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -56,5 +57,20 @@ public interface MallOrderDao extends BaseMapper<MallOrder> {
      * @param mallOrderQuery
      * @return
      */
-    List<MallOrderDTO> getTrendMallOrderByPageUApp(@Param("page") long page, @Param("size") long size, @Param("p") MallOrderUAppQuery mallOrderQuery);
+    List<MallOrderUAppDTO> getTrendMallOrderByPageUApp(@Param("page") long page, @Param("size") long size, @Param("p") MallOrderUAppQuery mallOrderQuery);
+
+    /**
+     * 获取订单详情，UApp
+     * @param orderNo
+     * @return
+     */
+    MallOrderUAppDTO queryOrderDetailByUApp(@Param("orderNo") String orderNo);
+
+    /**
+     * 通过自提码获取订单详情，UApp
+     * @param pickupNo
+     * @param shopNo
+     * @return
+     */
+    MallOrderUAppDTO queryDetailByPickupNoUApp(@Param("pickupNo") String pickupNo, @Param("shopNo") String shopNo);
 }

@@ -2,6 +2,7 @@ package com.ycandyz.master.service.risk.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.ycandyz.master.constant.CommonConstant;
 import com.ycandyz.master.dao.taboo.BaseTabooWordsDao;
 import com.ycandyz.master.domain.query.risk.TabooWordsForReview;
 import com.ycandyz.master.entities.taboo.BaseTabooWords;
@@ -9,9 +10,11 @@ import com.ycandyz.master.kafka.KafkaConstant;
 import com.ycandyz.master.kafka.Message;
 import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.utils.MyCollectionUtils;
+import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.TabooCheck;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -25,8 +28,11 @@ import java.util.*;
 @Slf4j
 public class TabooCheckServiceImpl implements TabooCheckService {
 
-    public static Map<String,List<String>> Taboomaps = new HashMap<>();
-    public static List<String> allTaboosLists = new ArrayList<>();
+//    public static Map<String,List<String>> Taboomaps = new HashMap<>();
+//    public static List<String> allTaboosLists = new ArrayList<>();
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Resource
     private BaseTabooWordsDao baseTabooWordsDao;
@@ -34,33 +40,74 @@ public class TabooCheckServiceImpl implements TabooCheckService {
     @Override
     public List<String> check(String txt) {
         List<String> lists = new ArrayList<>();
-        List<String> list = TabooCheck.check(allTaboosLists, txt);
-        for(Map.Entry<String, List<String>> it : Taboomaps.entrySet()){
-            for (String s:list) {
-                if (it.getValue().contains(s)){
-                    lists.add(it.getKey());
+        List<String> allTaboosLists = null;
+        if (redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList")!=null){
+            allTaboosLists = (List<String>) redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList");
+        }
+        Map<Object, Object> Taboomaps = null;
+        if (redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps")!=null){
+            Taboomaps = redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps");
+        }
+        if (allTaboosLists!=null && allTaboosLists.size()>0) {
+            List<String> list = TabooCheck.check(allTaboosLists, txt);
+            for (Map.Entry<Object, Object> it : Taboomaps.entrySet()) {
+                for (String s : list) {
+                    if (it.getValue().toString().contains(s)) {
+                        lists.add(it.getKey().toString());
+                    }
                 }
             }
         }
        return lists;
     }
 
-    @PostConstruct
-    public void init(){
+    @Override
+    public void getAllToRedis() {
         Map<String,String> map = new HashMap<>();
         List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
         tabooWordsForReviews.forEach(s->map.put(s.getPhraseName(),s.getTabooWords()));
-        map.forEach((k,v)->{Taboomaps.put(k,MyCollectionUtils.parseIds(v));});
-        log.info("缓存中敏感词现存Taboomaps------->{}",Taboomaps);
-        Taboomaps.forEach((k,v)->{
-            if (v != null){
-                allTaboosLists.addAll(v);
-            }
-        });
+        Map<Object, Object> Taboomaps = null;
+        if (redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps")!=null){
+            Taboomaps = redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps");
+        }else {
+            Taboomaps = new HashMap<>();
+        }
+        for (Map.Entry<String,String> entry : map.entrySet()){
+            Taboomaps.put(entry.getKey(),MyCollectionUtils.parseIds(entry.getValue()));
+        }
+        redisUtil.hmset(CommonConstant.TABOO_MAP_GROUP+"Taboomaps",Taboomaps);
+        List<String> allTaboosLists = null;
+        if (redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList")!=null){
+            allTaboosLists = (List<String>) redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList");
+        }else {
+            allTaboosLists = new ArrayList<>();
+        }
+        for (Map.Entry<Object,Object> entry : Taboomaps.entrySet()){
+            allTaboosLists.addAll((Collection<? extends String>) entry.getValue());
+        }
+        redisUtil.set(CommonConstant.TABOO_LIST_GROUP+"TabooList",allTaboosLists);
     }
 
+//    @PostConstruct
+//    public void init(){
+//        Map<String,String> map = new HashMap<>();
+//        List<TabooWordsForReview> tabooWordsForReviews = baseTabooWordsDao.selectWords();
+//        tabooWordsForReviews.forEach(s->map.put(s.getPhraseName(),s.getTabooWords()));
+//        Map<Object, Object> Taboomaps = null;
+//        if (redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP)!=null){
+//            Taboomaps = redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP);
+//            map.forEach((k,v)->{Taboomaps.put(k,MyCollectionUtils.parseIds(v));});
+//            log.info("缓存中敏感词现存Taboomaps------->{}",Taboomaps);
+//            Taboomaps.forEach((k,v)->{
+//                if (v != null){
+//                    allTaboosLists.addAll(v);
+//                }
+//            });
+//        }
+//    }
+
     //新增敏感词消费kafka消息
-    @KafkaListener(topics = KafkaConstant.TABOOTOPIC, groupId = "group_kafka_taboo")
+    @KafkaListener(topics = KafkaConstant.TABOOTOPIC, groupId = "group_kafka_taboo-test")
     public void addTaboo(ConsumerRecord<?, ?> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         Optional message = Optional.ofNullable(record.value());
         if (message.isPresent()) {
@@ -88,36 +135,56 @@ public class TabooCheckServiceImpl implements TabooCheckService {
                 }
             }
             //更新新缓存
+            Map<Object, Object> Taboomaps = null;
+            if (redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps")!=null){
+                Taboomaps = redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps");
+            }
             if (flag == 1 || flag == 2){
                 Map<String,List<String>> newTabooMaps = new HashMap<>();
                 newTabooMaps.put(baseTabooWords.getPhraseName(),MyCollectionUtils.parseIds(baseTabooWords.getTabooWords()));
                 if (newTabooMaps != null){
-                    newTabooMaps.forEach((k,v)->{
-                        if (Taboomaps.keySet().contains(k)){
-                            List<String> list = Taboomaps.get(k);
-                            list.clear();
-                            Taboomaps.put(k,v);
+
+                    for (Map.Entry<String,List<String>> entry : newTabooMaps.entrySet()){
+                        String key = entry.getKey();
+                        if (Taboomaps!=null){
+                            if (Taboomaps.containsKey(key)){
+                                Taboomaps.remove(key);
+                            }
+                            Taboomaps.put(key,entry.getValue());
                         }else {
-                            Taboomaps.put(k,v);
+                            Taboomaps = new HashMap<>();
+                            Taboomaps.put(key,entry.getValue());
                         }
-                    });
+                    }
+                    redisUtil.hmset(CommonConstant.TABOO_MAP_GROUP+"Taboomaps",Taboomaps);
                 }
             }else if (flag == 3){
                 String phraseName = baseTabooWords.getPhraseName();
-                if (Taboomaps.keySet().contains(phraseName)){
-                    List<String> list = Taboomaps.get(phraseName);
-                    list.clear();
-                    Taboomaps.remove(phraseName);
+
+                if (Taboomaps!=null){
+                    if(Taboomaps.containsKey(phraseName)){
+                        Taboomaps.remove(phraseName);
+                    }
+                    redisUtil.hmset(CommonConstant.TABOO_MAP_GROUP+"Taboomaps",Taboomaps);
                 }
             }
             ack.acknowledge();
         }
-        log.info("缓存中敏感词现存Taboomaps------->{}",Taboomaps);
-        Taboomaps.forEach((k,v)->{
-            if (v != null){
-                allTaboosLists.addAll(v);
+        log.info("缓存中敏感词现存Taboomaps------->{}",redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps"));
+        List<String> allTaboosLists = null;
+        if (redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList")!=null){
+            allTaboosLists = (List<String>) redisUtil.get(CommonConstant.TABOO_LIST_GROUP+"TabooList");
+        }
+        if (redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps")!=null){
+            Map<Object, Object> tab = redisUtil.hmget(CommonConstant.TABOO_MAP_GROUP+"Taboomaps");
+            for (Map.Entry<Object, Object> entry : tab.entrySet()){
+                if (allTaboosLists != null) {
+                    List<String> value = (List<String>) entry.getValue();
+                    allTaboosLists.addAll(value);
+                }
             }
-        });
+        }
+        redisUtil.set(CommonConstant.TABOO_LIST_GROUP+"TabooList",allTaboosLists);
     }
 
 }

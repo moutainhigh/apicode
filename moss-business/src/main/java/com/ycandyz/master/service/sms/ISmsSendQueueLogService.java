@@ -9,7 +9,7 @@ import com.ycandyz.master.entities.sms.SmsSendQueueLog;
  * </p>
  *
  * @author SanGang
- * @since 2020-11-12
+ * @since 2020-11-24
  * @version 2.0
  */
 public interface ISmsSendQueueLogService extends IService<SmsSendQueueLog>{

@@ -19,7 +19,7 @@ import lombok.Setter;
  * </p>
  *
  * @author SanGang
- * @since 2020-11-12
+ * @since 2020-11-24
  * @version 2.0
  */
 @Getter
@@ -52,5 +52,6 @@ public class SmsSendQueueLog extends Model {
 
    @ApiModelProperty(value = "创建时间")
    private Date createdTime;
+
 
 }

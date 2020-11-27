@@ -15,11 +15,17 @@ import lombok.Data;
 @Data
 public class OrganizeMpConfigModuleBaseVO {
 
-    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
+    @ApiModelProperty(value = "id")
     private Integer id;
 
+//    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
+//    private Integer id;
+
+//    @ApiModelProperty(value = "id")
+//    private Integer moduleBaseId;
+
     @ApiModelProperty(value = "元素编码")
-    private Integer baseCode;
+    private String baseCode;
 
     @ApiModelProperty(value = "元素名称")
     private String baseName;
@@ -32,4 +38,7 @@ public class OrganizeMpConfigModuleBaseVO {
 
     @ApiModelProperty(value = "展示数量限制")
     private Integer displayNum;
+
+    @ApiModelProperty(value = "一级分类图片")
+    private String replacePicUrl;
 }

@@ -45,8 +45,8 @@ public class OrganizeMpRelease extends Model {
    @ApiModelProperty(value = "编辑修改时间")
    private Date updateTime;
 
-   @ApiModelProperty(value = "企业类目")
-   private String organizeCategory;
+   @ApiModelProperty(value = "版本")
+   private String version;
 
 
 }
