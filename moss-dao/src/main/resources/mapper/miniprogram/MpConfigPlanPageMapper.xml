@@ -93,9 +93,17 @@
        delete from mp_config_plan_page where menu_id = #{menuId}
     </delete>
 
-    <select id="selByMenuId" resultType="com.ycandyz.master.entities.miniprogram.MpConfigPlanPage">
-        select * from mp_config_plan_page
+<!--    <select id="selByMenuId" resultType="com.ycandyz.master.entities.miniprogram.MpConfigPlanPage">-->
+<!--        select * from mp_config_plan_page-->
+<!--        where menu_id = #{menuId} and logic_delete = 0;-->
+<!--    </select>-->
+    <select id="selByMenuId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanPage">
+        select page.module_id,page.module_base_id,page.show_layout,page.sort_module,page.sort_base,page.replace_pic_url,page.logic_delete,
+        base.base_name from mp_config_plan_page page
+        left join mp_config_module_base base
+        on page.module_base_id = base.id
         where menu_id = #{menuId} and logic_delete = 0;
+
     </select>
 
 </mapper>

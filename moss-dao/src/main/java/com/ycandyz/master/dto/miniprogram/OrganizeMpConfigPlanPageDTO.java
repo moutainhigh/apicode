@@ -30,8 +30,8 @@ public class OrganizeMpConfigPlanPageDTO extends OrganizeMpConfigPlanPage {
     @ApiModelProperty(value = "元素基础编号")
     private Integer moduleBaseId;
 
-    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
-    private Integer organizeMpConfigPlanPageId;
+//    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
+//    private Integer organizeMpConfigPlanPageId;
 
     @ApiModelProperty(value = "模板菜单编号")
     private Integer menuId;

@@ -32,4 +32,6 @@ public interface OrganizeMpConfigPlanPageDao extends BaseMapper<OrganizeMpConfig
     void updateBaseNameById(@Param("id") Integer id, @Param("baseName") String baseName,@Param("sortModule") Integer sortModule,@Param("sortBase") Integer sortBase,@Param("isDel") Integer isDel);
 
     int delByMenuId(Integer menuId);
+
+    List<OrganizeMpConfigPlanPageDTO> selPageByMenuId(Integer menuId);
 }

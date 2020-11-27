@@ -48,4 +48,10 @@ public class OrganizeMpConfigPlanMenuDTO extends OrganizeMpConfigPlanMenu {
     @ApiModelProperty(value = "是否可布局0：不可布局；1、可布局")
     private Integer canDelete;
 
+    @ApiModelProperty(value = "被拷贝草稿的menu_id")
+    private Integer oldMenuId;
+
+    @ApiModelProperty(value = "模版的菜单menu_id")
+    private Integer moudleMenuId;
+
 }
