@@ -21,13 +21,9 @@ public interface OrganizeMpConfigPlanDao extends BaseMapper<OrganizeMpConfigPlan
 
     void insertSingle(OrganizeMpConfigPlan organizeMpConfigPlan1);
 
-    List<OrganizeMpConfigPlan> selectByOrganizeId(Long organizeId);
-
-    OrganizeMpConfigPlan getByOrganizeId(Long organizeId);
-
     int setDelete(@Param("id") Integer id);
 
-    OrganizeMpConfigPlan selByOrganizeIdNotUse(Long organizeId);
+    OrganizeMpConfigPlan selByOrganizeIdNowNotUse(Long organizeId);
 
     OrganizeMpConfigPlan selByOrganizeId(Long organizeId);
 

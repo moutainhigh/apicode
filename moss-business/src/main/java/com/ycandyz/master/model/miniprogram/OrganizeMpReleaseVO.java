@@ -1,5 +1,6 @@
 package com.ycandyz.master.model.miniprogram;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpRelease;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -23,9 +24,11 @@ import java.util.Date;
 @TableName("organize_mp_release")
 public class OrganizeMpReleaseVO extends OrganizeMpRelease {
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "申请发布时间")
     private Date createTime;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "编辑修改时间")
     private Date updateTime;
 

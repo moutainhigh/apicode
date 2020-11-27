@@ -28,7 +28,6 @@ import lombok.Setter;
 @ApiModel(description="企业小程序配置-菜单配置")
 public class OrganizeMpConfigPlanMenu extends Model {
 
-
    @ApiModelProperty(value = "编号")
    @TableId(value = "id", type = IdType.AUTO)
    private Integer id;
@@ -69,5 +68,10 @@ public class OrganizeMpConfigPlanMenu extends Model {
    @ApiModelProperty(value = "修改时间")
    private Date updateTime;
 
+   @ApiModelProperty(value = "被拷贝草稿的menu_id")
+   private Integer oldMenuId;
+
+   @ApiModelProperty(value = "模版的菜单menu_id")
+   private Integer moudleMenuId;
 
 }

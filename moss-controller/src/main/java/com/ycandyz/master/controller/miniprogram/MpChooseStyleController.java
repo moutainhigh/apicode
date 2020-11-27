@@ -57,7 +57,7 @@ public class MpChooseStyleController {
     @ApiOperation(value = "查询企业小程序全部菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
     @GetMapping(value = "organize/{id}")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="id",value="企业小程序编号",required=true,dataType="Integer")
+            @ApiImplicitParam(name="id",value="企业小程序编号",dataType="Integer")
     })
     public CommonResult<BaseResult<List<OrganizeMpConfigMenuVO>>> select(@PathVariable("id") Integer id) {
         log.info("查询企业小程序全部菜单样式请求响应:{}", id);
@@ -68,7 +68,7 @@ public class MpChooseStyleController {
 
     @ApiOperation(value = "查询企业小程序单个菜单样式", tags = "企业小程序DIY配置",httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="menuid",value="企业小程序菜单编号",required=true,dataType="Integer")
+            @ApiImplicitParam(name="menuid",value="企业小程序菜单编号",dataType="Integer")
     })
     @GetMapping(value = "organize/menu/{menuId}")
     public CommonResult<BaseResult<OrganizeMpConfigPageSingleMenuVO>> selectOrgainizeMenu(@PathVariable("menuId") Integer menuId) {
@@ -82,25 +82,32 @@ public class MpChooseStyleController {
     @PostMapping("/organize/menupage")
     public CommonResult saveSinglePage(@RequestBody OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
         log.info("企业小程序编辑/保存单个菜单页面样式请求入参:{}", JSON.toJSONString(organizeMenuMpRequestVO));
-        mpChooseStyleService.saveSingle(organizeMenuMpRequestVO);
+        mpChooseStyleService.saveSinglePage(organizeMenuMpRequestVO);
         log.info("企业小程序编辑/保存单个菜单页面样式请求出参:{}", JSON.toJSONString(CommonResult.success("成功")));
         return CommonResult.success("成功");
     }
 
-    @ApiOperation(value = "企业小程序编辑/保存到草稿或保存发布页面" , tags = "企业小程序DIY配置",httpMethod = "POST")
-    @PostMapping("/organize")
-    public CommonResult saveAndePublish(@RequestBody OrganizeMpRequestVO organizeMpRequestVO) {
-        log.info("企业小程序编辑/保存到草稿或保存页面请求入参:{}", JSON.toJSONString(organizeMpRequestVO));
-        mpChooseStyleService.saveAndePublish();
+    @ApiOperation(value = "企业小程序编辑/保存到草稿或保存发布页面" , notes = "0：保存草稿；1：保存发布",tags = "企业小程序DIY配置",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="publish",value="是否发布[0:否;1:是]:保存草稿是0;保存发布是1",dataType="Integer"),
+            @ApiImplicitParam(name="mpPlanId",value="小程序模版id",dataType="Integer"),
+            @ApiImplicitParam(name="reselectMoudle",value="是否重新选择模版并保存，[0:否1是]，会删除之前草稿",dataType="Integer")
+    })
+    @GetMapping("/organize/punlish")
+    public CommonResult saveAndPublish(@RequestParam("publish") Integer publish
+                                        ,@RequestParam("mpPlanId") Integer mpPlanId
+                                        ,@RequestParam("reselectMoudle") Integer reselectMoudle) {
+        log.info("企业小程序编辑/保存到草稿或保存页面请求入参:{};{}", publish,mpPlanId);
+        mpChooseStyleService.saveDraftOrPublish(publish,mpPlanId, reselectMoudle);
         log.info("企业小程序编辑/保存到草稿或保存页面请求出参:{}", JSON.toJSONString(CommonResult.success("成功")));
         return CommonResult.success("成功");
     }
 
-    @ApiOperation(value = "企业小程序编辑发布" ,notes = "是否有草稿[0 否；1 是]",tags = "企业小程序DIY配置",httpMethod = "GET")
+    @ApiOperation(value = "企业小程序当前是否有草稿" ,notes = "是否有草稿[0 否；1 是]",tags = "企业小程序DIY配置",httpMethod = "GET")
     @GetMapping("/organize/mp")
     public CommonResult<Integer> get() {
         Integer r = mpChooseStyleService.get();
-        log.info("企业小程序编辑发布请求出参:{}", r);
+        log.info("企业小程序当前是否有草稿请求出参:{}", r);
         return CommonResult.success(r);
     }
 
@@ -113,6 +120,12 @@ public class MpChooseStyleController {
         return CommonResult.success(new BaseResult<>(organizeMallCategoryDTOs));
     }
 
-
+//    @ApiOperation(value = "企业小程序返回上一级重新选择模版" ,notes = "是否有草稿[0 否；1 是]",tags = "企业小程序DIY配置",httpMethod = "GET")
+//    @GetMapping("/organize/reselect-moudle")
+//    public CommonResult<String> del() {
+//        mpChooseStyleService.del();
+//        log.info("企业小程序返回上一级重新选择模版请求出参:{}");
+//        return CommonResult.success("删除出成功");
+//    }
 
 }
