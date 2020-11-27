@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static java.lang.Float.parseFloat;
@@ -157,18 +158,17 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         }
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
-        OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
         Integer reselectMoudle = organizeMenuMpRequestVO.getReselectMoudle();
         //重新选择模版保存会删除当前草稿
         if(reselectMoudle != null && reselectMoudle == 1){
             delMenuAndPage(organizeId);
         }
+        OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
         if (organizeMpConfigPlan != null){
             //有草稿
             Integer organizePlanId = organizeMpConfigPlan.getId();
             Integer mpPlanId = organizeMenuMpRequestVO.getMpPlanId();
             //更新plan，menu不变;删除page
-            //selAndUpdatePlan(mpPlanId, organizeId, organizePlanId,reselectMoudle);
             //新增page和menu
             //查询模版底部菜单保存
             saveMenu(organizePlanId, organizeId, mpPlanId);
@@ -187,9 +187,9 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             //新增page和menu
             //查询模版底部菜单保存
             Integer organizePlanId = 0;
-            OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
-            if (organizeMpConfigPlan2 != null){
-                organizePlanId = organizeMpConfigPlan2.getId();
+            OrganizeMpConfigPlan organizeMpConfigPlan3 = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
+            if (organizeMpConfigPlan3 != null){
+                organizePlanId = organizeMpConfigPlan3.getId();
             }
             Integer mpPlanId = organizeMenuMpRequestVO.getMpPlanId();
             saveMenu(organizePlanId, organizeId, mpPlanId);
@@ -423,7 +423,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 //没有草稿
                 //保存plan表
                 saveDraft(mpPlanId, organizeId);
-            } else {
+            } else if (publish != null && publish == 1){
                 //有草稿
                 //查询page
                 //获取草稿menu
@@ -518,17 +518,19 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             if (organizeMpReleaseDTOS == null || (organizeMpReleaseDTOS != null && organizeMpReleaseDTOS.size() == 0)){
                 OrganizeMpReleaseParamVO organizeMpReleaseParamVO = new OrganizeMpReleaseParamVO();
                 organizeMpReleaseParamVO.setOrganizeId(organizeId);
-                organizeMpReleaseParamVO.setVersion(Float.toString(1.0f));
+                BigDecimal bigDecimal = new BigDecimal("1.0");
+                organizeMpReleaseParamVO.setVersion(bigDecimal.toString());
                 organizeMpReleaseParamVO.setPlanId(newOrganizePlanId);
                 log.info("企业小程序第一次保存发布入数据库入参:{}",organizeMpReleaseParamVO);
                 organizeMpReleaseDao.insertVersion(organizeMpReleaseParamVO);
             }else {
                 String version = organizeMpReleaseDTOS.get(0).getVersion();
-                float v = 0.0f;
+                BigDecimal bigDecimal = new BigDecimal("0.1");
+                String versionStr = null;
                 if (version != null){
-                    v = parseFloat(version) + 0.1f;
+                    BigDecimal bigDecimal2 = new BigDecimal(version);
+                    versionStr = bigDecimal2.add(bigDecimal).toString();
                 }
-                String versionStr = Float.toString(v);
                 OrganizeMpReleaseParamVO organizeMpReleaseParamVO = new OrganizeMpReleaseParamVO();
                 organizeMpReleaseParamVO.setOrganizeId(organizeId);
                 organizeMpReleaseParamVO.setVersion(versionStr);
