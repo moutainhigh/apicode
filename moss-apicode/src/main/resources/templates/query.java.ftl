@@ -56,7 +56,7 @@ public class ${entity}${cfg.querySuffix} implements Serializable {
     <#if field.comment!?length gt 0>
     <#if swagger2>
     	<#if field.propertyType != "Date">
-    @ApiModelProperty(value = "${field.comment}")
+    @ApiModelProperty(name = "${field.name}", value = "${field.comment}")
     	</#if>
     <#else>
     /**
@@ -75,11 +75,11 @@ public class ${entity}${cfg.querySuffix} implements Serializable {
         </#if>
     <#-- 普通字段 -->
     <#elseif field.propertyType == "Date">
-    @ApiModelProperty(value = "${field.comment}起")
+    @ApiModelProperty(name = "${field.name}", value = "${field.comment}起")
     @Condition(field = "${field.name}", condition = ConditionEnum.GE)
     private ${field.propertyType} ${field.propertyName}S;
     
-    @ApiModelProperty(value = "${field.comment}止")
+    @ApiModelProperty(name = "${field.name}", value = "${field.comment}止")
     @Condition(field = "${field.name}", condition = ConditionEnum.LE)
     private ${field.propertyType} ${field.propertyName}E;
     <#elseif field.fill??>
@@ -90,6 +90,8 @@ public class ${entity}${cfg.querySuffix} implements Serializable {
     @Condition(condition = ConditionEnum.EQ)
         </#if>
     <#elseif field.convert>
+    @Condition(condition = ConditionEnum.EQ)
+    <#else>
     @Condition(condition = ConditionEnum.EQ)
     </#if>
     <#if field.propertyType != "Date">
