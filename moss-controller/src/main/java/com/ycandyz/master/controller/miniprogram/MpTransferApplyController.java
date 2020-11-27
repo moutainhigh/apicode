@@ -59,7 +59,7 @@ public class MpTransferApplyController extends BaseController<MpTransferApplySer
 	@ApiOperation(value = "✓查询分页转交接申请", tags = "企业小程序DIY配置")
     @GetMapping
     public CommonResult<BasePageResult<MpTransferApply>> selectPage(PageModel page, MpTransferApplyQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "通过ID删除")

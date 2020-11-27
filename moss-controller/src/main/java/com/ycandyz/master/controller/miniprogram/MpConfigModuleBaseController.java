@@ -67,7 +67,7 @@ public class MpConfigModuleBaseController extends BaseController<MpConfigModuleB
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<MpConfigModuleBase>> selectPage(PageModel page, MpConfigModuleBaseQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "✓获取基础模块元素", tags = "企业小程序DIY配置")
