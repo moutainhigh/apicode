@@ -34,7 +34,7 @@
         select <include refid="Base_Column_List" />
         from organize_mp_config_plan_menu
         where organize_plan_id = #{organizePlanId}
-        and title = #{title}
+        and title = #{title} and logic_delete = 0
     </select>
     <select id="selByOrGanizeMoudleId"
             resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
@@ -46,7 +46,7 @@
     <select id="selectMenuById" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
         select <include refid="Base_Column_List" />
         from organize_mp_config_plan_menu
-        where id = #{menuId}
+        where id = #{menuId} and logic_delete = 0
     </select>
     <select id="selIdByOrGanizeMoudleId" resultType="java.lang.Integer">
         select id

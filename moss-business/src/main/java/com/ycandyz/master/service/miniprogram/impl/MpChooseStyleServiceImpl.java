@@ -237,6 +237,14 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 menuId = organizeMpConfigPlanMenuDTO1.getId();
             }
         }
+        //重新选择模版，此时menuid是最新创建的menu的id
+        if(organizeMenuMpRequestVO.getReselectMoudle() != null && organizeMenuMpRequestVO.getReselectMoudle() == 1){
+            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByIdAndName(organizePlanId, menuName);
+            if (organizeMpConfigPlanMenuDTO != null){
+                menuId = organizeMpConfigPlanMenuDTO.getId();
+            }
+        }
+        //menu_id没传时查询最新草稿
         if ( menuId == null){
             OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByIdAndName(organizePlanId, menuName);
             if (organizeMpConfigPlanMenuDTO != null){
@@ -461,6 +469,16 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             if (organizeMpConfigPlanOldUsing != null) {
                 //有发布的记录则删除
                 organizeMpConfigPlanDao.setDelete(organizeMpConfigPlanOldUsing.getId());
+                Integer organizePlanId = organizeMpConfigPlanOldUsing.getId();
+                List<Integer> menuIds = organizeMpConfigPlanMenuDao.selIdByOrGanizeMoudleId(organizePlanId);
+                if (menuIds != null && menuIds.size() > 0) {
+                    for (Integer menuId : menuIds) {
+                        //删除page中的菜单
+                        int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
+                        //删除menu中的菜单
+                        int i2 = organizeMpConfigPlanMenuDao.delById(menuId);
+                    }
+                }
             }
             //当前plan还是为草稿;
             //另保存当前草稿plan为一份新的plan:正在使用

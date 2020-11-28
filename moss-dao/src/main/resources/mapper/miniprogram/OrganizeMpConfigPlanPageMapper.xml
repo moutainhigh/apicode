@@ -37,11 +37,11 @@
         insert into organize_mp_config_plan_page(id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,logic_delete,replace_pic_url)
         values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0,#{replacePicUrl})
     </insert>
-    <update id="updateBaseNameById">
-        update organize_mp_config_plan_page
-        set base_name = #{baseName},sort_module = #{sortModule},sort_base = #{sortBase} , logic_delete = #{isDel}
-        where id = #{id}
-    </update>
+<!--    <update id="updateBaseNameById">-->
+<!--        update organize_mp_config_plan_page-->
+<!--        set base_name = #{baseName},sort_module = #{sortModule},sort_base = #{sortBase} , logic_delete = #{isDel}-->
+<!--        where id = #{id}-->
+<!--    </update>-->
     <delete id="delByMenuId">
         update organize_mp_config_plan_page set logic_delete = 1 where menu_id = #{menuId};
     </delete>
@@ -62,24 +62,24 @@
         order by p.sort_module desc,p.sort_base asc;
     </select>
 
-    <select id="getMenuModuleElement" resultMap="BaseResultMap2" >
-        SELECT b.id as module_base_id,p.id as omcpp_id,p.base_name,b.base_code,p.sort_base,p.show_layout,b.display_num
-        FROM organize_mp_config_plan_page p
-        left join mp_config_module_base b on p.module_base_id = b.id
-        <where>
-            <if test="moduleSort != null">
-                p.sort_module = #{moduleSort}
-            </if>
+<!--    <select id="getMenuModuleElement" resultMap="BaseResultMap2" >-->
+<!--        SELECT b.id as module_base_id,p.id as omcpp_id,p.base_name,b.base_code,p.sort_base,p.show_layout,b.display_num-->
+<!--        FROM organize_mp_config_plan_page p-->
+<!--        left join mp_config_module_base b on p.module_base_id = b.id-->
+<!--        <where>-->
+<!--            <if test="moduleSort != null">-->
+<!--                p.sort_module = #{moduleSort}-->
+<!--            </if>-->
 
-            <if test="baseIds != null ">
-                and b.id in
-                <foreach collection="baseIds" item="item" index="index" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-        </where>
-    </select>
+<!--            <if test="baseIds != null ">-->
+<!--                and b.id in-->
+<!--                <foreach collection="baseIds" item="item" index="index" open="(" separator="," close=")">-->
+<!--                    #{item}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
     <select id="selPageByMenuId" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO">
-        select * from organize_mp_config_plan_page where menu_id = #{menuId}
+        select * from organize_mp_config_plan_page where menu_id = #{menuId} and logic_delete = 0
     </select>
 </mapper>
