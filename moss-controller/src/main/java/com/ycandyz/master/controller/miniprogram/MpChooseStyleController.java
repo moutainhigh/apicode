@@ -89,9 +89,9 @@ public class MpChooseStyleController {
 
     @ApiOperation(value = "企业小程序编辑/保存到草稿或保存发布页面" , notes = "0：保存草稿；1：保存发布",tags = "企业小程序DIY配置",httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="publish",value="是否发布[0:否;1:是]:保存草稿是0;保存发布是1",dataType="Integer"),
+            @ApiImplicitParam(name="publish",value="是否发布[0:否;1:是]:0:保存草稿;1:保存发布",dataType="Integer"),
             @ApiImplicitParam(name="mpPlanId",value="小程序模版id",dataType="Integer"),
-            @ApiImplicitParam(name="reselectMoudle",value="是否重新选择模版并保存，[0:否1是]，会删除之前草稿",dataType="Integer")
+            @ApiImplicitParam(name="reselectMoudle",value="是否重新选择模版并保存，[0:否1是]，重新选择模版并保存会删除之前草稿",dataType="Integer")
     })
     @GetMapping("/organize/punlish")
     public CommonResult saveAndPublish(@RequestParam("publish") Integer publish

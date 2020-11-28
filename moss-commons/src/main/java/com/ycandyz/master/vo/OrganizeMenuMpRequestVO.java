@@ -12,10 +12,10 @@ public class OrganizeMenuMpRequestVO {
    @ApiModelProperty(value = "小程序模版id")
    private Integer mpPlanId;
 
-   @ApiModelProperty(value = "menuId")
+   @ApiModelProperty(value = "menuId,没有草稿或重新选择模版时此字段不用传")
    private Integer menuId;
 
-   @ApiModelProperty(value = "menuName")
+   @ApiModelProperty(value = "menuName，没有草稿或重新选择模版时此字段必传")
    private String menuName;
 
    @ApiModelProperty(value = "模块")
