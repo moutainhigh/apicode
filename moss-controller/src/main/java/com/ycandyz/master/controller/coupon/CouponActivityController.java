@@ -67,7 +67,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponActivity>> selectPage(PageModel page, CouponActivityQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "通过ID删除")

@@ -9,12 +9,7 @@ import java.util.List;
 import cn.hutool.core.convert.Convert;
 
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 <#if restControllerStyle>
 import org.springframework.web.bind.annotation.RestController;
 <#else>
@@ -28,6 +23,7 @@ import ${cfg.baseResult};
 import ${cfg.basePageResult};
 import ${cfg.pageModel};
 import ${cfg.entity}.${entity};
+import ${cfg.model}.${entity}${cfg.modelSuffix};
 import ${cfg.query}.${entity}${cfg.querySuffix};
 import ${cfg.ServiceImpl}.${table.serviceImplName};
 <#if superControllerClassPackage??>
@@ -63,15 +59,15 @@ public class ${table.controllerName} {
 	
 	@ApiOperation(value="新增")
     @PostMapping
-	public CommonResult<${entity}> insert(@Validated(ValidatorContract.OnCreate.class) ${entity} entity) {
-        return result(service.save(entity),entity,"保存失败!");
+	public CommonResult<${entity}${cfg.modelSuffix}> insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody ${entity}${cfg.modelSuffix} model) {
+        return result(service.insert(model),model,"保存失败!");
 	}
 	
 	@ApiOperation(value = "通过ID更新")
     @PutMapping(value = "{id}")
-	public CommonResult<${entity}> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) ${entity} entity) {
-        entity.setId(id);
-        return result(service.updateById(entity),entity,"更改失败!");
+	public CommonResult<${entity}${cfg.modelSuffix}> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) @RequestBody ${entity}${cfg.modelSuffix} model) {
+        model.setId(id);
+        return result(service.update(model),model,"更改失败!");
 	}
 	
 	@ApiOperation(value = "查询根据ID")
@@ -84,11 +80,11 @@ public class ${table.controllerName} {
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<${entity}>> selectPage(PageModel page, ${entity}${cfg.querySuffix} query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "查询全部")
-    @GetMapping(value = "list")
+    @GetMapping
     public CommonResult<BaseResult<List<${entity}>>> selectList(${entity}${cfg.querySuffix} query) {
         return CommonResult.success(new BaseResult<List<${entity}>>(service.list(query)));
     }

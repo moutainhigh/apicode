@@ -184,6 +184,7 @@ public class TabooCheckServiceImpl implements TabooCheckService {
                 }
             }
         }
+        redisUtil.set(CommonConstant.TABOO_LIST_GROUP+"TabooList",allTaboosLists);
     }
 
 }

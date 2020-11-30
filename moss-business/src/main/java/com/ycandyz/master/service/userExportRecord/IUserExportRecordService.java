@@ -8,8 +8,8 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordReq;
+import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordVo;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
-import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
 
 /**
@@ -23,7 +23,7 @@ import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
  */
 public interface IUserExportRecordService extends IService<UserExportRecord> {
 
-    Page<UserExportRecordResp> selectPages(RequestParams<UserExportRecordQuery> requestParams);
+    Page<UserExportRecordVo> selectPages(RequestParams<UserExportRecordQuery> requestParams);
 
     ReturnResponse insert(UserExportRecordReq requestParams);
 
