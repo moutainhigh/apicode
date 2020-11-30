@@ -23,6 +23,8 @@
             <result column="user_name" property="userName" />
             <result column="phone_no" property="phoneNo" />
             <result column="amount" property="amount" />
+            <result column="level" property="level" />
+            <result column="share_type" property="shareType" />
         </collection>
     </resultMap>
 
@@ -33,6 +35,7 @@
             modetail.item_name,
             modetail.goods_no,
             modetail.sku_no,
+            modetail.price as skuPrice,
             modetail.quantity AS skuQuantity,
             modetail.item_cover,
             modetail.is_enable_share,
@@ -43,7 +46,9 @@
             spec.spec_value,
             uu.`name` AS user_name,
             uu.phone AS phone_no,
-            flow.amount AS amount
+            flow.amount AS amount,
+            flow.share_type,
+            flow.level
         from
         mall_order mo
         left join mall_order_detail modetail on mo.order_no = modetail.order_no

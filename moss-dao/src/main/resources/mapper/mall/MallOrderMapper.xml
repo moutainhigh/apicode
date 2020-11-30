@@ -896,6 +896,7 @@
         <result column="receiveAtStr" property="receiveAtStr" />
         <result column="discountMoney" property="discountMoney" />
         <result column="receive_at" property="receiveAt" />
+        <result column="after_sales_end_at" property="afterSalesEndAt" />
         <result column="send_at" property="sendAt" />
         <result column="payuserName" property="payuserName" />
         <result column="payuserPhone" property="payuserPhone" />
@@ -904,6 +905,7 @@
         <result column="pick_up_address_name" property="pickUpAddressName" />
         <result column="pick_up_address_detail" property="pickUpAddressDetail" />
         <result column="pre_phone" property="prePhone" />
+        <result column="buyer_remark" property="buyerRemark" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -1033,6 +1035,7 @@
             mo.total_money,
             mo.buyer_remark,
             mo.order_at,
+            mo.after_sales_end_at,
             mo.pay_type,
             mo.order_type,
             mo.trade_no,
