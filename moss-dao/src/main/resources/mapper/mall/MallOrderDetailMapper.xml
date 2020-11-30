@@ -5,6 +5,7 @@
     <resultMap id="BasePlusResultMap" type="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="order_no" property="orderNo" />
+        <result column="after_sales_end_at" property="moAfterSalesEndAt" />
         <result column="item_no" property="itemNo" />
         <result column="goods_no" property="goodsNo" />
         <result column="sku_no" property="skuNo" />
@@ -31,6 +32,7 @@
     <select id="queryDetailListByOrderNos" resultMap="BasePlusResultMap">
         select
             mo.order_no,
+            mo.after_sales_end_at,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,

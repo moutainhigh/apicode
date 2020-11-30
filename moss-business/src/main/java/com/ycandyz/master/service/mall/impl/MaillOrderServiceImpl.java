@@ -1172,6 +1172,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
 
+            //订单头部信息拼接
+
+
         }
         return ReturnResponse.success(mallOrderVO);
     }
@@ -1324,6 +1327,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             specList.add(mallOrderDetailSpecUAppVO);
                         });
                         mallOrderDetailUAppVO.setSpecs(specList);
+                    }
+                    if (mallOrderDetailUAppVO.getMoAfterSalesEndAt()!=null && mallOrderDetailUAppVO.getMoAfterSalesEndAt()>0){
+                        long time = mallOrderDetailUAppVO.getMoAfterSalesEndAt()*1000;
+                        String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                        mallOrderDetailUAppVO.setMoAfterSalesEndAtStr(orderAtStr);
                     }
                 }
                 list.add(mallOrderDetailUAppVO);
