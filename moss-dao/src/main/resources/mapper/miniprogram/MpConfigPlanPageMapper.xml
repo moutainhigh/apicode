@@ -105,5 +105,8 @@
         where menu_id = #{menuId} and logic_delete = 0;
 
     </select>
+    <select id="selectById" resultType="com.ycandyz.master.entities.miniprogram.MpConfigPlanPage">
+        select * from mp_config_plan_page where id = #{id}
+    </select>
 
 </mapper>

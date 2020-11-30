@@ -111,7 +111,10 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         for (OrganizeMpConfigModuleVO o: moudles) {
             if (map.containsKey(o.getModuleId())){
                 List<OrganizeMpConfigModuleBaseVO> baseInfos2 = map.get(o.getModuleId());
-                baseInfos2.addAll(o.getBaseInfo());
+                if (baseInfos2 != null){
+                    baseInfos2.addAll(o.getBaseInfo());
+
+                }
                 map.put(o.getModuleId(),baseInfos2);
             }else {
                 map.put(o.getModuleId(),o.getBaseInfo());
@@ -267,7 +270,10 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
                     organizeMpConfigPlanPage.setMenuId(menuId);
                     organizeMpConfigPlanPage.setModuleId(o.getModuleId());
-                    organizeMpConfigPlanPage.setModuleBaseId(base.getId());
+                    MpConfigPlanPage mpConfigPlanPage = mpConfigPlanPageDao.selectById(base.getId());
+                    if (mpConfigPlanPage != null){
+                        organizeMpConfigPlanPage.setModuleBaseId(mpConfigPlanPage.getModuleBaseId());
+                    }
                     organizeMpConfigPlanPage.setShowLayout(base.getShowLayout());
                     organizeMpConfigPlanPage.setSortModule(o.getSortModule());
                     organizeMpConfigPlanPage.setSortBase(base.getSortBase());
