@@ -1005,6 +1005,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setReceiveAtStr(orderAtStr);
             }
+            if (mallOrderVO.getSendAt()!=null && mallOrderVO.getSendAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getSendAt())*1000;
+                String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setSendAtStr(sendAtStr);
+            }
 
             if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
                 mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号

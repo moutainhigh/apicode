@@ -63,6 +63,9 @@ public class MallOrderUAppDTO {
     /**下单时间*/
     @ApiModelProperty(value = "下单时间")
     private java.lang.Integer orderAt;
+    /**商家发货时间*/
+    @ApiModelProperty(value = "商家发货时间")
+    private java.lang.Integer sendAt;
     /**10-待支付  20-待发货 30-待收货 40-已收货  50-已取消 */
     @ApiModelProperty(value = "10-待支付  20-待发货 30-待收货 40-已收货  50-已取消 ")
     private java.lang.Integer status;
@@ -199,6 +202,9 @@ public class MallOrderUAppDTO {
     @ApiModelProperty(value = "订单关闭时间字符串")
     @Getter(AccessLevel.NONE)
     private String closeAtStr;
+    /**商家发货字符串*/
+    @ApiModelProperty(value = "商家发货字符串")
+    private String sendAtStr;
 
     public String getCancelAtStr(){
         try {

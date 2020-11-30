@@ -896,6 +896,7 @@
         <result column="receiveAtStr" property="receiveAtStr" />
         <result column="discountMoney" property="discountMoney" />
         <result column="receive_at" property="receiveAt" />
+        <result column="send_at" property="sendAt" />
         <result column="payuserName" property="payuserName" />
         <result column="payuserPhone" property="payuserPhone" />
         <result column="payuserHeading" property="payuserHeading" />
