@@ -188,6 +188,9 @@ public class MallOrderUAppVO {
     private BigDecimal shareManageMoney;
     @ApiModelProperty(value = "分销佣金")
     private BigDecimal shareDistributionMoney;
+    /**头部展示文案*/
+    @ApiModelProperty(value = "头部展示文案")
+    private String headField;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")
