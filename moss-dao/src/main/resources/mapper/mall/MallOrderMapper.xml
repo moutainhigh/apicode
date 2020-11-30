@@ -882,6 +882,7 @@
         <result column="total_money" property="totalMoney" />
         <result column="payed_at" property="payedAt" />
         <result column="status" property="status" />
+        <result column="sub_status" property="subStatus" />
         <result column="pay_type" property="payType" />
         <result column="payuser" property="payuser" />
         <result column="receiverName" property="receiverName" />
