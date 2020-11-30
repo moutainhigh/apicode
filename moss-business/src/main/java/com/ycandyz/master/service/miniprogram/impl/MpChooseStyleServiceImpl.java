@@ -574,7 +574,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 //没有草稿
                 //保存plan表
                 saveDraft(mpPlanId, organizeId);
-            } else if (publish != null && publish == 1){
+            } else{
                 //有草稿
                 //查询page
                 //获取草稿menu
@@ -582,7 +582,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
                     for (OrganizeMpConfigPlanMenuDTO m : organizeMpConfigPlanMenuDTOS) {
                         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selPageByMenuId(m.getId());
-                        if (organizeMpConfigPlanPageDTOS == null) {
+                        if (organizeMpConfigPlanPageDTOS == null || (organizeMpConfigPlanPageDTOS != null && organizeMpConfigPlanPageDTOS.size() == 0)) {
                             List<OrganizeMpConfigPlanPage > mpConfigPlanPages = mpConfigPlanPageDao.selByMenuId(m.getMoudleMenuId());
                             if (mpConfigPlanPages != null && mpConfigPlanPages.size() > 0) {
                                 for (OrganizeMpConfigPlanPage  mp : mpConfigPlanPages) {
