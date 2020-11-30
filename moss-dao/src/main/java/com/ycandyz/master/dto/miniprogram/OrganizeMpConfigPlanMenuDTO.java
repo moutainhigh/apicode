@@ -43,10 +43,10 @@ public class OrganizeMpConfigPlanMenuDTO extends OrganizeMpConfigPlanMenu {
     private Integer sortNum;
 
     @ApiModelProperty(value = "是否可布局0：不可布局；1、可布局")
-    private Integer canLayout;
+    private Boolean canLayout;
 
     @ApiModelProperty(value = "是否可布局0：不可布局；1、可布局")
-    private Integer canDelete;
+    private Boolean canDelete;
 
     @ApiModelProperty(value = "被拷贝草稿的menu_id")
     private Integer oldMenuId;
