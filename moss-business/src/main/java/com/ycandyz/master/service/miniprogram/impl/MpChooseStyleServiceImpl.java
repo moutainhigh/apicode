@@ -413,16 +413,20 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             }
             //当前plan还是为草稿;
             //保存草稿单个page
+            OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
             Integer menuId = organizeMenuMpRequestVO.getMenuId();
             List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selPageByMenuId(menuId);
             if (organizeMpConfigPlanPageDTOS2 != null && organizeMpConfigPlanPageDTOS2.size() > 0) {
                 int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
             }
-            Integer organizePlanId = organizeMpConfigPlan.getId();
+            Integer organizePlanId = null;
+            if (organizeMpConfigPlan2 != null){
+                organizePlanId = organizeMpConfigPlan2.getId();
+            }
             menuId = moudleOrNowMenu(organizePlanId, menuId);
             //新增page
             saveOnePage(organizeMenuMpRequestVO, menuId);
-            saveOther(organizeMpConfigPlan, organizeMenuMpRequestVO);
+            saveOther(organizeMpConfigPlan2, organizeMenuMpRequestVO);
             //另保存当前草稿plan为一份新的plan:正在使用
             OrganizeMpConfigPlan organizeMpConfigPlanDraft = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
             OrganizeMpConfigPlan organizeMpConfigPlanNowUsing = new OrganizeMpConfigPlan();
