@@ -520,6 +520,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                                 BeanUtils.copyProperties(mp, organizeMpConfigPlanPage);
                                 organizeMpConfigPlanPage.setMenuId(m.getId());
                                 organizeMpConfigPlanPage.setId(null);
+                                organizeMpConfigPlanPage.setBaseCode(mp.getBaseCode());
                                 organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
                             }
                         }
