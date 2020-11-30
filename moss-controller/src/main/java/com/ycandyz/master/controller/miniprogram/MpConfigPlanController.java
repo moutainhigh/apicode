@@ -40,14 +40,14 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
 	
 	@ApiOperation(value="✓创建方案", tags = "企业小程序DIY配置")
     @PostMapping
-	public CommonResult<Boolean> create(@RequestParam String planName) {
-	    if(StrUtil.isEmpty(planName)){
+	public CommonResult<Boolean> create(@RequestBody MpConfigPlanModel entity) {
+	    if(StrUtil.isEmpty(entity.getPlanName())){
             return CommonResult.validateFailed("方案名称不能为空");
         }
-	    if(planName.length() > 10){
+	    if(entity.getPlanName().length() > 10){
             return CommonResult.validateFailed("方案名称长度不能大于10个字符");
         }
-        return result(service.initPlan(planName),true,"创建失败!");
+        return result(service.initPlan(entity.getPlanName()),true,"创建失败!");
 	}
 
 	
