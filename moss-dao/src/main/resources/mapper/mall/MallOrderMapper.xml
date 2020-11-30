@@ -896,6 +896,7 @@
         <result column="receiveAtStr" property="receiveAtStr" />
         <result column="discountMoney" property="discountMoney" />
         <result column="receive_at" property="receiveAt" />
+        <result column="after_sales_end_at" property="afterSalesEndAt" />
         <result column="send_at" property="sendAt" />
         <result column="payuserName" property="payuserName" />
         <result column="payuserPhone" property="payuserPhone" />
@@ -1033,6 +1034,7 @@
             mo.total_money,
             mo.buyer_remark,
             mo.order_at,
+            mo.after_sales_end_at,
             mo.pay_type,
             mo.order_type,
             mo.trade_no,

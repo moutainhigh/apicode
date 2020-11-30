@@ -1010,6 +1010,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setSendAtStr(sendAtStr);
             }
+            if (mallOrderVO.getAfterSalesEndAt()!=null && mallOrderVO.getAfterSalesEndAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getAfterSalesEndAt())*1000;
+                String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
+                mallOrderVO.setAfterSalesEndAtStr(sendAtStr);   //售后截止时间,佣金预计到账时间
+            }
 
             if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
                 mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
@@ -1270,7 +1275,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Override
     public CommonResult<BasePageResult<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(Long page, Long pageSize, String orderNo) {
         UserVO userVO = getUser();  //获取当前登陆用户
-        Page<MallOrderDetailDTO> mallOrderDetailDTOPage = null;
+        BasePageResult<MallOrderDetailUAppVO> basePageResult = new BasePageResult();
         Page pageQuery = new Page(page, pageSize);
         List<MallOrderDetailUAppVO> list = new ArrayList<>();
         try {
@@ -1291,7 +1296,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
 
-            mallOrderDetailDTOPage = mallOrderDetailDao.queryDetailListByOrderNos(pageQuery,orderNoList);
+            Page<MallOrderDetailDTO> mallOrderDetailDTOPage = mallOrderDetailDao.queryDetailListByOrderNos(pageQuery,orderNoList);
+            if (mallOrderDetailDTOPage==null){
+                mallOrderDetailDTOPage = new Page<>();
+            }
             if (mallOrderDetailDTOPage.getRecords() != null && mallOrderDetailDTOPage.getRecords().size() > 0) {
                 MallOrderDetailUAppVO mallOrderDetailUAppVO = null;
                 for (MallOrderDetailDTO mallOrderDetailDTO : mallOrderDetailDTOPage.getRecords()){
@@ -1319,10 +1327,15 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     }
                 }
                 list.add(mallOrderDetailUAppVO);
+                basePageResult.setPage(mallOrderDetailDTOPage.getPages());
+                basePageResult.setPageSize(mallOrderDetailDTOPage.getSize());
+                basePageResult.setTotal(mallOrderDetailDTOPage.getTotal());
+                basePageResult.setResult(list);
             }
         }catch (Exception e){
             log.error(e.getMessage(),e);
         }
-        return CommonResult.success(new BasePageResult(mallOrderDetailDTOPage));
+
+        return CommonResult.success(basePageResult);
     }
 }
