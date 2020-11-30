@@ -41,7 +41,8 @@
         select <include refid="Base_Column_List" />
         from organize_mp_config_plan_menu
         where organize_plan_id = #{organizePlanId}
-        and logic_delete = 0;
+        and logic_delete = 0
+        order by sort_num asc;
     </select>
     <select id="selectMenuById" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
         select <include refid="Base_Column_List" />

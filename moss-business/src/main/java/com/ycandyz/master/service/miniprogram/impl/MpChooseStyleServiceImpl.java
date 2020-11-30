@@ -261,22 +261,6 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenu();
                     BeanUtils.copyProperties(m, organizeMpConfigPlanMenu);
                     organizeMpConfigPlanMenu.setOrganizePlanId(finalOrganizePlanId);
-//                    if (m.getCanDelete()== false){
-//                        organizeMpConfigPlanMenu.setCanDelete(0);
-//                    }else {
-//                        organizeMpConfigPlanMenu.setCanDelete(1);
-//                    }
-//                    if (m.getCanLayout()== false){
-//                        organizeMpConfigPlanMenu.setCanLayout(0);
-//                    }else {
-//                        organizeMpConfigPlanMenu.setCanLayout(1);
-//                    }
-//                    if (m.getLogicDelete()== false){
-//                        organizeMpConfigPlanMenu.setLogicDelete(0);
-//                    }else {
-//                        organizeMpConfigPlanMenu.setLogicDelete(1);
-//                    }
-
                     if (organizeMpConfigPlanMenuDTO != null){
                         organizeMpConfigPlanMenu.setId(organizeMpConfigPlanMenuDTO.getId());
                     }else {
