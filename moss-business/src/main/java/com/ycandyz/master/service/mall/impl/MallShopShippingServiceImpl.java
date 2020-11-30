@@ -5,6 +5,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.dao.mall.*;
@@ -19,6 +20,7 @@ import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.enums.ExpressEnum;
 import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
+import com.ycandyz.master.model.mall.uApp.MallShopShippingLogUAppVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.mall.MallShopShippingService;
@@ -428,6 +430,33 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             }
         }
         return ReturnResponse.success(list);
+    }
+
+    @Override
+    public CommonResult<List<MallShopShippingLogUAppVO>> shippingLogList(String companyCode, String shipNumber) {
+        List<MallShopShippingLog> mallShopShippingLogs = mallShopShippingLogDao.selectList(new QueryWrapper<MallShopShippingLog>().eq("company_code",companyCode).eq("number",shipNumber).orderByDesc("id"));
+        List<MallShopShippingLogUAppVO> result = new ArrayList<>();
+        if (mallShopShippingLogs!=null && mallShopShippingLogs.size()>0){
+            for (MallShopShippingLog mallShopShippingLog : mallShopShippingLogs){
+                MallShopShippingLogUAppVO mallShopShippingLogUAppVO = new MallShopShippingLogUAppVO();
+                mallShopShippingLogUAppVO.setAreaCode(mallShopShippingLog.getAreaCode());
+                mallShopShippingLogUAppVO.setAreaName(mallShopShippingLog.getAreaName());
+                mallShopShippingLogUAppVO.setCompany(mallShopShippingLog.getCompany());
+                mallShopShippingLogUAppVO.setCompanyCode(mallShopShippingLog.getCompanyCode());
+                mallShopShippingLogUAppVO.setContext(mallShopShippingLog.getContext());
+                mallShopShippingLogUAppVO.setCreatedTime(mallShopShippingLog.getCreatedTime());
+                mallShopShippingLogUAppVO.setId(mallShopShippingLog.getId());
+                mallShopShippingLogUAppVO.setIsCheck(mallShopShippingLog.getIsCheck());
+                mallShopShippingLogUAppVO.setLogAt(mallShopShippingLog.getLogAt());
+                mallShopShippingLogUAppVO.setNumber(mallShopShippingLog.getNumber());
+                mallShopShippingLogUAppVO.setShippingMoney(mallShopShippingLog.getShippingMoney());
+                mallShopShippingLogUAppVO.setShopShippingNo(mallShopShippingLog.getShopShippingNo());
+                mallShopShippingLogUAppVO.setStatus(mallShopShippingLog.getStatus());
+                mallShopShippingLogUAppVO.setUpdatedTime(mallShopShippingLog.getUpdatedTime());
+                result.add(mallShopShippingLogUAppVO);
+            }
+        }
+        return CommonResult.success(result);
     }
 
 }
