@@ -97,6 +97,9 @@ public class MallOrderDetailUAppVO {
     /**所有分销人集合*/
     @ApiModelProperty(value = "所有分销人集合")
     private List<MallSocialShareFlowUAppVO> shareFlowInfo;
+    /**该笔订单售后结束时间*/
+    @ApiModelProperty(value = "该笔订单售后结束时间")
+    private Long moAfterSalesEndAt;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")
@@ -110,6 +113,9 @@ public class MallOrderDetailUAppVO {
     @ApiModelProperty(value = "订单关闭时间字符串")
     @Getter(AccessLevel.NONE)
     private String closeAtStr;
+    /**该笔订单售后结束时间字符串*/
+    @ApiModelProperty(value = "该笔订单售后结束时间字符串")
+    private String moAfterSalesEndAtStr;
 
     public String getPayedAtStr(){
         try {
