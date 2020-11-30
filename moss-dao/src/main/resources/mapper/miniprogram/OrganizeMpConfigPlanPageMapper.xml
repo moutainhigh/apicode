@@ -9,11 +9,12 @@
         <result column="menu_name" property="menuName" />
         <result column="module_id" property="moduleId" />
         <result column="module_name" property="moduleName" />
-        <result column="module_base_ids" property="moduleBaseIds" />
+        <result column="page_ids" property="pageIds" />
         <result column="show_layout" property="showLayout" />
         <result column="sort_module" property="sortModule" />
         <result column="sort_base" property="sortBase" />
         <result column="base_name" property="baseName" />
+        <result column="base_code" property="baseCode" />
         <result column="replace_pic_url" property="replacePicUrl" />
     </resultMap>
 
@@ -31,58 +32,20 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,replace_pic_url
+        id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,replace_pic_url,base_code
     </sql>
     <insert id="insertSingle">
-        insert into organize_mp_config_plan_page(id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,logic_delete,replace_pic_url)
-        values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0,#{replacePicUrl})
+        insert into organize_mp_config_plan_page(id, menu_id, module_id, module_base_id, show_layout, sort_module, sort_base, base_name,logic_delete,replace_pic_url,base_code)
+        values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0,#{replacePicUrl},#{baseCode})
     </insert>
-<!--    <update id="updateBaseNameById">-->
-<!--        update organize_mp_config_plan_page-->
-<!--        set base_name = #{baseName},sort_module = #{sortModule},sort_base = #{sortBase} , logic_delete = #{isDel}-->
-<!--        where id = #{id}-->
-<!--    </update>-->
     <delete id="delByMenuId">
         update organize_mp_config_plan_page set logic_delete = 1 where menu_id = #{menuId};
     </delete>
 
-<!--    <select id="selectByMenuId" resultMap="BaseResultMap">-->
-<!--        SELECT p.id,p.menu_id,m.title as menu_name,p.module_id,d.module_name,-->
-<!--        p.sort_module,p.sort_base,p.show_layout,d.display_num,-->
-<!--        p.module_base_id as module_base_ids,p.base_name,p.replace_pic_url-->
-<!--        FROM organize_mp_config_plan_page p-->
-<!--        left join organize_mp_config_plan_menu m on p.menu_id = m.id-->
-<!--        left join mp_config_module d on p.module_id = d.id-->
-<!--        <where>-->
-<!--            p.logic_delete = 0-->
-<!--            <if test="menuId != null">-->
-<!--                and p.menu_id = #{menuId}-->
-<!--            </if>-->
-<!--        </where>-->
-<!--        order by p.sort_module desc,p.sort_base asc;-->
-<!--    </select>-->
-
-<!--    <select id="getMenuModuleElement" resultMap="BaseResultMap2" >-->
-<!--        SELECT b.id as module_base_id,p.id as omcpp_id,p.base_name,b.base_code,p.sort_base,p.show_layout,b.display_num-->
-<!--        FROM organize_mp_config_plan_page p-->
-<!--        left join mp_config_module_base b on p.module_base_id = b.id-->
-<!--        <where>-->
-<!--            <if test="moduleSort != null">-->
-<!--                p.sort_module = #{moduleSort}-->
-<!--            </if>-->
-
-<!--            <if test="baseIds != null ">-->
-<!--                and b.id in-->
-<!--                <foreach collection="baseIds" item="item" index="index" open="(" separator="," close=")">-->
-<!--                    #{item}-->
-<!--                </foreach>-->
-<!--            </if>-->
-<!--        </where>-->
-<!--    </select>-->
     <select id="selectByMenuId" resultMap="BaseResultMap">
-        SELECT p.id,p.menu_id,m.title as menu_name,p.module_id,d.module_name,
-        p.sort_module,p.sort_base,p.show_layout,d.display_num,
-        p.module_base_id as module_base_ids,p.base_name,p.replace_pic_url
+        SELECT p.id,p.menu_id,m.title as menu_name,p.module_id,d.module_name,p.base_code,
+        p.sort_module,p.sort_base,p.show_layout,d.display_num,group_concat(p.id separator ',') as page_ids,
+        p.base_name,p.replace_pic_url
         FROM organize_mp_config_plan_page p
         left join organize_mp_config_plan_menu m on p.menu_id = m.id
         left join mp_config_module d on p.module_id = d.id
@@ -92,10 +55,30 @@
                 and p.menu_id = #{menuId}
             </if>
         </where>
-        gr
-        order by p.sort_module desc,p.sort_base asc;
+        group by p.sort_module
+        order by p.sort_module asc,p.sort_base asc;
     </select>
     <select id="selPageByMenuId" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO">
         select * from organize_mp_config_plan_page where menu_id = #{menuId} and logic_delete = 0
+    </select>
+    <select id="selectByIds" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO">
+        select * from organize_mp_config_plan_page p
+        <where>
+            p.logic_delete = 0
+            <if test="menuId != null">
+                and p.menu_id = #{menuId}
+            </if>
+            <if test="moduleSort != null">
+                and p.sort_module = #{moduleSort}
+            </if>
+
+            <if test="pageIds != null ">
+                and p.id in
+                <foreach collection="pageIds" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+
     </select>
 </mapper>

@@ -19,7 +19,7 @@ public class OrganizeMpConfigModuleBaseVo {
     private Integer id;
 
     @ApiModelProperty(value = "元素编码")
-    private Integer baseCode;
+    private String baseCode;
 
     @ApiModelProperty(value = "元素名称")
     private String baseName;

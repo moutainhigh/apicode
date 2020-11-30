@@ -1,9 +1,12 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
+import com.ycandyz.master.domain.response.miniprogram.MpConfigModuleBaseResp;
+import com.ycandyz.master.dto.miniprogram.MpConfigPlanPageBaseDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO;
@@ -21,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static java.lang.Float.parseFloat;
 
 @Slf4j
 @Service
@@ -66,7 +68,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     }
 
     @Override
-    public OrganizeMpConfigPageSingleMenuVO selectMenuById(Integer menuId) {
+    public OrganizeMpConfigPageSingleMenuVO selectMenuById(Integer menuId){
         OrganizeMpConfigPageSingleMenuVO organizeMpConfigPageSingleMenuVO = new OrganizeMpConfigPageSingleMenuVO();
         organizeMpConfigPageSingleMenuVO.setMenuId(menuId);
         OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
@@ -79,71 +81,207 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         }
         List<OrganizeMpConfigModuleVO> moudles = new ArrayList<>();
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
-        for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
-            List<Integer> baseIds = new ArrayList<>();
+        for (OrganizeMpConfigPlanPageDTO dto :organizeMpConfigPlanPageDTOS) {
             OrganizeMpConfigModuleVO organizeMpConfigModuleVO = new OrganizeMpConfigModuleVO();
             organizeMpConfigModuleVO.setModuleId(dto.getModuleId());
             organizeMpConfigModuleVO.setModuleName(dto.getModuleName());
             organizeMpConfigModuleVO.setSortModule(dto.getSortModule());
             organizeMpConfigModuleVO.setDisplayNum(dto.getDisplayNum());
-            if (dto.getModuleBaseIds() != null) {
-                List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
-                for (String id : dto.getModuleBaseIds().split(",")) {
-                    baseIds.add(Integer.parseInt(id));
-                    MpConfigModuleBase mpConfigModuleBase = mpConfigModuleBaseDao.selectByBaseId(Integer.parseInt(id));
-                    if (mpConfigModuleBase != null){
-                        OrganizeMpConfigModuleBaseVO organizeMpConfigModuleBaseVO = new OrganizeMpConfigModuleBaseVO();
-                        organizeMpConfigModuleBaseVO.setBaseCode(mpConfigModuleBase.getBaseCode());
-                        organizeMpConfigModuleBaseVO.setBaseName(dto.getBaseName());
-                        organizeMpConfigModuleBaseVO.setSortBase(dto.getSortBase());
-                        organizeMpConfigModuleBaseVO.setShowLayout(dto.getShowLayout());
-                        organizeMpConfigModuleBaseVO.setDisplayNum(mpConfigModuleBase.getDisplayNum());
-                        organizeMpConfigModuleBaseVO.setReplacePicUrl(dto.getReplacePicUrl());
-                        organizeMpConfigModuleBaseVO.setId(mpConfigModuleBase.getId());
-                        baseInfoList.add(organizeMpConfigModuleBaseVO);
-                    }
+            List<Integer> pageIds = new ArrayList<>();
+            if(dto.getPageIds() != null){
+                for(String id: dto.getPageIds().split(",")){
+                    pageIds.add(Integer.parseInt(id));
                 }
-                organizeMpConfigModuleVO.setBaseInfo(baseInfoList);
             }
+
+            List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOs = organizeMpConfigPlanPageDao.selectByIds(menuId,dto.getSortModule(),pageIds);
+            List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
+            for(OrganizeMpConfigPlanPageDTO dtoBase: organizeMpConfigPlanPageDTOs){
+                OrganizeMpConfigModuleBaseVO organizeMpConfigModuleBaseVO = new OrganizeMpConfigModuleBaseVO();
+                organizeMpConfigModuleBaseVO.setBaseCode(dtoBase.getBaseCode());
+                organizeMpConfigModuleBaseVO.setBaseName(dtoBase.getBaseName());
+                organizeMpConfigModuleBaseVO.setSortBase(dtoBase.getSortBase());
+                organizeMpConfigModuleBaseVO.setShowLayout(dtoBase.getShowLayout());
+                organizeMpConfigModuleBaseVO.setReplacePicUrl(dtoBase.getReplacePicUrl());
+                organizeMpConfigModuleBaseVO.setId(dtoBase.getId());
+                baseInfoList.add(organizeMpConfigModuleBaseVO);
+            }
+            organizeMpConfigModuleVO.setBaseInfo(baseInfoList);
             moudles.add(organizeMpConfigModuleVO);
         }
-        Map<Integer,List<OrganizeMpConfigModuleBaseVO>> map = new HashMap<>();
-        for (OrganizeMpConfigModuleVO o: moudles) {
-            if (map.containsKey(o.getModuleId())){
-                List<OrganizeMpConfigModuleBaseVO> baseInfos2 = map.get(o.getModuleId());
-                if (baseInfos2 != null){
-                    baseInfos2.addAll(o.getBaseInfo());
-
-                }
-                map.put(o.getModuleId(),baseInfos2);
-            }else {
-                map.put(o.getModuleId(),o.getBaseInfo());
-            }
-        }
-
-        List<OrganizeMpConfigModuleVO> moudles2 = new ArrayList<>();
-        for (OrganizeMpConfigModuleVO o: moudles) {
-            OrganizeMpConfigModuleVO organizeMpConfigModuleVO = new OrganizeMpConfigModuleVO();
-            if (map.get(o.getModuleId()) != null){
-                organizeMpConfigModuleVO.setModuleId(o.getModuleId());
-                organizeMpConfigModuleVO.setModuleName(o.getModuleName());
-                organizeMpConfigModuleVO.setDisplayNum(o.getDisplayNum());
-                organizeMpConfigModuleVO.setSortModule(o.getSortModule());
-                organizeMpConfigModuleVO.setBaseInfo(map.get(o.getModuleId()));
-            }
-            moudles2.add(organizeMpConfigModuleVO);
-        }
-        Map<Integer,OrganizeMpConfigModuleVO> map2 = new HashMap<>();
-        for (OrganizeMpConfigModuleVO o: moudles2) {
-                map2.put(o.getModuleId(),o);
-        }
-        List<OrganizeMpConfigModuleVO> moudles3 = new ArrayList<>();
-        for (Map.Entry<Integer,OrganizeMpConfigModuleVO> mapsss: map2.entrySet()) {
-            moudles3.add(mapsss.getValue());
-        }
-        organizeMpConfigPageSingleMenuVO.setModules(moudles3);
+        organizeMpConfigPageSingleMenuVO.setModules(moudles);
         return organizeMpConfigPageSingleMenuVO;
     }
+//    public OrganizeMpConfigPageSingleMenuVO selectMenuById(Integer menuId) {
+//        OrganizeMpConfigPageSingleMenuVO organizeMpConfigPageSingleMenuVO = new OrganizeMpConfigPageSingleMenuVO();
+//        organizeMpConfigPageSingleMenuVO.setMenuId(menuId);
+//        OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
+//        if (organizeMpConfigPlanMenuDTO != null){
+//            organizeMpConfigPageSingleMenuVO.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
+//            OrganizeMpConfigPlan organizePlan = organizeMpConfigPlanDao.getOrganizePlanByPlanId(organizeMpConfigPlanMenuDTO.getOrganizePlanId());
+//            if (organizePlan != null){
+//                organizeMpConfigPageSingleMenuVO.setMpPlanId(organizePlan.getMpPlanId());
+//            }
+//        }
+//        Map<Integer,List<Integer>> idMaps = new TreeMap<>();
+//        Map<Integer,Map<Integer,List<Integer>>> sortMaps = new TreeMap<>();
+//        Map<Integer,OrganizeMpConfigPlanPageDTO> moudleMaps = new HashMap<>();
+//        List<OrganizeMpConfigModuleVO> moudles = new ArrayList<>();
+//        List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
+//
+//        for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
+//
+//            if (dto.getModuleBaseIds() != null) {
+//                Map<Integer,List<Integer>> idMaps2 = new HashMap<>();
+//                if (sortMaps.get(dto.getSortModule()) == null){
+//                    List<Integer> baseIds = new ArrayList<>();
+//                    if (idMaps2.get(dto.getModuleId()) == null){
+//                        baseIds.add(Integer.parseInt(dto.getModuleBaseIds()));
+//                        idMaps.put(dto.getSortModule(),baseIds);
+//                    }else {
+//                        idMaps2.get(dto.getSortModule()).add(Integer.parseInt(dto.getModuleBaseIds()));
+//                    }
+////                    List<Integer> baseIds = new ArrayList<>();
+////                    if (idMaps2.get(dto.getModuleId()) != null){
+////                        baseIds.add(Integer.parseInt(dto.getModuleBaseIds()));
+////                        idMaps2.put(dto.getModuleId(),baseIds);
+////                    }
+//                    sortMaps.put(dto.getSortModule(),idMaps2);
+//                }else {
+//                    idMaps2.get(dto.getModuleId()).add(Integer.parseInt(dto.getModuleBaseIds()));
+//                    sortMaps.get(dto.getSortModule()).put(idMaps2);
+//                }
+//                moudleMaps.put(dto.getSortModule(),dto);
+//            }
+//        }
+//
+//        for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
+//            List<Integer> baseIds = new ArrayList<>();
+//            if (dto.getModuleBaseIds() != null) {
+//                if (idMaps.get(dto.getSortModule()) == null){
+//                    baseIds.add(Integer.parseInt(dto.getModuleBaseIds()));
+//                    idMaps.put(dto.getSortModule(),baseIds);
+//                }else {
+//                    idMaps.get(dto.getSortModule()).add(Integer.parseInt(dto.getModuleBaseIds()));
+//                }
+//                moudleMaps.put(dto.getSortModule(),dto);
+//            }
+//        }
+//
+//        //Map<Integer,List<Integer>> idMaps2 = sortMapByKey(idMaps);
+//        for (Map.Entry<Integer,List<Integer>> baseIds :idMaps.entrySet()) {
+//            OrganizeMpConfigPlanPageDTO dto = moudleMaps.get(baseIds.getKey());
+//            OrganizeMpConfigModuleVO organizeMpConfigModuleVO = new OrganizeMpConfigModuleVO();
+//            organizeMpConfigModuleVO.setModuleId(dto.getModuleId());
+//            organizeMpConfigModuleVO.setModuleName(dto.getModuleName());
+//            organizeMpConfigModuleVO.setSortModule(dto.getSortModule());
+//            organizeMpConfigModuleVO.setDisplayNum(dto.getDisplayNum());
+//            List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
+//            for (Integer baseId: baseIds.getValue()) {
+//                MpConfigModuleBase mpConfigModuleBase = mpConfigModuleBaseDao.selectByBaseId(baseId);
+//                if (mpConfigModuleBase != null){
+//                    OrganizeMpConfigModuleBaseVO organizeMpConfigModuleBaseVO = new OrganizeMpConfigModuleBaseVO();
+//                    organizeMpConfigModuleBaseVO.setBaseCode(mpConfigModuleBase.getBaseCode());
+//                    organizeMpConfigModuleBaseVO.setBaseName(dto.getBaseName());
+//                    organizeMpConfigModuleBaseVO.setSortBase(dto.getSortBase());
+//                    organizeMpConfigModuleBaseVO.setShowLayout(dto.getShowLayout());
+//                    organizeMpConfigModuleBaseVO.setDisplayNum(mpConfigModuleBase.getDisplayNum());
+//                    organizeMpConfigModuleBaseVO.setReplacePicUrl(dto.getReplacePicUrl());
+//                    organizeMpConfigModuleBaseVO.setId(mpConfigModuleBase.getId());
+//                    baseInfoList.add(organizeMpConfigModuleBaseVO);
+//                }
+//            }
+//            organizeMpConfigModuleVO.setBaseInfo(baseInfoList);
+//            moudles.add(organizeMpConfigModuleVO);
+//        }
+//        organizeMpConfigPageSingleMenuVO.setModules(moudles);
+//        return organizeMpConfigPageSingleMenuVO;
+//    }
+
+//    private  Map<Integer, List<Integer>> sortMapByKey(Map<Integer, List<Integer>> map) {
+//        if (map == null || map.isEmpty()) {
+//            return null;
+//        }
+//        Map<Integer, List<Integer>> sortMap = new TreeMap<>(new MapKeyComparatorUtil());
+//        sortMap.putAll(map);
+//        return sortMap;
+//        OrganizeMpConfigPageSingleMenuVO organizeMpConfigPageSingleMenuVO = new OrganizeMpConfigPageSingleMenuVO();
+//        organizeMpConfigPageSingleMenuVO.setMenuId(menuId);
+//        OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
+//        if (organizeMpConfigPlanMenuDTO != null){
+//            organizeMpConfigPageSingleMenuVO.setMenuName(organizeMpConfigPlanMenuDTO.getTitle());
+//            OrganizeMpConfigPlan organizePlan = organizeMpConfigPlanDao.getOrganizePlanByPlanId(organizeMpConfigPlanMenuDTO.getOrganizePlanId());
+//            if (organizePlan != null){
+//                organizeMpConfigPageSingleMenuVO.setMpPlanId(organizePlan.getMpPlanId());
+//            }
+//        }
+//        List<OrganizeMpConfigModuleVO> moudles = new ArrayList<>();
+//        List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
+//        for (OrganizeMpConfigPlanPageDTO dto : organizeMpConfigPlanPageDTOS) {
+//            List<Integer> baseIds = new ArrayList<>();
+//            OrganizeMpConfigModuleVO organizeMpConfigModuleVO = new OrganizeMpConfigModuleVO();
+//            organizeMpConfigModuleVO.setModuleId(dto.getModuleId());
+//            organizeMpConfigModuleVO.setModuleName(dto.getModuleName());
+//            organizeMpConfigModuleVO.setSortModule(dto.getSortModule());
+//            organizeMpConfigModuleVO.setDisplayNum(dto.getDisplayNum());
+//            if (dto.getModuleBaseIds() != null) {
+//                List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
+//                for (String id : dto.getModuleBaseIds().split(",")) {
+//                    baseIds.add(Integer.parseInt(id));
+//                    MpConfigModuleBase mpConfigModuleBase = mpConfigModuleBaseDao.selectByBaseId(Integer.parseInt(id));
+//                    if (mpConfigModuleBase != null){
+//                        OrganizeMpConfigModuleBaseVO organizeMpConfigModuleBaseVO = new OrganizeMpConfigModuleBaseVO();
+//                        organizeMpConfigModuleBaseVO.setBaseCode(mpConfigModuleBase.getBaseCode());
+//                        organizeMpConfigModuleBaseVO.setBaseName(dto.getBaseName());
+//                        organizeMpConfigModuleBaseVO.setSortBase(dto.getSortBase());
+//                        organizeMpConfigModuleBaseVO.setShowLayout(dto.getShowLayout());
+//                        organizeMpConfigModuleBaseVO.setDisplayNum(mpConfigModuleBase.getDisplayNum());
+//                        organizeMpConfigModuleBaseVO.setReplacePicUrl(dto.getReplacePicUrl());
+//                        organizeMpConfigModuleBaseVO.setId(mpConfigModuleBase.getId());
+//                        baseInfoList.add(organizeMpConfigModuleBaseVO);
+//                    }
+//                }
+//                organizeMpConfigModuleVO.setBaseInfo(baseInfoList);
+//            }
+//            moudles.add(organizeMpConfigModuleVO);
+//        }
+//        Map<Integer,List<OrganizeMpConfigModuleBaseVO>> map = new HashMap<>();
+//        for (OrganizeMpConfigModuleVO o: moudles) {
+//            if (map.containsKey(o.getModuleId())){
+//                List<OrganizeMpConfigModuleBaseVO> baseInfos2 = map.get(o.getModuleId());
+//                if (baseInfos2 != null){
+//                    baseInfos2.addAll(o.getBaseInfo());
+//
+//                }
+//                map.put(o.getModuleId(),baseInfos2);
+//            }else {
+//                map.put(o.getModuleId(),o.getBaseInfo());
+//            }
+//        }
+//
+//        List<OrganizeMpConfigModuleVO> moudles2 = new ArrayList<>();
+//        for (OrganizeMpConfigModuleVO o: moudles) {
+//            OrganizeMpConfigModuleVO organizeMpConfigModuleVO = new OrganizeMpConfigModuleVO();
+//            if (map.get(o.getModuleId()) != null){
+//                organizeMpConfigModuleVO.setModuleId(o.getModuleId());
+//                organizeMpConfigModuleVO.setModuleName(o.getModuleName());
+//                organizeMpConfigModuleVO.setDisplayNum(o.getDisplayNum());
+//                organizeMpConfigModuleVO.setSortModule(o.getSortModule());
+//                organizeMpConfigModuleVO.setBaseInfo(map.get(o.getModuleId()));
+//            }
+//            moudles2.add(organizeMpConfigModuleVO);
+//        }
+//        Map<Integer,OrganizeMpConfigModuleVO> map2 = new HashMap<>();
+//        for (OrganizeMpConfigModuleVO o: moudles2) {
+//                map2.put(o.getModuleId(),o);
+//        }
+//        List<OrganizeMpConfigModuleVO> moudles3 = new ArrayList<>();
+//        for (Map.Entry<Integer,OrganizeMpConfigModuleVO> mapsss: map2.entrySet()) {
+//            moudles3.add(mapsss.getValue());
+//        }
+//        organizeMpConfigPageSingleMenuVO.setModules(moudles3);
+//        return organizeMpConfigPageSingleMenuVO;
+ //   }
 
     /**
      * 保存单个菜单页面
@@ -280,13 +418,12 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     organizeMpConfigPlanPage.setBaseName(base.getBaseName());
                     organizeMpConfigPlanPage.setLogicDelete(o.getIsDel());
                     organizeMpConfigPlanPage.setReplacePicUrl(base.getReplacePicUrl());
+                    organizeMpConfigPlanPage.setBaseCode(base.getBaseCode());
                     newList.add(organizeMpConfigPlanPage);
                     log.info("企业小程序单个菜单页面-page-保存当前菜单页面入参:{}", JSON.toJSONString(organizeMpConfigPlanPage));
                     organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
                 }
             }
-            //批量插入
-        //organizeMpConfigPlanPageDao.batchInsert(newList);
         }
 
 

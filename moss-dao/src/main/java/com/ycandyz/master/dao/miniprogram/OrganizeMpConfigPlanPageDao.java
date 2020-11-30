@@ -19,13 +19,11 @@ public interface OrganizeMpConfigPlanPageDao extends BaseMapper<OrganizeMpConfig
 
     List<OrganizeMpConfigPlanPageDTO> selectByMenuId(@Param("menuId") Integer menuId);
 
-    //List<OrganizeMpConfigPlanPageDTO> getMenuModuleElement(@Param("moduleSort") Integer moduleSort, @Param("baseIds") List<Integer> baseIds);
-
     void insertSingle(OrganizeMpConfigPlanPage o);
-
-    //void updateBaseNameById(@Param("id") Integer id, @Param("baseName") String baseName,@Param("sortModule") Integer sortModule,@Param("sortBase") Integer sortBase,@Param("isDel") Integer isDel);
 
     int delByMenuId(Integer menuId);
 
     List<OrganizeMpConfigPlanPageDTO> selPageByMenuId(Integer menuId);
+
+    List<OrganizeMpConfigPlanPageDTO> selectByIds(@Param("menuId")Integer menuId,@Param("moduleSort")Integer moduleSort,@Param("pageIds") List<Integer> pageIds);
 }
