@@ -29,5 +29,5 @@ public interface MallShopShippingService extends IService<MallShopShipping> {
 
     ReturnResponse<List<MallShopShippingUAppVO>> queryShippingLogListByNo(String companyCode, String number);
 
-    ReturnResponse<MallShopShippingUAppVO> verShipmentNoByUApp(String shipNumber);
+    ReturnResponse<List<MallShopShippingUAppVO>> verShipmentNoByUApp(String shipNumber);
 }

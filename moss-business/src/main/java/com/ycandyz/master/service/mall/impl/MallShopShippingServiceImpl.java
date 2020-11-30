@@ -411,20 +411,23 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
     }
 
     @Override
-    public ReturnResponse<MallShopShippingUAppVO> verShipmentNoByUApp(String shipNumber) {
+    public ReturnResponse<List<MallShopShippingUAppVO>> verShipmentNoByUApp(String shipNumber) {
         String result = HttpUtil.get(autonumberUrl.replace("NUM",shipNumber).replace("KEY",kuaidiKey));
-        JSONObject jsonObject = JSONUtil.parseArray(result).getJSONObject(0);
-        if (jsonObject!=null) {
-            if (jsonObject.getStr("comCode") != null && !"".equals(jsonObject.getStr("comCode"))) {
-                String value = ExpressEnum.getValue(jsonObject.getStr("comCode"));
-                MallShopShippingUAppVO mallShopShippingVO = new MallShopShippingUAppVO();
-                mallShopShippingVO.setCompany(value);
-                mallShopShippingVO.setCompanyCode(jsonObject.getStr("comCode"));
-                mallShopShippingVO.setNumber(shipNumber);
-                return ReturnResponse.success(mallShopShippingVO);
+        List<MallShopShippingUAppVO> list = new ArrayList<>();
+        if (result!=null && !"".equals(result)){
+            JSONObject jsonObject = JSONUtil.parseArray(result).getJSONObject(0);
+            if (jsonObject!=null) {
+                if (jsonObject.getStr("comCode") != null && !"".equals(jsonObject.getStr("comCode"))) {
+                    String value = ExpressEnum.getValue(jsonObject.getStr("comCode"));
+                    MallShopShippingUAppVO mallShopShippingVO = new MallShopShippingUAppVO();
+                    mallShopShippingVO.setCompany(value);
+                    mallShopShippingVO.setCompanyCode(jsonObject.getStr("comCode"));
+                    mallShopShippingVO.setNumber(shipNumber);
+                    list.add(mallShopShippingVO);
+                }
             }
         }
-        return ReturnResponse.failed("为查询到快递记录。");
+        return ReturnResponse.success(list);
     }
 
 }

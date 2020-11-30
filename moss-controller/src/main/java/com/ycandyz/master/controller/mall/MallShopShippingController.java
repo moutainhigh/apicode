@@ -114,12 +114,12 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
      * @param shipNumber
      * @return
      */
-    @ApiOperation(value = "订单发货校验物流单号,uapp",notes = "订单发货校验物流单号,uapp",httpMethod = "GET")
+    @ApiOperation(value = "订单发货校验物流单号,查看物流单号所属物流公司，返回快递公司名和编号,uapp",notes = "订单发货校验物流单号,uapp",httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(name="ship_number",value="物流单号",required=true,dataType="String")
     })
     @GetMapping("/u-app/shipping/company")
-    public ReturnResponse<MallShopShippingUAppVO> verShipmentNoByUApp(@RequestParam("ship_number") String shipNumber){
+    public ReturnResponse<List<MallShopShippingUAppVO>> verShipmentNoByUApp(@RequestParam("ship_number") String shipNumber){
         return mallShopShippingService.verShipmentNoByUApp(shipNumber);
     }
 }
