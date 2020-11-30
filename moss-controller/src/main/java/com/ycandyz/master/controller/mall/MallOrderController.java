@@ -213,7 +213,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
         if (page==null || pageSize==null){
             return CommonResult.failed("分页参数为空");
         }
-        if (orderNo==null || !"".equals(orderNo)){
+        if (orderNo==null || "".equals(orderNo)){
             return CommonResult.failed("传入参数为空");
         }
         orderNo = orderNo.trim();
