@@ -54,5 +54,11 @@
         where organize_plan_id = #{organizePlanId}
         and logic_delete = 0;
     </select>
+    <select id="selByMoudleMenuId" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
+        select * from organize_mp_config_plan_menu
+        where organize_plan_id = #{organizePlanId}
+        and moudle_menu_id = #{menuId}
+        and logic_delete = 0;
+    </select>
 
 </mapper>

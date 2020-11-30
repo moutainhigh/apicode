@@ -350,9 +350,6 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         if (organizeMenuMpRequestVO == null){
             return true;
         }
-        if (organizeMenuMpRequestVO.getMenuName() == null){
-            return true;
-        }
         if (organizeMenuMpRequestVO.getMpPlanId() == null){
             return true;
         }
@@ -368,30 +365,34 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             }
         }
         //第一次存储没有保存过草稿，所以menuId = null，但是可以用menuNamen和organizePlanId查询当前新建草稿的meunId
-        String menuName = organizeMenuMpRequestVO.getMenuName();
+        //String menuName = organizeMenuMpRequestVO.getMenuName();
         //menuId = 当前新建草稿的meunId
         Integer menuId = organizeMenuMpRequestVO.getMenuId();
-        if (menuName == null){
-            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO1 = organizeMpConfigPlanMenuDao.selectMenuById(organizeMenuMpRequestVO.getMenuId());
-            if (organizeMpConfigPlanMenuDTO1 != null){
-                menuName = organizeMpConfigPlanMenuDTO1.getTitle();
-                menuId = organizeMpConfigPlanMenuDTO1.getId();
-            }
-        }
+        menuId = moudleOrNowMenu(organizePlanId, menuId);
+
+        //不等于null，说明是第一次选模版，
+
+//        if (menuName == null){
+//            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO1 = organizeMpConfigPlanMenuDao.selectMenuById(organizeMenuMpRequestVO.getMenuId());
+//            if (organizeMpConfigPlanMenuDTO1 != null){
+//                menuName = organizeMpConfigPlanMenuDTO1.getTitle();
+//                menuId = organizeMpConfigPlanMenuDTO1.getId();
+//            }
+//        }
         //重新选择模版，此时menuid是最新创建的menu的id
-        if(organizeMenuMpRequestVO.getReselectMoudle() != null && organizeMenuMpRequestVO.getReselectMoudle() == 1){
-            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByIdAndName(organizePlanId, menuName);
-            if (organizeMpConfigPlanMenuDTO != null){
-                menuId = organizeMpConfigPlanMenuDTO.getId();
-            }
-        }
+//        if(organizeMenuMpRequestVO.getReselectMoudle() != null && organizeMenuMpRequestVO.getReselectMoudle() == 1){
+//            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByIdAndName(organizePlanId, menuName);
+//            if (organizeMpConfigPlanMenuDTO != null){
+//                menuId = organizeMpConfigPlanMenuDTO.getId();
+//            }
+//        }
         //menu_id没传时查询最新草稿
-        if ( menuId == null){
-            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByIdAndName(organizePlanId, menuName);
-            if (organizeMpConfigPlanMenuDTO != null){
-                menuId = organizeMpConfigPlanMenuDTO.getId();
-            }
-        }
+//        if ( menuId == null){
+//            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByIdAndName(organizePlanId, menuName);
+//            if (organizeMpConfigPlanMenuDTO != null){
+//                menuId = organizeMpConfigPlanMenuDTO.getId();
+//            }
+//        }
 
         //删除page
         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selectByMenuId(menuId);
@@ -425,6 +426,20 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 }
             }
         }
+
+    private Integer moudleOrNowMenu(Integer organizePlanId, Integer menuId) {
+        OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO = organizeMpConfigPlanMenuDao.selByMoudleMenuId(organizePlanId, menuId);
+        //不等于null，说明是第一次选模版，
+        if (organizeMpConfigPlanMenuDTO != null ){
+            menuId = organizeMpConfigPlanMenuDTO.getId();
+        }else {
+            OrganizeMpConfigPlanMenuDTO organizeMpConfigPlanMenuDTO2 = organizeMpConfigPlanMenuDao.selectMenuById(menuId);
+            if (organizeMpConfigPlanMenuDTO2 != null){
+                menuId = organizeMpConfigPlanMenuDTO2.getId();
+            }
+        }
+        return menuId;
+    }
 
 
     private void saveMenu(Integer organizePlanId, Long organizeId, Integer mpPlanId) {
@@ -557,13 +572,155 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
      *        用户没有保存过单个菜单页，直接点保存草稿
      *        保存模版的4个menu和所有page到草稿
      *      有草稿：
-     * @param publish
-     * @param mpPlanId
      */
+//    @Override
+//    public void saveDraftOrPublish(Integer publish,Integer mpPlanId,Integer reselectMoudle) {
+//        UserVO currentUser = UserRequest.getCurrentUser();
+//        Long organizeId = currentUser.getOrganizeId();
+//        //重新选择模版保存会删除当前草稿
+//        if(reselectMoudle != null && reselectMoudle == 1){
+//            delMenuAndPage(organizeId);
+//        }
+//        if (publish != null && publish == 0){
+//            OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
+//            if (organizeMpConfigPlan == null) {
+//                //没有草稿
+//                //保存plan表
+//                saveDraft(mpPlanId, organizeId);
+//            } else{
+//                //有草稿
+//                //查询page
+//                //获取草稿menu
+//                List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(organizeMpConfigPlan.getId());
+//                if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
+//                    for (OrganizeMpConfigPlanMenuDTO m : organizeMpConfigPlanMenuDTOS) {
+//                        List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selPageByMenuId(m.getId());
+//                        if (organizeMpConfigPlanPageDTOS == null || (organizeMpConfigPlanPageDTOS != null && organizeMpConfigPlanPageDTOS.size() == 0)) {
+//                            List<OrganizeMpConfigPlanPage > mpConfigPlanPages = mpConfigPlanPageDao.selByMenuId(m.getMoudleMenuId());
+//                            if (mpConfigPlanPages != null && mpConfigPlanPages.size() > 0) {
+//                                for (OrganizeMpConfigPlanPage  mp : mpConfigPlanPages) {
+//                                    if (mp != null) {
+//                                        OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
+//                                        BeanUtils.copyProperties(mp, organizeMpConfigPlanPage);
+//                                        organizeMpConfigPlanPage.setMenuId(m.getId());
+//                                        organizeMpConfigPlanPage.setId(null);
+//                                        organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }else if (publish == 1){
+//            //保存发布
+//            OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
+//            if (organizeMpConfigPlan == null) {
+//                //没有草稿
+//                //保存模版为草稿plan表
+//                saveDraft(mpPlanId, organizeId);
+//            }
+//            OrganizeMpConfigPlan organizeMpConfigPlanOldUsing = organizeMpConfigPlanDao.selectByIdUsing(organizeId);
+//            if (organizeMpConfigPlanOldUsing != null) {
+//                //有发布的记录则删除
+//                organizeMpConfigPlanDao.setDelete(organizeMpConfigPlanOldUsing.getId());
+//                Integer organizePlanId = organizeMpConfigPlanOldUsing.getId();
+//                List<Integer> menuIds = organizeMpConfigPlanMenuDao.selIdByOrGanizeMoudleId(organizePlanId);
+//                if (menuIds != null && menuIds.size() > 0) {
+//                    for (Integer menuId : menuIds) {
+//                        //删除page中的菜单
+//                        int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
+//                        //删除menu中的菜单
+//                        int i2 = organizeMpConfigPlanMenuDao.delById(menuId);
+//                    }
+//                }
+//            }
+//            //当前plan还是为草稿;
+//            //另保存当前草稿plan为一份新的plan:正在使用
+//            OrganizeMpConfigPlan organizeMpConfigPlanDraft = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
+//            OrganizeMpConfigPlan organizeMpConfigPlanNowUsing = new OrganizeMpConfigPlan();
+//            if (organizeMpConfigPlanDraft != null){
+//                BeanUtils.copyProperties(organizeMpConfigPlanDraft,organizeMpConfigPlanNowUsing);
+//            }
+//            organizeMpConfigPlanNowUsing.setCurrentUsing(1);
+//            organizeMpConfigPlanNowUsing.setLogicDelete(0);
+//            organizeMpConfigPlanNowUsing.setId(null);
+//            log.info("企业小程序单个菜单页面-plan-保存发布草稿为正在使用入参:{}",organizeMpConfigPlanNowUsing);
+//            organizeMpConfigPlanDao.insertSingle(organizeMpConfigPlanNowUsing);
+//
+//            //获取正在使用的plan
+//            OrganizeMpConfigPlan organizeMpConfigPlanNowUsing2 = organizeMpConfigPlanDao.selectByIdUsing(organizeId);
+//            //获取草稿的planId
+//            Integer oldOrganizePlanId = organizeMpConfigPlanDraft.getId();
+//            //获取正在使用的planId
+//            Integer newOrganizePlanId = organizeMpConfigPlanNowUsing2.getId();
+//            //草稿menuId
+//            //查询草稿menu
+//            List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigMenuDrafts = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(oldOrganizePlanId);
+//            for (OrganizeMpConfigPlanMenuDTO o: organizeMpConfigMenuDrafts) {
+//                OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu = new OrganizeMpConfigPlanMenuDTO();
+//                if (o != null && organizeMpConfigPlanNowUsing2 != null){
+//                    BeanUtils.copyProperties(o,organizeMpConfigPlanMenu);
+//                    organizeMpConfigPlanMenu.setId(null);
+//                    organizeMpConfigPlanMenu.setOrganizePlanId(newOrganizePlanId);
+//                    organizeMpConfigPlanMenu.setOldMenuId(o.getId());
+//                    organizeMpConfigPlanMenu.setMoudleMenuId(o.getMoudleMenuId());
+//                    organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
+//                }
+//            }
+//            //查询正在使用menu保存page
+//            List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigMenuUsings = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(newOrganizePlanId);
+//            //遍历草稿menuId
+//            if (organizeMpConfigMenuUsings != null && organizeMpConfigMenuUsings.size() > 0){
+//                for (OrganizeMpConfigPlanMenuDTO newMenu: organizeMpConfigMenuUsings) {
+//                    //查询草稿page
+//                    List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selPageByMenuId(newMenu.getOldMenuId());
+//                    for (OrganizeMpConfigPlanPageDTO o: organizeMpConfigPlanPageDTOS) {
+//                        if (o != null){
+//                            OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
+//                            BeanUtils.copyProperties(o,organizeMpConfigPlanPage);
+//                            organizeMpConfigPlanPage.setId(null);
+//                            organizeMpConfigPlanPage.setMenuId(newMenu.getId());
+//                            organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
+//                        }
+//                    }
+//                }
+//            }
+//            //保存发布记录
+//            List<OrganizeMpReleaseDTO> organizeMpReleaseDTOS = organizeMpReleaseDao.selByOrganizeId(organizeId);
+//            if (organizeMpReleaseDTOS == null || (organizeMpReleaseDTOS != null && organizeMpReleaseDTOS.size() == 0)){
+//                OrganizeMpReleaseParamVO organizeMpReleaseParamVO = new OrganizeMpReleaseParamVO();
+//                organizeMpReleaseParamVO.setOrganizeId(organizeId);
+//                BigDecimal bigDecimal = new BigDecimal("1.0");
+//                organizeMpReleaseParamVO.setVersion(bigDecimal.toString());
+//                organizeMpReleaseParamVO.setPlanId(newOrganizePlanId);
+//                log.info("企业小程序第一次保存发布入数据库入参:{}",organizeMpReleaseParamVO);
+//                organizeMpReleaseDao.insertVersion(organizeMpReleaseParamVO);
+//            }else {
+//                String version = organizeMpReleaseDTOS.get(0).getVersion();
+//                BigDecimal bigDecimal = new BigDecimal("0.1");
+//                String versionStr = null;
+//                if (version != null){
+//                    BigDecimal bigDecimal2 = new BigDecimal(version);
+//                    versionStr = bigDecimal2.add(bigDecimal).toString();
+//                }
+//                OrganizeMpReleaseParamVO organizeMpReleaseParamVO = new OrganizeMpReleaseParamVO();
+//                organizeMpReleaseParamVO.setOrganizeId(organizeId);
+//                organizeMpReleaseParamVO.setVersion(versionStr);
+//                organizeMpReleaseParamVO.setPlanId(newOrganizePlanId);
+//                log.info("企业小程序保存发布入参:{}",organizeMpReleaseParamVO);
+//                organizeMpReleaseDao.insertVersion(organizeMpReleaseParamVO);
+//            }
+//        }
+//        }
     @Override
-    public void saveDraftOrPublish(Integer publish,Integer mpPlanId,Integer reselectMoudle) {
+    public void saveDraftOrPublish(OrganizeMenuMpRequestVO organizeMenuMpRequestVO) {
         UserVO currentUser = UserRequest.getCurrentUser();
         Long organizeId = currentUser.getOrganizeId();
+        Integer reselectMoudle = organizeMenuMpRequestVO.getReselectMoudle();
+        Integer publish = organizeMenuMpRequestVO.getPublish();
+        Integer mpPlanId = organizeMenuMpRequestVO.getMpPlanId();
         //重新选择模版保存会删除当前草稿
         if(reselectMoudle != null && reselectMoudle == 1){
             delMenuAndPage(organizeId);
@@ -578,9 +735,21 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 //有草稿
                 //查询page
                 //获取草稿menu
+                Integer organizePlanId = organizeMpConfigPlan.getId();
+                Integer menuId = organizeMenuMpRequestVO.getMenuId();
+                menuId = moudleOrNowMenu(organizePlanId, menuId);
+                List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selPageByMenuId(menuId);
+                if (organizeMpConfigPlanPageDTOS2 != null && organizeMpConfigPlanPageDTOS2.size() > 0) {
+                    int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
+                    //新增page
+                }
+                saveOnePage(organizeMenuMpRequestVO, menuId);
                 List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(organizeMpConfigPlan.getId());
                 if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
                     for (OrganizeMpConfigPlanMenuDTO m : organizeMpConfigPlanMenuDTOS) {
+                        if (m.getId() == menuId ){
+                            continue;
+                        }
                         List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selPageByMenuId(m.getId());
                         if (organizeMpConfigPlanPageDTOS == null || (organizeMpConfigPlanPageDTOS != null && organizeMpConfigPlanPageDTOS.size() == 0)) {
                             List<OrganizeMpConfigPlanPage > mpConfigPlanPages = mpConfigPlanPageDao.selByMenuId(m.getMoudleMenuId());
@@ -600,7 +769,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
 
                 }
             }
-        }else if (publish == 1){
+        }else if (publish != null && publish == 1){
             //保存发布
             OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
             if (organizeMpConfigPlan == null) {
@@ -624,6 +793,16 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 }
             }
             //当前plan还是为草稿;
+            //保存草稿单个page
+            Integer menuId = organizeMenuMpRequestVO.getMenuId();
+            List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selPageByMenuId(menuId);
+            if (organizeMpConfigPlanPageDTOS2 != null && organizeMpConfigPlanPageDTOS2.size() > 0) {
+                int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
+            }
+            Integer organizePlanId = organizeMpConfigPlan.getId();
+            menuId = moudleOrNowMenu(organizePlanId, menuId);
+            //新增page
+            saveOnePage(organizeMenuMpRequestVO, menuId);
             //另保存当前草稿plan为一份新的plan:正在使用
             OrganizeMpConfigPlan organizeMpConfigPlanDraft = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
             OrganizeMpConfigPlan organizeMpConfigPlanNowUsing = new OrganizeMpConfigPlan();
@@ -700,7 +879,32 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 organizeMpReleaseDao.insertVersion(organizeMpReleaseParamVO);
             }
         }
+    }
+
+    private void saveOnePage(OrganizeMenuMpRequestVO organizeMenuMpRequestVO, Integer menuId) {
+        List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
+        for (OrganizeMpConfigPageMenuVo o : modules) {
+            List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
+            for (OrganizeMpConfigModuleBaseVo base : baseInfo) {
+                OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
+                organizeMpConfigPlanPage.setMenuId(menuId);
+                organizeMpConfigPlanPage.setModuleId(o.getModuleId());
+                MpConfigPlanPage mpConfigPlanPage = mpConfigPlanPageDao.selectById(base.getId());
+                if (mpConfigPlanPage != null){
+                    organizeMpConfigPlanPage.setModuleBaseId(mpConfigPlanPage.getModuleBaseId());
+                }
+                organizeMpConfigPlanPage.setShowLayout(base.getShowLayout());
+                organizeMpConfigPlanPage.setSortModule(o.getSortModule());
+                organizeMpConfigPlanPage.setSortBase(base.getSortBase());
+                organizeMpConfigPlanPage.setBaseName(base.getBaseName());
+                organizeMpConfigPlanPage.setLogicDelete(o.getIsDel());
+                organizeMpConfigPlanPage.setReplacePicUrl(base.getReplacePicUrl());
+                organizeMpConfigPlanPage.setBaseCode(base.getBaseCode());
+                log.info("企业小程序单个菜单页面-page-保存当前菜单页面入参:{}", JSON.toJSONString(organizeMpConfigPlanPage));
+                organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
+            }
         }
+    }
 
     @Override
     public void del() {

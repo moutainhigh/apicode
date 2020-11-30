@@ -20,7 +20,7 @@ public interface MpChooseStyleService {
 
     List<OrganizeMpConfigMenuVO> select2();
 
-    void saveDraftOrPublish(Integer publish,Integer mpPlanId,Integer reselectMoudle);
+    void saveDraftOrPublish(OrganizeMenuMpRequestVO organizeMenuMpRequestVO);
 
     void del();
 
