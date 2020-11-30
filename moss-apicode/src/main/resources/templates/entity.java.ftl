@@ -14,6 +14,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 </#if>
+import ${cfg.jsonNaming};
+import ${cfg.propertyNamingStrategy};
 
 /**
  * <p>
@@ -28,6 +30,7 @@ import lombok.Setter;
 @Getter
 @Setter
 </#if>
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 <#if table.convert>
 @TableName("${table.name}")
 </#if>
@@ -41,7 +44,6 @@ public class ${entity} extends Model<${entity}> {
 <#else>
 public class ${entity} extends Model {
 </#if>
-
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.fields as field>
  <#if field.keyFlag>
@@ -50,7 +52,7 @@ public class ${entity} extends Model {
 
  <#if field.comment!?length gt 0>
   <#if swagger2>
-   @ApiModelProperty(value = "${field.comment}")
+   @ApiModelProperty(name = "${field.name}", value = "${field.comment}")
   <#else>
    /**
    * ${field.comment}

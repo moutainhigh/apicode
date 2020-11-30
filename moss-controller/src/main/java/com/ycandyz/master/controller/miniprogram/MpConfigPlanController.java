@@ -73,7 +73,7 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
         OrderItem orderItem = OrderItem.desc("create_time");
         List<OrderItem> orderItemList = new ArrayList<OrderItem>();
         orderItemList.add(orderItem);
-        Page page = new Page(pageModel.getPageNum(),pageModel.getPageSize());
+        Page page = new Page(pageModel.getPage(),pageModel.getPageSize());
         page.setOrders(orderItemList);
 
 	    return CommonResult.success(new BasePageResult(service.page(page,query)));

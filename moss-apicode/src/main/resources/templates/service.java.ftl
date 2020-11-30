@@ -2,7 +2,7 @@ package ${cfg.Service};
 
 import ${superServiceClassPackage};
 import ${cfg.entity}.${entity};
-
+import ${cfg.model}.${entity}${cfg.modelSuffix};
 /**
  * <p>
  * @Description ${table.comment!} 业务接口类
@@ -16,6 +16,9 @@ import ${cfg.entity}.${entity};
 interface ${table.serviceName} : ${superServiceClass}<${entity}>
 <#else>
 public interface ${table.serviceName} extends ${superServiceClass}<${entity}>{
-	
+
+    boolean insert(${entity}${cfg.modelSuffix} model);
+
+    boolean update(${entity}${cfg.modelSuffix} model);
 }
 </#if>

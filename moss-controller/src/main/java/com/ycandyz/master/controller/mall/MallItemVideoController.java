@@ -68,7 +68,7 @@ public class MallItemVideoController extends BaseController<MallItemVideoService
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<MallItemVideo>> selectPage(PageModel page, MallItemVideoQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
     @ApiImplicitParam(name="itemNo",value="商品编号",required=true,dataType="string")

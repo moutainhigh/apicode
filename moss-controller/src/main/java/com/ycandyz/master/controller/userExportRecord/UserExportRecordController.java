@@ -8,6 +8,7 @@ import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.query.taboo.BaseTabooWordsQuery;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordReq;
+import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordVo;
 import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
 import com.ycandyz.master.service.userExportRecord.IUserExportRecordService;
@@ -55,9 +56,9 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
             @ApiImplicitParam(name="page",value="当前页",dataType="Long")
     })
     @GetMapping
-    public ReturnResponse<Page<UserExportRecordResp>> selectPage(@RequestParam(value = "terminal",required = false) Integer terminal,
+    public ReturnResponse<Page<UserExportRecordVo>> selectPage(@RequestParam(value = "terminal",required = false) Integer terminal,
                                                                  @RequestParam(value = "organizeName",required = false) String organizeName,
-                                                                 @RequestParam(value = "operatorId",required = false) Long operatorId,
+                                                                 @RequestParam(value = "operatorName",required = false) String operatorName,
                                                                  @RequestParam(value = "createdAtStart",required = false) Long createdAtStart,
                                                                  @RequestParam(value = "createdAtEnd",required = false) Long createdAtEnd,
                                                                  @RequestParam(value = "page_size",defaultValue = "10",required = false) Long page_size,
@@ -66,14 +67,14 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
         UserExportRecordQuery userExportRecordQuery = new UserExportRecordQuery();
         userExportRecordQuery.setTerminal(terminal);
         userExportRecordQuery.setOrganizeName(organizeName);
-        userExportRecordQuery.setOperatorId(operatorId);
+        userExportRecordQuery.setOperatorName(operatorName);
         userExportRecordQuery.setCreatedAtStart(createdAtStart);
         userExportRecordQuery.setCreatedAtEnd(createdAtEnd);
         requestParams.setPage_size(page_size);
         requestParams.setPage(page);
         requestParams.setT(userExportRecordQuery);
 	    log.info("导出记录-用户导出记录查询分页请求入参:{}", JSON.toJSONString(requestParams));
-        Page<UserExportRecordResp> userExportRecordRespPage = userExportRecordService.selectPages(requestParams);
+        Page<UserExportRecordVo> userExportRecordRespPage = userExportRecordService.selectPages(requestParams);
         log.info("导出记录-用户导出记录查询分页请求响应:{}", JSON.toJSONString(ReturnResponse.success(userExportRecordRespPage)));
         return ReturnResponse.success(userExportRecordRespPage);
     }

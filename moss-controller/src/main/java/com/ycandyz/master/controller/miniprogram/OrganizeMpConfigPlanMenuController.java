@@ -67,7 +67,7 @@ public class OrganizeMpConfigPlanMenuController extends BaseController<OrganizeM
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<OrganizeMpConfigPlanMenu>> selectPage(PageModel page, OrganizeMpConfigPlanMenuQuery query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPageNum(),page.getPageSize()),query)));
+        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "查询全部")

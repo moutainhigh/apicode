@@ -90,6 +90,15 @@ public class MallOrderUAppVO {
     /**发货方式:1-配送 2-自提*/
     @ApiModelProperty(value = "1-配送 2-自提")
     private java.lang.Integer deliverType;
+    /**自提码*/
+    @ApiModelProperty(value = "自提码")
+    private java.lang.String pickupNo;
+    /**自提地址名称*/
+    @ApiModelProperty(value = "自提地址名称")
+    private java.lang.String pickUpAddressName;
+    /**自提地址*/
+    @ApiModelProperty(value = "自提地址")
+    private java.lang.String pickUpAddressDetail;
     /**预留电话*/
     @ApiModelProperty(value = "预留电话")
     private java.lang.String prePhone;
