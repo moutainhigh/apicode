@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.ycandyz.master.api.*;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanModel;
+import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanNameModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +41,8 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
 	
 	@ApiOperation(value="✓创建方案", tags = "企业小程序DIY配置")
     @PostMapping
-	public CommonResult<Boolean> create(@RequestBody MpConfigPlanModel entity) {
-	    if(StrUtil.isEmpty(entity.getPlanName())){
-            return CommonResult.validateFailed("方案名称不能为空");
-        }
+	public CommonResult<Boolean> create(@RequestBody MpConfigPlanNameModel entity) {
+
 	    if(entity.getPlanName().length() > 10){
             return CommonResult.validateFailed("方案名称长度不能大于10个字符");
         }
