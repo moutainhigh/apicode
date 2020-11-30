@@ -38,12 +38,6 @@ public class CouponActivityTicketResp {
     @ApiModelProperty(value = "优惠卷剩余数量")
     private Integer remainNum;
 
-    @ApiModelProperty(value = "券生效开始时间")
-    private Long beginAt;
-
-    @ApiModelProperty(value = "券生效结束时间")
-    private Long endAt;
-
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "券生效开始时间")
     private Date beginTime;

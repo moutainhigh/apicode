@@ -5,16 +5,11 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.domain.enums.ad.SpecialEnum;
 import com.ycandyz.master.domain.enums.coupon.CouponActivityEnum;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
-import com.ycandyz.master.domain.query.ad.SpecialQuery;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
-import com.ycandyz.master.domain.query.coupon.CouponTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
-import com.ycandyz.master.domain.response.coupon.CouponTicketResp;
-import com.ycandyz.master.entities.ad.Special;
 import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.ycandyz.master.domain.query.coupon.CouponActivityQuery;
 import com.ycandyz.master.dao.coupon.CouponActivityDao;
@@ -25,7 +20,6 @@ import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.DateUtils;
 import com.ycandyz.master.utils.IDGeneratorUtils;
-import com.ycandyz.master.utils.QueryUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,24 +49,24 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     public Page<CouponActivity> page(Page page, CouponActivityQuery query) {
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         query.setShopNo(getShopNo());
-        if (null != query.getCreatedTimeS() && null != query.getCreatedTimeE() && query.getCreatedTimeS().equals(query.getCreatedTimeE())){
-            query.setCreatedTime(query.getCreatedTimeS());
-            query.setCreatedTimeS(null);
-            query.setCreatedTimeE(null);
+        if (null != query.getCreateTimeS() && null != query.getCreateTimeE() && query.getCreateTimeS().equals(query.getCreateTimeE())){
+            query.setCreateTime(query.getCreateTimeS());
+            query.setCreateTimeS(null);
+            query.setCreateTimeE(null);
         }
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .select(CouponActivity::getId,CouponActivity::getActivityNo,CouponActivity::getName,CouponActivity::getBeginTime,CouponActivity::getEndTime,
-                        CouponActivity::getStatus,CouponActivity::getJoinType,CouponActivity::getActivityNum,CouponActivity::getCreatedTime)
-                .apply(query.getCreatedTime() != null,
-                        "date_format (created_time,'%Y-%m-%d') = date_format('" + DateUtil.formatDate(query.getCreatedTime()) + "','%Y-%m-%d')")
-                .apply(null != query.getCreatedTimeS(),
-                        "date_format (created_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreatedTimeS()) + "','%Y-%m-%d')")
-                .apply(null != query.getCreatedTimeE(),
-                        "date_format (created_time,'%Y-%m-%d') <= date_format('" + DateUtils.queryEndDate(query.getCreatedTimeE())+ "','%Y-%m-%d')")
+                        CouponActivity::getStatus,CouponActivity::getJoinType,CouponActivity::getActivityNum,CouponActivity::getCreateTime)
+                .apply(query.getCreateTime() != null,
+                        "date_format (created_time,'%Y-%m-%d') = date_format('" + DateUtil.formatDate(query.getCreateTime()) + "','%Y-%m-%d')")
+                .apply(null != query.getCreateTimeS(),
+                        "date_format (created_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreateTimeS()) + "','%Y-%m-%d')")
+                .apply(null != query.getCreateTimeE(),
+                        "date_format (created_time,'%Y-%m-%d') <= date_format('" + DateUtils.queryEndDate(query.getCreateTimeE())+ "','%Y-%m-%d')")
                 .like(StrUtil.isNotEmpty(query.getName()),CouponActivity::getName,query.getName())
                 .eq(CouponActivity::getShopNo, query.getShopNo())
                 //.eq(CouponActivity::getStatus, SpecialEnum.EnabledEnum.DISABLE.getCode())
-                .orderByDesc(CouponActivity::getCreatedTime,CouponActivity::getCreatedTime);
+                .orderByDesc(CouponActivity::getCreateTime,CouponActivity::getCreateTime);
         Page<CouponActivity> p = (Page<CouponActivity>) baseMapper.selectPage(page, queryWrapper);
         p.getRecords().stream().forEach(f -> {
             if(CouponActivityEnum.Status.TYPE_0.getCode().equals(f.getStatus())){
@@ -98,14 +92,6 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         CouponActivityResp vo = new CouponActivityResp();
         BeanUtils.copyProperties(entity,vo);
         List<CouponActivityTicketResp> activityTicketList = couponActivityTicketService.list(entity.getActivityNo());
-        activityTicketList.stream().forEach(f -> {
-            if (f.getBeginAt() != null && f.getBeginAt() != 0){
-                f.setBeginTime(DateUtils.getCurrentDate(f.getBeginAt()));
-            }
-            if (f.getEndAt() != null && f.getEndAt() != 0){
-                f.setEndTime(DateUtils.getCurrentDate(f.getEndAt()));
-            }
-        });
         vo.setActivityTicketList(activityTicketList);
         return vo;
     }
@@ -120,8 +106,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.isFalse(isEmpty(entity),"该时间区间存在已有活动,请更改时间区间");
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
-        t.setCreatedBy(getUserId());
-        t.setUpdatedBy(getUserId());
+        t.setCreateBy(getUserId());
+        t.setUpdateBy(getUserId());
         t.setShopNo(getShopNo());
         t.setActivityNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
         entity.getTicketList().forEach(i -> {
@@ -145,7 +131,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         couponActivityTicketService.remove(queryWrapper);
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
-        t.setUpdatedBy(getUserId());
+        t.setUpdateBy(getUserId());
         t.setShopNo(getShopNo());
         entity.getTicketList().forEach(i -> {
             CouponActivityTicket at = new CouponActivityTicket();

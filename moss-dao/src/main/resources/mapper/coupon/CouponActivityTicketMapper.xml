@@ -7,8 +7,8 @@
         <id column="id" property="id" />
         <result column="activity_no" property="activityNo" />
         <result column="ticket_no" property="ticketNo" />
-        <result column="created_time" property="createdTime" />
-        <result column="updated_time" property="updatedTime" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -17,7 +17,7 @@
     </sql>
 
     <select id="list" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp">
-        SELECT ct.id,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_at,ti.end_at
+        SELECT ct.id,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_time,ti.end_time
         FROM
             coupon_activity_ticket ct
             LEFT JOIN coupon_ticket t ON ct.ticket_no = t.ticket_no
@@ -27,7 +27,7 @@
     </select>
 
     <select id="selectTicketPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp">
-        SELECT t.id,t.ticket_no,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_at,ti.end_at,ct.id activity_ticket_id
+        SELECT t.id,t.ticket_no,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_time,ti.end_time,ct.id activity_ticket_id
         FROM
         coupon_activity_ticket ct
         LEFT JOIN coupon_ticket t ON ct.ticket_no = t.ticket_no
@@ -40,7 +40,7 @@
     </select>
 
     <select id="selectActivityTicketPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp">
-        SELECT t.id,t.ticket_no,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_at,ti.end_at,case when ct.id is null then 'false' else 'true' end selected
+        SELECT t.id,t.ticket_no,t.`name`,t.ticket_sum - t.use_num remain_num,ti.begin_time,ti.end_time,case when ct.id is null then 'false' else 'true' end selected
         FROM
         coupon_ticket t
         LEFT JOIN coupon_ticket_info ti ON t.last_ticket_info_no = ti.ticket_info_no

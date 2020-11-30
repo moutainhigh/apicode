@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -55,11 +58,13 @@ public class CouponTicket extends Model {
    @ApiModelProperty(value = "优惠券最新修改详情编码")
    private String lastTicketInfoNo;
 
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    @ApiModelProperty(value = "创建时间")
-   private Long createdAt;
+   private Date createTime;
 
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    @ApiModelProperty(value = "更新时间")
-   private Long updateAt;
+   private Date updateTime;
 
 
 }

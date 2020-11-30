@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import io.swagger.annotations.ApiModel;
@@ -55,11 +56,11 @@ public class CouponTicketInfoQuery implements Serializable {
     @ApiModelProperty(value = "券有效期类型：0:时间段(自然日)，1:领券当日起计算天数，2:领券次日起计算天数")
     private Integer status;
 
-    @ApiModelProperty(value = "券生效开始时间")
-    private Long beginAt;
+    @ApiModelProperty(name = "begin_time",value = "券生效开始时间")
+    private Date beginTime;
 
-    @ApiModelProperty(value = "券生效结束时间")
-    private Long endAt;
+    @ApiModelProperty(name = "end_time",value = "券生效结束时间")
+    private Date endTime;
 
     @ApiModelProperty(value = "券有效天数")
     private Integer days;
@@ -79,11 +80,11 @@ public class CouponTicketInfoQuery implements Serializable {
     @ApiModelProperty(value = "说明备注")
     private String remark;
 
-    @ApiModelProperty(value = "创建时间")
-    private Long createdAt;
+    @ApiModelProperty(name = "created_time",value = "创建时间")
+    private Date createTime;
 
-    @ApiModelProperty(value = "更新时间")
-    private Long updateAt;
+    @ApiModelProperty(name = "created_time",value = "更新时间")
+    private Date updateTime;
 
     //优惠券表中字段
 

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -76,15 +77,15 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
                 for (CouponTicketInfoDTO couponTicketInfoDTO : page.getRecords()){
                     couponTicketInfoVO = new CouponTicketInfoVO();
                     BeanUtils.copyProperties(couponTicketInfoDTO, couponTicketInfoVO);
-                    if (couponTicketInfoVO.getTicketCreatedAt()!=null && couponTicketInfoVO.getTicketCreatedAt()!=0){
-                        couponTicketInfoVO.setTicketCreatedAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getTicketCreatedAt()*1000),"yyyy-MM-dd HH:mm:ss"));
+                    /*if (couponTicketInfoVO.getTicketCreatedTime()!=null && couponTicketInfoVO.getTicketCreatedTime()!=0){
+                        couponTicketInfoVO.setTicketCreatedAtStr(DateUtil.formTime(DateUtil.date(couponTicketInfoVO.getTicketCreatedTime()*1000),"yyyy-MM-dd HH:mm:ss"));
                     }
-                    if (couponTicketInfoVO.getBeginAt()!=null && couponTicketInfoVO.getBeginAt()!=0){
-                        couponTicketInfoVO.setBeginAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getBeginAt()*1000),"yyyy-MM-dd HH:mm:ss"));
+                    if (couponTicketInfoVO.getBeginTime()!=null && couponTicketInfoVO.getBeginTime()!=0){
+                        couponTicketInfoVO.setBeginAtStr(DateUtil.formTime(DateUtil.date(couponTicketInfoVO.getBeginTime()*1000),"yyyy-MM-dd HH:mm:ss"));
                     }
-                    if (couponTicketInfoVO.getEndAt()!=null && couponTicketInfoVO.getEndAt()!=0){
-                        couponTicketInfoVO.setEndAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getEndAt()*1000),"yyyy-MM-dd HH:mm:ss"));
-                    }
+                    if (couponTicketInfoVO.getEndTime()!=null && couponTicketInfoVO.getEndTime()!=0){
+                        couponTicketInfoVO.setEndAtStr(DateUtil.formTime(DateUtil.date(couponTicketInfoVO.getEndTime()*1000),"yyyy-MM-dd HH:mm:ss"));
+                    }*/
                     list.add(couponTicketInfoVO);
                 }
             }
@@ -110,7 +111,7 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
             return ReturnResponse.failed("当前用户登陆门店无权进行此操作");
         }
         couponTicket.setState(state);
-        couponTicket.setUpdateAt(System.currentTimeMillis()/1000);
+        couponTicket.setUpdateTime(new Date());
         int flag = couponTicketDao.updateById(couponTicket);
         if (flag>0){
             return ReturnResponse.success("成功");
@@ -126,15 +127,15 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
         if (couponTicketInfoDTO!=null){
             couponTicketInfoVO = new CouponTicketInfoVO();
             BeanUtils.copyProperties(couponTicketInfoDTO,couponTicketInfoVO);
-            if (couponTicketInfoVO.getTicketCreatedAt()!=null && couponTicketInfoVO.getTicketCreatedAt()!=0){
-                couponTicketInfoVO.setTicketCreatedAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getTicketCreatedAt()*1000),"yyyy-MM-dd HH:mm:ss"));
+            /*if (couponTicketInfoVO.getTicketCreatedTime()!=null && couponTicketInfoVO.getTicketCreatedTime()!=0){
+                couponTicketInfoVO.setTicketCreatedAtStr(DateUtil.formTime(DateUtil.date(couponTicketInfoVO.getTicketCreatedTime()*1000),"yyyy-MM-dd HH:mm:ss"));
             }
-            if (couponTicketInfoVO.getBeginAt()!=null && couponTicketInfoVO.getBeginAt()!=0){
-                couponTicketInfoVO.setBeginAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getBeginAt()*1000),"yyyy-MM-dd HH:mm:ss"));
+            if (couponTicketInfoVO.getBeginTime()!=null && couponTicketInfoVO.getBeginTime()!=0){
+                couponTicketInfoVO.setBeginAtStr(DateUtil.formTime(DateUtil.date(couponTicketInfoVO.getBeginTime()*1000),"yyyy-MM-dd HH:mm:ss"));
             }
-            if (couponTicketInfoVO.getEndAt()!=null && couponTicketInfoVO.getEndAt()!=0){
-                couponTicketInfoVO.setEndAtStr(DateUtil.format(DateUtil.date(couponTicketInfoVO.getEndAt()*1000),"yyyy-MM-dd HH:mm:ss"));
-            }
+            if (couponTicketInfoVO.getEndTime()!=null && couponTicketInfoVO.getEndTime()!=0){
+                couponTicketInfoVO.setEndAtStr(DateUtil.formTime(DateUtil.date(couponTicketInfoVO.getEndTime()*1000),"yyyy-MM-dd HH:mm:ss"));
+            }*/
         }
         return ReturnResponse.success(couponTicketInfoVO);
     }
@@ -171,8 +172,8 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
                 if (couponTicketInfoItems!=null && couponTicketInfoItems.size()>0){
                     infoItemNoList = couponTicketInfoItems.stream().map(CouponTicketInfoItem::getItemNo).collect(Collectors.toList());
                 }
-                if (!Objects.equals(couponTicketInfo.getBeginAt(),couponTicketInfoQuery.getBeginAt()) ||
-                        !Objects.equals(couponTicketInfo.getEndAt(),couponTicketInfoQuery.getEndAt()) ||
+                if (!Objects.equals(couponTicketInfo.getBeginTime(),couponTicketInfoQuery.getBeginTime()) ||
+                        !Objects.equals(couponTicketInfo.getEndTime(),couponTicketInfoQuery.getEndTime()) ||
                         !Objects.equals(couponTicketInfo.getShopType(),couponTicketInfoQuery.getShopType()) ||
                         !Objects.equals(couponTicketInfo.getUseType(),couponTicketInfoQuery.getUserType()) ||
                         !Objects.equals(couponTicketInfo.getFullMoney(),couponTicketInfoQuery.getFullMoney()) ||
@@ -187,9 +188,9 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
                         !Objects.equals(infoItemNoList,couponTicketInfoQuery.getItemNoList())){
                     //有不满足的进入到优惠券详情修改相关代码
                     CouponTicketInfo ticketInfo = new CouponTicketInfo();
-                    ticketInfo.setBeginAt(couponTicketInfoQuery.getBeginAt());
-                    ticketInfo.setEndAt(couponTicketInfoQuery.getEndAt());
-                    ticketInfo.setCreatedAt(System.currentTimeMillis()/1000);
+                    ticketInfo.setBeginTime(couponTicketInfoQuery.getBeginTime());
+                    ticketInfo.setEndTime(couponTicketInfoQuery.getEndTime());
+                    ticketInfo.setCreateTime(new Date());
                     ticketInfo.setDays(couponTicketInfoQuery.getDays());
                     ticketInfo.setDiscountMoney(couponTicketInfoQuery.getDiscountMoney());
                     ticketInfo.setFullMoney(couponTicketInfoQuery.getFullMoney());
@@ -201,7 +202,7 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
                     ticketInfo.setSuperposition(couponTicketInfoQuery.getSuperposition());
                     ticketInfo.setTakeNum(couponTicketInfoQuery.getTakeNum());
                     ticketInfo.setTicketInfoNo(String.valueOf(IDGeneratorUtils.getLongId()));
-                    ticketInfo.setUpdateAt(System.currentTimeMillis()/1000);
+                    ticketInfo.setUpdateTime(new Date());
                     ticketInfo.setUserType(couponTicketInfoQuery.getUserType());
                     ticketInfo.setUseType(couponTicketInfoQuery.getUseType());
                     ticketInfo.setTicketNo(couponTicket.getTicketNo());
@@ -211,7 +212,7 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
                 }
 
                 //最后更新优惠券表
-                couponTicket.setUpdateAt(System.currentTimeMillis()/1000);
+                couponTicket.setUpdateTime(new Date());
                 couponTicket.setLastTicketInfoNo(ticketInfoNo);
                 couponTicket.setName(couponTicketInfoQuery.getName());
                 couponTicket.setTicketSum(couponTicketInfoQuery.getTicketSum());
@@ -225,14 +226,14 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
     @Transactional
     public ReturnResponse<String> insertTicket(CouponTicketInfoQuery couponTicketInfoQuery) {
         UserVO userVO = getUser();  //当前登陆用户
-        Long current = System.currentTimeMillis()/1000;
+        Date current = new Date();
         String ticketInfoNo = String.valueOf(IDGeneratorUtils.getLongId());
         String ticketNo = String.valueOf(IDGeneratorUtils.getLongId());
         //新增优惠券详情
         CouponTicketInfo ticketInfo = new CouponTicketInfo();
-        ticketInfo.setBeginAt(couponTicketInfoQuery.getBeginAt());
-        ticketInfo.setEndAt(couponTicketInfoQuery.getEndAt());
-        ticketInfo.setCreatedAt(System.currentTimeMillis()/1000);
+        ticketInfo.setBeginTime(couponTicketInfoQuery.getBeginTime());
+        ticketInfo.setEndTime(couponTicketInfoQuery.getEndTime());
+        ticketInfo.setCreateTime(new Date());
         ticketInfo.setDays(couponTicketInfoQuery.getDays());
         ticketInfo.setDiscountMoney(couponTicketInfoQuery.getDiscountMoney());
         ticketInfo.setFullMoney(couponTicketInfoQuery.getFullMoney());
@@ -244,22 +245,22 @@ public class CouponTicketServiceImpl extends BaseService<CouponTicketDao,CouponT
         ticketInfo.setSuperposition(couponTicketInfoQuery.getSuperposition());
         ticketInfo.setTakeNum(couponTicketInfoQuery.getTakeNum());
         ticketInfo.setTicketInfoNo(ticketInfoNo);
-        ticketInfo.setUpdateAt(current);
+        ticketInfo.setUpdateTime(current);
         ticketInfo.setUserType(couponTicketInfoQuery.getUserType());
         ticketInfo.setUseType(couponTicketInfoQuery.getUseType());
         ticketInfo.setTicketNo(ticketNo);
         couponTicketInfoDao.insert(ticketInfo);
         //新增优惠券
         CouponTicket couponTicket = new CouponTicket();
-        couponTicket.setUpdateAt(current);
+        couponTicket.setUpdateTime(current);
         couponTicket.setLastTicketInfoNo(ticketInfoNo);
         couponTicket.setName(couponTicketInfoQuery.getName());
         couponTicket.setTicketSum(couponTicketInfoQuery.getTicketSum());
         couponTicket.setShopNo(userVO.getShopNo());
         couponTicket.setTicketNo(ticketNo);
-        if (current<couponTicketInfoQuery.getBeginAt()) {
+        if (current.before(couponTicketInfoQuery.getBeginTime())) {
             couponTicket.setState(0);
-        }else if (current>=couponTicketInfoQuery.getBeginAt() && current<couponTicketInfoQuery.getEndAt()){
+        }else if (current.after(couponTicketInfoQuery.getBeginTime()) && current.before(couponTicketInfoQuery.getEndTime())){
             couponTicket.setState(1);
         }else {
             couponTicket.setState(2);

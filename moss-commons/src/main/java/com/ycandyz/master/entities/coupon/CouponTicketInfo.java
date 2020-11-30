@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -56,11 +59,13 @@ public class CouponTicketInfo extends Model {
    @ApiModelProperty(value = "券有效期类型：0:时间段(自然日)，1:领券当日起计算天数，2:领券次日起计算天数")
    private Integer status;
 
-   @ApiModelProperty(value = "券生效开始时间")
-   private Long beginAt;
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+   @ApiModelProperty(value = "创建时间")
+   private Date beginTime;
 
-   @ApiModelProperty(value = "券生效结束时间")
-   private Long endAt;
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+   @ApiModelProperty(value = "更新时间")
+   private Date endTime;
 
    @ApiModelProperty(value = "券有效天数")
    private Integer days;
@@ -80,11 +85,13 @@ public class CouponTicketInfo extends Model {
    @ApiModelProperty(value = "说明备注")
    private String remark;
 
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    @ApiModelProperty(value = "创建时间")
-   private Long createdAt;
+   private Date createTime;
 
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    @ApiModelProperty(value = "更新时间")
-   private Long updateAt;
+   private Date updateTime;
 
 
 }

@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -34,14 +36,14 @@ public class CouponTicketInfoItemQuery implements Serializable {
     @Condition(field = "id", condition = ConditionEnum.EQ)
     private Long id;
 
-    @ApiModelProperty(value = "商品编号")
+    @ApiModelProperty(name = "item_no",value = "商品编号")
     private String itemNo;
 
-    @ApiModelProperty(value = "优惠券详情编号")
+    @ApiModelProperty(name = "ticket_info_no",value = "优惠券详情编号")
     private String ticketInfoNo;
 
-    @ApiModelProperty(value = "创建时间")
-    private Long createdAt;
+    @ApiModelProperty(name = "created_time",value = "创建时间")
+    private Date createTime;
 
 
 

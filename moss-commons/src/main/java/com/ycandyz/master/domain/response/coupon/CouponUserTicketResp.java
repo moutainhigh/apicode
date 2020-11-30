@@ -48,9 +48,6 @@ public class CouponUserTicketResp {
     @ApiModelProperty(name = "status_type", value = "优惠券状态分类：0:待使用,1:过期,2:已使用")
     private Integer statusType;
 
-    @ApiModelProperty(name = "create_at", value = "参与时间")
-    private Long createAt;
-
     @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
     @ApiModelProperty(name = "create_time",value = "参与时间")
     private Date createTime;

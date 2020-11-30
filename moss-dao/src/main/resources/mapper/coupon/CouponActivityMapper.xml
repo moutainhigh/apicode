@@ -12,15 +12,15 @@
         <result column="status" property="status" />
         <result column="join_type" property="joinType" />
         <result column="activity_num" property="activityNum" />
-        <result column="created_at" property="createdTime" />
-        <result column="updated_at" property="updatedTime" />
-        <result column="created_by" property="createdBy" />
-        <result column="updated_by" property="updatedBy" />
+        <result column="create_at" property="createTime" />
+        <result column="update_at" property="updateTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_by" property="updateBy" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, activity_no, shop_no, name, begin_at, end_at, height_limit, status, join_type, activity_num, created_at, updated_at, created_by, updated_by
+        id, activity_no, shop_no, name, begin_time, end_time, height_limit, status, join_type, activity_num, create_time, update_time, create_by, update_by
     </sql>
 
     <update id="updateStatusById">
