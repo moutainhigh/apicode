@@ -1,10 +1,9 @@
 package com.ycandyz.master.service.miniprogram;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpRelease;
 import com.ycandyz.master.model.miniprogram.OrganizeMpReleaseVO;
-
-import java.util.List;
 
 /**
  * <p>
@@ -17,6 +16,6 @@ import java.util.List;
  */
 public interface IOrganizeMpReleaseService extends IService<OrganizeMpRelease>{
 
-    List<OrganizeMpReleaseVO> listAll();
+    Page<OrganizeMpReleaseVO> listAll(Long page_size, Long page);
 
 }
