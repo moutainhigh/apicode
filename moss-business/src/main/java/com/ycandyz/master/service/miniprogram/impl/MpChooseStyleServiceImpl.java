@@ -90,7 +90,6 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     pageIds.add(Integer.parseInt(id));
                 }
             }
-
             List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOs = organizeMpConfigPlanPageDao.selectByIds(menuId,dto.getSortModule(),pageIds);
             List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
             for(OrganizeMpConfigPlanPageDTO dtoBase: organizeMpConfigPlanPageDTOs){
@@ -375,19 +374,19 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 //没有草稿
                 //保存plan表
                 saveDraft(mpPlanId, organizeId);
-            } else{
-                //有草稿 查询page
-                //获取草稿menu
-                Integer organizePlanId = organizeMpConfigPlan.getId();
-                Integer menuId = organizeMenuMpRequestVO.getMenuId();
-                menuId = moudleOrNowMenu(organizePlanId, menuId);
-                List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selPageByMenuId(menuId);
-                if (organizeMpConfigPlanPageDTOS2 != null && organizeMpConfigPlanPageDTOS2.size() > 0) {
-                    int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
-                }
-                saveOnePage(organizeMenuMpRequestVO, menuId);
-                saveOther(organizeMpConfigPlan, organizeMenuMpRequestVO);
             }
+            //有草稿 查询page
+            //获取草稿menu
+            OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
+            Integer organizePlanId = organizeMpConfigPlan2.getId();
+            Integer menuId = organizeMenuMpRequestVO.getMenuId();
+            menuId = moudleOrNowMenu(organizePlanId, menuId);
+            List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selPageByMenuId(menuId);
+            if (organizeMpConfigPlanPageDTOS2 != null && organizeMpConfigPlanPageDTOS2.size() > 0) {
+                int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
+            }
+            saveOnePage(organizeMenuMpRequestVO, menuId);
+            saveOther(organizeMpConfigPlan, organizeMenuMpRequestVO);
         }else if (publish != null && publish == 1){
             //保存发布
             OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
@@ -415,18 +414,19 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             //保存草稿单个page
             OrganizeMpConfigPlan organizeMpConfigPlan2 = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
             Integer menuId = organizeMenuMpRequestVO.getMenuId();
-            List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selPageByMenuId(menuId);
-            if (organizeMpConfigPlanPageDTOS2 != null && organizeMpConfigPlanPageDTOS2.size() > 0) {
-                int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
-            }
             Integer organizePlanId = null;
             if (organizeMpConfigPlan2 != null){
                 organizePlanId = organizeMpConfigPlan2.getId();
             }
+            //删除当前页
             menuId = moudleOrNowMenu(organizePlanId, menuId);
-            //新增page
+            List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS2 = organizeMpConfigPlanPageDao.selPageByMenuId(menuId);
+            if (organizeMpConfigPlanPageDTOS2 != null && organizeMpConfigPlanPageDTOS2.size() > 0) {
+                int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
+            }
+            //新增当前页page
             saveOnePage(organizeMenuMpRequestVO, menuId);
-            saveOther(organizeMpConfigPlan2, organizeMenuMpRequestVO);
+            //saveOther(organizeMpConfigPlan2, organizeMenuMpRequestVO);
             //另保存当前草稿plan为一份新的plan:正在使用
             OrganizeMpConfigPlan organizeMpConfigPlanDraft = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
             OrganizeMpConfigPlan organizeMpConfigPlanNowUsing = new OrganizeMpConfigPlan();
