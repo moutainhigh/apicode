@@ -882,6 +882,7 @@
         <result column="total_money" property="totalMoney" />
         <result column="payed_at" property="payedAt" />
         <result column="status" property="status" />
+        <result column="sub_status" property="subStatus" />
         <result column="pay_type" property="payType" />
         <result column="payuser" property="payuser" />
         <result column="receiverName" property="receiverName" />
@@ -906,6 +907,9 @@
         <result column="pick_up_address_detail" property="pickUpAddressDetail" />
         <result column="pre_phone" property="prePhone" />
         <result column="buyer_remark" property="buyerRemark" />
+        <result column="cancel_at" property="cancelAt" />
+        <result column="refund_no" property="refundNo" />
+        <result column="cancel_reason" property="cancelReason" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -1024,11 +1028,13 @@
             mo.id,
             mo.order_no,
             mo.cart_order_sn,
+            mo.refund_no,
             mo.real_money,
             mo.payed_at,
             mo.buyer_remark,
             mo.status,
             mo.sub_status,
+            mo.cancel_reason,
             mo.deliver_method,
             ship.receiver,
             ship.receiver_phone,
@@ -1068,7 +1074,7 @@
         where mo.order_no = #{orderNo}
     </select>
 
-    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
+    <select id="queryDetailByPickupNoUApp" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
         select
             mo.id,
             mo.order_no,

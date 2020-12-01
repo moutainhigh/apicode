@@ -1,5 +1,6 @@
 package com.ycandyz.master.controller.mall;
 
+import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
@@ -8,6 +9,7 @@ import com.ycandyz.master.domain.shipment.vo.ShipmentResponseDataVO;
 import com.ycandyz.master.entities.mall.MallShopShipping;
 import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
+import com.ycandyz.master.model.mall.uApp.MallShopShippingLogUAppVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.service.mall.impl.MallShopShippingServiceImpl;
@@ -93,7 +95,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
      * @param companyCode
      * @param number
      * @return
-     */
+     *//*
     @ApiOperation(value = "物流信息",notes = "通过订单编号或购物车编号获取分佣列表",httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(name="company_code",value="快递公司编码",required=true,dataType="String"),
@@ -107,19 +109,34 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
         number = number.trim();
         companyCode = companyCode.trim();
         return mallShopShippingService.queryShippingLogListByNo(companyCode,number);
-    }
+    }*/
 
     /**
-     * 订单发货校验物流单号，调用三方接口，查看物流单号所属物流公司，返回快递公司名和编号,UApp
+     * 通过快递编号，获取物流公司列表,UApp
      * @param shipNumber
      * @return
      */
-    @ApiOperation(value = "订单发货校验物流单号,uapp",notes = "订单发货校验物流单号,uapp",httpMethod = "GET")
+    @ApiOperation(value = "通过快递编号，获取物流公司列表,uapp",notes = "通过快递编号，获取物流公司列表,uapp",httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(name="ship_number",value="物流单号",required=true,dataType="String")
     })
-    @GetMapping("/u-app/shipping/company")
-    public ReturnResponse<MallShopShippingUAppVO> verShipmentNoByUApp(@RequestParam("ship_number") String shipNumber){
+    @GetMapping("/u-app/order/shipment")
+    public ReturnResponse<List<MallShopShippingUAppVO>> verShipmentNoByUApp(@RequestParam("ship_number") String shipNumber){
         return mallShopShippingService.verShipmentNoByUApp(shipNumber);
+    }
+
+    /**
+     * 通过快递编号和快递公司编码，获取快递日志列表,UApp
+     * @param shipNumber
+     * @return
+     */
+    @ApiOperation(value = "通过快递编号和快递公司编码，获取快递日志列表,uapp",notes = "通过快递编号，获取物流公司列表,uapp",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="company_code",value="快递公司编码",required=true,dataType="String"),
+            @ApiImplicitParam(name="number",value="快递单号",required=true,dataType="String")
+    })
+    @GetMapping("/u-app/order/shipment/log")
+    public CommonResult<List<MallShopShippingLogUAppVO>> shippingLogList(@RequestParam("company_code") String companyCode, @RequestParam("ship_number") String shipNumber){
+        return mallShopShippingService.shippingLogList(companyCode,shipNumber);
     }
 }

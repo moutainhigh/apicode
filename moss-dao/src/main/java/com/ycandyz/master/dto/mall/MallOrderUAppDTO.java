@@ -25,6 +25,9 @@ public class MallOrderUAppDTO {
     /**下单用户id*/
     @ApiModelProperty(value = "下单用户id")
     private Integer userId;
+    /**退款流水（对外展示的）*/
+    @ApiModelProperty(value = "退款流水（对外展示的）")
+    private String refundNo;
     /**订单编号*/
     @ApiModelProperty(value = "订单编号")
     private String orderNo;
