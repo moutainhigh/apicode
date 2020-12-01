@@ -1074,7 +1074,7 @@
         where mo.order_no = #{orderNo}
     </select>
 
-    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
+    <select id="queryDetailByPickupNoUApp" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
         select
             mo.id,
             mo.order_no,
