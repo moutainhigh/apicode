@@ -28,14 +28,11 @@ public class MallShopShippingUAppQuery {
     @ApiModelProperty(value = "商家快递表编号", name = "shop_shipping_no")
     @JsonAlias(value = {"shop_shipping_no", "shopShippingNo"})
     private String shopShippingNo;
-    @NotNull(message = "快递公司编码不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(value = "快递公司编码", name = "company_code")
     @JsonAlias(value = {"company_code", "companyCode"})
     private String companyCode;
     @ApiModelProperty(value = "快递公司名", name = "company")
     private String company;
-
-    @NotNull(message = "快递单号不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(value = "快递单号", name = "number")
     private String number;
 }
