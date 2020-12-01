@@ -1,6 +1,8 @@
 package com.ycandyz.master.service.mall;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.api.BasePageResult;
+import com.ycandyz.master.api.BaseResult;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.domain.query.mall.MallShopShippingQuery;
@@ -32,7 +34,7 @@ public interface MallShopShippingService extends IService<MallShopShipping> {
 
     ReturnResponse<List<MallShopShippingUAppVO>> queryShippingLogListByNo(String companyCode, String number);
 
-    ReturnResponse<List<MallShopShippingUAppVO>> verShipmentNoByUApp(String shipNumber);
+    ReturnResponse<BaseResult<List<MallShopShippingUAppVO>>> verShipmentNoByUApp(String shipNumber);
 
     CommonResult<List<MallShopShippingLogUAppVO>> shippingLogList(String companyCode, String shipNumber);
 }
