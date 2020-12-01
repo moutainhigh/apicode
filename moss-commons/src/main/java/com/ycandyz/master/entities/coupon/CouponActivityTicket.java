@@ -38,18 +38,18 @@ public class CouponActivityTicket extends Model {
    @TableId(value = "id", type = IdType.AUTO)
    private Long id;
 
-   @ApiModelProperty(value = "优惠宝编号")
+   @ApiModelProperty(name = "activity_no",value = "优惠宝编号")
    private String activityNo;
 
-   @ApiModelProperty(value = "优惠券编号")
+   @ApiModelProperty(name = "ticket_no",value = "优惠券编号")
    private String ticketNo;
 
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-   @ApiModelProperty(value = "创建时间")
+   @ApiModelProperty(name = "create_time",value = "创建时间")
    private Date createTime;
 
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-   @ApiModelProperty(value = "更新时间")
+   @ApiModelProperty(name = "update_time",value = "更新时间")
    private Date updateTime;
 
 

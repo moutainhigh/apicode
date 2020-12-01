@@ -23,7 +23,7 @@ import java.util.List;
 @TableName("coupon_activity")
 public class CouponActivityResp extends CouponActivity {
 
-    @ApiModelProperty(value = "已选优惠卷")
+    @ApiModelProperty(name = "activity_ticket_list",value = "已选优惠卷")
     private List<CouponActivityTicketResp> activityTicketList;
 
 }
