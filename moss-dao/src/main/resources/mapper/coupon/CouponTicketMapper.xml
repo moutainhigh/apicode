@@ -3,7 +3,7 @@
 <mapper namespace="com.ycandyz.master.dao.coupon.CouponTicketDao">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.coupon.CouponTicketInfo">
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.coupon.CouponTicketInfoDTO">
         <id column="id" property="id" />
         <result column="shop_no" property="shopNo" />
         <result column="ticket_no" property="ticketNo" />
@@ -13,7 +13,7 @@
         <result column="use_num" property="useNum" />
         <result column="state" property="state" />
         <result column="last_ticket_info_no" property="lastTicketInfoNo" />
-        <result column="created_at" property="createdAt" />
+        <result column="create_time" property="createTime" />
         <result column="ticket_info_no" property="ticketInfoNo" />
         <result column="shop_type" property="shopType" />
         <result column="use_type" property="useType" />
@@ -34,7 +34,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, shop_no, ticket_no, name, ticket_sum, obtain_num, use_num, state, last_ticket_info_no, created_at, update_at
+        id, shop_no, ticket_no, name, ticket_sum, obtain_num, use_num, state, last_ticket_info_no, created_time, update_time
     </sql>
 
     <select id="queryTicketPageList" parameterType="com.ycandyz.master.domain.query.coupon.CouponTicketQuery" resultMap="BaseResultMap">
@@ -54,7 +54,7 @@
             ti.obtain_num,
             ti.ticket_sum-ti.obtain_num as surplus_num,
             ti.use_num,
-            ti.created_at as ticketCreatedAt
+            ti.created_time as ticketCreatedAt
         FROM
             coupon_ticket ti
             LEFT JOIN coupon_ticket_info info ON ti.last_ticket_info_no = info.ticket_info_no

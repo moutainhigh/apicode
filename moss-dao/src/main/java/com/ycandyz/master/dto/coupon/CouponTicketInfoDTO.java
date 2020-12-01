@@ -1,5 +1,6 @@
 package com.ycandyz.master.dto.coupon;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ycandyz.master.entities.coupon.CouponTicketInfo;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -71,11 +73,13 @@ public class CouponTicketInfoDTO extends CouponTicketInfo {
     @ApiModelProperty(value = "说明备注")
     private String remark;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "创建时间")
-    private Long createdAt;
+    private Date beginTime;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "更新时间")
-    private Long updateAt;
+    private Date endTime;
 
 
     //冗余字段
@@ -83,8 +87,9 @@ public class CouponTicketInfoDTO extends CouponTicketInfo {
     @ApiModelProperty(value = "剩余数量")
     private Integer surplusNum;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "生成时间")
-    private Long ticketCreatedAt;
+    private Date ticketCreatedAt;
 
     @ApiModelProperty(value = "门店编号")
     private String shopNo;
