@@ -268,7 +268,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                         organizeMpConfigPlanMenu.setId(null);
                     }
                     organizeMpConfigPlanMenu.setOldMenuId(null);
-                    organizeMpConfigPlanMenu.setMoudleMenuId(m.getId());
+                    organizeMpConfigPlanMenu.setModuleMenuId(m.getId());
                     log.info("企业小程序单个菜单页面-menu-保存全部菜单页面入参:{}", JSON.toJSONString(organizeMpConfigPlanMenu));
                     organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
                 }
@@ -457,7 +457,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     organizeMpConfigPlanMenu.setId(null);
                     organizeMpConfigPlanMenu.setOrganizePlanId(newOrganizePlanId);
                     organizeMpConfigPlanMenu.setOldMenuId(o.getId());
-                    organizeMpConfigPlanMenu.setMoudleMenuId(o.getMoudleMenuId());
+                    organizeMpConfigPlanMenu.setModuleMenuId(o.getModuleMenuId());
                     organizeMpConfigPlanMenuDao.insertSingle(organizeMpConfigPlanMenu);
                 }
             }
@@ -518,7 +518,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 }
                 List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selPageByMenuId(m.getId());
                 if (organizeMpConfigPlanPageDTOS == null || (organizeMpConfigPlanPageDTOS != null && organizeMpConfigPlanPageDTOS.size() == 0)) {
-                    List<OrganizeMpConfigPlanPage > mpConfigPlanPages = mpConfigPlanPageDao.selByMenuId(m.getMoudleMenuId());
+                    List<OrganizeMpConfigPlanPage > mpConfigPlanPages = mpConfigPlanPageDao.selByMenuId(m.getModuleMenuId());
                     if (mpConfigPlanPages != null && mpConfigPlanPages.size() > 0) {
                         for (OrganizeMpConfigPlanPage  mp : mpConfigPlanPages) {
                             if (mp != null) {
@@ -605,7 +605,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
             for (OrganizeMpConfigPlanMenuDTO m : organizeMpConfigPlanMenuDTOS) {
                 if (m != null) {
-                    List<OrganizeMpConfigPlanPage> mpConfigPlanPages = mpConfigPlanPageDao.selByMenuId(m.getMoudleMenuId());
+                    List<OrganizeMpConfigPlanPage> mpConfigPlanPages = mpConfigPlanPageDao.selByMenuId(m.getModuleMenuId());
                     if (mpConfigPlanPages != null && mpConfigPlanPages.size() > 0) {
                         for (OrganizeMpConfigPlanPage mp : mpConfigPlanPages) {
                             if (mp != null) {
