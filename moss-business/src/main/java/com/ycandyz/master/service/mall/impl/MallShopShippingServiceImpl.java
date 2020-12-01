@@ -24,6 +24,7 @@ import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingLogUAppVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
+import com.ycandyz.master.model.mall.uApp.MallShopShippingUVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
@@ -415,17 +416,17 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
     }
 
     @Override
-    public ReturnResponse<BaseResult<List<MallShopShippingUAppVO>>> verShipmentNoByUApp(String shipNumber) {
+    public ReturnResponse<BaseResult<List<MallShopShippingUVO>>> verShipmentNoByUApp(String shipNumber) {
         String result = HttpUtil.get(autonumberUrl.replace("NUM",shipNumber).replace("KEY",kuaidiKey));
-        List<MallShopShippingUAppVO> list = new ArrayList<>();
+        List<MallShopShippingUVO> list = new ArrayList<>();
         if (result!=null && !"".equals(result)){
             JSONObject jsonObject = JSONUtil.parseArray(result).getJSONObject(0);
             if (jsonObject!=null) {
                 if (jsonObject.getStr("comCode") != null && !"".equals(jsonObject.getStr("comCode"))) {
                     String value = ExpressEnum.getValue(jsonObject.getStr("comCode"));
-                    MallShopShippingUAppVO mallShopShippingVO = new MallShopShippingUAppVO();
+                    MallShopShippingUVO mallShopShippingVO = new MallShopShippingUVO();
                     mallShopShippingVO.setCompany(value);
-                    mallShopShippingVO.setCompanyCode(jsonObject.getStr("comCode"));
+                    mallShopShippingVO.setCode(jsonObject.getStr("comCode"));
                     mallShopShippingVO.setNumber(shipNumber);
                     list.add(mallShopShippingVO);
                 }

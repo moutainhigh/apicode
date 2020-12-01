@@ -14,6 +14,7 @@ import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingLogUAppVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
+import com.ycandyz.master.model.mall.uApp.MallShopShippingUVO;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public interface MallShopShippingService extends IService<MallShopShipping> {
 
     ReturnResponse<List<MallShopShippingUAppVO>> queryShippingLogListByNo(String companyCode, String number);
 
-    ReturnResponse<BaseResult<List<MallShopShippingUAppVO>>> verShipmentNoByUApp(String shipNumber);
+    ReturnResponse<BaseResult<List<MallShopShippingUVO>>> verShipmentNoByUApp(String shipNumber);
 
     CommonResult<List<MallShopShippingLogUAppVO>> shippingLogList(String companyCode, String shipNumber);
 }
