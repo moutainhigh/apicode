@@ -12,6 +12,7 @@ import com.ycandyz.master.model.mall.MallOrderUAppVO;
 import com.ycandyz.master.model.mall.MallShopShippingVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingLogUAppVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
+import com.ycandyz.master.model.mall.uApp.MallShopShippingUVO;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.service.mall.impl.MallShopShippingServiceImpl;
 import io.swagger.annotations.Api;
@@ -122,7 +123,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
             @ApiImplicitParam(name="ship_number",value="物流单号",required=true,dataType="String")
     })
     @GetMapping("/u-app/order/shipment")
-    public ReturnResponse<BaseResult<List<MallShopShippingUAppVO>>> verShipmentNoByUApp(@RequestParam("ship_number") String shipNumber){
+    public ReturnResponse<BaseResult<List<MallShopShippingUVO>>> verShipmentNoByUApp(@RequestParam("ship_number") String shipNumber){
         return mallShopShippingService.verShipmentNoByUApp(shipNumber);
     }
 
