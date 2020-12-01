@@ -27,6 +27,7 @@ import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingUVO;
 import com.ycandyz.master.service.mall.MallOrderService;
 import com.ycandyz.master.service.mall.MallShopShippingService;
+import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -417,6 +418,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
 
     @Override
     public ReturnResponse<BaseResult<List<MallShopShippingUVO>>> verShipmentNoByUApp(String shipNumber) {
+        AssertUtils.notNull(shipNumber,"shipNumber不能为空");
         String result = HttpUtil.get(autonumberUrl.replace("NUM",shipNumber).replace("KEY",kuaidiKey));
         List<MallShopShippingUVO> list = new ArrayList<>();
         if (result!=null && !"".equals(result)){
