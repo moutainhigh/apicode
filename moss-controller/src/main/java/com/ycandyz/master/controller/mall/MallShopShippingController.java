@@ -15,12 +15,14 @@ import com.ycandyz.master.model.mall.uApp.MallShopShippingUAppVO;
 import com.ycandyz.master.model.mall.uApp.MallShopShippingUVO;
 import com.ycandyz.master.service.mall.MallShopShippingService;
 import com.ycandyz.master.service.mall.impl.MallShopShippingServiceImpl;
+import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -88,7 +90,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
     @ApiOperation(value = "确认发货",notes = "确认发货",httpMethod = "POST")
     @PostMapping("/u-app/order/shipment")
     @ResponseBody
-    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(@RequestBody MallShopShippingUAppQuery mallShopShippingUAppQuery){
+    public ReturnResponse<MallOrderUAppVO> enterShippingUApp(@RequestBody @Validated(ValidatorContract.OnCreate.class) MallShopShippingUAppQuery mallShopShippingUAppQuery){
         return mallShopShippingService.enterShippingUApp(mallShopShippingUAppQuery);
     }
 
