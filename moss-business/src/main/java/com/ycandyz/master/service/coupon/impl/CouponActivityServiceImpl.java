@@ -8,8 +8,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.domain.enums.coupon.CouponActivityEnum;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
+import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
+import com.ycandyz.master.domain.response.coupon.CouponUserTicketResp;
 import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.ycandyz.master.domain.query.coupon.CouponActivityQuery;
 import com.ycandyz.master.dao.coupon.CouponActivityDao;
@@ -191,6 +193,11 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(query.getActivityNo(), "活动编号不能为空");
         query.setShopNo(getShopNo());
         return couponActivityTicketService.selectActivityTicketPage(page,query);
+    }
+
+    @Override
+    public Page<CouponUserTicketResp> selectUserActivityTicketPage(Page page, CouponUserActivityTicketQuery query) {
+        return couponActivityTicketService.selectUserActivityTicketPage(page,query);
     }
 
 }

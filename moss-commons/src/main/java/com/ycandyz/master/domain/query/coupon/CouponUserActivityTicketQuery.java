@@ -39,6 +39,10 @@ public class CouponUserActivityTicketQuery implements Serializable {
     @ApiModelProperty(value = "用户名/手机号")
     private String username;
 
+    @ApiParam(hidden = true)
+    @ApiModelProperty(value = "手机号")
+    private String phone;
+
     @ApiModelProperty(name = "status_type", value = "优惠券状态分类：0:待使用,1:过期,2:已使用")
     private Integer statusType;
 

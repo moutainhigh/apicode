@@ -53,5 +53,38 @@
         </if>
     </select>
 
+    <select id="selectUserActivityTicketPage" resultType="com.ycandyz.master.domain.response.coupon.CouponUserTicketResp">
+        SELECT
+        uti.id,uti.status,uti.create_time,ti.use_type,ti.full_money,ti.discount_money,u.`name`,u.phone
+        FROM
+        coupon_user_ticket_info uti
+        LEFT JOIN coupon_ticket_info ti ON uti.ticket_info_no = ti.ticket_info_no
+        LEFT JOIN user u ON u.id = uti.user_id
+        WHERE 1=1
+        <if test="q.createTimeS != null">
+            <![CDATA[
+	            AND uti.create_time > #{q.createTimeS}
+	        ]]>
+        </if>
+        <if test="q.createTimeE != null">
+            <![CDATA[
+	            AND date(uti.create_time) <= date(#{q.createTimeE})
+	        ]]>
+        </if>
+        <if test="q.statusType != null and q.statusType == 2"> AND uti.status = 1 </if>
+        <if test="q.statusType != null and q.statusType == 1">
+            <![CDATA[
+            	AND ti.end_time < NOW()
+            ]]>
+        </if>
+        <if test="q.statusType != null and q.statusType == 0">
+            <![CDATA[
+            	AND ti.end_time > NOW()
+            ]]>
+        </if>
+        <if test="q.username != null and q.username != ''"> AND (u.name like CONCAT('%',#{q.username},'%') or u.phone = #{q.username}) </if>
+        <if test="q.phone != null and q.phone != ''"> AND u.phone = #{q.phone} </if>
+    </select>
+
 
 </mapper>

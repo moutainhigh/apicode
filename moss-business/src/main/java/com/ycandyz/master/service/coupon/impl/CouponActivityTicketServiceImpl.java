@@ -2,7 +2,9 @@ package com.ycandyz.master.service.coupon.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
+import com.ycandyz.master.domain.response.coupon.CouponUserTicketResp;
 import com.ycandyz.master.entities.coupon.CouponActivityTicket;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
 import com.ycandyz.master.dao.coupon.CouponActivityTicketDao;
@@ -41,5 +43,10 @@ public class CouponActivityTicketServiceImpl extends BaseService<CouponActivityT
     @Override
     public Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query) {
         return baseMapper.selectActivityTicketPage(page,query);
+    }
+
+    @Override
+    public Page<CouponUserTicketResp> selectUserActivityTicketPage(Page page, CouponUserActivityTicketQuery query) {
+        return baseMapper.selectUserActivityTicketPage(page,query);
     }
 }

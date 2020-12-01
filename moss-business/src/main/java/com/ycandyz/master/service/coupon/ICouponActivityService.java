@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
 import com.ycandyz.master.domain.query.coupon.CouponTicketQuery;
+import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
 import com.ycandyz.master.domain.response.coupon.CouponTicketResp;
+import com.ycandyz.master.domain.response.coupon.CouponUserTicketResp;
 import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.ycandyz.master.model.ad.SpecialModel;
 import com.ycandyz.master.utils.QueryUtil;
@@ -41,4 +43,6 @@ public interface ICouponActivityService extends IService<CouponActivity>{
     Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query);
 
     Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query);
+
+    Page<CouponUserTicketResp> selectUserActivityTicketPage(Page page, CouponUserActivityTicketQuery query);
 }

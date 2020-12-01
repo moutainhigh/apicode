@@ -2,7 +2,9 @@ package com.ycandyz.master.controller.coupon;
 
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
+import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
+import com.ycandyz.master.domain.response.coupon.CouponUserTicketResp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -86,8 +88,8 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @ApiOperation(value = "活动参与人-分页")
     @GetMapping(value = "user/page")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponActivityTicketResp>> getUserPage(PageModel page,CouponActivityTicketQuery query) {
-        return CommonResult.success(new BasePageResult(service.selectTicketPage(new Page(page.getPage(),page.getPageSize()),query)));
+    public CommonResult<BasePageResult<CouponUserTicketResp>> getUserPage(PageModel page, CouponUserActivityTicketQuery query) {
+        return CommonResult.success(new BasePageResult(service.selectUserActivityTicketPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
     @ApiImplicitParam(name="activity_no",value="活动编号",required=true,dataType="string")
