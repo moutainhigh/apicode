@@ -28,7 +28,6 @@ import lombok.Setter;
 @ApiModel(description="企业小程序配置-菜单配置")
 public class OrganizeMpConfigPlanMenu extends Model {
 
-
    @ApiModelProperty(value = "编号")
    @TableId(value = "id", type = IdType.AUTO)
    private Integer id;
@@ -55,13 +54,13 @@ public class OrganizeMpConfigPlanMenu extends Model {
    private Integer organizePlanId;
 
    @ApiModelProperty(value = "逻辑删除0：未删除；1、删除")
-   private Integer logicDelete;
+   private Boolean logicDelete;
 
    @ApiModelProperty(value = "是否可布局0：不可布局；1、可布局")
-   private Integer canLayout;
+   private Boolean canLayout;
 
    @ApiModelProperty(value = "是否可删除0：不可删除，1：可删除")
-   private Integer canDelete;
+   private Boolean canDelete;
 
    @ApiModelProperty(value = "创建时间")
    private Date createTime;
@@ -69,5 +68,10 @@ public class OrganizeMpConfigPlanMenu extends Model {
    @ApiModelProperty(value = "修改时间")
    private Date updateTime;
 
+   @ApiModelProperty(value = "被拷贝草稿的menu_id")
+   private Integer oldMenuId;
+
+   @ApiModelProperty(value = "模版的菜单menu_id")
+   private Integer moduleMenuId;
 
 }

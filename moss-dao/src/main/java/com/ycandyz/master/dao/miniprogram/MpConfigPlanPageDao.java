@@ -4,6 +4,7 @@ import com.ycandyz.master.dto.miniprogram.MpConfigPlanPageBaseDTO;
 import com.ycandyz.master.dto.miniprogram.MpConfigPlanPageDTO;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanPage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlanPage;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public interface MpConfigPlanPageDao extends BaseMapper<MpConfigPlanPage> {
     List<MpConfigPlanPage> getMenuSortModule(@Param("menuId") Integer menuId, @Param("moduleSort") Integer moduleSort, @Param("moduleId") Integer moduleId);
 
 
-    List<MpConfigPlanPage> selByMenuId(Integer id);
+    List<OrganizeMpConfigPlanPage > selByMenuId(Integer id);
 
     /**
      * 删除菜单下配置模块
@@ -63,4 +64,7 @@ public interface MpConfigPlanPageDao extends BaseMapper<MpConfigPlanPage> {
      * @return
      */
     Boolean deleteByMenuId(@Param("menuId") Integer menuId);
+
+    MpConfigPlanPage selectById(Integer id);
+
 }

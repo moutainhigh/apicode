@@ -30,8 +30,8 @@ public class OrganizeMpConfigPlanPageDTO extends OrganizeMpConfigPlanPage {
     @ApiModelProperty(value = "元素基础编号")
     private Integer moduleBaseId;
 
-    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
-    private Integer organizeMpConfigPlanPageId;
+//    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
+//    private Integer organizeMpConfigPlanPageId;
 
     @ApiModelProperty(value = "模板菜单编号")
     private Integer menuId;
@@ -51,8 +51,8 @@ public class OrganizeMpConfigPlanPageDTO extends OrganizeMpConfigPlanPage {
     @ApiModelProperty(value = "菜单模块显示数量")
     private Integer displayNum;
 
-    @ApiModelProperty(value = "菜单模块元素编号")
-    private String moduleBaseIds;
+    @ApiModelProperty(value = "page主键id集合")
+    private String pageIds;
 
     @ApiModelProperty(value = "菜单模块元素编号")
     private String replacePicUrl;
@@ -62,6 +62,9 @@ public class OrganizeMpConfigPlanPageDTO extends OrganizeMpConfigPlanPage {
 
     @ApiModelProperty(value = "sortBase")
     private Integer sortBase;
+
+    @ApiModelProperty(value = "baseCode")
+    private String baseCode;
 
     @ApiModelProperty(value = "baseName")
     private String baseName;

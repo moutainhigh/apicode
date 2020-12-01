@@ -18,40 +18,47 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, title, picture_select, color_select, picture_not_select, color_not_select, sort_num,can_layout,can_delete,organize_plan_id
+        id, title, picture_select, color_select, picture_not_select, color_not_select, sort_num,can_layout,can_delete,organize_plan_id,old_menu_id,module_menu_id
     </sql>
     <insert id="insertSingle">
         insert into organize_mp_config_plan_menu(id, title, picture_select, color_select,
-        picture_not_select, color_not_select, sort_num,can_layout,can_delete,create_time,update_time,organize_plan_id,logic_delete)
+        picture_not_select, color_not_select, sort_num,can_layout,can_delete,create_time,update_time,organize_plan_id,logic_delete,old_menu_id,module_menu_id)
         values (#{id},#{title},#{pictureSelect},#{colorSelect},#{pictureNotSelect},#{colorNotSelect},
-        #{sortNum},#{canLayout},#{canDelete},now(),now(),#{organizePlanId},0)
+        #{sortNum},#{canLayout},#{canDelete},now(),now(),#{organizePlanId},0,#{oldMenuId},#{moduleMenuId})
     </insert>
     <delete id="delById">
-        delete from organize_mp_config_plan_menu where id = #{menuId} and logic_delete = 0
+        update organize_mp_config_plan_menu set logic_delete = 1 where id = #{menuId}
     </delete>
 
     <select id="selByIdAndName" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
         select <include refid="Base_Column_List" />
         from organize_mp_config_plan_menu
         where organize_plan_id = #{organizePlanId}
-        and title = #{title}
+        and title = #{title} and logic_delete = 0
     </select>
     <select id="selByOrGanizeMoudleId"
             resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
         select <include refid="Base_Column_List" />
         from organize_mp_config_plan_menu
         where organize_plan_id = #{organizePlanId}
-        and logic_delete = 0;
+        and logic_delete = 0
+        order by sort_num asc;
     </select>
     <select id="selectMenuById" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
         select <include refid="Base_Column_List" />
         from organize_mp_config_plan_menu
-        where id = #{menuId}
+        where id = #{menuId} and logic_delete = 0
     </select>
     <select id="selIdByOrGanizeMoudleId" resultType="java.lang.Integer">
         select id
         from organize_mp_config_plan_menu
         where organize_plan_id = #{organizePlanId}
+        and logic_delete = 0;
+    </select>
+    <select id="selByMoudleMenuId" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO">
+        select * from organize_mp_config_plan_menu
+        where organize_plan_id = #{organizePlanId}
+        and module_menu_id = #{menuId}
         and logic_delete = 0;
     </select>
 

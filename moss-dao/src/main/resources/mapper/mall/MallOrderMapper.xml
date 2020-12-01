@@ -882,6 +882,7 @@
         <result column="total_money" property="totalMoney" />
         <result column="payed_at" property="payedAt" />
         <result column="status" property="status" />
+        <result column="sub_status" property="subStatus" />
         <result column="pay_type" property="payType" />
         <result column="payuser" property="payuser" />
         <result column="receiverName" property="receiverName" />
@@ -896,6 +897,19 @@
         <result column="receiveAtStr" property="receiveAtStr" />
         <result column="discountMoney" property="discountMoney" />
         <result column="receive_at" property="receiveAt" />
+        <result column="after_sales_end_at" property="afterSalesEndAt" />
+        <result column="send_at" property="sendAt" />
+        <result column="payuserName" property="payuserName" />
+        <result column="payuserPhone" property="payuserPhone" />
+        <result column="payuserHeading" property="payuserHeading" />
+        <result column="trade_no" property="tradeNo" />
+        <result column="pick_up_address_name" property="pickUpAddressName" />
+        <result column="pick_up_address_detail" property="pickUpAddressDetail" />
+        <result column="pre_phone" property="prePhone" />
+        <result column="buyer_remark" property="buyerRemark" />
+        <result column="cancel_at" property="cancelAt" />
+        <result column="refund_no" property="refundNo" />
+        <result column="cancel_reason" property="cancelReason" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -929,8 +943,12 @@
         a.`after_sales_end_at`,
         a.shippingMoney,
         a.shop_no,
+        a.trade_no,
         a.total_money-a.real_money as discountMoney,
         concat( u.`name`, ' ', u.phone ) AS payuser,
+        u.name as payuserName,
+        u.phone as payuserPhone,
+        u.headimg as payuserHeading,
         concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
         a.order_type,
         a.all_money,
@@ -964,7 +982,8 @@
         mo.all_money - mo.real_money AS shippingMoney,
         mo.order_type,
         mo.all_money,
-        mo.shop_no
+        mo.shop_no,
+        mo.trade_no
         FROM
         mall_order mo
         LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
@@ -1009,17 +1028,20 @@
             mo.id,
             mo.order_no,
             mo.cart_order_sn,
+            mo.refund_no,
             mo.real_money,
             mo.payed_at,
             mo.buyer_remark,
             mo.status,
             mo.sub_status,
+            mo.cancel_reason,
             mo.deliver_method,
             ship.receiver,
             ship.receiver_phone,
             mo.total_money,
             mo.buyer_remark,
             mo.order_at,
+            mo.after_sales_end_at,
             mo.pay_type,
             mo.order_type,
             mo.trade_no,
@@ -1052,7 +1074,7 @@
         where mo.order_no = #{orderNo}
     </select>
 
-    <select id="queryDetailByPickupNo" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
+    <select id="queryDetailByPickupNoUApp" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
         select
             mo.id,
             mo.order_no,

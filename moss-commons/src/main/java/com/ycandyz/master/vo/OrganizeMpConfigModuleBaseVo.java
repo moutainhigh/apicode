@@ -18,11 +18,11 @@ public class OrganizeMpConfigModuleBaseVo {
     @ApiModelProperty(value = "id")
     private Integer id;
 
-//    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
-//    private Integer organizeMpConfigPlanPageId;
+    @ApiModelProperty(value = "moudleBaseId")
+    private Integer moduleBaseId;
 
     @ApiModelProperty(value = "元素编码")
-    private Integer baseCode;
+    private String baseCode;
 
     @ApiModelProperty(value = "元素名称")
     private String baseName;
@@ -35,4 +35,7 @@ public class OrganizeMpConfigModuleBaseVo {
 
     @ApiModelProperty(value = "展示数量限制")
     private Integer displayNum;
+
+    @ApiModelProperty(value = "图片")
+    private String replacePicUrl;
 }

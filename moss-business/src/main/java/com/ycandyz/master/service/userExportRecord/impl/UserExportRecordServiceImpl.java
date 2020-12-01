@@ -12,7 +12,6 @@ import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordQuery;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordReq;
 import com.ycandyz.master.domain.query.userExportRecord.UserExportRecordVo;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
-import com.ycandyz.master.domain.response.userExportRecord.UserExportRecordResp;
 import com.ycandyz.master.dto.organize.OrganizeDTO;
 import com.ycandyz.master.dto.user.UserForExport;
 import com.ycandyz.master.entities.userExportRecord.UserExportRecord;
