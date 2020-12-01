@@ -52,6 +52,6 @@ public class OrganizeMpConfigPlanMenuDTO extends OrganizeMpConfigPlanMenu {
     private Integer oldMenuId;
 
     @ApiModelProperty(value = "模版的菜单menu_id")
-    private Integer moudleMenuId;
+    private Integer moduleMenuId;
 
 }
