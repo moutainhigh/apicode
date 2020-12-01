@@ -5,6 +5,8 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ycandyz.master.api.BasePageResult;
+import com.ycandyz.master.api.BaseResult;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseService;
@@ -413,7 +415,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
     }
 
     @Override
-    public ReturnResponse<List<MallShopShippingUAppVO>> verShipmentNoByUApp(String shipNumber) {
+    public ReturnResponse<BaseResult<List<MallShopShippingUAppVO>>> verShipmentNoByUApp(String shipNumber) {
         String result = HttpUtil.get(autonumberUrl.replace("NUM",shipNumber).replace("KEY",kuaidiKey));
         List<MallShopShippingUAppVO> list = new ArrayList<>();
         if (result!=null && !"".equals(result)){
@@ -429,7 +431,7 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
                 }
             }
         }
-        return ReturnResponse.success(list);
+        return ReturnResponse.success(new BaseResult(list));
     }
 
     @Override

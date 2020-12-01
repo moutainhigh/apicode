@@ -1,5 +1,6 @@
 package com.ycandyz.master.controller.mall;
 
+import com.ycandyz.master.api.BaseResult;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.controller.base.BaseController;
@@ -121,7 +122,7 @@ public class MallShopShippingController extends BaseController<MallShopShippingS
             @ApiImplicitParam(name="ship_number",value="物流单号",required=true,dataType="String")
     })
     @GetMapping("/u-app/order/shipment")
-    public ReturnResponse<List<MallShopShippingUAppVO>> verShipmentNoByUApp(@RequestParam("ship_number") String shipNumber){
+    public ReturnResponse<BaseResult<List<MallShopShippingUAppVO>>> verShipmentNoByUApp(@RequestParam("ship_number") String shipNumber){
         return mallShopShippingService.verShipmentNoByUApp(shipNumber);
     }
 

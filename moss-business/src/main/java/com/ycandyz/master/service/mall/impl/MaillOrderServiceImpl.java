@@ -1192,7 +1192,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"支付成功，请等待买家到店自提");
                 }else { //不是线下的
                     if (mallOrderVO.getDeliverMethod()==10) {    //快递
-                        mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"发货，快递信息："+mallShopShippingDTO!=null?mallShopShippingDTO.getNumber():"");
+                        String n =  mallShopShippingDTO!=null?mallShopShippingDTO.getNumber():"";
+                        mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"发货，快递信息："+n);
                     }else { //线下配送
                         mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"发货，方式为线下配送");
                     }
