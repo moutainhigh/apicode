@@ -94,6 +94,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             List<OrganizeMpConfigModuleBaseVO> baseInfoList = new ArrayList<>();
             for(OrganizeMpConfigPlanPageDTO dtoBase: organizeMpConfigPlanPageDTOs){
                 OrganizeMpConfigModuleBaseVO organizeMpConfigModuleBaseVO = new OrganizeMpConfigModuleBaseVO();
+                organizeMpConfigModuleBaseVO.setModuleBaseId(dtoBase.getModuleBaseId());
                 organizeMpConfigModuleBaseVO.setBaseCode(dtoBase.getBaseCode());
                 organizeMpConfigModuleBaseVO.setBaseName(dtoBase.getBaseName());
                 organizeMpConfigModuleBaseVO.setSortBase(dtoBase.getSortBase());
@@ -192,7 +193,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 organizePlanId = organizeMpConfigPlan2.getId();
             }
         }
-        //第一次存储没有保存过草稿，所以menuId = null，但是可以用menuNamen和organizePlanId查询当前新建草稿的meunId
+
         Integer menuId = organizeMenuMpRequestVO.getMenuId();
         menuId = moudleOrNowMenu(organizePlanId, menuId);
 
@@ -211,10 +212,11 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                     OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
                     organizeMpConfigPlanPage.setMenuId(menuId);
                     organizeMpConfigPlanPage.setModuleId(o.getModuleId());
-                    MpConfigPlanPage mpConfigPlanPage = mpConfigPlanPageDao.selectById(base.getId());
-                    if (mpConfigPlanPage != null){
-                        organizeMpConfigPlanPage.setModuleBaseId(mpConfigPlanPage.getModuleBaseId());
-                    }
+//                    MpConfigPlanPage mpConfigPlanPage = mpConfigPlanPageDao.selectById(base.getId());
+//                    if (mpConfigPlanPage != null){
+//                        organizeMpConfigPlanPage.setModuleBaseId(mpConfigPlanPage.getModuleBaseId());
+//                    }
+                    organizeMpConfigPlanPage.setModuleBaseId(base.getModuleBaseId());
                     organizeMpConfigPlanPage.setShowLayout(base.getShowLayout());
                     organizeMpConfigPlanPage.setSortModule(o.getSortModule());
                     organizeMpConfigPlanPage.setSortBase(base.getSortBase());
@@ -543,10 +545,11 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
                 organizeMpConfigPlanPage.setMenuId(menuId);
                 organizeMpConfigPlanPage.setModuleId(o.getModuleId());
-                MpConfigPlanPage mpConfigPlanPage = mpConfigPlanPageDao.selectById(base.getId());
-                if (mpConfigPlanPage != null){
-                    organizeMpConfigPlanPage.setModuleBaseId(mpConfigPlanPage.getModuleBaseId());
-                }
+//                MpConfigPlanPage mpConfigPlanPage = mpConfigPlanPageDao.selectById(base.getId());
+//                if (mpConfigPlanPage != null){
+//                    organizeMpConfigPlanPage.setModuleBaseId(mpConfigPlanPage.getModuleBaseId());
+//                }
+                organizeMpConfigPlanPage.setModuleBaseId(base.getModuleBaseId());
                 organizeMpConfigPlanPage.setShowLayout(base.getShowLayout());
                 organizeMpConfigPlanPage.setSortModule(o.getSortModule());
                 organizeMpConfigPlanPage.setSortBase(base.getSortBase());

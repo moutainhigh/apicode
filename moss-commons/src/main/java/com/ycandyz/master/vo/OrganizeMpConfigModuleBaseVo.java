@@ -18,6 +18,9 @@ public class OrganizeMpConfigModuleBaseVo {
     @ApiModelProperty(value = "id")
     private Integer id;
 
+    @ApiModelProperty(value = "moudleBaseId")
+    private Integer moduleBaseId;
+
     @ApiModelProperty(value = "元素编码")
     private String baseCode;
 
