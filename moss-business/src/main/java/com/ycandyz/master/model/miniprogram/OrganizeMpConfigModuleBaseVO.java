@@ -18,11 +18,8 @@ public class OrganizeMpConfigModuleBaseVO {
     @ApiModelProperty(value = "id")
     private Integer id;
 
-//    @ApiModelProperty(value = "organize_mp_config_plan_page的主键id")
-//    private Integer id;
-
-//    @ApiModelProperty(value = "id")
-//    private Integer moduleBaseId;
+    @ApiModelProperty(value = "moduleBaseId")
+    private Integer moduleBaseId;
 
     @ApiModelProperty(value = "元素编码")
     private String baseCode;
