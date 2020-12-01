@@ -19,7 +19,7 @@
         values (#{id},#{organizeId},#{planId},now(),now(),#{version});
     </insert>
     <select id="listAll" resultMap="BaseResultMap">
-        select create_time,update_time,version from organize_mp_release where organize_id = #{organizeId} order by create_time desc;
+        select create_time,update_time,version from organize_mp_release where organize_id = #{organizeId} order by create_time desc
     </select>
     <select id="selByOrganizeId" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO">
         select * from organize_mp_release where organize_id = #{organizeId} order by create_time desc;
