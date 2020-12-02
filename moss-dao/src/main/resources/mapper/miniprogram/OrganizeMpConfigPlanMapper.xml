@@ -17,7 +17,7 @@
     <sql id="Base_Column_List">
         id, organize_id, plan_name, mp_plan_id, logic_delete, current_using, create_time, update_time
     </sql>
-    <insert id="insertSingle">
+    <insert id="insertSingle" useGeneratedKeys="true" keyProperty="id">
         insert into organize_mp_config_plan(id,organize_id, mp_plan_id,
         logic_delete, current_using, create_time, update_time)
         values (#{id},#{organizeId},#{mpPlanId},#{logicDelete},#{currentUsing},now(),now());
