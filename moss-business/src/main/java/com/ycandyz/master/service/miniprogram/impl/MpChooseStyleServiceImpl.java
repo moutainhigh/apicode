@@ -375,7 +375,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             if (organizeMpConfigPlan == null) {
                 //没有草稿
                 //保存plan表
-                saveDraft(mpPlanId, organizeId);
+                organizeMpConfigPlan = saveDraft(mpPlanId, organizeId);
             }
             //有草稿 查询page
             //获取草稿menu
@@ -395,7 +395,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
             if (organizeMpConfigPlan == null) {
                 //没有草稿
                 //保存模版为草稿plan表
-                saveDraft(mpPlanId, organizeId);
+                organizeMpConfigPlan = saveDraft(mpPlanId, organizeId);
             }
             OrganizeMpConfigPlan organizeMpConfigPlanOldUsing = organizeMpConfigPlanDao.selectByIdUsing(organizeId);
             if (organizeMpConfigPlanOldUsing != null) {
@@ -585,7 +585,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         }
     }
 
-    private void saveDraft(Integer mpPlanId, Long organizeId) {
+    private OrganizeMpConfigPlan saveDraft(Integer mpPlanId, Long organizeId) {
         OrganizeMpConfigPlan organizeMpConfigPlan1 = new OrganizeMpConfigPlan();
         organizeMpConfigPlan1.setMpPlanId(mpPlanId);
         organizeMpConfigPlan1.setOrganizeId(organizeId);
@@ -620,5 +620,6 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 }
             }
         }
+        return organizeMpConfigPlan1;
     }
 }

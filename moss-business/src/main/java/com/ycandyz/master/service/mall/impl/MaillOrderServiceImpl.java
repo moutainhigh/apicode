@@ -14,6 +14,7 @@ import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.domain.UserVO;
+import com.ycandyz.master.domain.enums.mall.MallOrderEnum;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
 import com.ycandyz.master.domain.query.mall.MallOrderUAppQuery;
 import com.ycandyz.master.domain.query.mall.uApp.MallPickupUAppQuery;
@@ -1221,6 +1222,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
 
+            //匹配原因中文名称
+            MallOrderEnum.CancelReason cancelReason = MallOrderEnum.CancelReason.parseCode(mallOrderVO.getCancelReason());
+            if(null != cancelReason){
+                mallOrderVO.setCancelReasonName(cancelReason.getText());
+            }
         }
         return ReturnResponse.success(mallOrderVO);
     }
