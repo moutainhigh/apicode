@@ -86,6 +86,7 @@ public class InterceptorToken implements HandlerInterceptor {
             Long userId = null;
             String shopNo = "";
             Long organizeId = null;
+            Integer platform = null;
             if(StrUtil.isNotEmpty(token)){
 
                 if(!ConfigUtils.getBoolean(Config.ENABLED)){
@@ -105,6 +106,7 @@ public class InterceptorToken implements HandlerInterceptor {
                     shopNo = jsonObject.getStr("shop_no");
                     //获取企业ID
                     organizeId = jsonObject.getLong("organize_id");
+                    platform = jsonObject.getInt("platform");
                 }catch (JSONException e){
                     log.error("token 解析失败");
                     result = new CommonResult(ResultEnum.TOKEN_ILLEGAL.getValue(),ResultEnum.TOKEN_ILLEGAL.getDesc(),null);
@@ -135,6 +137,7 @@ public class InterceptorToken implements HandlerInterceptor {
                     UserVO userVO = new UserVO();
                     userVO.setId(userId);
                     userVO.setOrganizeId(organizeId);
+                    userVO.setPlatform(platform);
                     if(organizeId != null){
                         LambdaQueryWrapper<MallShop> queryWrapper = new LambdaQueryWrapper<MallShop>()
                                 .eq(MallShop::getOrganizeId, organizeId);

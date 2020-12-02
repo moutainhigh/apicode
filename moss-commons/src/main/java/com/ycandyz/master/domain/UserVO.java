@@ -79,6 +79,9 @@ public class UserVO extends User {
     @ApiModelProperty(value = "是否删除 0-正常 1-已删除")
     private Boolean isDel;
 
+    @ApiModelProperty(value = "0-企业 1-前端 2-代理商 3-有传 4-U客后台 5-U客App")
+    private Integer platform;
+
     @ApiModelProperty(value = "企业ID")
     private Long organizeId;
 

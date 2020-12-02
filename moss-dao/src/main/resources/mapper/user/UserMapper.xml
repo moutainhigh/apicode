@@ -57,7 +57,7 @@
         AND n.`type` = 1
         WHERE 1=1
         AND ur.`user_id` = #{userId}
-        AND ur.`platform` = 4
+        AND ur.`platform` = #{platform}
         AND ur.`organize_id` = #{organizeId}
         AND ur.`status` = 0
         AND ur.role_id > 0

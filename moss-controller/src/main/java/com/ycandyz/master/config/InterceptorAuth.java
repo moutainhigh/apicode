@@ -11,6 +11,7 @@ import com.ycandyz.master.domain.response.user.UserNodeResp;
 import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.entities.user.Node;
 import com.ycandyz.master.entities.user.UserRole;
+import com.ycandyz.master.enums.PlatformEnum;
 import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.service.user.INodeService;
 import com.ycandyz.master.service.user.IUserRoleService;
@@ -75,6 +76,12 @@ public class InterceptorAuth implements HandlerInterceptor {
         }
         Long menuId = Long.parseLong(menuIdStr);
         user.setMenuId(menuId);
+        PlatformEnum platformEnum = PlatformEnum.parseCode(user.getPlatform());
+        AssertUtils.notNull(platformEnum, "platform不正确");
+        //目前只对U客管理后台、U客APP做权限
+        if(platformEnum.getCode() < PlatformEnum.TYPE_4.getCode()){
+            return true;
+        }
         //需要做权限的接口
         boolean authFlow = false;
 
@@ -86,12 +93,13 @@ public class InterceptorAuth implements HandlerInterceptor {
             PrintWriter out = null ;
             CommonResult result = null;
             AssertUtils.notNull(user, "用户信息未获取到");
+            AssertUtils.notNull(user.getPlatform(), "platform未获取到");
             AssertUtils.notNull(user.getOrganizeId(), "organizeId未获取到");
             //先判断是否超管
             LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<UserRole>()
                     .eq(UserRole::getUserId, user.getId())
                     .eq(UserRole::getOrganizeId,user.getOrganizeId())
-                    .eq(UserRole::getPlatform,4)
+                    .eq(UserRole::getPlatform,user.getPlatform())
                     .eq(UserRole::getStatus,0)
                     .eq(UserRole::getRoleId,0);
             UserRole userRole = UserRoleService.getOne(queryWrapper);
@@ -103,6 +111,7 @@ public class InterceptorAuth implements HandlerInterceptor {
             query.setMenuId(user.getMenuId());
             query.setUserId(user.getId());
             query.setOrganizeId(user.getOrganizeId());
+            query.setPlatform(user.getPlatform());
             List<UserNodeResp> list = userService.selectUserNode(query);
             if(CollectionUtil.isNotEmpty(list)){
                 //匹配路径
