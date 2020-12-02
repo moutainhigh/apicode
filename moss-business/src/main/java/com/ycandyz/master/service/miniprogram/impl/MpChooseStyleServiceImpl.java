@@ -10,6 +10,7 @@ import com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO;
 import com.ycandyz.master.entities.miniprogram.*;
 import com.ycandyz.master.model.miniprogram.*;
 import com.ycandyz.master.request.UserRequest;
+import com.ycandyz.master.service.miniprogram.IMpConfigPlanService;
 import com.ycandyz.master.service.miniprogram.MpChooseStyleService;
 import com.ycandyz.master.vo.*;
 import com.ycandyz.master.vo.OrganizeMpReleaseParamVO;
@@ -49,6 +50,9 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
 
     @Autowired
     private MpConfigPlanPageDao mpConfigPlanPageDao;
+
+    @Autowired
+    private IMpConfigPlanService mpConfigPlanService;
 
     @Override
     public List<OrganizeMpConfigMenuVO> selByOrGanizeMoudleId(Integer organizePlanId) {
@@ -366,6 +370,10 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         Integer reselectMoudle = organizeMenuMpRequestVO.getReselectMoudle();
         Integer publish = organizeMenuMpRequestVO.getPublish();
         Integer mpPlanId = organizeMenuMpRequestVO.getMpPlanId();
+
+        //企业绑定模板统计
+        mpConfigPlanService.organizeBindPlan(organizeId.intValue(),mpPlanId);
+
         //重新选择模版保存会删除当前草稿
         if(reselectMoudle != null && reselectMoudle == 1){
             delMenuAndPage(organizeId);
