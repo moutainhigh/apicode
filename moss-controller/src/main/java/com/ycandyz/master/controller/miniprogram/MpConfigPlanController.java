@@ -69,11 +69,16 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
     @GetMapping
     public CommonResult<BasePageResult<MpConfigPlan>> selectPage(PageModel pageModel, MpConfigPlanQuery query) {
 
-        OrderItem orderItem = OrderItem.desc("create_time");
+        OrderItem orderItem = OrderItem.desc("update_time");
         List<OrderItem> orderItemList = new ArrayList<OrderItem>();
         orderItemList.add(orderItem);
         Page page = new Page(pageModel.getPage(),pageModel.getPageSize());
         page.setOrders(orderItemList);
+        if(query.getPlanName() != null){
+            if(query.getPlanName().equals("%")){
+                query.setPlanName("\\%");
+            }
+        }
 
 	    return CommonResult.success(new BasePageResult(service.page(page,query)));
     }
