@@ -1181,12 +1181,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
 
+            //匹配原因中文名称
+            MallOrderEnum.CancelReason cancelReason = MallOrderEnum.CancelReason.parseCode(mallOrderVO.getCancelReason());
+            if(null != cancelReason){
+                mallOrderVO.setCancelReasonName(cancelReason.getText());
+            }
+
             //订单头部信息拼接
             if (mallOrderVO.getStatus()==10) {  //待支付
                 mallOrderVO.setHeadField(mallOrderVO.getOrderAtStr()+"已下单，待买家付款");
             }
             if (mallOrderVO.getStatus()==20) {  //待发货
-                mallOrderVO.setHeadField(mallOrderVO.getSendAtStr()+"卖家已付款，请及时发货");
+                mallOrderVO.setHeadField(mallOrderVO.getPayedAtStr()+"卖家已付款，请及时发货");
             }
             if (mallOrderVO.getStatus()==30) {  //待收货
                 if (mallOrderVO.getDeliverType()==20){  //自提
@@ -1194,15 +1200,16 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }else { //不是线下的
                     if (mallOrderVO.getDeliverMethod()==10) {    //快递
                         String n =  mallShopShippingDTO!=null?mallShopShippingDTO.getNumber():"";
-                        mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"发货，快递信息："+n);
+                        String shipCompany =  mallShopShippingDTO!=null?mallShopShippingDTO.getCompany():"";
+                        mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"发货，快递信息："+n+" "+shipCompany);
                     }else { //线下配送
                         mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"发货，方式为线下配送");
                     }
                 }
             }
             if (mallOrderVO.getStatus()==40){   //已收货
-                if (mallOrderVO.getDeliverType()==20) {  //自提
-                    mallOrderVO.setHeadField("已收货"+mallOrderVO.getReceiveAtStr()+"买家成功到店收货");
+                if (mallOrderVO.getDeliverType()==2) {  //自提
+                    mallOrderVO.setHeadField(mallOrderVO.getReceiveAtStr()+"买家成功到店收货");
                 }else {
                     mallOrderVO.setHeadField(mallOrderVO.getReceiveAtStr()+"买家已收货");
                 }
@@ -1211,22 +1218,17 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 if (mallOrderVO.getSubStatus()==5020) { //5020-系统超时取消(待支付)
                     mallOrderVO.setHeadField("订单已取消 由于买家超时未付款，系统于"+mallOrderVO.getCancelAtStr()+"自动取消了订单");
                 }
-                if (mallOrderVO.getSubStatus()==5030 || mallOrderVO.getSubStatus()==5060){ //5010-用户主动取消(待支付)  5060-买家取消（待收货-自提订单）
+                if (mallOrderVO.getSubStatus()==5010 || mallOrderVO.getSubStatus()==5030 || mallOrderVO.getSubStatus()==5060){ //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)  5060-买家取消（待收货-自提订单）
                     mallOrderVO.setHeadField("订单已取消 买家于"+mallOrderVO.getCancelAtStr()+"取消了订单");
                 }
                 if (mallOrderVO.getSubStatus()==1030){  //1030-支付取消- 待支付
                     mallOrderVO.setHeadField("买家取消了订单，"+mallOrderVO.getCancelAtStr()+"系统已自动退款");
                 }
                 if (mallOrderVO.getSubStatus()==5040 || mallOrderVO.getSubStatus()==5050){  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
-                    mallOrderVO.setHeadField(mallOrderVO.getCancelAtStr()+"卖家取消订单，原因为："+mallOrderVO.getCancelReason()+"，退款金额将原路退回");
+                    mallOrderVO.setHeadField(mallOrderVO.getCancelAtStr()+"卖家取消订单，原因为："+mallOrderVO.getCancelReasonName()+"，退款金额将原路退回");
                 }
             }
 
-            //匹配原因中文名称
-            MallOrderEnum.CancelReason cancelReason = MallOrderEnum.CancelReason.parseCode(mallOrderVO.getCancelReason());
-            if(null != cancelReason){
-                mallOrderVO.setCancelReasonName(cancelReason.getText());
-            }
         }
         return ReturnResponse.success(mallOrderVO);
     }
@@ -1445,12 +1447,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
 
+            //匹配原因中文名称
+            MallOrderEnum.CancelReason cancelReason = MallOrderEnum.CancelReason.parseCode(mallOrderVO.getCancelReason());
+            if(null != cancelReason){
+                mallOrderVO.setCancelReasonName(cancelReason.getText());
+            }
+
             //订单头部信息拼接
             if (mallOrderVO.getStatus()==10) {  //待支付
                 mallOrderVO.setHeadField(mallOrderVO.getOrderAtStr()+"已下单，待买家付款");
             }
             if (mallOrderVO.getStatus()==20) {  //待发货
-                mallOrderVO.setHeadField(mallOrderVO.getSendAtStr()+"卖家已付款，请及时发货");
+                mallOrderVO.setHeadField(mallOrderVO.getPayedAtStr()+"卖家已付款，请及时发货");
             }
             if (mallOrderVO.getStatus()==30) {  //待收货
                 if (mallOrderVO.getDeliverType()==20){  //自提
@@ -1458,15 +1466,16 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }else { //不是线下的
                     if (mallOrderVO.getDeliverMethod()==10) {    //快递
                         String n =  mallShopShippingDTO!=null?mallShopShippingDTO.getNumber():"";
-                        mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"发货，快递信息："+n);
+                        String shipCompany =  mallShopShippingDTO!=null?mallShopShippingDTO.getCompany():"";
+                        mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"发货，快递信息："+n+" "+shipCompany);
                     }else { //线下配送
                         mallOrderVO.setHeadField("卖家于"+mallOrderVO.getSendAtStr()+"发货，方式为线下配送");
                     }
                 }
             }
             if (mallOrderVO.getStatus()==40){   //已收货
-                if (mallOrderVO.getDeliverType()==20) {  //自提
-                    mallOrderVO.setHeadField("已收货"+mallOrderVO.getReceiveAtStr()+"买家成功到店收货");
+                if (mallOrderVO.getDeliverType()==2) {  //自提
+                    mallOrderVO.setHeadField(mallOrderVO.getReceiveAtStr()+"买家成功到店收货");
                 }else {
                     mallOrderVO.setHeadField(mallOrderVO.getReceiveAtStr()+"买家已收货");
                 }
@@ -1475,22 +1484,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 if (mallOrderVO.getSubStatus()==5020) { //5020-系统超时取消(待支付)
                     mallOrderVO.setHeadField("订单已取消 由于买家超时未付款，系统于"+mallOrderVO.getCancelAtStr()+"自动取消了订单");
                 }
-                if (mallOrderVO.getSubStatus()==5030 || mallOrderVO.getSubStatus()==5060){ //5010-用户主动取消(待支付)  5060-买家取消（待收货-自提订单）
+                if (mallOrderVO.getSubStatus()==5010 || mallOrderVO.getSubStatus()==5030 || mallOrderVO.getSubStatus()==5060){ //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)  5060-买家取消（待收货-自提订单）
                     mallOrderVO.setHeadField("订单已取消 买家于"+mallOrderVO.getCancelAtStr()+"取消了订单");
                 }
                 if (mallOrderVO.getSubStatus()==1030){  //1030-支付取消- 待支付
                     mallOrderVO.setHeadField("买家取消了订单，"+mallOrderVO.getCancelAtStr()+"系统已自动退款");
                 }
                 if (mallOrderVO.getSubStatus()==5040 || mallOrderVO.getSubStatus()==5050){  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
-                    mallOrderVO.setHeadField(mallOrderVO.getCancelAtStr()+"卖家取消订单，原因为："+mallOrderVO.getCancelReason()+"，退款金额将原路退回");
+                    mallOrderVO.setHeadField(mallOrderVO.getCancelAtStr()+"卖家取消订单，原因为："+mallOrderVO.getCancelReasonName()+"，退款金额将原路退回");
                 }
             }
 
-            //匹配原因中文名称
-            MallOrderEnum.CancelReason cancelReason = MallOrderEnum.CancelReason.parseCode(mallOrderVO.getCancelReason());
-            if(null != cancelReason){
-                mallOrderVO.setCancelReasonName(cancelReason.getText());
-            }
+
             return ReturnResponse.success(mallOrderVO);
         }
         return ReturnResponse.failed("查询提货码未查询到订单");
