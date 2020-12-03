@@ -14,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -51,8 +53,32 @@ public class MpConfigPlanMenuServiceImpl extends BaseService<MpConfigPlanMenuDao
 
     @Override
     public Boolean addBatch(PlanMenuModel model) {
-        this.baseMapper.deleteByPlanId(model.getPlanId());
         List<MenuWithinPlan> menus = model.getMenus();
+
+        //查询原有方案下菜单
+        List<MpConfigPlanMenu> planMenus = this.baseMapper.selByPlanId(model.getPlanId());
+        List<MpConfigPlanMenu> canDelMenus = new ArrayList<MpConfigPlanMenu>();
+        for(MpConfigPlanMenu menu: planMenus){
+            if(menu.getCanDelete()){
+                canDelMenus.add(menu);
+            }
+        }
+
+        //获取入参可修改得菜单
+        Map<Integer,Object> updateMenusMap = new HashMap<Integer,Object>();
+        for(MenuWithinPlan menu: menus){
+            if(menu.getId() != null){
+                updateMenusMap.put(menu.getId(),menu);
+            }
+        }
+
+        for(MpConfigPlanMenu delMenu: canDelMenus){
+            Object obj = updateMenusMap.get(delMenu.getId());
+            if(obj == null){
+                this.baseMapper.deleteById(delMenu.getId());
+            }
+        }
+
         List<MpConfigPlanMenu> planMenuList = new ArrayList<MpConfigPlanMenu>();
         for(MenuWithinPlan menu: menus){
             MpConfigPlanMenu planMenu = new MpConfigPlanMenu();

@@ -49,7 +49,7 @@ public class UserExportRecordController extends BaseController<UserExportRecordS
     @ApiImplicitParams({
             @ApiImplicitParam(name="terminal",value="操作终端:1-U客企业后台 2-有传运营后台",dataType="Integer"),
             @ApiImplicitParam(name="organizeName",value="企业名称",dataType="String"),
-            @ApiImplicitParam(name="operatorId",value="操作人id",dataType="Long"),
+            @ApiImplicitParam(name="operatorName",value="操作人姓名",dataType="String"),
             @ApiImplicitParam(name="createdAtStart",value="创建时间开始",dataType="Long"),
             @ApiImplicitParam(name="createdAtEnd",value="创建时间截止",dataType="Long"),
             @ApiImplicitParam(name="page_size",value="每页显示条数",dataType="Long"),
