@@ -82,7 +82,7 @@ public class InterceptorAuth implements HandlerInterceptor {
         PlatformEnum platformEnum = PlatformEnum.parseCode(user.getPlatform());
         AssertUtils.notNull(platformEnum, "platform不正确");
         //目前只对U客管理后台、U客APP做权限
-        if(platformEnum.getCode() < PlatformEnum.TYPE_4.getCode()){
+        if(platformEnum.getCode() < PlatformEnum.TYPE_3.getCode()){
             return true;
         }
         //需要做权限的接口
