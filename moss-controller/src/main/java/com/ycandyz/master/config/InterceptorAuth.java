@@ -17,6 +17,7 @@ import com.ycandyz.master.service.user.IUserService;
 import com.ycandyz.master.utils.AssertUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -70,8 +71,11 @@ public class InterceptorAuth implements HandlerInterceptor {
         }
         UserVO user = (UserVO)httpServletRequest.getSession().getAttribute(SecurityConstant.USER_TOKEN_HEADER);
         String menuIdStr = httpServletRequest.getHeader(SecurityConstant.MENU_ID);
-        if(StrUtil.isEmpty(menuIdStr)){
-            AssertUtils.notNull(null, "menu_id不能为空");
+        boolean isNum = StringUtils.isNumeric(menuIdStr);
+        if(StrUtil.isEmpty(menuIdStr) || !isNum){
+            log.error("menuId: {}", menuIdStr);
+            out(httpServletResponse, CommonResult.forbidden(null));
+            return false;
         }
         Long menuId = Long.parseLong(menuIdStr);
         user.setMenuId(menuId);
