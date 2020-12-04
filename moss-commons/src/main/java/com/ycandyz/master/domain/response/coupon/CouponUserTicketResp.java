@@ -55,5 +55,9 @@ public class CouponUserTicketResp {
     @ApiModelProperty(name = "create_time",value = "参与时间")
     private Date createTime;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty(name = "end_time",value = "优惠卷截止时间")
+    private Date endTime;
+
 
 }

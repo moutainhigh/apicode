@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.domain.enums.coupon.CouponActivityEnum;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
+import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
 import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
@@ -51,20 +52,13 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     public Page<CouponActivity> page(Page page, CouponActivityQuery query) {
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         query.setShopNo(getShopNo());
-        if (null != query.getCreateTimeS() && null != query.getCreateTimeE() && query.getCreateTimeS().equals(query.getCreateTimeE())){
-            query.setCreateTime(query.getCreateTimeS());
-            query.setCreateTimeS(null);
-            query.setCreateTimeE(null);
-        }
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .select(CouponActivity::getId,CouponActivity::getActivityNo,CouponActivity::getName,CouponActivity::getBeginTime,CouponActivity::getEndTime,
                         CouponActivity::getStatus,CouponActivity::getJoinType,CouponActivity::getActivityNum,CouponActivity::getCreateTime)
-                .apply(query.getCreateTime() != null,
-                        "date_format (created_time,'%Y-%m-%d') = date_format('" + DateUtil.formatDate(query.getCreateTime()) + "','%Y-%m-%d')")
                 .apply(null != query.getCreateTimeS(),
                         "date_format (created_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreateTimeS()) + "','%Y-%m-%d')")
                 .apply(null != query.getCreateTimeE(),
-                        "date_format (created_time,'%Y-%m-%d') <= date_format('" + DateUtils.queryEndDate(query.getCreateTimeE())+ "','%Y-%m-%d')")
+                        "date_format (created_time,'%Y-%m-%d') <= date_format('" + DateUtil.formatDate(query.getCreateTimeE())+ "','%Y-%m-%d')")
                 .like(StrUtil.isNotEmpty(query.getName()),CouponActivity::getName,query.getName())
                 .eq(CouponActivity::getShopNo, query.getShopNo())
                 //.eq(CouponActivity::getStatus, SpecialEnum.EnabledEnum.DISABLE.getCode())
@@ -159,13 +153,13 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     }
 
     @Override
-    public boolean switchById(Long id,Integer type) {
-        AssertUtils.notNull(type, "参数不正确");
+    public boolean switchById(CouponActivityPutModel model) {
+        AssertUtils.notNull(model.getStatus(), "参数不正确");
         CouponActivity entity = new CouponActivity();
-        entity.setId(id);
-        if(CouponActivityEnum.Status.TYPE_0.equals(type)){
+        entity.setId(model.getId());
+        if(CouponActivityEnum.Status.TYPE_0.getCode().equals(model.getStatus())){
             entity.setStatus(CouponActivityEnum.Status.TYPE_0.getCode());
-        }else if (CouponActivityEnum.Status.TYPE_1.equals(type)){
+        }else if (CouponActivityEnum.Status.TYPE_1.getCode().equals(model.getStatus())){
             entity.setStatus(CouponActivityEnum.Status.TYPE_4.getCode());
         }else{
             AssertUtils.notNull(null, "参数不正确");
@@ -192,16 +186,18 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     }
 
     @Override
-    public Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query) {
-        AssertUtils.notNull(getShopNo(), "商店编号不存在");
-        AssertUtils.notNull(query.getActivityNo(), "活动编号不能为空");
-        query.setShopNo(getShopNo());
-        return couponActivityTicketService.selectActivityTicketPage(page,query);
-    }
-
-    @Override
     public Page<CouponUserTicketResp> selectUserActivityTicketPage(Page page, CouponUserActivityTicketQuery query) {
-        return couponActivityTicketService.selectUserActivityTicketPage(page,query);
+        Page<CouponUserTicketResp> p = couponActivityTicketService.selectUserActivityTicketPage(page,query);
+        p.getRecords().stream().forEach(f -> {
+            if(f.getStatus() == 1){
+                f.setStatusType(2);
+            }else if(f.getEndTime().before(new Date())){
+                f.setStatusType(1);
+            }else{
+                f.setStatusType(0);
+            }
+        });
+        return p;
     }
 
 }

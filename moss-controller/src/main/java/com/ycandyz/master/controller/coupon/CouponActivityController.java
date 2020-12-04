@@ -3,6 +3,7 @@ package com.ycandyz.master.controller.coupon;
 import com.ycandyz.master.config.ApiVersion;
 import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
+import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
 import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
@@ -55,11 +56,11 @@ public class CouponActivityController extends BaseController<CouponActivityServi
         return result(service.update(entity),entity,"更改失败!");
 	}
 
-    @ApiImplicitParam(name="type",value="类型(0启用,1停止)",required=true,dataType="int")
     @ApiOperation(value = "启用/停止")
     @PutMapping(value = "switch/{id}")
-    public CommonResult<String> switchById(@PathVariable Long id,Integer type) {
-        return result(service.switchById(id,type),null,"停止失败!");
+    public CommonResult<String> switchById(@PathVariable Long id, @Validated(ValidatorContract.OnUpdate.class) @RequestBody CouponActivityPutModel model) {
+	    model.setId(id);
+        return result(service.switchById(model),null,"停止失败!");
     }
 	
 	@ApiOperation(value = "查询单条数据")
@@ -75,7 +76,6 @@ public class CouponActivityController extends BaseController<CouponActivityServi
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
-    @ApiImplicitParam(name="activity_no",value="活动编号",required=true,dataType="string")
     @ApiOperation(value = "发卷宝-优惠卷-分页")
     @GetMapping(value = "ticket/page")
     @SuppressWarnings("unchecked")

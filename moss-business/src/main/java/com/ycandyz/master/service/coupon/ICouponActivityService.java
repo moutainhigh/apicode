@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
+import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
 import com.ycandyz.master.domain.query.coupon.CouponTicketQuery;
 import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
@@ -34,13 +35,11 @@ public interface ICouponActivityService extends IService<CouponActivity>{
 
     boolean update(CouponActivityModel entity);
 
-    boolean switchById(Long id,Integer status);
+    boolean switchById(CouponActivityPutModel model);
 
     boolean removeTicketById(Serializable id);
 
     Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query);
-
-    Page<CouponActivityTicketResp> selectActivityTicketPage(Page page, CouponActivityTicketQuery query);
 
     Page<CouponUserTicketResp> selectUserActivityTicketPage(Page page, CouponUserActivityTicketQuery query);
 }
