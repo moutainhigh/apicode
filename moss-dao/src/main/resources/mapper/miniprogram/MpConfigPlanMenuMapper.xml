@@ -41,7 +41,7 @@
          from mp_config_plan_menu where id = #{menuId}
     </select>
     <select id="selByPlanId" resultType="com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu">
-        select *  from mp_config_plan_menu where plan_id = #{planId}
+        select *  from mp_config_plan_menu where plan_id = #{planId} and logic_delete = 0
     </select>
 
     <delete id="deleteByPlanId" parameterType="java.lang.Integer">

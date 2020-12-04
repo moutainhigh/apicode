@@ -29,4 +29,6 @@ public interface OrganizeMpConfigPlanMenuDao extends BaseMapper<OrganizeMpConfig
     void insertSingle(OrganizeMpConfigPlanMenu organizeMpConfigPlanMenu);
 
     int delById(Integer menuId);
+
+    OrganizeMpConfigPlanMenuDTO selByMoudleMenuId(@Param("organizePlanId") Integer organizePlanId,@Param("menuId") Integer menuId);
 }

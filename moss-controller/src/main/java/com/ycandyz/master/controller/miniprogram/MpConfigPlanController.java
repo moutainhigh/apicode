@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.ycandyz.master.api.*;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanModel;
+import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanNameModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -40,14 +41,12 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
 	
 	@ApiOperation(value="✓创建方案", tags = "企业小程序DIY配置")
     @PostMapping
-	public CommonResult<Boolean> create(@RequestParam String planName) {
-	    if(StrUtil.isEmpty(planName)){
-            return CommonResult.validateFailed("方案名称不能为空");
-        }
-	    if(planName.length() > 10){
+	public CommonResult<Boolean> create(@RequestBody MpConfigPlanNameModel entity) {
+
+	    if(entity.getPlanName().length() > 10){
             return CommonResult.validateFailed("方案名称长度不能大于10个字符");
         }
-        return result(service.initPlan(planName),true,"创建失败!");
+        return result(service.initPlan(entity.getPlanName()),true,"创建失败!");
 	}
 
 	
@@ -70,11 +69,16 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
     @GetMapping
     public CommonResult<BasePageResult<MpConfigPlan>> selectPage(PageModel pageModel, MpConfigPlanQuery query) {
 
-        OrderItem orderItem = OrderItem.desc("create_time");
+        OrderItem orderItem = OrderItem.desc("update_time");
         List<OrderItem> orderItemList = new ArrayList<OrderItem>();
         orderItemList.add(orderItem);
         Page page = new Page(pageModel.getPage(),pageModel.getPageSize());
         page.setOrders(orderItemList);
+        if(query.getPlanName() != null){
+            if(query.getPlanName().equals("%")){
+                query.setPlanName("\\%");
+            }
+        }
 
 	    return CommonResult.success(new BasePageResult(service.page(page,query)));
     }

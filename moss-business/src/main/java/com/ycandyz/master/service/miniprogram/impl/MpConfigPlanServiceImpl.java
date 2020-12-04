@@ -91,13 +91,17 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
     @Override
     public int organizeBindPlan(Integer organizeId, Integer planId) {
 
-        Organize updateParam = new Organize();
-        updateParam.setId(organizeId);
-        updateParam.setPlanId(planId);
-        organizeService.updateById(updateParam);
-        MpConfigPlan mpConfigPlan = this.baseMapper.selectById(planId);
-        mpConfigPlan.setOrganizeChooseNum(mpConfigPlan.getOrganizeChooseNum() + 1);
-        return this.baseMapper.updateById(mpConfigPlan);
+        Organize organize = organizeService.getById(organizeId);
+        if(planId != organize.getPlanId()){
+            Organize updateParam = new Organize();
+            updateParam.setId(organizeId);
+            updateParam.setPlanId(planId);
+            organizeService.updateById(updateParam);
+            MpConfigPlan mpConfigPlan = this.baseMapper.selectById(planId);
+            mpConfigPlan.setOrganizeChooseNum(mpConfigPlan.getOrganizeChooseNum() + 1);
+            return this.baseMapper.updateById(mpConfigPlan);
+        }
+        return 0;
     }
 
 }

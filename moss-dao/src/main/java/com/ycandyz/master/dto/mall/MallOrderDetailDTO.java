@@ -89,4 +89,7 @@ public class MallOrderDetailDTO {
     /**所有分销人集合*/
     @ApiModelProperty(value = "所有分销人集合")
     private List<MallSocialShareFlowDTO> shareFlowInfo;
+    /**该笔订单售后结束时间*/
+    @ApiModelProperty(value = "该笔订单售后结束时间")
+    private Long moAfterSalesEndAt;
 }

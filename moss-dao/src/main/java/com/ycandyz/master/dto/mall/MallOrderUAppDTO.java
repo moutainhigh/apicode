@@ -25,6 +25,9 @@ public class MallOrderUAppDTO {
     /**下单用户id*/
     @ApiModelProperty(value = "下单用户id")
     private Integer userId;
+    /**退款流水（对外展示的）*/
+    @ApiModelProperty(value = "退款流水（对外展示的）")
+    private String refundNo;
     /**订单编号*/
     @ApiModelProperty(value = "订单编号")
     private String orderNo;
@@ -63,6 +66,9 @@ public class MallOrderUAppDTO {
     /**下单时间*/
     @ApiModelProperty(value = "下单时间")
     private java.lang.Integer orderAt;
+    /**商家发货时间*/
+    @ApiModelProperty(value = "商家发货时间")
+    private java.lang.Integer sendAt;
     /**10-待支付  20-待发货 30-待收货 40-已收货  50-已取消 */
     @ApiModelProperty(value = "10-待支付  20-待发货 30-待收货 40-已收货  50-已取消 ")
     private java.lang.Integer status;
@@ -82,6 +88,15 @@ public class MallOrderUAppDTO {
     /**发货方式:1-配送 2-自提*/
     @ApiModelProperty(value = "1-配送 2-自提")
     private java.lang.Integer deliverType;
+    /**自提码*/
+    @ApiModelProperty(value = "自提码")
+    private java.lang.String pickupNo;
+    /**自提地址名称*/
+    @ApiModelProperty(value = "自提地址名称")
+    private java.lang.String pickUpAddressName;
+    /**自提地址*/
+    @ApiModelProperty(value = "自提地址")
+    private java.lang.String pickUpAddressDetail;
     /**预留电话*/
     @ApiModelProperty(value = "预留电话")
     private java.lang.String prePhone;
@@ -131,6 +146,9 @@ public class MallOrderUAppDTO {
     /**receiveAt*/
     @ApiModelProperty(value = "receiveAt")
     private java.lang.Integer receiveAt;
+    /**交易流水（对外展示的）*/
+    @ApiModelProperty(value = "交易流水（对外展示的）")
+    private String tradeNo;
     /**关联卖家物流日志表*/
     @ApiModelProperty(value = "关联卖家物流日志表")
     private List<MallShopShippingLogDTO> shopShippingLog;
@@ -155,6 +173,16 @@ public class MallOrderUAppDTO {
     /**关联商店*/
     @ApiModelProperty(value = "关联商店")
     private MallShopDTO shopInfo;
+    /**下单用户名*/
+    @ApiModelProperty(value = "下单用户名")
+    private String payuserName;
+    /**下单用户手机号*/
+    @ApiModelProperty(value = "下单用户手机号")
+    private String payuserPhone;
+    /**下单用户头像*/
+    @ApiModelProperty(value = "下单用户头像")
+    private String payuserHeading;
+
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")
@@ -177,6 +205,9 @@ public class MallOrderUAppDTO {
     @ApiModelProperty(value = "订单关闭时间字符串")
     @Getter(AccessLevel.NONE)
     private String closeAtStr;
+    /**商家发货字符串*/
+    @ApiModelProperty(value = "商家发货字符串")
+    private String sendAtStr;
 
     public String getCancelAtStr(){
         try {

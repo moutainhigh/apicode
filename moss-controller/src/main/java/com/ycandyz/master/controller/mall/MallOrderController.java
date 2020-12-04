@@ -190,7 +190,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
     @ApiOperation(value = "验证提货码,出货",notes = "验证提货码,出货",httpMethod = "PUT")
     @PutMapping("/u-app/order/pickup")
     public ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(@RequestBody MallPickupUAppQuery mallPickupUAppQuery){
-        if (mallPickupUAppQuery == null || mallPickupUAppQuery.getOrderNo()==null || !"".equals(mallPickupUAppQuery.getOrderNo())){
+        if (mallPickupUAppQuery == null || mallPickupUAppQuery.getOrderNo()==null || "".equals(mallPickupUAppQuery.getOrderNo())){
             return ReturnResponse.failed("请求参数为空");
         }
         mallPickupUAppQuery.setOrderNo(mallPickupUAppQuery.getOrderNo().trim());    //去空格
@@ -213,7 +213,7 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
         if (page==null || pageSize==null){
             return CommonResult.failed("分页参数为空");
         }
-        if (orderNo==null || !"".equals(orderNo)){
+        if (orderNo==null || "".equals(orderNo)){
             return CommonResult.failed("传入参数为空");
         }
         orderNo = orderNo.trim();

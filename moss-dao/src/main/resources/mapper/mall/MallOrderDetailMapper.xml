@@ -5,6 +5,7 @@
     <resultMap id="BasePlusResultMap" type="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="order_no" property="orderNo" />
+        <result column="after_sales_end_at" property="moAfterSalesEndAt" />
         <result column="item_no" property="itemNo" />
         <result column="goods_no" property="goodsNo" />
         <result column="sku_no" property="skuNo" />
@@ -23,16 +24,20 @@
             <result column="user_name" property="userName" />
             <result column="phone_no" property="phoneNo" />
             <result column="amount" property="amount" />
+            <result column="level" property="level" />
+            <result column="share_type" property="shareType" />
         </collection>
     </resultMap>
 
     <select id="queryDetailListByOrderNos" resultMap="BasePlusResultMap">
         select
             mo.order_no,
+            mo.after_sales_end_at,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
             modetail.sku_no,
+            modetail.price as skuPrice,
             modetail.quantity AS skuQuantity,
             modetail.item_cover,
             modetail.is_enable_share,
@@ -43,7 +48,9 @@
             spec.spec_value,
             uu.`name` AS user_name,
             uu.phone AS phone_no,
-            flow.amount AS amount
+            flow.amount AS amount,
+            flow.share_type,
+            flow.level
         from
         mall_order mo
         left join mall_order_detail modetail on mo.order_no = modetail.order_no

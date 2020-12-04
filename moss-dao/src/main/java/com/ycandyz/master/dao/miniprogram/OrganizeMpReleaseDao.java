@@ -1,9 +1,11 @@
 package com.ycandyz.master.dao.miniprogram;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO;
 import com.ycandyz.master.entities.miniprogram.OrganizeMpRelease;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ycandyz.master.vo.OrganizeMpReleaseParamVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
  */
 public interface OrganizeMpReleaseDao extends BaseMapper<OrganizeMpRelease> {
 
-    List<OrganizeMpReleaseDTO> listAll(Long organizeId);
+    Page<OrganizeMpReleaseDTO> listAll(Page pageQuery,@Param("organizeId") Long organizeId);
 
     List<OrganizeMpReleaseDTO>  selByOrganizeId(Long organizeId);
 

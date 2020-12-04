@@ -27,6 +27,9 @@ public class MallOrderUAppVO {
     /**商店编号*/
     @ApiModelProperty(value = "商店编号")
     private String shopNo;
+    /**交易流水*/
+    @ApiModelProperty(value = "交易流水")
+    private String tradeNo;
     /**下单用户id*/
     @ApiModelProperty(value = "下单用户id")
     private Integer userId;
@@ -68,6 +71,9 @@ public class MallOrderUAppVO {
     /**下单时间*/
     @ApiModelProperty(value = "下单时间")
     private java.lang.Integer orderAt;
+    /**商家发货时间*/
+    @ApiModelProperty(value = "商家发货时间")
+    private java.lang.Integer sendAt;
     /**10-待支付  20-待发货 30-待收货 40-已收货  50-已取消 */
     @ApiModelProperty(value = "10-待支付  20-待发货 30-待收货 40-已收货  50-已取消 ")
     private java.lang.Integer status;
@@ -87,6 +93,15 @@ public class MallOrderUAppVO {
     /**发货方式:1-配送 2-自提*/
     @ApiModelProperty(value = "1-配送 2-自提")
     private java.lang.Integer deliverType;
+    /**自提码*/
+    @ApiModelProperty(value = "自提码")
+    private java.lang.String pickupNo;
+    /**自提地址名称*/
+    @ApiModelProperty(value = "自提地址名称")
+    private java.lang.String pickUpAddressName;
+    /**自提地址*/
+    @ApiModelProperty(value = "自提地址")
+    private java.lang.String pickUpAddressDetail;
     /**预留电话*/
     @ApiModelProperty(value = "预留电话")
     private java.lang.String prePhone;
@@ -160,6 +175,22 @@ public class MallOrderUAppVO {
     /**关联商店*/
     @ApiModelProperty(value = "关联商店")
     private MallShopUAppVO shopInfo;
+    /**下单用户名*/
+    @ApiModelProperty(value = "下单用户名")
+    private String payuserName;
+    /**下单用户手机号*/
+    @ApiModelProperty(value = "下单用户手机号")
+    private String payuserPhone;
+    /**下单用户头像*/
+    @ApiModelProperty(value = "下单用户头像")
+    private String payuserHeading;
+    @ApiModelProperty(value = "管理佣金")
+    private BigDecimal shareManageMoney;
+    @ApiModelProperty(value = "分销佣金")
+    private BigDecimal shareDistributionMoney;
+    /**头部展示文案*/
+    @ApiModelProperty(value = "头部展示文案")
+    private String headField;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")
@@ -182,6 +213,18 @@ public class MallOrderUAppVO {
     @ApiModelProperty(value = "订单关闭时间字符串")
     @Getter(AccessLevel.NONE)
     private String closeAtStr;
+    /**商家发货字符串*/
+    @ApiModelProperty(value = "商家发货字符串")
+    private String sendAtStr;
+
+    @ApiModelProperty(value = "退款流水（对外展示的）")
+    private String refundNo;
+
+    /**待付款，买家取消订单原因  501010：多拍/拍错/不想要  501011：不喜欢/效果不好  501012：做工/质量问题  501013：商家发错货  501014：未按约定时间发货  501015：与商品描述严重不符  501016：收到商品少件/破损/污渍  501099：其他
+     待发货，买家取消订单原因 503010-多拍/拍错/不想要  503011-协商一致退款  503012-缺货  503013-未按约定时间发货  503099-其他 待发货，商家取消订单原因 504010-暂停售卖  504011-缺货/断货  504099-其他
+     */
+    @ApiModelProperty(value = "待付款，买家取消订单原因  501010：多拍/拍错/不想要  501011：不喜欢/效果不好  501012：做工/质量问题  501013：商家发错货  501014：未按约定时间发货  501015：与商品描述严重不符  501016：收到商品少件/破损/污渍  501099：其他 待发货，买家取消订单原因 503010-多拍/拍错/不想要  503011-协商一致退款  503012-缺货  503013-未按约定时间发货  503099-其他 待发货，商家取消订单原因 504010-暂停售卖  504011-缺货/断货  504099-其他 ")
+    private String cancelReasonName;
 
     public String getCancelAtStr(){
         try {
