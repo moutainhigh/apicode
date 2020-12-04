@@ -5,6 +5,7 @@
     <resultMap id="BasePlusResultMap" type="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="order_no" property="orderNo" />
+        <result column="order_detail_no" property="orderDetailNo" />
         <result column="after_sales_end_at" property="moAfterSalesEndAt" />
         <result column="item_no" property="itemNo" />
         <result column="goods_no" property="goodsNo" />
@@ -29,7 +30,24 @@
         </collection>
     </resultMap>
 
-    <select id="queryDetailListByOrderNos" resultMap="BasePlusResultMap">
+    <select id="queryDetailListByOrderNosCount" resultType="java.lang.Integer">
+        select
+        count(a.id)
+        from
+        (select modetail.id from
+        mall_order_detail modetail
+        left join mall_order mo on mo.order_no = modetail.order_no
+        where
+        modetail.order_no in
+        <foreach item="item" collection="list" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by
+        modetail.order_detail_no
+        ) a
+    </select>
+
+    <select id="queryDetailListByOrderNosPage" resultMap="BasePlusResultMap">
         select
         a.*,
         spec.spec_name,
@@ -40,31 +58,33 @@
         flow.share_type,
         flow.level from (
         select
-            modetail.order_no,
-            modetail.order_detail_no,
-            mo.order_at,
-            mo.after_sales_end_at,
-            mo.order_type,
-            modetail.item_no,
-            modetail.item_name,
-            modetail.goods_no,
-            modetail.sku_no,
-            modetail.price as skuPrice,
-            modetail.quantity AS skuQuantity,
-            modetail.item_cover,
-            modetail.is_enable_share,
-            modetail.share_user_id,
-            modetail.total_money,
-            modetail.real_money
+        modetail.id,
+        modetail.order_no,
+        modetail.order_detail_no,
+        mo.order_at,
+        mo.after_sales_end_at,
+        mo.order_type,
+        modetail.item_no,
+        modetail.item_name,
+        modetail.goods_no,
+        modetail.sku_no,
+        modetail.price as skuPrice,
+        modetail.quantity AS skuQuantity,
+        modetail.item_cover,
+        modetail.is_enable_share,
+        modetail.share_user_id,
+        modetail.total_money,
+        modetail.real_money
         from
         mall_order_detail modetail
         left join mall_order mo on mo.order_no = modetail.order_no
         where
-            modetail.order_no in
-            <foreach  item="item" collection="list" index="index"  open="(" separator="," close=")">
-                #{item}
-            </foreach>
-            group by modetail.order_detail_no
+        modetail.order_no in
+        <foreach  item="item" collection="list" index="index"  open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by modetail.order_detail_no
+        limit #{page},#{pageSize}
         ) a
         left join mall_order_detail_spec spec on spec.order_detail_no = a.order_detail_no
         left join mall_social_share_flow flow on IF(a.order_type=2, flow.order_detail_no = a.order_detail_no , flow.order_no = a.order_no )
