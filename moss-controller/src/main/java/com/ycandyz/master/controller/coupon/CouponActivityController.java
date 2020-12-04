@@ -39,17 +39,17 @@ import com.ycandyz.master.controller.base.BaseController;
 @ApiVersion(group = ApiVersionConstant.API_COUPON)
 @Slf4j
 @RestController
-@RequestMapping("coupon/activity")
-@Api(tags="coupon-activity")
+@RequestMapping("activity")
+@Api(tags="优惠卷")
 public class CouponActivityController extends BaseController<CouponActivityServiceImpl,CouponActivity,CouponActivityQuery> {
 
-	@ApiOperation(value="新增")
+	@ApiOperation(value="新增",notes="新增")
     @PostMapping
 	public CommonResult<CouponActivityModel> insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody CouponActivityModel entity) {
 	    return result(service.insert(entity),entity,"保存失败!");
 	}
 	
-	@ApiOperation(value = "更新")
+	@ApiOperation(value = "更新",notes="更新")
     @PutMapping(value = "{id}")
 	public CommonResult<CouponActivityModel> updateById(@PathVariable Long id,@Validated(ValidatorContract.OnUpdate.class) @RequestBody CouponActivityModel entity) {
         entity.setId(id);
@@ -63,28 +63,28 @@ public class CouponActivityController extends BaseController<CouponActivityServi
         return result(service.switchById(model),null,"停止失败!");
     }
 	
-	@ApiOperation(value = "查询单条数据")
+	@ApiOperation(value = "查询单条数据",notes="查询单条数据")
     @GetMapping(value = "{id}")
 	public CommonResult<CouponActivity> getById(@PathVariable Long id) {
         return CommonResult.success(service.selectById(id));
     }
     
 	@ApiOperation(value = "发卷宝-分页")
-    @GetMapping(value = "page")
+    @GetMapping
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponActivity>> getPage(PageModel page,CouponActivityQuery query) {
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
     @ApiOperation(value = "发卷宝-优惠卷-分页")
-    @GetMapping(value = "ticket/page")
+    @GetMapping(value = "coupon")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponActivityTicketResp>> getTicketPage(PageModel page,CouponActivityTicketQuery query) {
         return CommonResult.success(new BasePageResult(service.selectTicketPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
     @ApiOperation(value = "活动参与人-分页")
-    @GetMapping(value = "user/page")
+    @GetMapping(value = "user")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponUserTicketResp>> getUserPage(PageModel page, CouponUserActivityTicketQuery query) {
         return CommonResult.success(new BasePageResult(service.selectUserActivityTicketPage(new Page(page.getPage(),page.getPageSize()),query)));
@@ -92,7 +92,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 
     @ApiVersion(group = {ApiVersionConstant.API_COUPON_100})
     @ApiOperation(value = "删除发卷宝的-优惠卷")
-    @DeleteMapping(value = "ticket/{activity_ticket_id}")
+    @DeleteMapping(value = "coupon/{activity_ticket_id}")
 	public CommonResult deleteTicketById(@PathVariable Long activity_ticket_id) {
         return result(service.removeTicketById(activity_ticket_id),"删除成功！","删除失败!");
 	}
