@@ -1223,7 +1223,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 if (mallOrderVO.getDeliverType()==2) {  //自提
                     mallOrderVO.setHeadField(receiveAtStrMin+" 买家成功到店收货");
                 }else {
-                    mallOrderVO.setHeadField(receiveAtStrMin+" 买家已收货");
+                    if (mallOrderVO.getSubStatus()==4010){  //4010-系统自动收货
+                        mallOrderVO.setHeadField(receiveAtStrMin+" 系统已自动确认收货");
+                    }else {
+                        mallOrderVO.setHeadField(receiveAtStrMin + " 买家已收货");
+                    }
                 }
             }
             if (mallOrderVO.getStatus()==50){   //已取消
@@ -1503,7 +1507,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 if (mallOrderVO.getDeliverType()==2) {  //自提
                     mallOrderVO.setHeadField(receiveAtStrMin+" 买家成功到店收货");
                 }else {
-                    mallOrderVO.setHeadField(receiveAtStrMin+" 买家已收货");
+                    if (mallOrderVO.getSubStatus()==4010){  //4010-系统自动收货
+                        mallOrderVO.setHeadField(receiveAtStrMin+" 系统已自动确认收货");
+                    }else {
+                        mallOrderVO.setHeadField(receiveAtStrMin + " 买家已收货");
+                    }
                 }
             }
             if (mallOrderVO.getStatus()==50){   //已取消
@@ -1618,8 +1626,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                         mallOrderDetailUAppVO.setMoAfterSalesEndAtStr(orderAtStr);
                     }
+                    list.add(mallOrderDetailUAppVO);
                 }
-                list.add(mallOrderDetailUAppVO);
                 basePageResult.setPage(mallOrderDetailDTOPage.getPages());
                 basePageResult.setPageSize(mallOrderDetailDTOPage.getSize());
                 basePageResult.setTotal(mallOrderDetailDTOPage.getTotal());
