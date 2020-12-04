@@ -1218,10 +1218,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 if (mallOrderVO.getSubStatus()==5020) { //5020-系统超时取消(待支付)
                     mallOrderVO.setHeadField("由于买家超时未付款，系统于"+mallOrderVO.getCancelAtStr()+"自动取消了订单");
                 }
-                if (mallOrderVO.getSubStatus()==5010 || mallOrderVO.getSubStatus()==5030 || mallOrderVO.getSubStatus()==5060){ //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)  5060-买家取消（待收货-自提订单）
+                if (mallOrderVO.getSubStatus()==5010 || mallOrderVO.getSubStatus()==5030){ //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)
                     mallOrderVO.setHeadField("买家于"+mallOrderVO.getCancelAtStr()+"取消了订单");
                 }
-                if (mallOrderVO.getSubStatus()==1030){  //1030-支付取消- 待支付
+                if (mallOrderVO.getSubStatus()==1030 || mallOrderVO.getSubStatus()==5060){  //1030-支付取消- 待支付  5060-买家取消（待收货-自提订单）
                     mallOrderVO.setHeadField("买家取消了订单，"+mallOrderVO.getCancelAtStr()+"系统已自动退款");
                 }
                 if (mallOrderVO.getSubStatus()==5040 || mallOrderVO.getSubStatus()==5050){  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
@@ -1484,10 +1484,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 if (mallOrderVO.getSubStatus()==5020) { //5020-系统超时取消(待支付)
                     mallOrderVO.setHeadField("由于买家超时未付款，系统于"+mallOrderVO.getCancelAtStr()+"自动取消了订单");
                 }
-                if (mallOrderVO.getSubStatus()==5010 || mallOrderVO.getSubStatus()==5030 || mallOrderVO.getSubStatus()==5060){ //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)  5060-买家取消（待收货-自提订单）
+                if (mallOrderVO.getSubStatus()==5010 || mallOrderVO.getSubStatus()==5030){ //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)
                     mallOrderVO.setHeadField("买家于"+mallOrderVO.getCancelAtStr()+"取消了订单");
                 }
-                if (mallOrderVO.getSubStatus()==1030){  //1030-支付取消- 待支付
+                if (mallOrderVO.getSubStatus()==1030 || mallOrderVO.getSubStatus()==5060){  //1030-支付取消- 待支付  5060-买家取消（待收货-自提订单）
                     mallOrderVO.setHeadField("买家取消了订单，"+mallOrderVO.getCancelAtStr()+"系统已自动退款");
                 }
                 if (mallOrderVO.getSubStatus()==5040 || mallOrderVO.getSubStatus()==5050){  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
