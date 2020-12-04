@@ -1040,38 +1040,38 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<MallOrderDetailUAppVO> detailVOList = new ArrayList<>();
-                BigDecimal manageMoney = new BigDecimal(0);
-                BigDecimal distributionMoney = new BigDecimal(0);
+
                 for(MallOrderDetailDTO orderDetail : mallOrderDTO.getDetails()){
                     MallOrderDetailUAppVO mallOrderDetailVO = new MallOrderDetailUAppVO();
                     BeanUtils.copyProperties(orderDetail,mallOrderDetailVO);
-
-                    if (mallOrderDTO.getOrderType()!=null) {
-                        if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10){  //已取消订单不展示分销人相关信息
-
-                            //查询佣金流水表
-                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
-                            if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
-                                List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
-                                for(MallSocialShareFlowDTO dto : mallSocialShareFlowDTOs) {
-                                    MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
-                                    BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
-                                    flowList.add(mallSocialShareFlowVO);
-                                    if (dto.getShareType()==0){ //分销佣金
-                                        distributionMoney = distributionMoney.add(dto.getAmount());
-                                    }else if (dto.getShareType()==1){   //管理佣金
-                                        manageMoney = manageMoney.add(dto.getAmount());
-                                    }
-                                }
-                                mallOrderDetailVO.setShareFlowInfo(flowList);
-                            }
-                        }
-                        detailVOList.add(mallOrderDetailVO);
-                    }
+                    detailVOList.add(mallOrderDetailVO);
                 }
                 mallOrderVO.setDetails(detailVOList);
-                mallOrderVO.setShareManageMoney(manageMoney);
-                mallOrderVO.setShareDistributionMoney(distributionMoney);
+
+            }
+
+            if (mallOrderDTO.getOrderType()!=null) {
+                if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10){  //已取消订单不展示分销人相关信息
+                    BigDecimal manageMoney = new BigDecimal(0);
+                    BigDecimal distributionMoney = new BigDecimal(0);
+                    //查询佣金流水表
+                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
+                    if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
+                        List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
+                        for(MallSocialShareFlowDTO dto : mallSocialShareFlowDTOs) {
+                            MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
+                            BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
+                            flowList.add(mallSocialShareFlowVO);
+                            if (dto.getShareType()==0){ //分销佣金
+                                distributionMoney = distributionMoney.add(dto.getAmount());
+                            }else if (dto.getShareType()==1){   //管理佣金
+                                manageMoney = manageMoney.add(dto.getAmount());
+                            }
+                        }
+                    }
+                    mallOrderVO.setShareManageMoney(manageMoney);
+                    mallOrderVO.setShareDistributionMoney(distributionMoney);
+                }
             }
 
             //查看商店
@@ -1332,33 +1332,35 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     if (map.containsKey(mallOrderDetailVO.getOrderDetailNo())){
                         mallOrderDetailVO.setSpecs(map.get(mallOrderDetailVO.getOrderDetailNo()));
                     }
-
-                    if (mallOrderDTO.getOrderType()!=null) {
-                        if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10){  //已取消订单不展示分销人相关信息
-
-                            //查询佣金流水表
-                            List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
-                            if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
-                                List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
-                                for(MallSocialShareFlowDTO flowDTO : mallSocialShareFlowDTOs) {
-                                    MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
-                                    BeanUtils.copyProperties(flowDTO, mallSocialShareFlowVO);
-                                    flowList.add(mallSocialShareFlowVO);
-                                    if (flowDTO.getShareType()==0){ //分销佣金
-                                        distributionMoney = distributionMoney.add(flowDTO.getAmount());
-                                    }else if (flowDTO.getShareType()==1){   //管理佣金
-                                        manageMoney = manageMoney.add(flowDTO.getAmount());
-                                    }
-                                }
-                                mallOrderDetailVO.setShareFlowInfo(flowList);
-                            }
-                        }
-                    }
                     list.add(mallOrderDetailVO);
                 }
                 mallOrderVO.setDetails(list);
                 mallOrderVO.setShareManageMoney(manageMoney);
                 mallOrderVO.setShareDistributionMoney(distributionMoney);
+            }
+
+            if (mallOrderDTO.getOrderType()!=null) {
+                if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10){  //已取消订单不展示分销人相关信息
+                    BigDecimal manageMoney = new BigDecimal(0);
+                    BigDecimal distributionMoney = new BigDecimal(0);
+                    //查询佣金流水表
+                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
+                    if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
+                        List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
+                        for(MallSocialShareFlowDTO dto : mallSocialShareFlowDTOs) {
+                            MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
+                            BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
+                            flowList.add(mallSocialShareFlowVO);
+                            if (dto.getShareType()==0){ //分销佣金
+                                distributionMoney = distributionMoney.add(dto.getAmount());
+                            }else if (dto.getShareType()==1){   //管理佣金
+                                manageMoney = manageMoney.add(dto.getAmount());
+                            }
+                        }
+                    }
+                    mallOrderVO.setShareManageMoney(manageMoney);
+                    mallOrderVO.setShareDistributionMoney(distributionMoney);
+                }
             }
 
             //获取订单详情编号列表
