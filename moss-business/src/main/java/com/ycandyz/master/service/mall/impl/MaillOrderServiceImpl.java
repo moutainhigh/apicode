@@ -1192,7 +1192,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 mallOrderVO.setHeadField(mallOrderVO.getOrderAtStr()+" 已下单，待买家付款");
             }
             if (mallOrderVO.getStatus()==20) {  //待发货
-                mallOrderVO.setHeadField(mallOrderVO.getPayedAtStr()+" 卖家已付款，请及时发货");
+                mallOrderVO.setHeadField(mallOrderVO.getPayedAtStr()+" 买家已付款，请及时发货");
             }
             if (mallOrderVO.getStatus()==30) {  //待收货
                 if (mallOrderVO.getDeliverType()==20){  //自提
@@ -1458,7 +1458,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 mallOrderVO.setHeadField(mallOrderVO.getOrderAtStr()+" 已下单，待买家付款");
             }
             if (mallOrderVO.getStatus()==20) {  //待发货
-                mallOrderVO.setHeadField(mallOrderVO.getPayedAtStr()+" 卖家已付款，请及时发货");
+                mallOrderVO.setHeadField(mallOrderVO.getPayedAtStr()+" 买家已付款，请及时发货");
             }
             if (mallOrderVO.getStatus()==30) {  //待收货
                 if (mallOrderVO.getDeliverType()==2){  //自提
