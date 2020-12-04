@@ -1572,7 +1572,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public CommonResult<BasePageResult<MallOrderDetailUAppVO>> queryOrderDetailShareFlowListByNo(Long page, Long pageSize, String orderNo) {
         UserVO userVO = getUser();  //获取当前登陆用户
         BasePageResult<MallOrderDetailUAppVO> basePageResult = new BasePageResult();
-        Page pageQuery = new Page(page, pageSize);
         List<MallOrderDetailUAppVO> list = new ArrayList<>();
         try {
             List<String> orderNoList = new ArrayList<>();
@@ -1592,46 +1591,46 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
 
-            Page<MallOrderDetailDTO> mallOrderDetailDTOPage = mallOrderDetailDao.queryDetailListByOrderNos(pageQuery,orderNoList);
-            if (mallOrderDetailDTOPage==null){
-                mallOrderDetailDTOPage = new Page<>();
-            }
-            if (mallOrderDetailDTOPage.getRecords() != null && mallOrderDetailDTOPage.getRecords().size() > 0) {
-                MallOrderDetailUAppVO mallOrderDetailUAppVO = null;
-                for (MallOrderDetailDTO mallOrderDetailDTO : mallOrderDetailDTOPage.getRecords()){
-                    mallOrderDetailUAppVO = new MallOrderDetailUAppVO();
-                    BeanUtils.copyProperties(mallOrderDetailDTO,mallOrderDetailUAppVO);
-                    //分销佣金保存
-                    if (mallOrderDetailDTO.getShareFlowInfo() != null && mallOrderDetailDTO.getShareFlowInfo().size() > 0) {
-                        List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
-                        mallOrderDetailDTO.getShareFlowInfo().forEach(dto -> {
-                            MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
-                            BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
-                            flowList.add(mallSocialShareFlowVO);
-                        });
-                        mallOrderDetailUAppVO.setShareFlowInfo(flowList);
+            Integer count = mallOrderDetailDao.queryDetailListByOrderNosCount(orderNoList);
+            if (count!=null && count>0) {
+                List<MallOrderDetailDTO> mallOrderDetailDTOList = mallOrderDetailDao.queryDetailListByOrderNosPage((page-1)*pageSize,pageSize, orderNoList);
+                if (mallOrderDetailDTOList != null && mallOrderDetailDTOList.size() > 0) {
+                    MallOrderDetailUAppVO mallOrderDetailUAppVO = null;
+                    for (MallOrderDetailDTO mallOrderDetailDTO : mallOrderDetailDTOList) {
+                        mallOrderDetailUAppVO = new MallOrderDetailUAppVO();
+                        BeanUtils.copyProperties(mallOrderDetailDTO, mallOrderDetailUAppVO);
+                        //分销佣金保存
+                        if (mallOrderDetailDTO.getShareFlowInfo() != null && mallOrderDetailDTO.getShareFlowInfo().size() > 0) {
+                            List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
+                            mallOrderDetailDTO.getShareFlowInfo().forEach(dto -> {
+                                MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
+                                BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
+                                flowList.add(mallSocialShareFlowVO);
+                            });
+                            mallOrderDetailUAppVO.setShareFlowInfo(flowList);
+                        }
+                        //产品规格保存
+                        if (mallOrderDetailDTO.getSpecs() != null && mallOrderDetailDTO.getSpecs().size() > 0) {
+                            List<MallOrderDetailSpecUAppVO> specList = new ArrayList<>();
+                            mallOrderDetailDTO.getSpecs().forEach(spec -> {
+                                MallOrderDetailSpecUAppVO mallOrderDetailSpecUAppVO = new MallOrderDetailSpecUAppVO();
+                                BeanUtils.copyProperties(spec, mallOrderDetailSpecUAppVO);
+                                specList.add(mallOrderDetailSpecUAppVO);
+                            });
+                            mallOrderDetailUAppVO.setSpecs(specList);
+                        }
+                        if (mallOrderDetailUAppVO.getMoAfterSalesEndAt() != null && mallOrderDetailUAppVO.getMoAfterSalesEndAt() > 0) {
+                            long time = mallOrderDetailUAppVO.getMoAfterSalesEndAt() * 1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                            mallOrderDetailUAppVO.setMoAfterSalesEndAtStr(orderAtStr);
+                        }
+                        list.add(mallOrderDetailUAppVO);
                     }
-                    //产品规格保存
-                    if (mallOrderDetailDTO.getSpecs()!=null && mallOrderDetailDTO.getSpecs().size()>0){
-                        List<MallOrderDetailSpecUAppVO> specList = new ArrayList<>();
-                        mallOrderDetailDTO.getSpecs().forEach(spec->{
-                            MallOrderDetailSpecUAppVO mallOrderDetailSpecUAppVO = new MallOrderDetailSpecUAppVO();
-                            BeanUtils.copyProperties(spec, mallOrderDetailSpecUAppVO);
-                            specList.add(mallOrderDetailSpecUAppVO);
-                        });
-                        mallOrderDetailUAppVO.setSpecs(specList);
-                    }
-                    if (mallOrderDetailUAppVO.getMoAfterSalesEndAt()!=null && mallOrderDetailUAppVO.getMoAfterSalesEndAt()>0){
-                        long time = mallOrderDetailUAppVO.getMoAfterSalesEndAt()*1000;
-                        String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                        mallOrderDetailUAppVO.setMoAfterSalesEndAtStr(orderAtStr);
-                    }
-                    list.add(mallOrderDetailUAppVO);
+                    basePageResult.setPage(page);
+                    basePageResult.setPageSize(pageSize);
+                    basePageResult.setTotal(count);
+                    basePageResult.setResult(list);
                 }
-                basePageResult.setPage(mallOrderDetailDTOPage.getPages());
-                basePageResult.setPageSize(mallOrderDetailDTOPage.getSize());
-                basePageResult.setTotal(mallOrderDetailDTOPage.getTotal());
-                basePageResult.setResult(list);
             }
         }catch (Exception e){
             log.error(e.getMessage(),e);
