@@ -529,7 +529,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(organizeMpConfigPlan.getId());
         if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
             for (OrganizeMpConfigPlanMenuDTO m : organizeMpConfigPlanMenuDTOS) {
-                if (m.getId() == menuId){
+                if (m.getId().equals(menuId)){
                     continue;
                 }
                 List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selPageByMenuId(m.getId());
