@@ -12,5 +12,7 @@ import java.util.List;
 @Mapper
 public interface MallOrderDetailDao extends BaseMapper<MallOrderDetail> {
 
-    Page<MallOrderDetailDTO> queryDetailListByOrderNos(Page page, @Param("list") List<String> orderNos);
+    Integer queryDetailListByOrderNosCount(@Param("list") List<String> orderNos);
+
+    List<MallOrderDetailDTO> queryDetailListByOrderNosPage(@Param("page") Long page, @Param("pageSize") Long pageSize, @Param("list") List<String> orderNos);
 }
