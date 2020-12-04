@@ -24,4 +24,6 @@ public interface OrganizeMpReleaseDao extends BaseMapper<OrganizeMpRelease> {
     List<OrganizeMpReleaseDTO>  selByOrganizeId(Long organizeId);
 
     void insertVersion(OrganizeMpReleaseParamVO organizeMpReleaseParamVO);
+
+    void updateDraftTime(@Param("id") Integer id);
 }
