@@ -1020,7 +1020,7 @@
         LEFT JOIN mall_order_detail modetail ON a.order_no = modetail.order_no
         LEFT JOIN user u ON a.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = a.order_no
-        ORDER BY a.order_at DESC
+        ORDER BY a.created_time DESC
     </select>
 
     <select id="queryOrderDetailByUApp" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
