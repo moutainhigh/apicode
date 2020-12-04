@@ -27,4 +27,8 @@ public class MpConfigPlanModel {
     @ApiModelProperty(value = "方案展示图")
     @NotNull(message = "方案展示图不能为空",groups = {ValidatorContract.OnUpdate.class})
     private String stylePicUrl;
+
+    @ApiModelProperty(value = "是否默认模板")
+    @NotNull(message = "是否默认模板不能为空",groups = {ValidatorContract.OnUpdate.class})
+    private Boolean isDefault;
 }

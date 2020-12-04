@@ -40,4 +40,8 @@ public class MpConfigPlanQuery implements Serializable {
     @Condition(field = "sync_uke", condition = ConditionEnum.EQ)
     private Boolean syncUke;
 
+    @ApiModelProperty(value = "是否默认模板")
+    @Condition(field = "is_default", condition = ConditionEnum.EQ)
+    private Boolean isDefault;
+
 }
