@@ -15,6 +15,7 @@ import com.ycandyz.master.service.user.INodeService;
 import com.ycandyz.master.service.user.IUserRoleService;
 import com.ycandyz.master.service.user.IUserService;
 import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,10 @@ public class InterceptorAuth implements HandlerInterceptor {
         String method = httpServletRequest.getMethod();
         String httpPath = method+"|"+path;
         log.info(path);
+
+        if(ConfigUtils.getBoolean(Config.ENABLED) || path.equals("/")){
+            return true;
+        }
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
         boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));
@@ -82,7 +87,7 @@ public class InterceptorAuth implements HandlerInterceptor {
         PlatformEnum platformEnum = PlatformEnum.parseCode(user.getPlatform());
         AssertUtils.notNull(platformEnum, "platform不正确");
         //目前只对U客管理后台、U客APP做权限
-        if(platformEnum.getCode() < PlatformEnum.TYPE_4.getCode()){
+        if(platformEnum.getCode() < PlatformEnum.TYPE_3.getCode()){
             return true;
         }
         //需要做权限的接口

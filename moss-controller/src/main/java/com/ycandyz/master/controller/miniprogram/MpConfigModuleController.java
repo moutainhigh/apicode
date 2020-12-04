@@ -40,7 +40,7 @@ import com.ycandyz.master.controller.base.BaseController;
 
 @Slf4j
 @RestController
-@RequestMapping("cms/mp/dict/modules")
+@RequestMapping("cms/mp/dict/module")
 @Api(tags="小程序配置-模块信息")
 public class MpConfigModuleController extends BaseController<MpConfigModuleServiceImpl,MpConfigModule,MpConfigModuleQuery> {
 	

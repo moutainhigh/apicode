@@ -529,7 +529,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
         List<OrganizeMpConfigPlanMenuDTO> organizeMpConfigPlanMenuDTOS = organizeMpConfigPlanMenuDao.selByOrGanizeMoudleId(organizeMpConfigPlan.getId());
         if (organizeMpConfigPlanMenuDTOS != null && organizeMpConfigPlanMenuDTOS.size() > 0) {
             for (OrganizeMpConfigPlanMenuDTO m : organizeMpConfigPlanMenuDTOS) {
-                if (m.getId() == menuId){
+                if (m.getId().equals(menuId)){
                     continue;
                 }
                 List<OrganizeMpConfigPlanPageDTO> organizeMpConfigPlanPageDTOS = organizeMpConfigPlanPageDao.selPageByMenuId(m.getId());
@@ -555,28 +555,34 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
 
     private void saveOnePage(OrganizeMenuMpRequestVO organizeMenuMpRequestVO, Integer menuId) {
         List<OrganizeMpConfigPageMenuVo> modules = organizeMenuMpRequestVO.getModules();
-        for (OrganizeMpConfigPageMenuVo o : modules) {
-            List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
-            for (OrganizeMpConfigModuleBaseVo base : baseInfo) {
-                OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
-                organizeMpConfigPlanPage.setMenuId(menuId);
-                organizeMpConfigPlanPage.setModuleId(o.getModuleId());
-//                MpConfigPlanPage mpConfigPlanPage = mpConfigPlanPageDao.selectById(base.getId());
-//                if (mpConfigPlanPage != null){
+        if(modules.size() > 0){
+            for (OrganizeMpConfigPageMenuVo o : modules) {
+                List<OrganizeMpConfigModuleBaseVo> baseInfo = o.getBaseInfo();
+                for (OrganizeMpConfigModuleBaseVo base : baseInfo) {
+                    OrganizeMpConfigPlanPage organizeMpConfigPlanPage = new OrganizeMpConfigPlanPage();
+                    organizeMpConfigPlanPage.setMenuId(menuId);
+                    organizeMpConfigPlanPage.setModuleId(o.getModuleId());
+//                  MpConfigPlanPage mpConfigPlanPage = mpConfigPlanPageDao.selectById(base.getId());
+//                  if (mpConfigPlanPage != null){
 //                    organizeMpConfigPlanPage.setModuleBaseId(mpConfigPlanPage.getModuleBaseId());
-//                }
-                organizeMpConfigPlanPage.setModuleBaseId(base.getModuleBaseId());
-                organizeMpConfigPlanPage.setShowLayout(base.getShowLayout());
-                organizeMpConfigPlanPage.setSortModule(o.getSortModule());
-                organizeMpConfigPlanPage.setSortBase(base.getSortBase());
-                organizeMpConfigPlanPage.setBaseName(base.getBaseName());
-                organizeMpConfigPlanPage.setLogicDelete(o.getIsDel());
-                organizeMpConfigPlanPage.setReplacePicUrl(base.getReplacePicUrl());
-                organizeMpConfigPlanPage.setBaseCode(base.getBaseCode());
-                log.info("企业小程序单个菜单页面-page-保存当前菜单页面入参:{}", JSON.toJSONString(organizeMpConfigPlanPage));
-                organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
+//                  }
+                    organizeMpConfigPlanPage.setModuleBaseId(base.getModuleBaseId());
+                    organizeMpConfigPlanPage.setShowLayout(base.getShowLayout());
+                    organizeMpConfigPlanPage.setSortModule(o.getSortModule());
+                    organizeMpConfigPlanPage.setSortBase(base.getSortBase());
+                    organizeMpConfigPlanPage.setBaseName(base.getBaseName());
+                    organizeMpConfigPlanPage.setLogicDelete(o.getIsDel());
+                    organizeMpConfigPlanPage.setReplacePicUrl(base.getReplacePicUrl());
+                    organizeMpConfigPlanPage.setBaseCode(base.getBaseCode());
+                    log.info("企业小程序单个菜单页面-page-保存当前菜单页面入参:{}", JSON.toJSONString(organizeMpConfigPlanPage));
+                    organizeMpConfigPlanPageDao.insertSingle(organizeMpConfigPlanPage);
+                }
             }
+        }else{
+            //删除菜单下模块
+            organizeMpConfigPlanPageDao.delByMenuId(menuId);
         }
+
     }
 
     @Override

@@ -1,14 +1,20 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ycandyz.master.domain.model.miniprogram.ConfigPlanAndMenuModel;
 import com.ycandyz.master.domain.model.miniprogram.MenuWithinPlan;
+import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanModel;
+import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.entities.miniprogram.MpConfigMenu;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlan;
 import com.ycandyz.master.domain.query.miniprogram.MpConfigPlanQuery;
 import com.ycandyz.master.dao.miniprogram.MpConfigPlanDao;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlanMenu;
 import com.ycandyz.master.entities.organize.Organize;
+import com.ycandyz.master.entities.user.UserRole;
 import com.ycandyz.master.service.miniprogram.IMpConfigMenuService;
 import com.ycandyz.master.service.miniprogram.IMpConfigPlanMenuService;
 import com.ycandyz.master.service.miniprogram.IMpConfigPlanService;
@@ -99,9 +105,30 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
             organizeService.updateById(updateParam);
             MpConfigPlan mpConfigPlan = this.baseMapper.selectById(planId);
             mpConfigPlan.setOrganizeChooseNum(mpConfigPlan.getOrganizeChooseNum() + 1);
+            mpConfigPlan.setCreateTime(null);
+            mpConfigPlan.setUpdateTime(null);
             return this.baseMapper.updateById(mpConfigPlan);
         }
         return 0;
+    }
+
+    @Override
+    public Boolean updatePlan(MpConfigPlan mpConfigPlan) {
+
+        if(mpConfigPlan.getIsDefault()){
+            MpConfigPlan mpm = this.baseMapper.selectOne(new QueryWrapper<MpConfigPlan>().eq("is_default",mpConfigPlan.getIsDefault()));
+            if(mpm != null){
+                MpConfigPlan upNonDefault = new MpConfigPlan();
+                upNonDefault.setId(mpm.getId());
+                upNonDefault.setIsDefault(false);
+                this.baseMapper.updateById(upNonDefault);
+            }
+        }
+        int result = this.baseMapper.updateById(mpConfigPlan);
+        if(result > 0){
+            return true;
+        }
+        return false;
     }
 
 }

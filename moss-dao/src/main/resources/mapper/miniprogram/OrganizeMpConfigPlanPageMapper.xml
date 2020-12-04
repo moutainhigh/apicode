@@ -39,7 +39,7 @@
         values(#{id},#{menuId},#{moduleId},#{moduleBaseId},#{showLayout},#{sortModule},#{sortBase},#{baseName},0,#{replacePicUrl},#{baseCode})
     </insert>
     <delete id="delByMenuId">
-        update organize_mp_config_plan_page set logic_delete = 1 where menu_id = #{menuId};
+        update organize_mp_config_plan_page set logic_delete = 1 where menu_id = #{menuId}
     </delete>
 
     <select id="selectByMenuId" resultMap="BaseResultMap">
@@ -56,7 +56,7 @@
             </if>
         </where>
         group by p.sort_module
-        order by p.sort_module asc,p.sort_base asc;
+        order by p.sort_module asc,p.sort_base asc
     </select>
     <select id="selPageByMenuId" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanPageDTO">
         select * from organize_mp_config_plan_page where menu_id = #{menuId} and logic_delete = 0
