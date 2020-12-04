@@ -1020,7 +1020,7 @@
         LEFT JOIN mall_order_detail modetail ON a.order_no = modetail.order_no
         LEFT JOIN user u ON a.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = a.order_no
-        ORDER BY a.order_at DESC
+        ORDER BY a.created_time DESC
     </select>
 
     <select id="queryOrderDetailByUApp" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
@@ -1078,20 +1078,32 @@
         select
             mo.id,
             mo.order_no,
-            mo.shop_no,
-            mo.cart_order_id,
+            mo.cart_order_sn,
+            mo.refund_no,
             mo.real_money,
             mo.payed_at,
             mo.buyer_remark,
+            mo.status,
+            mo.sub_status,
+            mo.cancel_reason,
+            mo.deliver_method,
+            mo.total_money,
+            mo.buyer_remark,
+            mo.order_at,
+            mo.after_sales_end_at,
+            mo.pay_type,
+            mo.order_type,
+            mo.trade_no,
+            mo.send_at,
+            mo.receive_at,
+            mo.cancel_at,
+            mo.cancel_reason,
+            mo.`deliver_type`,
             mo.pick_up_address_name,
             mo.pick_up_address_detail,
             mo.pre_phone,
-            mo.status,
-            mo.sub_status,
-            mo.deliver_method,
-            mo.`after_sales_status`,
-            mo.`deliver_type`,
-            mo.total_money-mo.real_money as shippingMoney,
+            mo.all_money-mo.real_money as shippingMoney,
+            mo.all_money,
             mo.shop_no,
             mo.total_money-mo.real_money as discountMoney,
             modetail.order_detail_no,
@@ -1100,6 +1112,7 @@
             modetail.sku_no,
             modetail.item_name,
             modetail.item_cover,
+            modetail.is_enable_share,
             modetail.quantity as skuQuantity,
             modetail.price as skuPrice,
             modetail.total_money,
