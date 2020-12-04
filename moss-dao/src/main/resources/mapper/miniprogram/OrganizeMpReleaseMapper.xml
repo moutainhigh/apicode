@@ -29,7 +29,7 @@
     </select>
 
     <update id="updateDraftTime">
-        update organize_mp_release set update_time = now() where id = #{id}
+        update organize_mp_release set update_time = now() where plan_id = #{planId}
     </update>
 
 </mapper>
