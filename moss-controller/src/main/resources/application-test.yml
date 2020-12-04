@@ -3,8 +3,6 @@ server:
   servlet:
     context-path: /youchuan-master
 
-enabled: true #为true时不做sing与redis校验 方便本地调试
-
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver           # mysql驱动包
