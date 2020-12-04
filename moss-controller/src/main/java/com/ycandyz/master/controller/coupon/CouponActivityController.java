@@ -35,13 +35,13 @@ import com.ycandyz.master.controller.base.BaseController;
  * @version 2.0
  */
 
-@ApiVersion(group = {ApiVersionConstant.V_COUPON})
+@ApiVersion(group = ApiVersionConstant.API_COUPON)
 @Slf4j
 @RestController
 @RequestMapping("coupon/activity")
 @Api(tags="coupon-activity")
 public class CouponActivityController extends BaseController<CouponActivityServiceImpl,CouponActivity,CouponActivityQuery> {
-	
+
 	@ApiOperation(value="新增")
     @PostMapping
 	public CommonResult<CouponActivityModel> insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody CouponActivityModel entity) {
@@ -89,7 +89,8 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     public CommonResult<BasePageResult<CouponUserTicketResp>> getUserPage(PageModel page, CouponUserActivityTicketQuery query) {
         return CommonResult.success(new BasePageResult(service.selectUserActivityTicketPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
-    
+
+    @ApiVersion(group = {ApiVersionConstant.API_COUPON_100})
     @ApiOperation(value = "删除发卷宝的-优惠卷")
     @DeleteMapping(value = "ticket/{activity_ticket_id}")
 	public CommonResult deleteTicketById(@PathVariable Long activity_ticket_id) {

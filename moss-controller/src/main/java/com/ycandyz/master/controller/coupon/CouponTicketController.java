@@ -39,7 +39,7 @@ import com.ycandyz.master.controller.base.BaseController;
  * @version 2.0
  */
 
-@ApiVersion(group = {ApiVersionConstant.V_COUPON})
+@ApiVersion(group = ApiVersionConstant.API_COUPON)
 @Slf4j
 @RestController
 @RequestMapping("coupon-ticket")

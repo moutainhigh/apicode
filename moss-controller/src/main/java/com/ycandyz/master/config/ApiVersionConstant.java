@@ -2,8 +2,9 @@ package com.ycandyz.master.config;
 
 public interface ApiVersionConstant {
 
-    String V_COUPON = "v-coupon";
+    String API_COUPON = "api-coupon";
+    String API_COUPON_100 = "api-coupon-1.0.0";
 
-    String V_ADVERTISING = "v-advertising";
+    String API_ADVERTISING = "api-advertising";
 
 }
