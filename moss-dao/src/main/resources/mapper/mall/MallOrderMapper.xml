@@ -1015,7 +1015,7 @@
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
         GROUP BY mo.order_no
-        ORDER BY mo.order_at DESC
+        ORDER BY mo.id DESC
         LIMIT #{page},#{size}) a
         LEFT JOIN mall_cart_order cart ON cart.id = a.cart_order_id
         LEFT JOIN mall_order_detail modetail ON a.order_no = modetail.order_no
