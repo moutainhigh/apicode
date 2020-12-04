@@ -4,6 +4,8 @@ import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.base.BaseController;
+import com.ycandyz.master.config.ApiVersion;
+import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.query.ad.AdvertisingQuery;
 import com.ycandyz.master.entities.ad.Advertising;
 import com.ycandyz.master.service.ad.impl.AdvertisingServiceImpl;
@@ -27,6 +29,7 @@ import java.util.List;
  * @version 2.0
  */
 
+@ApiVersion(group = ApiVersionConstant.API_ADVERTISING)
 @Slf4j
 @RestController
 @RequestMapping("advertising")
