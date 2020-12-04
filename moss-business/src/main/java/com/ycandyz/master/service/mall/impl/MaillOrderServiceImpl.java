@@ -1225,7 +1225,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallOrderVO.setHeadField("买家取消了订单，"+mallOrderVO.getCancelAtStr()+"系统已自动退款");
                 }
                 if (mallOrderVO.getSubStatus()==5040 || mallOrderVO.getSubStatus()==5050){  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
-                    mallOrderVO.setHeadField(mallOrderVO.getCancelAtStr()+"卖家取消订单，原因为："+mallOrderVO.getCancelReasonName()+"，退款金额将原路退回");
+                    mallOrderVO.setHeadField(mallOrderVO.getCancelAtStr()+"，卖家取消订单\r\n原因为："+mallOrderVO.getCancelReasonName()+"，退款金额将原路退回");
                 }
             }
 
@@ -1491,7 +1491,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallOrderVO.setHeadField("买家取消了订单，"+mallOrderVO.getCancelAtStr()+"系统已自动退款");
                 }
                 if (mallOrderVO.getSubStatus()==5040 || mallOrderVO.getSubStatus()==5050){  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
-                    mallOrderVO.setHeadField(mallOrderVO.getCancelAtStr()+"卖家取消订单，原因为："+mallOrderVO.getCancelReasonName()+"，退款金额将原路退回");
+                    mallOrderVO.setHeadField(mallOrderVO.getCancelAtStr()+"，卖家取消订单\r\n原因为："+mallOrderVO.getCancelReasonName()+"，退款金额将原路退回");
                 }
             }
 
