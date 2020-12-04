@@ -88,7 +88,6 @@
         ) a
         left join mall_order_detail_spec spec on spec.order_detail_no = a.order_detail_no
         left join mall_social_share_flow flow on IF(a.order_type=2, flow.order_detail_no = a.order_detail_no , flow.order_no = a.order_no )
-        AND flow.share_type = 0
         LEFT JOIN user uu ON uu.id = flow.user_id
         order by a.order_at DESC
     </select>
