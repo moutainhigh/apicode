@@ -99,6 +99,8 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
             organizeService.updateById(updateParam);
             MpConfigPlan mpConfigPlan = this.baseMapper.selectById(planId);
             mpConfigPlan.setOrganizeChooseNum(mpConfigPlan.getOrganizeChooseNum() + 1);
+            mpConfigPlan.setCreateTime(null);
+            mpConfigPlan.setUpdateTime(null);
             return this.baseMapper.updateById(mpConfigPlan);
         }
         return 0;

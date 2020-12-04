@@ -1,11 +1,9 @@
 package com.ycandyz.master.entities.miniprogram;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -14,6 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.annotations.InsertProvider;
 
 /**
  * <p>

@@ -4,21 +4,21 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.constant.SecurityConstant;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.user.UserNodeQuery;
 import com.ycandyz.master.domain.response.user.UserNodeResp;
-import com.ycandyz.master.entities.CommonResult;
-import com.ycandyz.master.entities.user.Node;
 import com.ycandyz.master.entities.user.UserRole;
 import com.ycandyz.master.enums.PlatformEnum;
-import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.service.user.INodeService;
 import com.ycandyz.master.service.user.IUserRoleService;
 import com.ycandyz.master.service.user.IUserService;
 import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -27,6 +27,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -59,6 +60,10 @@ public class InterceptorAuth implements HandlerInterceptor {
         String method = httpServletRequest.getMethod();
         String httpPath = method+"|"+path;
         log.info(path);
+
+        if(ConfigUtils.getBoolean(Config.ENABLED) || path.equals("/")){
+            return true;
+        }
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
         boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));
@@ -71,15 +76,18 @@ public class InterceptorAuth implements HandlerInterceptor {
         }
         UserVO user = (UserVO)httpServletRequest.getSession().getAttribute(SecurityConstant.USER_TOKEN_HEADER);
         String menuIdStr = httpServletRequest.getHeader(SecurityConstant.MENU_ID);
-        if(StrUtil.isEmpty(menuIdStr)){
-            AssertUtils.notNull(null, "menu_id不能为空");
+        boolean isNum = StringUtils.isNumeric(menuIdStr);
+        if(StrUtil.isEmpty(menuIdStr) || !isNum){
+            log.error("menuId: {}", menuIdStr);
+            out(httpServletResponse, CommonResult.forbidden(null));
+            return false;
         }
         Long menuId = Long.parseLong(menuIdStr);
         user.setMenuId(menuId);
         PlatformEnum platformEnum = PlatformEnum.parseCode(user.getPlatform());
         AssertUtils.notNull(platformEnum, "platform不正确");
         //目前只对U客管理后台、U客APP做权限
-        if(platformEnum.getCode() < PlatformEnum.TYPE_4.getCode()){
+        if(platformEnum.getCode() < PlatformEnum.TYPE_3.getCode()){
             return true;
         }
         //需要做权限的接口
@@ -122,38 +130,17 @@ public class InterceptorAuth implements HandlerInterceptor {
                     return true;
                 }else {
                     //提示无权限
-                    result = new CommonResult(ResultEnum.FORBIDDEN.getValue(),ResultEnum.FORBIDDEN.getDesc(),null);
-                    try{
-                        String json = JSONUtil.toJsonStr(result);
-                        httpServletResponse.setContentType("application/json");
-                        out = httpServletResponse.getWriter();
-                        out.append(json);
-                        out.flush();
-                        return false;
-                    } catch (Exception e){
-                        httpServletResponse.sendError(403);
-                        return false;
-                    }
+                    out(httpServletResponse, CommonResult.forbidden(null));
+                    return false;
                 }
             }else {
                 //提示无权限
-                result = new CommonResult(ResultEnum.FORBIDDEN.getValue(),ResultEnum.FORBIDDEN.getDesc(),null);
-                try{
-                    String json = JSONUtil.toJsonStr(result);
-                    httpServletResponse.setContentType("application/json");
-                    out = httpServletResponse.getWriter();
-                    out.append(json);
-                    out.flush();
-                    return false;
-                } catch (Exception e){
-                    httpServletResponse.sendError(403);
-                    return false;
-                }
+                out(httpServletResponse, CommonResult.forbidden(null));
+                return false;
             }
         }else{
             return true;
         }
-
     }
 
     @Override
@@ -164,5 +151,22 @@ public class InterceptorAuth implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
         // System.out.println("视图渲染之后的操作");
+    }
+
+    public static <T> void out(ServletResponse response, T result) {
+        PrintWriter out = null;
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
+            out = response.getWriter();
+            out.println(JSONUtil.parse(result).toJSONString(0));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            if (out != null) {
+                out.flush();
+                out.close();
+            }
+        }
     }
 }

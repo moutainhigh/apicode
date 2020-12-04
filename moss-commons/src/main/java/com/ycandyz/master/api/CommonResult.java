@@ -10,7 +10,7 @@ public class CommonResult<T> {
     private long code;
     private String msg;
     private T data;
-    private long time = DateUtil.currentSeconds();;
+    private long time = DateUtil.currentSeconds();
 
     protected CommonResult() {
     }

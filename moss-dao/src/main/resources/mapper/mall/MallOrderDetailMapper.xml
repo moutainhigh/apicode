@@ -31,8 +31,20 @@
 
     <select id="queryDetailListByOrderNos" resultMap="BasePlusResultMap">
         select
-            mo.order_no,
+        a.*,
+        spec.spec_name,
+        spec.spec_value,
+        uu.`name` AS user_name,
+        uu.phone AS phone_no,
+        flow.amount AS amount,
+        flow.share_type,
+        flow.level from (
+        select
+            modetail.order_no,
+            modetail.order_detail_no,
+            mo.order_at,
             mo.after_sales_end_at,
+            mo.order_type,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
@@ -43,27 +55,21 @@
             modetail.is_enable_share,
             modetail.share_user_id,
             modetail.total_money,
-            modetail.real_money,
-            spec.spec_name,
-            spec.spec_value,
-            uu.`name` AS user_name,
-            uu.phone AS phone_no,
-            flow.amount AS amount,
-            flow.share_type,
-            flow.level
+            modetail.real_money
         from
-        mall_order mo
-        left join mall_order_detail modetail on mo.order_no = modetail.order_no
-        left join mall_order_detail_spec spec on spec.order_detail_no = modetail.order_detail_no
-        left join mall_social_share_flow flow on IF(mo.order_type=2, flow.order_detail_no = modetail.order_detail_no , flow.order_no = mo.order_no )
-        AND flow.share_type = 0
-        LEFT JOIN user uu ON uu.id = flow.user_id
+        mall_order_detail modetail
+        left join mall_order mo on mo.order_no = modetail.order_no
         where
-            mo.order_no in
+            modetail.order_no in
             <foreach  item="item" collection="list" index="index"  open="(" separator="," close=")">
                 #{item}
             </foreach>
-        GROUP BY modetail.order_detail_no
-        order by mo.order_at DESC
+            group by modetail.order_detail_no
+        ) a
+        left join mall_order_detail_spec spec on spec.order_detail_no = a.order_detail_no
+        left join mall_social_share_flow flow on IF(a.order_type=2, flow.order_detail_no = a.order_detail_no , flow.order_no = a.order_no )
+        AND flow.share_type = 0
+        LEFT JOIN user uu ON uu.id = flow.user_id
+        order by a.order_at DESC
     </select>
 </mapper>
