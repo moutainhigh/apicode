@@ -983,6 +983,7 @@
         mo.order_type,
         mo.all_money,
         mo.shop_no,
+        mo.created_time,
         mo.trade_no
         FROM
         mall_order mo
