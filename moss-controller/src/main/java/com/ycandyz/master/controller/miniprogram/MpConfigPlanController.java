@@ -35,7 +35,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("cms/mp/plans")
+@RequestMapping("cms/mp/plan")
 @Api(tags="小程序配置-方案配置")
 public class MpConfigPlanController extends BaseController<MpConfigPlanServiceImpl,MpConfigPlan,MpConfigPlanQuery> {
 	
@@ -56,7 +56,7 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
         MpConfigPlan params = new MpConfigPlan();
         params.setId(id);
         BeanUtil.copyProperties(entity,params);
-        return result(service.updateById(params),entity,"更改失败!");
+        return result(service.updatePlan(params),entity,"更改失败!");
 	}
 	
 	@ApiOperation(value = "查询根据ID")
