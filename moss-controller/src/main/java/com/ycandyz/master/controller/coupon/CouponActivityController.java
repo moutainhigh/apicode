@@ -1,5 +1,7 @@
 package com.ycandyz.master.controller.coupon;
 
+import com.ycandyz.master.config.ApiVersion;
+import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
 import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
@@ -33,10 +35,11 @@ import com.ycandyz.master.controller.base.BaseController;
  * @version 2.0
  */
 
+@ApiVersion(group = {ApiVersionConstant.V_COUPON})
 @Slf4j
 @RestController
 @RequestMapping("coupon/activity")
-@Api(tags="coupon-发卷宝")
+@Api(tags="coupon-activity")
 public class CouponActivityController extends BaseController<CouponActivityServiceImpl,CouponActivity,CouponActivityQuery> {
 	
 	@ApiOperation(value="新增")
@@ -56,7 +59,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @ApiOperation(value = "启用/停止")
     @PutMapping(value = "switch/{id}")
     public CommonResult<String> switchById(@PathVariable Long id,Integer type) {
-        return result(service.switchById(id,type),"停止成功！","停止失败!");
+        return result(service.switchById(id,type),null,"停止失败!");
     }
 	
 	@ApiOperation(value = "查询单条数据")
@@ -65,7 +68,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
         return CommonResult.success(service.selectById(id));
     }
     
-	@ApiOperation(value = "查询分页")
+	@ApiOperation(value = "发卷宝-分页")
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponActivity>> getPage(PageModel page,CouponActivityQuery query) {
@@ -73,7 +76,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     }
 
     @ApiImplicitParam(name="activity_no",value="活动编号",required=true,dataType="string")
-    @ApiOperation(value = "优惠卷-分页")
+    @ApiOperation(value = "发卷宝-优惠卷-分页")
     @GetMapping(value = "ticket/page")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<CouponActivityTicketResp>> getTicketPage(PageModel page,CouponActivityTicketQuery query) {

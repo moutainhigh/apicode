@@ -1,5 +1,7 @@
 package com.ycandyz.master.controller.coupon;
 
+import com.ycandyz.master.config.ApiVersion;
+import com.ycandyz.master.config.ApiVersionConstant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
@@ -38,10 +40,11 @@ import com.ycandyz.master.controller.base.BaseController;
  * @version 2.0
  */
 
+@ApiVersion(group = {ApiVersionConstant.V_COUPON})
 @Slf4j
 @RestController
 @RequestMapping("coupon-ticket-info-item")
-@Api(tags="coupon-优惠券详情关联商品表")
+@Api(tags="coupon-ticket-info-item")
 public class CouponTicketInfoItemController extends BaseController<CouponTicketInfoItemServiceImpl,CouponTicketInfoItem,CouponTicketInfoItemQuery> {
     
 }

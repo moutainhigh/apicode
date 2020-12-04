@@ -2,6 +2,8 @@ package com.ycandyz.master.controller.coupon;
 
 import com.ycandyz.master.api.*;
 import com.ycandyz.master.auth.CurrentUser;
+import com.ycandyz.master.config.ApiVersion;
+import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.coupon.CouponTicketInfoQuery;
 import com.ycandyz.master.domain.query.mall.MallOrderQuery;
@@ -37,10 +39,11 @@ import com.ycandyz.master.controller.base.BaseController;
  * @version 2.0
  */
 
+@ApiVersion(group = {ApiVersionConstant.V_COUPON})
 @Slf4j
 @RestController
 @RequestMapping("coupon-ticket")
-@Api(tags="coupon-优惠卷")
+@Api(tags="coupon-ticket")
 public class CouponTicketController extends BaseController<CouponTicketServiceImpl,CouponTicket,CouponTicketQuery> {
 
     @Autowired
