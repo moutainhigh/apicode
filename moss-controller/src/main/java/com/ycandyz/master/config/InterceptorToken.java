@@ -4,18 +4,12 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import cn.hutool.system.UserInfo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ycandyz.master.constant.ApiConstant;
+import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.constant.SecurityConstant;
 import com.ycandyz.master.domain.UserVO;
-import com.ycandyz.master.entities.CommonResult;
 import com.ycandyz.master.entities.mall.MallShop;
-import com.ycandyz.master.entities.user.User;
-import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.service.mall.impl.MallShopServiceImpl;
-import com.ycandyz.master.service.user.IUserService;
-import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.ConfigUtils;
 import com.ycandyz.master.utils.RedisUtil;
 import com.ycandyz.master.utils.TokenUtil;
@@ -30,6 +24,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -49,8 +44,6 @@ import java.util.Map;
 @Order(1)
 public class InterceptorToken implements HandlerInterceptor {
 
-    @Resource
-    private IUserService userService;
     @Resource
     private MallShopServiceImpl mallShopService;
 
@@ -108,28 +101,12 @@ public class InterceptorToken implements HandlerInterceptor {
                     organizeId = jsonObject.getLong("organize_id");
                     platform = jsonObject.getInt("platform");
                 }catch (JSONException e){
-                    log.error("token 解析失败");
-                    result = new CommonResult(ResultEnum.TOKEN_ILLEGAL.getValue(),ResultEnum.TOKEN_ILLEGAL.getDesc(),null);
-                    String json = JSONUtil.toJsonStr(result);
-                    httpServletResponse.setContentType("application/json");
-                    out = httpServletResponse.getWriter();
-                    out.append(json);
-                    out.flush();
+                    out(httpServletResponse,CommonResult.validateFailed("token解析失败"));
                     return false;
                 }
                 if(userId == null || userId == 0){
-                    result = new CommonResult(ResultEnum.TOKEN_INVALID.getValue(),ResultEnum.TOKEN_INVALID.getDesc(),null);
-                    try{
-                        String json = JSONUtil.toJsonStr(result);
-                        httpServletResponse.setContentType("application/json");
-                        out = httpServletResponse.getWriter();
-                        out.append(json);
-                        out.flush();
-                        return false;
-                    } catch (Exception e){
-                        httpServletResponse.sendError(500);
-                        return false;
-                    }
+                    out(httpServletResponse,CommonResult.validateFailed("用户ID不正确"));
+                    return false;
                 }else{
                     //校验用户信息
                     //User ukeUser = userService.getById(userId);
@@ -137,8 +114,9 @@ public class InterceptorToken implements HandlerInterceptor {
                     UserVO userVO = new UserVO();
                     userVO.setId(userId);
                     userVO.setOrganizeId(organizeId);
+                    userVO.setShopNo(shopNo);
                     userVO.setPlatform(platform);
-                    if(organizeId != null){
+                    if(StrUtil.isEmpty(shopNo) && organizeId != null){
                         LambdaQueryWrapper<MallShop> queryWrapper = new LambdaQueryWrapper<MallShop>()
                                 .eq(MallShop::getOrganizeId, organizeId);
                         MallShop mallShop = mallShopService.getOne(queryWrapper);
@@ -150,22 +128,10 @@ public class InterceptorToken implements HandlerInterceptor {
                 }
             }else{
                 if (flow) {
-                    log.info("requestUrl: {}", path);
-                    // 请求放行
                     return true;
                 }
-                result = new CommonResult(ResultEnum.TOKEN_IS_NULL.getValue(),ResultEnum.TOKEN_IS_NULL.getDesc(),null);
-                try{
-                    String json = JSONUtil.toJsonStr(result);
-                    httpServletResponse.setContentType("application/json");
-                    out = httpServletResponse.getWriter();
-                    out.append(json);
-                    out.flush();
-                    return false;
-                } catch (Exception e){
-                    httpServletResponse.sendError(500);
-                    return false;
-                }
+                out(httpServletResponse,CommonResult.unauthorized(null));
+                return false;
             }
             return true;
         }
@@ -182,32 +148,21 @@ public class InterceptorToken implements HandlerInterceptor {
         // System.out.println("视图渲染之后的操作");
     }
 
-    private UserVO userToUserVO(User user){
-        UserVO userVO = new UserVO();
-        userVO.setAppstoreId(user.getAppstoreId());
-        userVO.setDisableReason(user.getDisableReason());
-        userVO.setEmail(user.getEmail());
-        userVO.setHeadimg(user.getHeadimg());
-        userVO.setId(user.getId());
-        userVO.setInviteCode(user.getInviteCode());
-        userVO.setInviteStatus(user.getInviteStatus());
-        userVO.setInviteUserId(user.getInviteUserId());
-        userVO.setIsAuth(user.getIsAuth());
-        userVO.setIsDel(user.getIsDel());
-        userVO.setIsDisable(user.getIsDisable());
-        userVO.setName(user.getName());
-        userVO.setNickname(user.getNickname());
-        userVO.setPhone(user.getPhone());
-        userVO.setRegistDevice(user.getRegistDevice());
-        userVO.setRegistPlatfrom(user.getRegistPlatfrom());
-        userVO.setSex(user.getSex());
-        userVO.setWxGzhOpenId(user.getWxGzhOpenId());
-        userVO.setWxId(user.getWxId());
-        userVO.setWxMiniOpenId(user.getWxMiniOpenId());
-        userVO.setWxOpenId(user.getWxOpenId());
-        userVO.setWxUnionId(user.getWxUnionId());
-        userVO.setBlockChainId(user.getBlockChainId());
-        return userVO;
+    public static <T> void out(ServletResponse response, T result) {
+        PrintWriter out = null;
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
+            out = response.getWriter();
+            out.println(JSONUtil.toJsonStr(result));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            if (out != null) {
+                out.flush();
+                out.close();
+            }
+        }
     }
 
     /**

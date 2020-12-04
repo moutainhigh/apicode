@@ -546,7 +546,7 @@
         <foreach collection="p.shopNo" item="shopNo" index="index" open="(" close=")" separator=",">
             #{shopNo}
         </foreach>
-        and mo.is_del=0
+        and (mo.is_del=0 or mo.is_del=1)
         <if test="p.orderNo != null and p.orderNo != ''">
             and
             (mo.order_no  like concat('%',#{p.orderNo},'%') or mo.cart_order_sn like concat('%',#{p.orderNo},'%'))	/**子订单编号或母订单编号*/
@@ -727,7 +727,7 @@
         <foreach collection="p.shopNo" item="shopNo" index="index" open="(" close=")" separator=",">
             #{shopNo}
         </foreach>
-        and mo.is_del=0
+        and (mo.is_del=0 or mo.is_del=1)
         <if test="p.orderNo != null and p.orderNo != ''">
             and
             (mo.order_no  like concat('%',#{p.orderNo},'%') or mo.cart_order_sn like concat('%',#{p.orderNo},'%'))	/**子订单编号或母订单编号*/
@@ -848,7 +848,7 @@
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
         WHERE
         mo.shop_no=#{p.shopNo}
-        and mo.is_del=0
+        and (mo.is_del=0 or mo.is_del=1)
         <if test="p.mallOrderQuery != null and p.mallOrderQuery != ''">
             and
             (mo.order_no  like concat('%',#{p.mallOrderQuery},'%') or mo.cart_order_sn like concat('%',#{p.mallOrderQuery},'%') or u.`name` like concat('%',#{p.mallOrderQuery},'%') OR u.phone like concat('%',#{p.mallOrderQuery},'%') or ship.receiver like concat('%',#{p.mallOrderQuery},'%') OR ship.receiver_phone like concat('%',#{p.mallOrderQuery},'%') or mo.pre_phone like concat('%',#{p.mallOrderQuery},'%'))	/**子订单编号或母订单编号*/
@@ -983,6 +983,7 @@
         mo.order_type,
         mo.all_money,
         mo.shop_no,
+        mo.created_time,
         mo.trade_no
         FROM
         mall_order mo
@@ -992,7 +993,7 @@
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
         WHERE
         mo.shop_no=#{p.shopNo}
-        and mo.is_del=0
+        and (mo.is_del=0 or mo.is_del=1)
         <if test="p.mallOrderQuery != null and p.mallOrderQuery != ''">
             and
             (mo.order_no  like concat('%',#{p.mallOrderQuery},'%') or mo.cart_order_sn like concat('%',#{p.mallOrderQuery},'%') or u.`name` like concat('%',#{p.mallOrderQuery},'%') OR u.phone like concat('%',#{p.mallOrderQuery},'%') or ship.receiver like concat('%',#{p.mallOrderQuery},'%') OR ship.receiver_phone like concat('%',#{p.mallOrderQuery},'%') or mo.pre_phone like concat('%',#{p.mallOrderQuery},'%'))	/**子订单编号或母订单编号*/
@@ -1020,7 +1021,7 @@
         LEFT JOIN mall_order_detail modetail ON a.order_no = modetail.order_no
         LEFT JOIN user u ON a.user_id = u.id
         LEFT JOIN mall_shop_shipping ship ON ship.order_no = a.order_no
-        ORDER BY a.order_at DESC
+        ORDER BY a.id DESC
     </select>
 
     <select id="queryOrderDetailByUApp" parameterType="java.lang.String" resultMap="BaseOrderListResultUAppMap">
@@ -1078,20 +1079,32 @@
         select
             mo.id,
             mo.order_no,
-            mo.shop_no,
-            mo.cart_order_id,
+            mo.cart_order_sn,
+            mo.refund_no,
             mo.real_money,
             mo.payed_at,
             mo.buyer_remark,
+            mo.status,
+            mo.sub_status,
+            mo.cancel_reason,
+            mo.deliver_method,
+            mo.total_money,
+            mo.buyer_remark,
+            mo.order_at,
+            mo.after_sales_end_at,
+            mo.pay_type,
+            mo.order_type,
+            mo.trade_no,
+            mo.send_at,
+            mo.receive_at,
+            mo.cancel_at,
+            mo.cancel_reason,
+            mo.`deliver_type`,
             mo.pick_up_address_name,
             mo.pick_up_address_detail,
             mo.pre_phone,
-            mo.status,
-            mo.sub_status,
-            mo.deliver_method,
-            mo.`after_sales_status`,
-            mo.`deliver_type`,
-            mo.total_money-mo.real_money as shippingMoney,
+            mo.all_money-mo.real_money as shippingMoney,
+            mo.all_money,
             mo.shop_no,
             mo.total_money-mo.real_money as discountMoney,
             modetail.order_detail_no,
@@ -1100,6 +1113,7 @@
             modetail.sku_no,
             modetail.item_name,
             modetail.item_cover,
+            modetail.is_enable_share,
             modetail.quantity as skuQuantity,
             modetail.price as skuPrice,
             modetail.total_money,
