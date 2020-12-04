@@ -1195,8 +1195,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 mallOrderVO.setHeadField(mallOrderVO.getPayedAtStr()+" 买家已付款，请及时发货");
             }
             if (mallOrderVO.getStatus()==30) {  //待收货
-                if (mallOrderVO.getDeliverType()==20){  //自提
-                    mallOrderVO.setHeadField("卖家于"+mallOrderVO.getPayedAtStr()+"支付成功，请等待买家到店自提");
+                if (mallOrderVO.getDeliverType()==2){  //自提
+                    mallOrderVO.setHeadField(mallOrderVO.getPayedAtStr()+"支付成功，请等待买家到店自提");
                 }else { //不是线下的
                     if (mallOrderVO.getDeliverMethod()==10) {    //快递
                         String n =  mallShopShippingDTO!=null?mallShopShippingDTO.getNumber():"";
