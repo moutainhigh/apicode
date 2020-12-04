@@ -159,18 +159,17 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     }
 
     @Override
-    public boolean stopById(Long id) {
+    public boolean switchById(Long id,Integer type) {
+        AssertUtils.notNull(type, "参数不正确");
         CouponActivity entity = new CouponActivity();
         entity.setId(id);
-        entity.setStatus(CouponActivityEnum.Status.TYPE_4.getCode());
-        return this.retBool(baseMapper.updateStatusById(entity));
-    }
-
-    @Override
-    public boolean startById(Long id) {
-        CouponActivity entity = new CouponActivity();
-        entity.setId(id);
-        entity.setStatus(CouponActivityEnum.Status.TYPE_0.getCode());
+        if(CouponActivityEnum.Status.TYPE_0.equals(type)){
+            entity.setStatus(CouponActivityEnum.Status.TYPE_0.getCode());
+        }else if (CouponActivityEnum.Status.TYPE_1.equals(type)){
+            entity.setStatus(CouponActivityEnum.Status.TYPE_4.getCode());
+        }else{
+            AssertUtils.notNull(null, "参数不正确");
+        }
         return this.retBool(baseMapper.updateStatusById(entity));
     }
 
@@ -181,10 +180,15 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query) {
+        CouponActivityEnum.Type type = CouponActivityEnum.Type.parseCode(query.getType());
         AssertUtils.notNull(getShopNo(), "商店编号不存在");
         AssertUtils.notNull(query.getActivityNo(), "活动编号不能为空");
+        AssertUtils.notNull(type, "类型不正确");
         query.setShopNo(getShopNo());
-        return couponActivityTicketService.selectTicketPage(page,query);
+        if(type.getCode().equals(CouponActivityEnum.Type.TYPE_0.getCode())){
+            return couponActivityTicketService.selectTicketPage(page,query);
+        }
+        return couponActivityTicketService.selectActivityTicketPage(page,query);
     }
 
     @Override

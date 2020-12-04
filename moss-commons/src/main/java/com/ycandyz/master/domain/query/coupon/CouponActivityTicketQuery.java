@@ -36,4 +36,7 @@ public class CouponActivityTicketQuery implements Serializable {
     @ApiModelProperty(value = "优惠卷名称")
     private String name;
 
+    @ApiModelProperty(value = "类型(0全部,1已选)")
+    private Integer type;
+
 }

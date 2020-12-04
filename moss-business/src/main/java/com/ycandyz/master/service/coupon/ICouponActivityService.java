@@ -34,9 +34,7 @@ public interface ICouponActivityService extends IService<CouponActivity>{
 
     boolean update(CouponActivityModel entity);
 
-    boolean stopById(Long id);
-
-    boolean startById(Long id);
+    boolean switchById(Long id,Integer status);
 
     boolean removeTicketById(Serializable id);
 

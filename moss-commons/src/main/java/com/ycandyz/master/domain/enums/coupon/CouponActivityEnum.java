@@ -8,6 +8,40 @@ import com.ycandyz.master.domain.enums.IEnum;
  */
 public class CouponActivityEnum {
 
+    public enum Type implements IEnum<Integer> {
+        TYPE_0(0, "全部"),
+        TYPE_1(1, "已选");
+
+        private Integer code;
+        private String text;
+
+        Type(Integer code, String text) {
+            this.code = code;
+            this.text = text;
+        }
+
+        @Override
+        public Integer getCode() {
+            return code;
+        }
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        public static Type parseCode(Integer code) {
+            if (code == null) {
+                return null;
+            }
+            for (Type value : values()) {
+                if (code.equals(value.code)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
     /**
      * 活动状态 类型枚举
      */
