@@ -33,7 +33,7 @@ public class CouponUserActivityTicketQuery implements Serializable {
     @ApiModelProperty(name = "shop_no",value = "门店编号")
     private String shopNo;
 
-    @ApiModelProperty(name = "activity_no",value = "优惠宝编号")
+    @ApiModelProperty(name = "activity_no",value = "优惠宝编号",required=true)
     private String activityNo;
 
     @ApiModelProperty(value = "用户名/手机号")
@@ -46,15 +46,15 @@ public class CouponUserActivityTicketQuery implements Serializable {
     @ApiModelProperty(name = "status_type", value = "优惠券状态分类：0:待使用,1:过期,2:已使用")
     private Integer statusType;
 
-    @ApiModelProperty(name = "created_time",value = "创建时间")
+    @ApiModelProperty(name = "create_time",value = "创建时间")
     @Condition(field = "create_time", condition = ConditionEnum.EQ)
     private Date createTime;
 
-    @ApiModelProperty(name = "created_time_s",value = "创建时间起")
+    @ApiModelProperty(name = "create_time_s",value = "创建时间起")
     @Condition(field = "create_time", condition = ConditionEnum.GE)
     private Date createTimeS;
 
-    @ApiModelProperty(name = "created_time_e",value = "创建时间止")
+    @ApiModelProperty(name = "create_time_e",value = "创建时间止")
     @Condition(field = "create_time", condition = ConditionEnum.LE)
     private Date createTimeE;
 
