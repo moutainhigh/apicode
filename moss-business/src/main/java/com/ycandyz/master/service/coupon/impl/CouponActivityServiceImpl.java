@@ -153,16 +153,18 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     }
 
     @Override
-    public boolean switchById(CouponActivityPutModel model) {
-        AssertUtils.notNull(model.getStatus(), "参数不正确");
-        CouponActivity entity = new CouponActivity();
-        entity.setId(model.getId());
-        if(CouponActivityEnum.Status.TYPE_0.getCode().equals(model.getStatus())){
+    public boolean switchById(Long id) {
+        LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
+                .eq(CouponActivity::getShopNo, getShopNo())
+                .eq(CouponActivity::getId, id);
+        CouponActivity entity = baseMapper.selectOne(queryWrapper);
+        AssertUtils.notNull(entity, "未匹配到符合条件的记录");
+        if(CouponActivityEnum.Status.TYPE_4.getCode().equals(entity.getStatus())){
             entity.setStatus(CouponActivityEnum.Status.TYPE_0.getCode());
-        }else if (CouponActivityEnum.Status.TYPE_1.getCode().equals(model.getStatus())){
+        }else if (CouponActivityEnum.Status.TYPE_0.getCode().equals(entity.getStatus())){
             entity.setStatus(CouponActivityEnum.Status.TYPE_4.getCode());
         }else{
-            AssertUtils.notNull(null, "参数不正确");
+            AssertUtils.notNull(null, "操作失败，状态不正确");
         }
         return this.retBool(baseMapper.updateStatusById(entity));
     }

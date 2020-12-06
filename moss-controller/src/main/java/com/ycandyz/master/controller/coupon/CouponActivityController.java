@@ -58,9 +58,8 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 
     @ApiOperation(value = "启用/停止")
     @PutMapping(value = "switch/{id}")
-    public CommonResult<String> switchById(@PathVariable Long id, @Validated(ValidatorContract.OnUpdate.class) @RequestBody CouponActivityPutModel model) {
-	    model.setId(id);
-        return result(service.switchById(model),null,"停止失败!");
+    public CommonResult<String> switchById(@PathVariable Long id) {
+        return result(service.switchById(id),null,"操作失败!");
     }
 	
 	@ApiOperation(value = "查询单条数据",notes="查询单条数据")
