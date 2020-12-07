@@ -1253,284 +1253,292 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(String pickupNo, String orderNo) {
         UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(pickupNo, userVO.getShopNo());
-        if (mallOrderDTO!=null){
-            //判断pickNo查询到订单是否是orderNo的订单
-            if (StringUtils.isNotEmpty(orderNo)){
-                //orderNo不为空，说明是订单详情中进行的订单校验
-                if (!orderNo.equals(mallOrderDTO.getOrderNo())){
-                    return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
-                }
-            }
-            MallOrderUAppVO mallOrderVO = new MallOrderUAppVO();
-            BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
-
-            String orderAtStrMin = "";
-            String payedAtStrMin = "";
-            String receiveAtStrMin = "";
-            String sendAtStrMin = "";
-            String afterSalesEndAtStrMin = "";
-            String cancelAtStrMin = "";
-            //order_at;payed_at;receive_at时间转换为字符串
-            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
-                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setOrderAtStr(orderAtStr);
-                orderAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
-            }
-            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
-                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setPayedAtStr(orderAtStr);
-                payedAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
-            }
-            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
-                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setReceiveAtStr(orderAtStr);
-                receiveAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
-            }
-            if (mallOrderVO.getSendAt()!=null && mallOrderVO.getSendAt()>0) {
-                long time = Long.valueOf(mallOrderVO.getSendAt())*1000;
-                String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setSendAtStr(sendAtStr);
-                sendAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
-            }
-            if (mallOrderVO.getAfterSalesEndAt()!=null && mallOrderVO.getAfterSalesEndAt()>0) {
-                long time = Long.valueOf(mallOrderVO.getAfterSalesEndAt())*1000;
-                String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setAfterSalesEndAtStr(sendAtStr);   //售后截止时间,佣金预计到账时间
-                afterSalesEndAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
-            }
-            if (mallOrderVO.getCancelAt()!=null && mallOrderVO.getCancelAt()>0) {
-                long time = Long.valueOf(mallOrderVO.getCancelAt())*1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
-                mallOrderVO.setCancelAtStr(orderAtStr);
-                cancelAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
-            }
-
-            if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
-                mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
-            }
-
-            if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
-                List<String> orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
-                List<MallOrderDetailSpecDTO> specList = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);     //查询订单详情规格值表
-                Map<String, List<MallOrderDetailSpecUAppVO>> map = null;
-                if (specList!=null){
-                    List<MallOrderDetailSpecUAppVO> specVoList = new ArrayList<>();
-                    specList.forEach(spec->{
-                        MallOrderDetailSpecUAppVO mallOrderDetailSpecVO = new MallOrderDetailSpecUAppVO();
-                        BeanUtils.copyProperties(spec,mallOrderDetailSpecVO);
-                        specVoList.add(mallOrderDetailSpecVO);
-                    });
-                    map = specVoList.stream().collect(Collectors.groupingBy(input -> input.getOrderDetailNo()));        //吧specVO集合转换为map类型，方便下面做判断和取值
-                }else {
-                    map = new HashMap<>();
-                }
-                List<MallOrderDetailUAppVO> list = new ArrayList<>();
-                BigDecimal manageMoney = new BigDecimal(0);
-                BigDecimal distributionMoney = new BigDecimal(0);
-                for(MallOrderDetailDTO dto : mallOrderDTO.getDetails()){
-                    MallOrderDetailUAppVO mallOrderDetailVO = new MallOrderDetailUAppVO();
-                    BeanUtils.copyProperties(dto,mallOrderDetailVO);
-                    if (map.containsKey(mallOrderDetailVO.getOrderDetailNo())){
-                        mallOrderDetailVO.setSpecs(map.get(mallOrderDetailVO.getOrderDetailNo()));
+        if (mallOrderDTO!=null) {
+            if (mallOrderDTO.getStatus() == 30 && mallOrderDTO.getSubStatus() == 3010) {
+                //判断pickNo查询到订单是否是orderNo的订单
+                if (StringUtils.isNotEmpty(orderNo)) {
+                    //orderNo不为空，说明是订单详情中进行的订单校验
+                    if (!orderNo.equals(mallOrderDTO.getOrderNo())) {
+                        return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
                     }
-                    list.add(mallOrderDetailVO);
                 }
-                mallOrderVO.setDetails(list);
-                mallOrderVO.setShareManageMoney(manageMoney);
-                mallOrderVO.setShareDistributionMoney(distributionMoney);
-            }
+                MallOrderUAppVO mallOrderVO = new MallOrderUAppVO();
+                BeanUtils.copyProperties(mallOrderDTO, mallOrderVO);
 
-            if (mallOrderDTO.getOrderType()!=null) {
-                if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10){  //已取消订单不展示分销人相关信息
+                String orderAtStrMin = "";
+                String payedAtStrMin = "";
+                String receiveAtStrMin = "";
+                String sendAtStrMin = "";
+                String afterSalesEndAtStrMin = "";
+                String cancelAtStrMin = "";
+                //order_at;payed_at;receive_at时间转换为字符串
+                if (mallOrderVO.getOrderAt() != null && mallOrderVO.getOrderAt() > 0) {
+                    long time = Long.valueOf(mallOrderVO.getOrderAt()) * 1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                    mallOrderVO.setOrderAtStr(orderAtStr);
+                    orderAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                }
+                if (mallOrderVO.getPayedAt() != null && mallOrderVO.getPayedAt() > 0) {
+                    long time = Long.valueOf(mallOrderVO.getPayedAt()) * 1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                    mallOrderVO.setPayedAtStr(orderAtStr);
+                    payedAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                }
+                if (mallOrderVO.getReceiveAt() != null && mallOrderVO.getReceiveAt() > 0) {
+                    long time = Long.valueOf(mallOrderVO.getReceiveAt()) * 1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                    mallOrderVO.setReceiveAtStr(orderAtStr);
+                    receiveAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                }
+                if (mallOrderVO.getSendAt() != null && mallOrderVO.getSendAt() > 0) {
+                    long time = Long.valueOf(mallOrderVO.getSendAt()) * 1000;
+                    String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                    mallOrderVO.setSendAtStr(sendAtStr);
+                    sendAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                }
+                if (mallOrderVO.getAfterSalesEndAt() != null && mallOrderVO.getAfterSalesEndAt() > 0) {
+                    long time = Long.valueOf(mallOrderVO.getAfterSalesEndAt()) * 1000;
+                    String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                    mallOrderVO.setAfterSalesEndAtStr(sendAtStr);   //售后截止时间,佣金预计到账时间
+                    afterSalesEndAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                }
+                if (mallOrderVO.getCancelAt() != null && mallOrderVO.getCancelAt() > 0) {
+                    long time = Long.valueOf(mallOrderVO.getCancelAt()) * 1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                    mallOrderVO.setCancelAtStr(orderAtStr);
+                    cancelAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                }
+
+                if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
+                    mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
+                }
+
+                if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+                    List<String> orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
+                    List<MallOrderDetailSpecDTO> specList = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);     //查询订单详情规格值表
+                    Map<String, List<MallOrderDetailSpecUAppVO>> map = null;
+                    if (specList != null) {
+                        List<MallOrderDetailSpecUAppVO> specVoList = new ArrayList<>();
+                        specList.forEach(spec -> {
+                            MallOrderDetailSpecUAppVO mallOrderDetailSpecVO = new MallOrderDetailSpecUAppVO();
+                            BeanUtils.copyProperties(spec, mallOrderDetailSpecVO);
+                            specVoList.add(mallOrderDetailSpecVO);
+                        });
+                        map = specVoList.stream().collect(Collectors.groupingBy(input -> input.getOrderDetailNo()));        //吧specVO集合转换为map类型，方便下面做判断和取值
+                    } else {
+                        map = new HashMap<>();
+                    }
+                    List<MallOrderDetailUAppVO> list = new ArrayList<>();
                     BigDecimal manageMoney = new BigDecimal(0);
                     BigDecimal distributionMoney = new BigDecimal(0);
-                    //查询佣金流水表
-                    List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
-                    if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
-                        List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
-                        for(MallSocialShareFlowDTO dto : mallSocialShareFlowDTOs) {
-                            MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
-                            BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
-                            flowList.add(mallSocialShareFlowVO);
-                            if (dto.getShareType()==0){ //分销佣金
-                                distributionMoney = distributionMoney.add(dto.getAmount());
-                            }else if (dto.getShareType()==1){   //管理佣金
-                                manageMoney = manageMoney.add(dto.getAmount());
-                            }
+                    for (MallOrderDetailDTO dto : mallOrderDTO.getDetails()) {
+                        MallOrderDetailUAppVO mallOrderDetailVO = new MallOrderDetailUAppVO();
+                        BeanUtils.copyProperties(dto, mallOrderDetailVO);
+                        if (map.containsKey(mallOrderDetailVO.getOrderDetailNo())) {
+                            mallOrderDetailVO.setSpecs(map.get(mallOrderDetailVO.getOrderDetailNo()));
                         }
+                        list.add(mallOrderDetailVO);
                     }
+                    mallOrderVO.setDetails(list);
                     mallOrderVO.setShareManageMoney(manageMoney);
                     mallOrderVO.setShareDistributionMoney(distributionMoney);
                 }
-            }
 
-            //获取订单详情编号列表
-            List<String> orderDetailNoList = null;
-            if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
-                orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
-                //获取总购买数量
-                int quantity = mallOrderDTO.getDetails().stream().collect(Collectors.summingInt(MallOrderDetailDTO::getSkuQuantity));
-                mallOrderVO.setQuantity(quantity);
-            }
-
-            Integer orderType = mallOrderVO.getOrderType();
-            //查看售后
-            if (orderDetailNoList!=null) {
-                List<MallAfterSalesDTO> mallAfterSalesDTOs = mallAfterSalesDao.querySalesByOrderDetailNoList(orderDetailNoList, orderType, orderNo);
-                if (mallAfterSalesDTOs != null && mallAfterSalesDTOs.size() > 0) {
-                    //获取售后编号列表
-                    List<String> afterSalesNoList = new ArrayList<>();
-                    List<MallAfterSalesUAppVO> voList = new ArrayList<>();
-                    mallAfterSalesDTOs.forEach(dto -> {
-                        MallAfterSalesUAppVO mallAfterSalesVO = new MallAfterSalesUAppVO();
-                        BeanUtils.copyProperties(dto, mallAfterSalesVO);
-                        //更新createdTime时间展示
-                        if (mallAfterSalesVO.getCreatedTime()!=null) {
-                            String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
-                            mallAfterSalesVO.setCreatedAtStr(orderAtStr);
+                if (mallOrderDTO.getOrderType() != null) {
+                    if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10) {  //已取消订单不展示分销人相关信息
+                        BigDecimal manageMoney = new BigDecimal(0);
+                        BigDecimal distributionMoney = new BigDecimal(0);
+                        //查询佣金流水表
+                        List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
+                        if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
+                            List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
+                            for (MallSocialShareFlowDTO dto : mallSocialShareFlowDTOs) {
+                                MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
+                                BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
+                                flowList.add(mallSocialShareFlowVO);
+                                if (dto.getShareType() == 0) { //分销佣金
+                                    distributionMoney = distributionMoney.add(dto.getAmount());
+                                } else if (dto.getShareType() == 1) {   //管理佣金
+                                    manageMoney = manageMoney.add(dto.getAmount());
+                                }
+                            }
                         }
-                        voList.add(mallAfterSalesVO);
-                        afterSalesNoList.add(dto.getAfterSalesNo());
-                    });
-                    mallOrderVO.setAfterSales(voList);
-
-                    //查看售后日志
-                    List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNoList(afterSalesNoList);
-                    if (mallAfterSalesLogDTOs != null && mallAfterSalesLogDTOs.size() > 0) {
-                        List<MallAfterSalesLogUAppVO> salesLogVOList = new ArrayList<>();
-                        mallAfterSalesLogDTOs.forEach(dto -> {
-                            MallAfterSalesLogUAppVO mallAfterSalesLogVO = new MallAfterSalesLogUAppVO();
-                            BeanUtils.copyProperties(dto, mallAfterSalesLogVO);
-                            salesLogVOList.add(mallAfterSalesLogVO);
-                        });
-                        mallOrderVO.setAfterSalesLog(salesLogVOList);
+                        mallOrderVO.setShareManageMoney(manageMoney);
+                        mallOrderVO.setShareDistributionMoney(distributionMoney);
                     }
+                }
 
-                    //查看买家寄出的快递表
-                    List<MallBuyerShippingDTO> mallBuyerShippingDTOs = mallBuyerShippingDao.queryByAfterSalesNoList(afterSalesNoList);
-                    if (mallBuyerShippingDTOs != null && mallBuyerShippingDTOs.size() > 0) {
+                //获取订单详情编号列表
+                List<String> orderDetailNoList = null;
+                if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+                    orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
+                    //获取总购买数量
+                    int quantity = mallOrderDTO.getDetails().stream().collect(Collectors.summingInt(MallOrderDetailDTO::getSkuQuantity));
+                    mallOrderVO.setQuantity(quantity);
+                }
+
+                Integer orderType = mallOrderVO.getOrderType();
+                //查看售后
+                if (orderDetailNoList != null) {
+                    List<MallAfterSalesDTO> mallAfterSalesDTOs = mallAfterSalesDao.querySalesByOrderDetailNoList(orderDetailNoList, orderType, orderNo);
+                    if (mallAfterSalesDTOs != null && mallAfterSalesDTOs.size() > 0) {
                         //获取售后编号列表
-                        List<String> buyerShippingNoList = new ArrayList<>();
-                        List<MallBuyerShippingUAppVO> buyerShippingVOList = new ArrayList<>();
-                        mallBuyerShippingDTOs.forEach(dto -> {
-                            MallBuyerShippingUAppVO mallBuyerShippingVO = new MallBuyerShippingUAppVO();
-                            BeanUtils.copyProperties(dto, mallBuyerShippingVO);
-                            buyerShippingVOList.add(mallBuyerShippingVO);
-                            buyerShippingNoList.add(dto.getBuyerShippingNo());
+                        List<String> afterSalesNoList = new ArrayList<>();
+                        List<MallAfterSalesUAppVO> voList = new ArrayList<>();
+                        mallAfterSalesDTOs.forEach(dto -> {
+                            MallAfterSalesUAppVO mallAfterSalesVO = new MallAfterSalesUAppVO();
+                            BeanUtils.copyProperties(dto, mallAfterSalesVO);
+                            //更新createdTime时间展示
+                            if (mallAfterSalesVO.getCreatedTime() != null) {
+                                String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(), "yyyy-MM-dd HH:mm:ss");
+                                mallAfterSalesVO.setCreatedAtStr(orderAtStr);
+                            }
+                            voList.add(mallAfterSalesVO);
+                            afterSalesNoList.add(dto.getAfterSalesNo());
                         });
-                        mallOrderVO.setBuyerShipping(buyerShippingVOList);
+                        mallOrderVO.setAfterSales(voList);
 
-                        //查看买家寄出的快递物流日志表
-                        List<MallBuyerShippingLogDTO> mallBuyerShippingLogDTOs = mallBuyerShippingLogDao.queryListByBuyerShippingNoList(buyerShippingNoList);
-                        if (mallBuyerShippingLogDTOs != null && mallBuyerShippingLogDTOs.size() > 0) {
-                            List<MallBuyerShippingLogUAppVO> buyerShippingLogVOList = new ArrayList<>();
-                            mallBuyerShippingLogDTOs.forEach(dto -> {
-                                MallBuyerShippingLogUAppVO mallBuyerShippingLogVO = new MallBuyerShippingLogUAppVO();
-                                BeanUtils.copyProperties(dto, mallBuyerShippingLogVO);
-                                buyerShippingLogVOList.add(mallBuyerShippingLogVO);
+                        //查看售后日志
+                        List<MallAfterSalesLogDTO> mallAfterSalesLogDTOs = mallAfterSalesLogDao.querySalesLogByShopNoAndSalesNoList(afterSalesNoList);
+                        if (mallAfterSalesLogDTOs != null && mallAfterSalesLogDTOs.size() > 0) {
+                            List<MallAfterSalesLogUAppVO> salesLogVOList = new ArrayList<>();
+                            mallAfterSalesLogDTOs.forEach(dto -> {
+                                MallAfterSalesLogUAppVO mallAfterSalesLogVO = new MallAfterSalesLogUAppVO();
+                                BeanUtils.copyProperties(dto, mallAfterSalesLogVO);
+                                salesLogVOList.add(mallAfterSalesLogVO);
                             });
-                            mallOrderVO.setBuyerShippingLog(buyerShippingLogVOList);
+                            mallOrderVO.setAfterSalesLog(salesLogVOList);
+                        }
+
+                        //查看买家寄出的快递表
+                        List<MallBuyerShippingDTO> mallBuyerShippingDTOs = mallBuyerShippingDao.queryByAfterSalesNoList(afterSalesNoList);
+                        if (mallBuyerShippingDTOs != null && mallBuyerShippingDTOs.size() > 0) {
+                            //获取售后编号列表
+                            List<String> buyerShippingNoList = new ArrayList<>();
+                            List<MallBuyerShippingUAppVO> buyerShippingVOList = new ArrayList<>();
+                            mallBuyerShippingDTOs.forEach(dto -> {
+                                MallBuyerShippingUAppVO mallBuyerShippingVO = new MallBuyerShippingUAppVO();
+                                BeanUtils.copyProperties(dto, mallBuyerShippingVO);
+                                buyerShippingVOList.add(mallBuyerShippingVO);
+                                buyerShippingNoList.add(dto.getBuyerShippingNo());
+                            });
+                            mallOrderVO.setBuyerShipping(buyerShippingVOList);
+
+                            //查看买家寄出的快递物流日志表
+                            List<MallBuyerShippingLogDTO> mallBuyerShippingLogDTOs = mallBuyerShippingLogDao.queryListByBuyerShippingNoList(buyerShippingNoList);
+                            if (mallBuyerShippingLogDTOs != null && mallBuyerShippingLogDTOs.size() > 0) {
+                                List<MallBuyerShippingLogUAppVO> buyerShippingLogVOList = new ArrayList<>();
+                                mallBuyerShippingLogDTOs.forEach(dto -> {
+                                    MallBuyerShippingLogUAppVO mallBuyerShippingLogVO = new MallBuyerShippingLogUAppVO();
+                                    BeanUtils.copyProperties(dto, mallBuyerShippingLogVO);
+                                    buyerShippingLogVOList.add(mallBuyerShippingLogVO);
+                                });
+                                mallOrderVO.setBuyerShippingLog(buyerShippingLogVOList);
+                            }
                         }
                     }
                 }
-            }
-            //商家寄出的快递表
-            MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(orderNo);
-            if (mallShopShippingDTO!=null){
-                MallShopShippingUAppVO mallShopShippingVO = new MallShopShippingUAppVO();
-                BeanUtils.copyProperties(mallShopShippingDTO,mallShopShippingVO);
-                mallOrderVO.setShopShipping(mallShopShippingVO);
+                //商家寄出的快递表
+                MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(orderNo);
+                if (mallShopShippingDTO != null) {
+                    MallShopShippingUAppVO mallShopShippingVO = new MallShopShippingUAppVO();
+                    BeanUtils.copyProperties(mallShopShippingDTO, mallShopShippingVO);
+                    mallOrderVO.setShopShipping(mallShopShippingVO);
 
-                //商家寄出的快递物流日志表
-                List<MallShopShippingLogDTO> mallShopShippingLogDTOs = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShippingVO.getShopShippingNo());
-                if (mallShopShippingLogDTOs!=null && mallShopShippingLogDTOs.size()>0) {
-                    List<MallShopShippingLogUAppVO> voList = new ArrayList<>();
-                    mallShopShippingLogDTOs.forEach(dto->{
-                        MallShopShippingLogUAppVO mallShopShippingLogVO = new MallShopShippingLogUAppVO();
-                        BeanUtils.copyProperties(dto,mallShopShippingLogVO);
-                        voList.add(mallShopShippingLogVO);
-                    });
+                    //商家寄出的快递物流日志表
+                    List<MallShopShippingLogDTO> mallShopShippingLogDTOs = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShippingVO.getShopShippingNo());
+                    if (mallShopShippingLogDTOs != null && mallShopShippingLogDTOs.size() > 0) {
+                        List<MallShopShippingLogUAppVO> voList = new ArrayList<>();
+                        mallShopShippingLogDTOs.forEach(dto -> {
+                            MallShopShippingLogUAppVO mallShopShippingLogVO = new MallShopShippingLogUAppVO();
+                            BeanUtils.copyProperties(dto, mallShopShippingLogVO);
+                            voList.add(mallShopShippingLogVO);
+                        });
 
-                    mallOrderVO.setShopShippingLog(voList);
+                        mallOrderVO.setShopShippingLog(voList);
+                    }
                 }
-            }
 
-            //查询订单详情规格值表
-            if (orderDetailNoList!=null) {
-                List<MallOrderDetailSpecDTO> mallOrderDetailSpecDTOs = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);
-                if (mallOrderDetailSpecDTOs != null && mallOrderDetailSpecDTOs.size() > 0) {
-                    List<MallOrderDetailSpecUAppVO> voList = new ArrayList<>();
-                    mallOrderDetailSpecDTOs.forEach(dto -> {
-                        MallOrderDetailSpecUAppVO mallOrderDetailSpecVO = new MallOrderDetailSpecUAppVO();
-                        BeanUtils.copyProperties(dto, mallOrderDetailSpecVO);
-                        voList.add(mallOrderDetailSpecVO);
-                    });
-                    Map<String, List<MallOrderDetailSpecUAppVO>> detailNoMap = voList.stream().collect(Collectors.groupingBy(input -> input.getOrderDetailNo()));
-                    mallOrderVO.getDetails().forEach(detail -> {
-                        if (detailNoMap.containsKey(detail.getOrderDetailNo())) {
-                            detail.setSpecs(detailNoMap.get(detail.getOrderDetailNo()));
+                //查询订单详情规格值表
+                if (orderDetailNoList != null) {
+                    List<MallOrderDetailSpecDTO> mallOrderDetailSpecDTOs = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);
+                    if (mallOrderDetailSpecDTOs != null && mallOrderDetailSpecDTOs.size() > 0) {
+                        List<MallOrderDetailSpecUAppVO> voList = new ArrayList<>();
+                        mallOrderDetailSpecDTOs.forEach(dto -> {
+                            MallOrderDetailSpecUAppVO mallOrderDetailSpecVO = new MallOrderDetailSpecUAppVO();
+                            BeanUtils.copyProperties(dto, mallOrderDetailSpecVO);
+                            voList.add(mallOrderDetailSpecVO);
+                        });
+                        Map<String, List<MallOrderDetailSpecUAppVO>> detailNoMap = voList.stream().collect(Collectors.groupingBy(input -> input.getOrderDetailNo()));
+                        mallOrderVO.getDetails().forEach(detail -> {
+                            if (detailNoMap.containsKey(detail.getOrderDetailNo())) {
+                                detail.setSpecs(detailNoMap.get(detail.getOrderDetailNo()));
+                            }
+                        });
+                    }
+                }
+
+                //匹配原因中文名称
+                MallOrderEnum.CancelReason cancelReason = MallOrderEnum.CancelReason.parseCode(mallOrderVO.getCancelReason());
+                if (null != cancelReason) {
+                    mallOrderVO.setCancelReasonName(cancelReason.getText());
+                }
+
+                //订单头部信息拼接
+                if (mallOrderVO.getStatus() == 10) {  //待支付
+                    mallOrderVO.setHeadField(orderAtStrMin + " 已下单，待买家付款");
+                }
+                if (mallOrderVO.getStatus() == 20) {  //待发货
+                    mallOrderVO.setHeadField(payedAtStrMin + " 买家已付款，请及时发货");
+                }
+                if (mallOrderVO.getStatus() == 30) {  //待收货
+                    if (mallOrderVO.getDeliverType() == 2) {  //自提
+                        mallOrderVO.setHeadField(payedAtStrMin + " 支付成功，请等待买家到店自提");
+                    } else { //不是线下的
+                        if (mallOrderVO.getDeliverMethod() == 10) {    //快递
+                            String n = mallShopShippingDTO != null ? mallShopShippingDTO.getNumber() : "";
+                            String shipCompany = mallShopShippingDTO != null ? mallShopShippingDTO.getCompany() : "";
+                            mallOrderVO.setHeadField("卖家于" + sendAtStrMin + "发货，快递信息：" + n + " " + shipCompany);
+                        } else { //线下配送
+                            mallOrderVO.setHeadField("卖家于" + sendAtStrMin + "发货，方式为线下配送");
                         }
-                    });
-                }
-            }
-
-            //匹配原因中文名称
-            MallOrderEnum.CancelReason cancelReason = MallOrderEnum.CancelReason.parseCode(mallOrderVO.getCancelReason());
-            if(null != cancelReason){
-                mallOrderVO.setCancelReasonName(cancelReason.getText());
-            }
-
-            //订单头部信息拼接
-            if (mallOrderVO.getStatus()==10) {  //待支付
-                mallOrderVO.setHeadField(orderAtStrMin+" 已下单，待买家付款");
-            }
-            if (mallOrderVO.getStatus()==20) {  //待发货
-                mallOrderVO.setHeadField(payedAtStrMin+" 买家已付款，请及时发货");
-            }
-            if (mallOrderVO.getStatus()==30) {  //待收货
-                if (mallOrderVO.getDeliverType()==2){  //自提
-                    mallOrderVO.setHeadField(payedAtStrMin+" 支付成功，请等待买家到店自提");
-                }else { //不是线下的
-                    if (mallOrderVO.getDeliverMethod()==10) {    //快递
-                        String n =  mallShopShippingDTO!=null?mallShopShippingDTO.getNumber():"";
-                        String shipCompany =  mallShopShippingDTO!=null?mallShopShippingDTO.getCompany():"";
-                        mallOrderVO.setHeadField("卖家于"+sendAtStrMin+"发货，快递信息："+n+" "+shipCompany);
-                    }else { //线下配送
-                        mallOrderVO.setHeadField("卖家于"+sendAtStrMin+"发货，方式为线下配送");
                     }
                 }
-            }
-            if (mallOrderVO.getStatus()==40){   //已收货
-                if (mallOrderVO.getDeliverType()==2) {  //自提
-                    mallOrderVO.setHeadField(receiveAtStrMin+" 买家成功到店收货");
-                }else {
-                    if (mallOrderVO.getSubStatus()==4010){  //4010-系统自动收货
-                        mallOrderVO.setHeadField(receiveAtStrMin+" 系统已自动确认收货");
-                    }else {
-                        mallOrderVO.setHeadField(receiveAtStrMin + " 买家已收货");
+                if (mallOrderVO.getStatus() == 40) {   //已收货
+                    if (mallOrderVO.getDeliverType() == 2) {  //自提
+                        mallOrderVO.setHeadField(receiveAtStrMin + " 买家成功到店收货");
+                    } else {
+                        if (mallOrderVO.getSubStatus() == 4010) {  //4010-系统自动收货
+                            mallOrderVO.setHeadField(receiveAtStrMin + " 系统已自动确认收货");
+                        } else {
+                            mallOrderVO.setHeadField(receiveAtStrMin + " 买家已收货");
+                        }
                     }
                 }
-            }
-            if (mallOrderVO.getStatus()==50){   //已取消
-                if (mallOrderVO.getSubStatus()==5020) { //5020-系统超时取消(待支付)
-                    mallOrderVO.setHeadField("由于买家超时未付款，系统于"+cancelAtStrMin+"自动取消了订单");
+                if (mallOrderVO.getStatus() == 50) {   //已取消
+                    if (mallOrderVO.getSubStatus() == 5020) { //5020-系统超时取消(待支付)
+                        mallOrderVO.setHeadField("由于买家超时未付款，系统于" + cancelAtStrMin + "自动取消了订单");
+                    }
+                    if (mallOrderVO.getSubStatus() == 5010 || mallOrderVO.getSubStatus() == 5030) { //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)
+                        mallOrderVO.setHeadField("买家于" + cancelAtStrMin + "取消了订单");
+                    }
+                    if (mallOrderVO.getSubStatus() == 1030 || mallOrderVO.getSubStatus() == 5060) {  //1030-支付取消- 待支付  5060-买家取消（待收货-自提订单）
+                        mallOrderVO.setHeadField("买家取消了订单，" + cancelAtStrMin + "系统已自动退款");
+                    }
+                    if (mallOrderVO.getSubStatus() == 5040 || mallOrderVO.getSubStatus() == 5050) {  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
+                        mallOrderVO.setHeadField(cancelAtStrMin + "，卖家取消订单\r\n原因为：" + mallOrderVO.getCancelReasonName() + "，退款金额将原路退回");
+                    }
                 }
-                if (mallOrderVO.getSubStatus()==5010 || mallOrderVO.getSubStatus()==5030){ //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)
-                    mallOrderVO.setHeadField("买家于"+cancelAtStrMin+"取消了订单");
-                }
-                if (mallOrderVO.getSubStatus()==1030 || mallOrderVO.getSubStatus()==5060){  //1030-支付取消- 待支付  5060-买家取消（待收货-自提订单）
-                    mallOrderVO.setHeadField("买家取消了订单，"+cancelAtStrMin+"系统已自动退款");
-                }
-                if (mallOrderVO.getSubStatus()==5040 || mallOrderVO.getSubStatus()==5050){  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
-                    mallOrderVO.setHeadField(cancelAtStrMin+"，卖家取消订单\r\n原因为："+mallOrderVO.getCancelReasonName()+"，退款金额将原路退回");
-                }
-            }
 
 
-            return ReturnResponse.success(mallOrderVO);
+                return ReturnResponse.success(mallOrderVO);
+            }
+        }else if (mallOrderDTO.getStatus()==50){
+            if (mallOrderDTO.getSubStatus()==5050){ //5050-卖家取消（待收货-自提订单）
+                return ReturnResponse.failed("该笔订单已经被商家取消了");
+            }else {
+                return ReturnResponse.failed("当前订单被取消");
+            }
         }
         return ReturnResponse.failed("查询提货码未查询到订单");
     }

@@ -1120,6 +1120,7 @@
             modetail.real_money
         from mall_order mo
         left join mall_order_detail modetail on mo.order_no=modetail.order_no
-        where mo.shop_no=#{shopNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2 and mo.status=30 and mo.sub_status=3010
+        where mo.shop_no=#{shopNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2
+        /**and mo.status=30 and mo.sub_status=3010*/
     </select>
 </mapper>
