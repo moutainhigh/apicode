@@ -42,8 +42,8 @@ import com.ycandyz.master.controller.base.BaseController;
 @ApiVersion(group = ApiVersionConstant.API_COUPON)
 @Slf4j
 @RestController
-@RequestMapping("coupon-ticket")
-@Api(tags="coupon-ticket")
+@RequestMapping("coupon/ticket")
+@Api(tags="coupon/ticket")
 public class CouponTicketController extends BaseController<CouponTicketServiceImpl,CouponTicket,CouponTicketQuery> {
 
     @Autowired
@@ -52,11 +52,11 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
     /**
      * 优惠券列表查询
      * @param requestParams
-     * @param userVO
+     * @param requestParams
      * @return
      */
 	@ApiOperation(value = "查询分页")
-    @GetMapping(value = "page")
+    @GetMapping(value = "")
     public ReturnResponse<Page<CouponTicketInfoVO>> selectPageList(@RequestBody RequestParams<CouponTicketQuery> requestParams) {
         return iCouponTicketService.selectPageList(requestParams);
     }
@@ -82,8 +82,8 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
      * @return
      */
     @ApiOperation(value = "优惠券启用停用")
-    @GetMapping(value = "/detail")
-    public ReturnResponse<CouponTicketInfoVO> ticketDetail(@RequestParam("ticketNo") String ticketNo) {
+    @GetMapping(value = "/{ticketNo}")
+    public ReturnResponse<CouponTicketInfoVO> ticketDetail(@PathVariable("ticketNo") String ticketNo) {
         if (ticketNo==null || "".equals(ticketNo)){
             return ReturnResponse.failed("传入参数为空");
         }
@@ -96,7 +96,7 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
      * @return
      */
     @ApiOperation(value = "优惠券的新增或修改")
-    @PutMapping(value = "/ticket")
+    @PutMapping(value = "")
     public ReturnResponse<String> saveTicket(@RequestBody CouponTicketInfoQuery couponTicketInfoQuery){
         ReturnResponse<String> returnResponse = iCouponTicketService.saveTicket(couponTicketInfoQuery);
         return returnResponse;
