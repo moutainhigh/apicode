@@ -33,10 +33,10 @@ public class CouponTicketQuery implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiParam(hidden = true)
-    @ApiModelProperty(value = "门店编号")
+    @ApiModelProperty(name = "shop_no",value = "门店编号")
     private String shopNo;
 
-    @ApiModelProperty(value = "优惠券名称")
+    @ApiModelProperty(name = "name",value = "优惠券名称")
     private String name;
 
 }

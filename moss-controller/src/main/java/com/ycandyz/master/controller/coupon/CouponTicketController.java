@@ -82,8 +82,8 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
      * @return
      */
     @ApiOperation(value = "优惠券启用停用")
-    @GetMapping(value = "/{ticketNo}")
-    public ReturnResponse<CouponTicketInfoVO> ticketDetail(@PathVariable("ticketNo") String ticketNo) {
+    @GetMapping(value = "/{ticket_no}")
+    public ReturnResponse<CouponTicketInfoVO> ticketDetail(@PathVariable("ticket_no") String ticketNo) {
         if (ticketNo==null || "".equals(ticketNo)){
             return ReturnResponse.failed("传入参数为空");
         }
@@ -101,5 +101,8 @@ public class CouponTicketController extends BaseController<CouponTicketServiceIm
         ReturnResponse<String> returnResponse = iCouponTicketService.saveTicket(couponTicketInfoQuery);
         return returnResponse;
     }
-    
+
+//    public ReturnResponse<String> itemList(String type, String keyword, String itemType){
+//
+//    }
 }
