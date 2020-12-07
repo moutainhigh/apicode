@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
-import com.ycandyz.master.domain.query.coupon.CouponTicketQuery;
 import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
 import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;

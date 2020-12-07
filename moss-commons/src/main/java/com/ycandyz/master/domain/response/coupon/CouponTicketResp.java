@@ -1,12 +1,10 @@
 package com.ycandyz.master.domain.response.coupon;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**

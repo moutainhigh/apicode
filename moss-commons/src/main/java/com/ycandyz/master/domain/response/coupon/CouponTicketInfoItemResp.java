@@ -1,6 +1,6 @@
 package com.ycandyz.master.domain.response.coupon;
 
-import com.ycandyz.master.entities.coupon.CouponTicketInfoItem;
+import com.ycandyz.master.entities.coupon.CouponDetailItem;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Getter;
@@ -17,7 +17,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("coupon_ticket_info_item")
-public class CouponTicketInfoItemResp extends CouponTicketInfoItem {
+@TableName("coupon_detail_item")
+public class CouponTicketInfoItemResp extends CouponDetailItem {
 
 }
