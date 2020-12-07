@@ -1,6 +1,8 @@
 package com.ycandyz.master.model.coupon;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -21,6 +23,7 @@ import java.util.Date;
 @Getter
 @Setter
 @TableName("coupon")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class CouponVO extends Coupon {
 
     private Long id;

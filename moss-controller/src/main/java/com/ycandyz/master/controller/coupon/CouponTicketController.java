@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import com.ycandyz.master.controller.base.BaseController;
 
@@ -47,7 +46,7 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
 	@ApiOperation(value = "查询分页")
     @GetMapping(value = "")
-    public ReturnResponse<Page<CouponDetailVO>> selectPageList(@RequestBody RequestParams<CouponQuery> requestParams) {
+    public CommonResult<BasePageResult<CouponDetailVO>> selectPageList(@RequestBody RequestParams<CouponQuery> requestParams) {
         return iCouponService.selectPageList(requestParams);
     }
 
@@ -59,9 +58,9 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "优惠券启用停用")
     @GetMapping(value = "/audit")
-	public ReturnResponse<String> auditState(@RequestParam("id") Long id, @RequestParam("state") Integer state) {
+	public CommonResult<String> auditState(@RequestParam("id") Long id, @RequestParam("state") Integer state) {
         if (id==null || id==0 || state==null){
-            return ReturnResponse.failed("传入参数为空");
+            return CommonResult.failed("传入参数为空");
         }
         return iCouponService.auditState(id,state);
 	}
@@ -73,9 +72,9 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "优惠券启用停用")
     @GetMapping(value = "/{ticket_no}")
-    public ReturnResponse<CouponDetailVO> ticketDetail(@PathVariable("ticket_no") String ticketNo) {
+    public CommonResult<CouponDetailVO> ticketDetail(@PathVariable("ticket_no") String ticketNo) {
         if (ticketNo==null || "".equals(ticketNo)){
-            return ReturnResponse.failed("传入参数为空");
+            return CommonResult.failed("传入参数为空");
         }
         return iCouponService.ticketDetail(ticketNo);
     }
@@ -87,8 +86,8 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "优惠券的新增或修改")
     @PutMapping(value = "")
-    public ReturnResponse<String> saveTicket(@RequestBody CouponDetailQuery couponDetailQuery){
-        ReturnResponse<String> returnResponse = iCouponService.saveTicket(couponDetailQuery);
+    public CommonResult<String> saveTicket(@RequestBody CouponDetailQuery couponDetailQuery){
+        CommonResult<String> returnResponse = iCouponService.saveTicket(couponDetailQuery);
         return returnResponse;
     }
 

@@ -2,8 +2,9 @@ package com.ycandyz.master.service.coupon.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ycandyz.master.api.BasePageResult;
+import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.RequestParams;
-import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dao.coupon.CouponDao;
 import com.ycandyz.master.dao.coupon.CouponDetailDao;
 import com.ycandyz.master.dao.coupon.CouponDetailItemDao;
@@ -54,12 +55,12 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     private CouponDetailItemDao couponDetailItemDao;
 
     @Override
-    public ReturnResponse<Page<CouponDetailVO>> selectPageList(RequestParams<CouponQuery> requestParams) {
+    public CommonResult<BasePageResult<CouponDetailVO>> selectPageList(RequestParams<CouponQuery> requestParams) {
         UserVO userVO = getUser();  //当前登陆用户
         if (userVO==null || userVO.getShopNo()==null || "".equals(userVO.getShopNo())){
-            return ReturnResponse.failed("无门店信息");
+            return CommonResult.failed("无门店信息");
         }
-        Page<CouponDetailVO> infoVOPage = new Page<>();
+        BasePageResult<CouponDetailVO> infoVOPage = new BasePageResult<>();
         List<CouponDetailVO> list = new ArrayList<>();
         CouponQuery couponQuery = requestParams.getT();
         couponQuery.setShopNo(userVO.getShopNo());
@@ -88,34 +89,33 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             log.error(e.getMessage(),e);
         }
         infoVOPage.setTotal(page.getTotal());
-        infoVOPage.setSize(page.getSize());
-        infoVOPage.setRecords(list);
-        infoVOPage.setCurrent(page.getCurrent());
-        infoVOPage.setPages(page.getPages());
-        return ReturnResponse.success(infoVOPage);
+        infoVOPage.setPageSize(page.getSize());
+        infoVOPage.setResult(list);
+        infoVOPage.setPage(page.getCurrent());
+        return CommonResult.success(infoVOPage);
     }
 
     @Override
-    public ReturnResponse<String> auditState(Long id, Integer state) {
+    public CommonResult<String> auditState(Long id, Integer state) {
         UserVO userVO = getUser();  //当前登陆用户
         Coupon coupon = couponDao.selectById(id);
         if (coupon==null){
-            return ReturnResponse.failed("传入id无法查询到优惠券");
+            return CommonResult.failed("传入id无法查询到优惠券");
         }
         if (!userVO.getShopNo().equals(coupon.getShopNo())){
-            return ReturnResponse.failed("当前用户登陆门店无权进行此操作");
+            return CommonResult.failed("当前用户登陆门店无权进行此操作");
         }
         coupon.setState(state);
         coupon.setUpdateTime(new Date());
         int flag = couponDao.updateById(coupon);
         if (flag>0){
-            return ReturnResponse.success("成功");
+            return CommonResult.success("成功");
         }
-        return ReturnResponse.failed("更新失败");
+        return CommonResult.failed("更新失败");
     }
 
     @Override
-    public ReturnResponse<CouponDetailVO> ticketDetail(String ticketNo) {
+    public CommonResult<CouponDetailVO> ticketDetail(String ticketNo) {
         UserVO userVO = getUser();  //当前登陆用户
         CouponDetailDTO couponTicketInfoDTO = couponDao.queryTicketDetailByTicketNo(ticketNo,userVO.getShopNo());
         CouponDetailVO couponTicketInfoVO = null;
@@ -132,11 +132,11 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 couponTicketInfoVO.setEndAtStr(DateUtil.formTime(DateUtil.date(couponTicketInfoVO.getEndTime()*1000),"yyyy-MM-dd HH:mm:ss"));
             }*/
         }
-        return ReturnResponse.success(couponTicketInfoVO);
+        return CommonResult.success(couponTicketInfoVO);
     }
 
     @Override
-    public ReturnResponse<String> saveTicket(CouponDetailQuery couponDetailQuery) {
+    public CommonResult<String> saveTicket(CouponDetailQuery couponDetailQuery) {
         if (couponDetailQuery.getCouponId()!=null && couponDetailQuery.getCouponId()>0){
             return updateTicket(couponDetailQuery);
         }else {
@@ -145,14 +145,14 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     }
 
     @Transactional
-    public ReturnResponse<String> updateTicket(CouponDetailQuery couponDetailQuery){
+    public CommonResult<String> updateTicket(CouponDetailQuery couponDetailQuery){
         UserVO userVO = getUser();  //当前登陆用户
         //更新ticket表
         Coupon coupon = couponDao.selectOne(new QueryWrapper<Coupon>().eq("coupon_id",couponDetailQuery.getCouponId()));
         if (coupon!=null){
 
             if (!coupon.getShopNo().equals(userVO.getShopNo())){
-                return ReturnResponse.failed("当前所在门店无权进行此操作");
+                return CommonResult.failed("当前所在门店无权进行此操作");
             }
 
             //获取优惠卷详情
@@ -213,13 +213,13 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 coupon.setTicketSum(couponDetailQuery.getTicketSum());
                 couponDao.updateById(coupon);
             }
-            return ReturnResponse.success("更新成功!");
+            return CommonResult.success("更新成功!");
         }
-        return ReturnResponse.failed("更新失败");
+        return CommonResult.failed("更新失败");
     }
 
     @Transactional
-    public ReturnResponse<String> insertTicket(CouponDetailQuery couponDetailQuery) {
+    public CommonResult<String> insertTicket(CouponDetailQuery couponDetailQuery) {
         UserVO userVO = getUser();  //当前登陆用户
         Date current = new Date();
         String ticketInfoNo = String.valueOf(IDGeneratorUtils.getLongId());
@@ -264,8 +264,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         ticketInfo.setCouponId(couponTicket.getId());
         int flag = couponDetailDao.insert(ticketInfo);
         if (flag>0){
-            return ReturnResponse.success("新增成功");
+            return CommonResult.success("新增成功");
         }
-        return ReturnResponse.failed("新增失败");
+        return CommonResult.failed("新增失败");
     }
 }
