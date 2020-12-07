@@ -115,9 +115,9 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     }
 
     @Override
-    public CommonResult<CouponDetailVO> ticketDetail(String ticketNo) {
+    public CommonResult<CouponDetailVO> ticketDetail(Long id) {
         UserVO userVO = getUser();  //当前登陆用户
-        CouponDetailDTO couponTicketInfoDTO = couponDao.queryTicketDetailByTicketNo(ticketNo,userVO.getShopNo());
+        CouponDetailDTO couponTicketInfoDTO = couponDao.queryTicketDetailByTicketNo(id,userVO.getShopNo());
         CouponDetailVO couponTicketInfoVO = null;
         if (couponTicketInfoDTO!=null){
             couponTicketInfoVO = new CouponDetailVO();

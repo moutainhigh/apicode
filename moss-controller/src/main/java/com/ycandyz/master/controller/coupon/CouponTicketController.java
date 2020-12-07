@@ -67,16 +67,16 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
 
     /**
      * 优惠券的启用和停用
-     * @param ticketNo 优惠券编号
+     * @param id 优惠券编号
      * @return
      */
     @ApiOperation(value = "优惠券启用停用")
-    @GetMapping(value = "/{ticket_no}")
-    public CommonResult<CouponDetailVO> ticketDetail(@PathVariable("ticket_no") String ticketNo) {
-        if (ticketNo==null || "".equals(ticketNo)){
+    @GetMapping(value = "/{id}")
+    public CommonResult<CouponDetailVO> ticketDetail(@PathVariable("id") Long id) {
+        if (id==null || id>0){
             return CommonResult.failed("传入参数为空");
         }
-        return iCouponService.ticketDetail(ticketNo);
+        return iCouponService.ticketDetail(id);
     }
 
     /**

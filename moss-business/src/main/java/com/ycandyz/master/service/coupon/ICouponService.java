@@ -26,7 +26,7 @@ public interface ICouponService extends IService<Coupon>{
 
     CommonResult<String> auditState(Long id, Integer state);
 
-    CommonResult<CouponDetailVO> ticketDetail(String ticketNo);
+    CommonResult<CouponDetailVO> ticketDetail(Long id);
 
     CommonResult<String> saveTicket(CouponDetailQuery couponDetailQuery);
 }

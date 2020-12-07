@@ -18,5 +18,5 @@ public interface CouponDao extends BaseMapper<Coupon> {
 
     Page<CouponDetailDTO> queryTicketPageList(Page page, @Param("p") CouponQuery couponQuery);
 
-    CouponDetailDTO queryTicketDetailByTicketNo(@Param("ticketNo") String ticketNo, @Param("shopNo") String shopNo);
+    CouponDetailDTO queryTicketDetailByTicketNo(@Param("id") Long id, @Param("shopNo") String shopNo);
 }

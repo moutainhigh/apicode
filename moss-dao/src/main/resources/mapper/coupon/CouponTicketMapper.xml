@@ -78,7 +78,7 @@
             </if>
     </select>
 
-    <select id="queryTicketDetailByTicketNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="queryTicketDetailByTicketNo" resultMap="BaseResultMap">
         ti.id as ticketId,
             ti.ticket_no,
             ti.ticket_sum,
@@ -108,6 +108,6 @@
         where
             ti.shop_no=#{p.shopNo}
             and
-            ti.ticket_no=#{ticketNo}
+            ti.id=#{id}
     </select>
 </mapper>
