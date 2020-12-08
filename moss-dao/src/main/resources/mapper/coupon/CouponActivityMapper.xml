@@ -23,7 +23,7 @@
     </sql>
 
     <update id="updateStatusById">
-        update coupon_activity set status = #{status} where id = #{id}
+        update coupon_activity set enabled = #{enabled} where id = #{id}
     </update>
 
 </mapper>

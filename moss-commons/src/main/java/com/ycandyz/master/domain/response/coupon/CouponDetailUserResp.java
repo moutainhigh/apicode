@@ -31,7 +31,7 @@ public class CouponDetailUserResp {
     private Long userId;
 
     @ApiModelProperty(value = "姓名")
-    private String username;
+    private String name;
 
     @ApiModelProperty(value = "手机号码")
     private String phone;
@@ -47,6 +47,9 @@ public class CouponDetailUserResp {
 
     @ApiModelProperty(name = "status", value = "优惠券状态分类：0:待使用,1:过期,2:已使用")
     private Integer status;
+
+    @ApiModelProperty(value = "操作类型(1启用,0停止)",required=true)
+    private Integer enabled;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(name = "create_time",value = "参与时间")

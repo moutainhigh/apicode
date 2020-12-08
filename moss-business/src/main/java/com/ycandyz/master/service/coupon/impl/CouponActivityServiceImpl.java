@@ -52,7 +52,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         query.setShopNo(getShopNo());
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .select(CouponActivity::getId,CouponActivity::getId,CouponActivity::getTitle,CouponActivity::getBeginTime,CouponActivity::getEndTime,
-                        CouponActivity::getStatus,CouponActivity::getInletName,CouponActivity::getActivityNum,CouponActivity::getCreateTime)
+                        CouponActivity::getEnabled,CouponActivity::getInletName,CouponActivity::getActivityNum,CouponActivity::getCreateTime)
                 .apply(null != query.getCreateTimeBegin(),
                         "date_format (create_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreateTimeBegin()) + "','%Y-%m-%d')")
                 .apply(null != query.getCreateTimeEnd(),
@@ -63,7 +63,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 .orderByDesc(CouponActivity::getCreateTime,CouponActivity::getCreateTime);
         Page<CouponActivity> p = (Page<CouponActivity>) baseMapper.selectPage(page, queryWrapper);
         p.getRecords().stream().forEach(f -> {
-            if(CouponActivityEnum.Status.TYPE_0.getCode().equals(f.getStatus())){
+            if(CouponActivityEnum.Enabled.TYPE_1.getCode().equals(f.getEnabled())){
                 if(new Date().after(f.getBeginTime())){
                     f.setStatusName(CouponActivityEnum.Status.TYPE_1.getText());
                 }
@@ -140,6 +140,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 .eq(CouponActivity::getShopNo, getShopNo())
                 .and(obj -> obj.between(CouponActivity::getBeginTime, model.getBeginTime(),model.getEndTime())
                         .or(obj1 -> obj1.between(CouponActivity::getEndTime, model.getBeginTime(),model.getEndTime()))
+                        .or(obj1 -> obj1.lt(CouponActivity::getBeginTime,model.getBeginTime()).gt(CouponActivity::getEndTime,model.getEndTime()))
                 )
                 .notIn(model.getId() != null ,CouponActivity::getId, model.getId());
         List<CouponActivity> list = baseMapper.selectList(queryWrapper);
@@ -156,17 +157,10 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 .eq(CouponActivity::getId, model.getId());
         CouponActivity entity = baseMapper.selectOne(queryWrapper);
         AssertUtils.notNull(entity, "未匹配到符合条件的记录");
-        if(entity.getStatus().equals(model.getStatus())){
-            AssertUtils.notNull(null, "操作失败，状态不正确");
+        if(entity.getEnabled().equals(model.getEnabled())){
+            AssertUtils.notNull(null, "操作失败，状态已更新");
         }
-        if(CouponActivityEnum.Status.TYPE_4.getCode().equals(entity.getStatus())){
-            entity.setStatus(CouponActivityEnum.Status.TYPE_0.getCode());
-        }else if (CouponActivityEnum.Status.TYPE_0.getCode().equals(entity.getStatus())){
-            entity.setStatus(CouponActivityEnum.Status.TYPE_4.getCode());
-        }else{
-            AssertUtils.notNull(null, "操作失败，状态不正确");
-        }
-        return this.retBool(baseMapper.updateStatusById(entity));
+        return this.retBool(baseMapper.updateStatusById(model));
     }
 
     @Override
@@ -190,15 +184,17 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     @Override
     public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponUserActivityCouponQuery query) {
         Page<CouponDetailUserResp> p = couponActivityCouponService.selectUserActivityCouponPage(page,query);
-        p.getRecords().stream().forEach(f -> {
-            if(f.getStatus() == 1){
-                f.setStatus(2);
-            }else if(f.getEndTime().before(new Date())){
-                f.setStatus(1);
-            }else{
-                f.setStatus(0);
-            }
-        });
+        if(p.getRecords() != null){
+            p.getRecords().stream().forEach(f -> {
+                if(f.getStatus() == 1){
+                    f.setStatus(2);
+                }else if(f.getEndTime().before(new Date())){
+                    f.setStatus(1);
+                }else{
+                    f.setStatus(0);
+                }
+            });
+        }
         return p;
     }
 

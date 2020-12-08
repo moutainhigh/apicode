@@ -9,6 +9,7 @@ import com.ycandyz.master.domain.query.coupon.CouponUserActivityCouponQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp;
 import com.ycandyz.master.domain.response.coupon.CouponDetailUserResp;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,12 +59,13 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 	}
 
     @ApiVersion(group = {ApiVersionConstant.API_COUPON_100})
+    @ApiImplicitParam(name="enabled",value="操作类型(0启用,1停止)",required=true,dataType="string")
     @ApiOperation(value = "启用/停止")
     @PutMapping(value = "{id}/switch")
-    public CommonResult<String> switchById(@PathVariable Long id, @RequestParam("status") Integer status) {
+    public CommonResult<String> switchById(@PathVariable Long id, @RequestParam("enabled") Integer enabled) {
         CouponActivityPutModel model = new CouponActivityPutModel();
         model.setId(id);
-        model.setStatus(status);
+        model.setEnabled(enabled);
         return result(service.switchById(model),null,"操作失败!");
     }
 

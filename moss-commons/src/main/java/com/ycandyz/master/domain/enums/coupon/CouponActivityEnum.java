@@ -42,6 +42,40 @@ public class CouponActivityEnum {
         }
     }
 
+    public enum Enabled implements IEnum<Integer> {
+        TYPE_0(0, "禁止"),
+        TYPE_1(1, "启用");
+
+        private Integer code;
+        private String text;
+
+        Enabled(Integer code, String text) {
+            this.code = code;
+            this.text = text;
+        }
+
+        @Override
+        public Integer getCode() {
+            return code;
+        }
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        public static Enabled parseCode(Integer code) {
+            if (code == null) {
+                return null;
+            }
+            for (Enabled value : values()) {
+                if (code.equals(value.code)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
     /**
      * 活动状态 类型枚举
      */

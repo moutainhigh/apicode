@@ -71,6 +71,9 @@ public class CouponActivity extends Model {
    @ApiModelProperty(name = "max_limit",value = "赠送上限人数")
    private Integer maxLimit;
 
+   @ApiModelProperty(value = "状态：0:禁用,1:启用")
+   private Integer enabled;
+
    @ApiModelProperty(value = "活动状态：0:默认，1:未开始，2:进行中，3:已结束，4:已停止")
    private Integer status;
 

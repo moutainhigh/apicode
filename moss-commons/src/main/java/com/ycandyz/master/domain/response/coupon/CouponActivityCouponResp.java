@@ -30,7 +30,7 @@ public class CouponActivityCouponResp {
     private Long id;
 
     @ApiModelProperty(value = "优惠券名称")
-    private String title;
+    private String name;
 
     @ApiModelProperty(name = "remain_num",value = "优惠卷剩余数量")
     private Integer remainNum;
@@ -49,8 +49,8 @@ public class CouponActivityCouponResp {
     @ApiModelProperty(value = "说明备注")
     private String remark;
 
-    @ApiModelProperty(name = "activity_ticket_id",value = "卷宝-优惠卷 ID")
-    private Long activityTicketId;
+    @ApiModelProperty(name = "activity_coupon_id",value = "卷宝-优惠卷 ID")
+    private Long activityCouponId;
 
     @ApiModelProperty(value = "是否选中")
     private Boolean selected;
