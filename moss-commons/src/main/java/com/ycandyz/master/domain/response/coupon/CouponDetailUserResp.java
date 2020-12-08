@@ -22,7 +22,7 @@ import java.util.Date;
 @Getter
 @Setter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class CouponUserTicketResp {
+public class CouponDetailUserResp {
 
     @ApiModelProperty(value = "主键ID")
     private Long id;
@@ -31,7 +31,7 @@ public class CouponUserTicketResp {
     private Long userId;
 
     @ApiModelProperty(value = "姓名")
-    private String name;
+    private String username;
 
     @ApiModelProperty(value = "手机号码")
     private String phone;
@@ -45,11 +45,8 @@ public class CouponUserTicketResp {
     @ApiModelProperty(name = "discount_money",value = "优惠金额")
     private BigDecimal discountMoney;
 
-    @ApiModelProperty(name = "status", value = "使用状态(0未使用,1已使用)")
+    @ApiModelProperty(name = "status", value = "优惠券状态分类：0:待使用,1:过期,2:已使用")
     private Integer status;
-
-    @ApiModelProperty(name = "status_type", value = "优惠券状态分类：0:待使用,1:过期,2:已使用")
-    private Integer statusType;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(name = "create_time",value = "参与时间")

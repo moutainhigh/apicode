@@ -8,21 +8,19 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.domain.enums.coupon.CouponActivityEnum;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
-import com.ycandyz.master.domain.query.coupon.CouponActivityTicketQuery;
-import com.ycandyz.master.domain.query.coupon.CouponUserActivityTicketQuery;
+import com.ycandyz.master.domain.query.coupon.CouponActivityCouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponUserActivityCouponQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
-import com.ycandyz.master.domain.response.coupon.CouponActivityTicketResp;
-import com.ycandyz.master.domain.response.coupon.CouponUserTicketResp;
+import com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp;
+import com.ycandyz.master.domain.response.coupon.CouponDetailUserResp;
 import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.ycandyz.master.domain.query.coupon.CouponActivityQuery;
 import com.ycandyz.master.dao.coupon.CouponActivityDao;
-import com.ycandyz.master.entities.coupon.CouponActivityTicket;
+import com.ycandyz.master.entities.coupon.CouponActivityCoupon;
 import com.ycandyz.master.service.coupon.ICouponActivityService;
 import com.ycandyz.master.controller.base.BaseService;
 
 import com.ycandyz.master.utils.AssertUtils;
-import com.ycandyz.master.utils.DateUtils;
-import com.ycandyz.master.utils.IDGeneratorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,20 +44,20 @@ import java.util.List;
 public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,CouponActivity,CouponActivityQuery> implements ICouponActivityService {
 
     @Autowired
-    private CouponActivityTicketServiceImpl couponActivityTicketService;
+    private CouponActivityCouponServiceImpl couponActivityCouponService;
 
     @Override
     public Page<CouponActivity> page(Page page, CouponActivityQuery query) {
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         query.setShopNo(getShopNo());
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
-                .select(CouponActivity::getId,CouponActivity::getActivityNo,CouponActivity::getName,CouponActivity::getBeginTime,CouponActivity::getEndTime,
-                        CouponActivity::getStatus,CouponActivity::getJoinType,CouponActivity::getActivityNum,CouponActivity::getCreateTime)
-                .apply(null != query.getCreateTimeS(),
-                        "date_format (created_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreateTimeS()) + "','%Y-%m-%d')")
-                .apply(null != query.getCreateTimeE(),
-                        "date_format (created_time,'%Y-%m-%d') <= date_format('" + DateUtil.formatDate(query.getCreateTimeE())+ "','%Y-%m-%d')")
-                .like(StrUtil.isNotEmpty(query.getName()),CouponActivity::getName,query.getName())
+                .select(CouponActivity::getId,CouponActivity::getId,CouponActivity::getTitle,CouponActivity::getBeginTime,CouponActivity::getEndTime,
+                        CouponActivity::getStatus,CouponActivity::getInletName,CouponActivity::getActivityNum,CouponActivity::getCreateTime)
+                .apply(null != query.getCreateTimeBegin(),
+                        "date_format (create_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreateTimeBegin()) + "','%Y-%m-%d')")
+                .apply(null != query.getCreateTimeEnd(),
+                        "date_format (create_time,'%Y-%m-%d') <= date_format('" + DateUtil.formatDate(query.getCreateTimeEnd())+ "','%Y-%m-%d')")
+                .like(StrUtil.isNotEmpty(query.getTitle()),CouponActivity::getTitle,query.getTitle())
                 .eq(CouponActivity::getShopNo, query.getShopNo())
                 //.eq(CouponActivity::getStatus, SpecialEnum.EnabledEnum.DISABLE.getCode())
                 .orderByDesc(CouponActivity::getCreateTime,CouponActivity::getCreateTime);
@@ -67,13 +65,15 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         p.getRecords().stream().forEach(f -> {
             if(CouponActivityEnum.Status.TYPE_0.getCode().equals(f.getStatus())){
                 if(new Date().after(f.getBeginTime())){
-                    f.setStatus(CouponActivityEnum.Status.TYPE_1.getCode());
+                    f.setStatusName(CouponActivityEnum.Status.TYPE_1.getText());
                 }
                 else if(new Date().before(f.getEndTime())){
-                    f.setStatus(CouponActivityEnum.Status.TYPE_3.getCode());
+                    f.setStatusName(CouponActivityEnum.Status.TYPE_3.getText());
                 }else{
-                    f.setStatus(CouponActivityEnum.Status.TYPE_2.getCode());
+                    f.setStatusName(CouponActivityEnum.Status.TYPE_2.getText());
                 }
+            }else {
+                f.setStatusName(CouponActivityEnum.Status.TYPE_4.getText());
             }
         });
         return p;
@@ -87,15 +87,14 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         }
         CouponActivityResp vo = new CouponActivityResp();
         BeanUtils.copyProperties(entity,vo);
-        List<CouponActivityTicketResp> activityTicketList = couponActivityTicketService.list(entity.getActivityNo());
-        vo.setActivityTicketList(activityTicketList);
+        List<CouponActivityCouponResp> activityCouponList = couponActivityCouponService.list(entity.getId());
+        vo.setActivityCouponList(activityCouponList);
         return vo;
     }
 
     @Override
     public boolean insert(CouponActivityModel entity) {
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
-        AssertUtils.notNull(entity.getTicketList(), "优惠卷不能为空");
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(new Date()),"截止时间不能小于当前时间");
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
@@ -105,12 +104,11 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         t.setCreateBy(getUserId());
         t.setUpdateBy(getUserId());
         t.setShopNo(getShopNo());
-        t.setActivityNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
-        entity.getTicketList().forEach(i -> {
-            CouponActivityTicket at = new CouponActivityTicket();
-            at.setActivityNo(t.getActivityNo());
-            at.setTicketNo(i);
-            couponActivityTicketService.save(at);
+        entity.getCouponIds().forEach(i -> {
+            CouponActivityCoupon at = new CouponActivityCoupon();
+            at.setActivityId(t.getId());
+            at.setCouponId(i);
+            couponActivityCouponService.save(at);
         });
         return super.save(t);
     }
@@ -118,22 +116,21 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     @Override
     public boolean update(CouponActivityModel entity) {
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
-        AssertUtils.notNull(entity.getTicketList(), "优惠卷不能为空");
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
         AssertUtils.isFalse(isEmpty(entity),"该时间区间存在已有活动,请更改时间区间");
-        LambdaQueryWrapper<CouponActivityTicket> queryWrapper = new LambdaQueryWrapper<CouponActivityTicket>()
-                .eq(CouponActivityTicket::getActivityNo, entity.getActivityNo());
-        couponActivityTicketService.remove(queryWrapper);
+        LambdaQueryWrapper<CouponActivityCoupon> queryWrapper = new LambdaQueryWrapper<CouponActivityCoupon>()
+                .eq(CouponActivityCoupon::getActivityId, entity.getId());
+        couponActivityCouponService.remove(queryWrapper);
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
         t.setUpdateBy(getUserId());
         t.setShopNo(getShopNo());
-        entity.getTicketList().forEach(i -> {
-            CouponActivityTicket at = new CouponActivityTicket();
-            at.setActivityNo(t.getActivityNo());
-            at.setTicketNo(i);
-            couponActivityTicketService.save(at);
+        entity.getCouponIds().forEach(i -> {
+            CouponActivityCoupon at = new CouponActivityCoupon();
+            at.setActivityId(t.getId());
+            at.setCouponId(i);
+            couponActivityCouponService.save(at);
         });
         return super.updateById(t);
     }
@@ -144,7 +141,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 .and(obj -> obj.between(CouponActivity::getBeginTime, model.getBeginTime(),model.getEndTime())
                         .or(obj1 -> obj1.between(CouponActivity::getEndTime, model.getBeginTime(),model.getEndTime()))
                 )
-                .notIn(StrUtil.isNotEmpty(model.getActivityNo()),CouponActivity::getActivityNo, model.getActivityNo());
+                .notIn(model.getId() != null ,CouponActivity::getId, model.getId());
         List<CouponActivity> list = baseMapper.selectList(queryWrapper);
         if(CollectionUtil.isEmpty(list)){
             return false;
@@ -153,12 +150,15 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     }
 
     @Override
-    public boolean switchById(Long id) {
+    public boolean switchById(CouponActivityPutModel model) {
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .eq(CouponActivity::getShopNo, getShopNo())
-                .eq(CouponActivity::getId, id);
+                .eq(CouponActivity::getId, model.getId());
         CouponActivity entity = baseMapper.selectOne(queryWrapper);
         AssertUtils.notNull(entity, "未匹配到符合条件的记录");
+        if(entity.getStatus().equals(model.getStatus())){
+            AssertUtils.notNull(null, "操作失败，状态不正确");
+        }
         if(CouponActivityEnum.Status.TYPE_4.getCode().equals(entity.getStatus())){
             entity.setStatus(CouponActivityEnum.Status.TYPE_0.getCode());
         }else if (CouponActivityEnum.Status.TYPE_0.getCode().equals(entity.getStatus())){
@@ -170,33 +170,33 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     }
 
     @Override
-    public boolean removeTicketById(Serializable id) {
-        return couponActivityTicketService.removeById(id);
+    public boolean removeCouponById(Serializable id) {
+        return couponActivityCouponService.removeById(id);
     }
 
     @Override
-    public Page<CouponActivityTicketResp> selectTicketPage(Page page, CouponActivityTicketQuery query) {
+    public Page<CouponActivityCouponResp> selectCouponPage(Page page, CouponActivityCouponQuery query) {
         CouponActivityEnum.Type type = CouponActivityEnum.Type.parseCode(query.getType());
         AssertUtils.notNull(getShopNo(), "商店编号不存在");
-        AssertUtils.notNull(query.getActivityNo(), "活动编号不能为空");
+        AssertUtils.notNull(query.getId(), "活动编号不能为空");
         AssertUtils.notNull(type, "类型不正确");
         query.setShopNo(getShopNo());
         if(type.getCode().equals(CouponActivityEnum.Type.TYPE_0.getCode())){
-            return couponActivityTicketService.selectTicketPage(page,query);
+            return couponActivityCouponService.selectCouponPage(page,query);
         }
-        return couponActivityTicketService.selectActivityTicketPage(page,query);
+        return couponActivityCouponService.selectActivityCouponPage(page,query);
     }
 
     @Override
-    public Page<CouponUserTicketResp> selectUserActivityTicketPage(Page page, CouponUserActivityTicketQuery query) {
-        Page<CouponUserTicketResp> p = couponActivityTicketService.selectUserActivityTicketPage(page,query);
+    public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponUserActivityCouponQuery query) {
+        Page<CouponDetailUserResp> p = couponActivityCouponService.selectUserActivityCouponPage(page,query);
         p.getRecords().stream().forEach(f -> {
             if(f.getStatus() == 1){
-                f.setStatusType(2);
+                f.setStatus(2);
             }else if(f.getEndTime().before(new Date())){
-                f.setStatusType(1);
+                f.setStatus(1);
             }else{
-                f.setStatusType(0);
+                f.setStatus(0);
             }
         });
         return p;

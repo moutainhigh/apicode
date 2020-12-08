@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.coupon.CouponActivityCouponDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.coupon.CouponActivityCoupon">
+        <id column="id" property="id" />
+        <result column="activity_id" property="activityId" />
+        <result column="coupon_id" property="couponId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, activity_no, coupon_no, created_at, updated_at
+    </sql>
+
+    <select id="list" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp">
+        SELECT ct.id,t.`name`,t.coupon_sum - t.use_num remain_num,ti.begin_time,ti.end_time
+        FROM
+            coupon_activity_coupon ct
+            LEFT JOIN coupon t ON ct.coupon_no = t.coupon_no
+            LEFT JOIN coupon_detail ti ON t.last_coupon_detail_no = ti.coupon_detail_no
+        WHERE
+            ct.activity_id = #{activityId}
+    </select>
+
+    <select id="selectCouponPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp">
+        SELECT t.id,t.coupon_no,t.`name`,t.coupon_sum - t.use_num remain_num,ti.begin_time,ti.end_time,ct.id activity_coupon_id
+        FROM
+        coupon_activity_coupon ct
+        LEFT JOIN coupon t ON ct.coupon_no = t.coupon_no
+        LEFT JOIN coupon_detail ti ON t.last_coupon_detail_no = ti.coupon_detail_no
+        WHERE 1=1
+        AND ct.activity_id = #{q.activityId}
+        <if test="q.name!=null and q.name!=''">
+            and ti.name like concat('%',#{q.name},'%')
+        </if>
+    </select>
+
+    <select id="selectActivityCouponPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp">
+        SELECT t.id,t.coupon_no,t.`name`,t.coupon_sum - t.use_num remain_num,ti.begin_time,ti.end_time,case when ct.id is null then 'false' else 'true' end selected
+        FROM
+        coupon t
+        LEFT JOIN coupon_detail ti ON t.last_coupon_detail_no = ti.coupon_detail_no
+        LEFT JOIN coupon_activity_coupon ct ON ct.coupon_no = t.coupon_no
+        AND ct.activity_id = #{q.activityId}
+        WHERE 1=1
+        AND t.shop_no = #{q.shopNo}
+        <if test="q.name!=null and q.name!=''">
+            and ti.name like concat('%',#{q.name},'%')
+        </if>
+    </select>
+
+    <select id="selectUserActivityCouponPage" resultType="com.ycandyz.master.domain.response.coupon.CouponDetailUserResp">
+        SELECT
+        uti.id,uti.status,uti.create_time,ti.end_time,ti.use_type,ti.full_money,ti.discount_money,u.`name`,u.phone
+        FROM
+        coupon_activity_coupon cat
+        LEFT JOIN coupon ct ON ct.coupon_no = cat.coupon_no
+        LEFT JOIN coupon_detail ti ON ti.coupon_no = ct.coupon_no
+        LEFT JOIN coupon_user_coupon_detail uti ON uti.coupon_detail_no = ti.coupon_detail_no
+        LEFT JOIN user u ON u.id = uti.user_id
+        WHERE 1=1
+        AND cat.activity_id = #{q.id}
+        <if test="q.createTimeS != null">
+            <![CDATA[
+	            AND uti.create_time > #{q.createTimeS}
+	        ]]>
+        </if>
+        <if test="q.createTimeE != null">
+            <![CDATA[
+	            AND date(uti.create_time) <= date(#{q.createTimeE})
+	        ]]>
+        </if>
+        <if test="q.statusType != null and q.statusType == 2"> AND uti.status = 1 </if>
+        <if test="q.statusType != null and q.statusType == 1">
+            <![CDATA[
+            	AND ti.end_time < NOW()
+            ]]>
+        </if>
+        <if test="q.statusType != null and q.statusType == 0">
+            <![CDATA[
+            	AND ti.end_time > NOW()
+            ]]>
+        </if>
+        <if test="q.username != null and q.username != ''"> AND (u.name like CONCAT('%',#{q.username},'%') or u.phone = #{q.username}) </if>
+        <if test="q.phone != null and q.phone != ''"> AND u.phone = #{q.phone} </if>
+    </select>
+
+
+</mapper>

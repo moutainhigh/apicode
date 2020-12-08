@@ -24,16 +24,13 @@ import java.util.Date;
 @Getter
 @Setter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class CouponActivityTicketResp {
+public class CouponActivityCouponResp {
 
     @ApiModelProperty(value = "主键ID")
     private Long id;
 
-    @ApiModelProperty(name = "ticket_no",value = "优惠券编号")
-    private String ticketNo;
-
     @ApiModelProperty(value = "优惠券名称")
-    private String name;
+    private String title;
 
     @ApiModelProperty(name = "remain_num",value = "优惠卷剩余数量")
     private Integer remainNum;
