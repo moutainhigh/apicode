@@ -396,7 +396,12 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
                 int i = organizeMpConfigPlanPageDao.delByMenuId(menuId);
             }
             saveOnePage(organizeMenuMpRequestVO, menuId);
-            saveOther(organizeMpConfigPlan2, organizeMenuMpRequestVO);
+            //saveOther(organizeMpConfigPlan2, organizeMenuMpRequestVO);
+
+            //保存草稿时间
+            OrganizeMpConfigPlan organizeMpConfigPlan3 = organizeMpConfigPlanDao.selectByIdUsing(organizeId);
+            organizeMpReleaseDao.updateDraftTime(organizeMpConfigPlan3.getId());
+
         }else if (publish != null && publish == 1){
             //保存发布
             OrganizeMpConfigPlan organizeMpConfigPlan = organizeMpConfigPlanDao.selByOrganizeIdNowNotUse(organizeId);
