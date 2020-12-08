@@ -1532,12 +1532,12 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
 
                 return ReturnResponse.success(mallOrderVO);
-            }
-        }else if (mallOrderDTO.getStatus()==50){
-            if (mallOrderDTO.getSubStatus()==5050){ //5050-卖家取消（待收货-自提订单）
-                return ReturnResponse.failed("该笔订单已经被商家取消了");
-            }else {
-                return ReturnResponse.failed("当前订单被取消");
+            }else if (mallOrderDTO.getStatus()==50){
+                if (mallOrderDTO.getSubStatus()==5050){ //5050-卖家取消（待收货-自提订单）
+                    return ReturnResponse.failed("该笔订单已经被商家取消了");
+                }else {
+                    return ReturnResponse.failed("当前订单被取消");
+                }
             }
         }
         return ReturnResponse.failed("查询提货码未查询到订单");
