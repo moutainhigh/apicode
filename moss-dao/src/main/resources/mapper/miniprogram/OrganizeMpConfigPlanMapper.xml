@@ -37,14 +37,14 @@
     </select>
 
     <select id="selByOrganizeId" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-        select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 1 and logic_delete = 0;
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 1 and logic_delete = 0
     </select>
     <select id="selByOrganizeIdNowNotUse" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-        select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 0 and logic_delete = 0;
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and current_using = 0 and logic_delete = 0
     </select>
 
     <select id="selectByIdUsing" resultType="com.ycandyz.master.entities.miniprogram.OrganizeMpConfigPlan">
-        select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0 and current_using = 1;
+        select * from organize_mp_config_plan where organize_id = #{organizeId} and logic_delete = 0 and current_using = 1
     </select>
 
 </mapper>
