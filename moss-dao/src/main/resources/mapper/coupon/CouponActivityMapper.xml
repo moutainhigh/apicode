@@ -5,12 +5,11 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.coupon.CouponActivity">
         <id column="id" property="id" />
-        <result column="activity_no" property="activityNo" />
         <result column="shop_no" property="shopNo" />
-        <result column="name" property="name" />
-        <result column="height_limit" property="heightLimit" />
+        <result column="title" property="title" />
+        <result column="max_limit" property="maxLimit" />
         <result column="status" property="status" />
-        <result column="join_type" property="joinType" />
+        <result column="user_type" property="userType" />
         <result column="activity_num" property="activityNum" />
         <result column="create_at" property="createTime" />
         <result column="update_at" property="updateTime" />
@@ -24,7 +23,7 @@
     </sql>
 
     <update id="updateStatusById">
-        update coupon_activity set status = #{status} where id = #{id}
+        update coupon_activity set enabled = #{enabled} where id = #{id}
     </update>
 
 </mapper>

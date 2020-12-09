@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(description="发卷宝-优惠卷-检索参数")
-public class CouponActivityTicketQuery implements Serializable {
+public class CouponActivityCouponQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,8 +30,8 @@ public class CouponActivityTicketQuery implements Serializable {
     @ApiModelProperty(name = "shop_no",value = "门店编号")
     private String shopNo;
 
-    @ApiModelProperty(name = "activity_no",value = "发卷宝编号",required=true)
-    private String activityNo;
+    @ApiModelProperty(name = "id",value = "发卷宝ID",required=true)
+    private Long id;
 
     @ApiModelProperty(value = "优惠卷名称")
     private String name;

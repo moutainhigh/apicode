@@ -1,6 +1,6 @@
 package com.ycandyz.master.dto.coupon;
 
-import com.ycandyz.master.entities.coupon.CouponActivityTicket;
+import com.ycandyz.master.entities.coupon.CouponActivityCoupon;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Getter;
@@ -18,6 +18,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("coupon_activity_ticket")
-public class CouponActivityTicketDTO extends CouponActivityTicket {
+public class CouponActivityTicketDTO extends CouponActivityCoupon {
 
 }

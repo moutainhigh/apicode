@@ -36,7 +36,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("coupon")
-@Api(tags="coupon")
+@Api(tags="优惠卷")
 public class CouponTicketController extends BaseController<CouponServiceImpl,Coupon,CouponQuery> {
 
     @Autowired

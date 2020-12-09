@@ -29,20 +29,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-@TableName("coupon_activity_ticket")
+@TableName("coupon_activity_coupon")
 @ApiModel(description="发卷宝-优惠卷")
-public class CouponActivityTicket extends Model {
+public class CouponActivityCoupon extends Model {
 
 
    @ApiModelProperty(value = "ID")
    @TableId(value = "id", type = IdType.AUTO)
    private Long id;
 
-   @ApiModelProperty(name = "activity_no",value = "优惠宝编号")
-   private String activityNo;
+   @ApiModelProperty(name = "activity_id",value = "优惠宝ID")
+   private Long activityId;
 
-   @ApiModelProperty(name = "ticket_no",value = "优惠券编号")
-   private String ticketNo;
+   @ApiModelProperty(name = "coupon_id",value = "优惠券ID")
+   private Long couponId;
 
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    @ApiModelProperty(name = "create_time",value = "创建时间")

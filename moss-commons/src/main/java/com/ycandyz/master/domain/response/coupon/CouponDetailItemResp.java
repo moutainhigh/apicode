@@ -18,6 +18,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("coupon_detail_item")
-public class CouponTicketInfoItemResp extends CouponDetailItem {
+public class CouponDetailItemResp extends CouponDetailItem {
 
 }
