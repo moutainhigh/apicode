@@ -208,9 +208,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
 
                 //最后更新优惠券表
                 coupon.setUpdateTime(new Date());
-                coupon.setLastTicketInfoNo(ticketInfoNo);
                 coupon.setName(couponDetailQuery.getName());
-                coupon.setTicketSum(couponDetailQuery.getTicketSum());
+                coupon.setCouponSum(couponDetailQuery.getTicketSum());
                 couponDao.updateById(coupon);
             }
             return CommonResult.success("更新成功!");
@@ -228,11 +227,10 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         //新增优惠券
         Coupon couponTicket = new Coupon();
         couponTicket.setUpdateTime(current);
-        couponTicket.setLastTicketInfoNo(ticketInfoNo);
         couponTicket.setName(couponDetailQuery.getName());
-        couponTicket.setTicketSum(couponDetailQuery.getTicketSum());
+        couponTicket.setCouponSum(couponDetailQuery.getTicketSum());
         couponTicket.setShopNo(userVO.getShopNo());
-        couponTicket.setTicketNo(ticketNo);
+        couponTicket.setCouponNo(ticketNo);
         if (current.before(couponDetailQuery.getBeginTime())) {
             couponTicket.setState(0);
         }else if (current.after(couponDetailQuery.getBeginTime()) && current.before(couponDetailQuery.getEndTime())){

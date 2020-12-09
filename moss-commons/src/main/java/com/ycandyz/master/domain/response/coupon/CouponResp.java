@@ -18,7 +18,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class CouponTicketResp {
+public class CouponResp {
 
     @ApiModelProperty(value = "主键ID")
     private Long id;

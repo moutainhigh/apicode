@@ -3,7 +3,7 @@ package com.ycandyz.master.service.coupon;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.domain.query.coupon.CouponActivityCouponQuery;
-import com.ycandyz.master.domain.query.coupon.CouponUserActivityCouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponDetailUserQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp;
 import com.ycandyz.master.domain.response.coupon.CouponDetailUserResp;
 import com.ycandyz.master.entities.coupon.CouponActivityCoupon;
@@ -27,5 +27,5 @@ public interface ICouponActivityCouponService extends IService<CouponActivityCou
 
     Page<CouponActivityCouponResp> selectActivityCouponPage(Page page, CouponActivityCouponQuery query);
 
-    Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponUserActivityCouponQuery query);
+    Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query);
 }

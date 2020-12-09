@@ -2,7 +2,7 @@ package com.ycandyz.master.dao.coupon;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.domain.query.coupon.CouponActivityCouponQuery;
-import com.ycandyz.master.domain.query.coupon.CouponUserActivityCouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponDetailUserQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp;
 import com.ycandyz.master.domain.response.coupon.CouponDetailUserResp;
 import com.ycandyz.master.entities.coupon.CouponActivityCoupon;
@@ -25,7 +25,7 @@ public interface CouponActivityCouponDao extends BaseMapper<CouponActivityCoupon
 
     Page<CouponActivityCouponResp> selectCouponPage(Page page, @Param("q") CouponActivityCouponQuery query);
 
-    Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, @Param("q") CouponUserActivityCouponQuery query);
+    Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, @Param("q") CouponDetailUserQuery query);
 
     Page<CouponActivityCouponResp> selectActivityCouponPage(Page page, @Param("q") CouponActivityCouponQuery query);
 

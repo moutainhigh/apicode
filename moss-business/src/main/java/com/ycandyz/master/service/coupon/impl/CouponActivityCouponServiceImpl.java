@@ -1,7 +1,7 @@
 package com.ycandyz.master.service.coupon.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ycandyz.master.domain.query.coupon.CouponUserActivityCouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponDetailUserQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp;
 import com.ycandyz.master.domain.response.coupon.CouponDetailUserResp;
 import com.ycandyz.master.entities.coupon.CouponActivityCoupon;
@@ -44,7 +44,7 @@ public class CouponActivityCouponServiceImpl extends BaseService<CouponActivityC
     }
 
     @Override
-    public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponUserActivityCouponQuery query) {
+    public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query) {
         return baseMapper.selectUserActivityCouponPage(page,query);
     }
 }

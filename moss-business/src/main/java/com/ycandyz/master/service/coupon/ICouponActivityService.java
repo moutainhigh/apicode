@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityCouponQuery;
-import com.ycandyz.master.domain.query.coupon.CouponUserActivityCouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponDetailUserQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
 import com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp;
 import com.ycandyz.master.domain.response.coupon.CouponDetailUserResp;
@@ -36,5 +36,5 @@ public interface ICouponActivityService extends IService<CouponActivity>{
 
     Page<CouponActivityCouponResp> selectCouponPage(Page page, CouponActivityCouponQuery query);
 
-    Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponUserActivityCouponQuery query);
+    Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query);
 }

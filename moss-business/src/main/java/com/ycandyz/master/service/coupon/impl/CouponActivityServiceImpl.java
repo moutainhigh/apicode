@@ -9,7 +9,7 @@ import com.ycandyz.master.domain.enums.coupon.CouponActivityEnum;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityCouponQuery;
-import com.ycandyz.master.domain.query.coupon.CouponUserActivityCouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponDetailUserQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
 import com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp;
 import com.ycandyz.master.domain.response.coupon.CouponDetailUserResp;
@@ -182,7 +182,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     }
 
     @Override
-    public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponUserActivityCouponQuery query) {
+    public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query) {
         Page<CouponDetailUserResp> p = couponActivityCouponService.selectUserActivityCouponPage(page,query);
         if(p.getRecords() != null){
             p.getRecords().stream().forEach(f -> {

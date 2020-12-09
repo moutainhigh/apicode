@@ -25,7 +25,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(description="发卷宝-优惠卷-检索参数")
-public class CouponUserActivityCouponQuery implements Serializable {
+public class CouponDetailUserQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

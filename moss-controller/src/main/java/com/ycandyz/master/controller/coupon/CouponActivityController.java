@@ -5,7 +5,7 @@ import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityCouponQuery;
-import com.ycandyz.master.domain.query.coupon.CouponUserActivityCouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponDetailUserQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp;
 import com.ycandyz.master.domain.response.coupon.CouponDetailUserResp;
 import io.swagger.annotations.Api;
@@ -95,7 +95,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @ApiOperation(value = "活动参与人-分页")
     @GetMapping(value = "{id}/user")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponDetailUserResp>> getUserPage(@PathVariable Long id,PageModel page, CouponUserActivityCouponQuery query) {
+    public CommonResult<BasePageResult<CouponDetailUserResp>> getUserPage(@PathVariable Long id,PageModel page, CouponDetailUserQuery query) {
 	    query.setId(id);
         return CommonResult.success(new BasePageResult(service.selectUserActivityCouponPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
