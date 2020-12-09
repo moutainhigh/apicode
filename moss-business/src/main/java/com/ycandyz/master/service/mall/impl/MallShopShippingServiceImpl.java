@@ -286,6 +286,14 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
 
         MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",mallShopShippingUAppQuery.getOrderNo()));
         if (mallOrder != null) {
+
+            if (mallOrder.getStatus()==50){ //订单已经被取消
+                return ReturnResponse.failed("发货失败，订单已取消");
+            }
+            if (mallOrder.getStatus()==30){ //订单已经发货，无需重复发货
+                return ReturnResponse.failed("订单已经发货了哦");
+            }
+
             if (mallOrder.getDeliverMethod()==10) {     //快递发货
                 UserVO userVO = getUser();  //获取当前登陆用户
                 MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(mallShopShippingUAppQuery.getOrderNo());

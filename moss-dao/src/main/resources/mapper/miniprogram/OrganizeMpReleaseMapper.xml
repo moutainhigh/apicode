@@ -14,15 +14,22 @@
     <sql id="Base_Column_List">
         id, plan_name, plan_id, create_time, update_time, organize_category
     </sql>
-        <insert id="insertVersion">
-        insert into organize_mp_release(id,organize_id,plan_id,create_time, update_time,version)
-        values (#{id},#{organizeId},#{planId},now(),now(),#{version});
+
+    <insert id="insertVersion">
+        insert into organize_mp_release(id,organize_id,plan_id,create_time,version)
+        values (#{id},#{organizeId},#{planId},now(),#{version});
     </insert>
+
     <select id="listAll" resultMap="BaseResultMap">
         select create_time,update_time,version from organize_mp_release where organize_id = #{organizeId} order by create_time desc
     </select>
+
     <select id="selByOrganizeId" resultType="com.ycandyz.master.dto.miniprogram.OrganizeMpReleaseDTO">
-        select * from organize_mp_release where organize_id = #{organizeId} order by create_time desc;
+        select * from organize_mp_release where organize_id = #{organizeId} order by create_time desc
     </select>
+
+    <update id="updateDraftTime">
+        update organize_mp_release set update_time = now() where plan_id = #{planId}
+    </update>
 
 </mapper>
