@@ -41,6 +41,8 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> e
     @Autowired
     public HttpServletRequest request;
 
+    private static String SHOP_NO = "0";
+
     public UserVO getUser() {
         return (UserVO)request.getSession().getAttribute(SecurityConstant.USER_TOKEN_HEADER);
     }
@@ -57,6 +59,13 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> e
      * 获取当前用户登录的店铺编号
      */
     public String getShopNo() {
+
+        UserVO user = getUser();
+        if(user == null){
+            return null;
+        }if(user.getShopNo() == null || SHOP_NO.equals(user.getShopNo())){
+            return null;
+        }
         return getUser().getShopNo();
     }
 
