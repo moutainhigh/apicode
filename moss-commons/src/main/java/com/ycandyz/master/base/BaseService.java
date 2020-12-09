@@ -37,6 +37,8 @@ import java.util.List;
  */
 public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> extends ServiceImpl<M, T> {
 
+    private static String SHOP_NO = "0";
+
     @Autowired
     public HttpServletRequest request;
 
@@ -56,6 +58,10 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> e
      * 获取当前用户登录的店铺编号
      */
     public String getShopNo() {
+        UserVO user = getUser();
+        if(user == null || user.getShopNo() == null || SHOP_NO.equals(user.getShopNo())){
+            return null;
+        }
         return getUser().getShopNo();
     }
 
