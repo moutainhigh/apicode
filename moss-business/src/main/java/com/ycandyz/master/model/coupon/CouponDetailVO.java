@@ -52,7 +52,7 @@ public class CouponDetailVO extends CouponDetail {
     private BigDecimal discountMoney;
 
     @ApiModelProperty(value = "券有效期类型：0:时间段(自然日)，1:领券当日起计算天数，2:领券次日起计算天数")
-    private Integer status;
+    private Integer validityType;
 
     @ApiModelProperty(value = "券生效开始时间")
     private Date beginTime;
@@ -86,6 +86,9 @@ public class CouponDetailVO extends CouponDetail {
     @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
+    @ApiModelProperty(value = "标记优惠券关联详情：0-以前；1-当前")
+    private Integer status;
+
     //冗余字段
 
     @ApiModelProperty(value = "剩余数量")
@@ -106,9 +109,6 @@ public class CouponDetailVO extends CouponDetail {
     @ApiModelProperty(value = "核销数量")
     private Integer useNum;
 
-    @ApiModelProperty(value = "优惠券状态：0:未开始，1:进行中，2:已结束，3:已停止")
-    private Integer state;
-
-    @ApiModelProperty(value = "优惠券最新修改详情编码")
-    private String lastTicketInfoNo;
+    @ApiModelProperty(value = "优惠券状态：0:停止,1:开始")
+    private Integer couponStatus;
 }

@@ -7,8 +7,10 @@ import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
+import com.ycandyz.master.model.mall.MallCategoryVO;
 import com.ycandyz.master.service.coupon.ICouponService;
 import com.ycandyz.master.service.coupon.impl.CouponServiceImpl;
+import com.ycandyz.master.vo.MallItemVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.ycandyz.master.controller.base.BaseController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -44,10 +48,11 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      * @param requestParams
      * @return
      */
-	@ApiOperation(value = "查询分页")
+    @ApiOperation(value = "查询分页")
     @GetMapping(value = "")
-    public CommonResult<BasePageResult<CouponDetailVO>> selectPageList(@RequestBody RequestParams<CouponQuery> requestParams) {
-        return iCouponService.selectPageList(requestParams);
+    public CommonResult<BasePageResult<CouponDetailVO>> selectPageList(PageModel page, CouponQuery requestParams) {
+
+        return iCouponService.selectPageList(page,requestParams);
     }
 
     /**
@@ -57,20 +62,20 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      * @return
      */
     @ApiOperation(value = "优惠券启用停用")
-    @GetMapping(value = "/audit")
-	public CommonResult<String> auditState(@RequestParam("id") Long id, @RequestParam("state") Integer state) {
+    @GetMapping(value = "{id}/switch")
+    public CommonResult<String> auditState(@PathVariable("id") Long id, @RequestParam("state") Integer state) {
         if (id==null || id==0 || state==null){
             return CommonResult.failed("传入参数为空");
         }
         return iCouponService.auditState(id,state);
-	}
+    }
 
     /**
-     * 优惠券的启用和停用
+     * 优惠券详情
      * @param id 优惠券编号
      * @return
      */
-    @ApiOperation(value = "优惠券启用停用")
+    @ApiOperation(value = "优惠券详情")
     @GetMapping(value = "/{id}")
     public CommonResult<CouponDetailVO> ticketDetail(@PathVariable("id") Long id) {
         if (id==null || id>0){
@@ -80,18 +85,46 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
     }
 
     /**
-     * 优惠券的编辑或新增
+     * 优惠券的新增
      * @param couponDetailQuery
      * @return
      */
-    @ApiOperation(value = "优惠券的新增或修改")
-    @PutMapping(value = "")
-    public CommonResult<String> saveTicket(@RequestBody CouponDetailQuery couponDetailQuery){
-        CommonResult<String> returnResponse = iCouponService.saveTicket(couponDetailQuery);
+    @ApiOperation(value = "优惠券的新增")
+    @PostMapping(value = "")
+    public CommonResult<String> insertTicket(@RequestBody CouponDetailQuery couponDetailQuery){
+        CommonResult<String> returnResponse = iCouponService.insertTicket(couponDetailQuery);
         return returnResponse;
     }
 
-//    public ReturnResponse<String> itemList(String type, String keyword, String itemType){
-//
-//    }
+    /**
+     * 优惠券的编辑
+     * @param couponDetailQuery
+     * @return
+     */
+    @ApiOperation(value = "优惠券的修改")
+    @PutMapping(value = "")
+    public CommonResult<String> updateTicket(@RequestBody CouponDetailQuery couponDetailQuery){
+        CommonResult<String> returnResponse = iCouponService.updateTicket(couponDetailQuery);
+        return returnResponse;
+    }
+
+    /**
+     * 获取分类树形结构列表
+     * @return
+     */
+    @ApiOperation(value = "获取分类树形结构列表")
+    @GetMapping(value = "/item/category")
+    public CommonResult<List<MallCategoryVO>> getCategoryList(){
+        return iCouponService.getCategoryList();
+    }
+
+    /**
+     * 获取所有分类
+     * @return
+     */
+    @ApiOperation(value = "获取所有分类")
+    @GetMapping(value = "{id}/item")
+    public CommonResult<BasePageResult<MallItemVO>> itemList(@PathVariable("id") Long id, @RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam("type") String type, @RequestParam("keyword") String keyword, @RequestParam("category") String category){
+        return iCouponService.itemList(id,page,pageSize,type,keyword,category);
+    }
 }

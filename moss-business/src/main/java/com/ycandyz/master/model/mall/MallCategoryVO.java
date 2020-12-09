@@ -2,8 +2,11 @@ package com.ycandyz.master.model.mall;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ycandyz.master.entities.mall.MallCategory;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * <p>
@@ -19,4 +22,6 @@ import lombok.Setter;
 @TableName("mall_category")
 public class MallCategoryVO extends MallCategory {
 
+    @ApiModelProperty(value = "子集数组")
+    private List<MallCategoryVO> chaildList;
 }

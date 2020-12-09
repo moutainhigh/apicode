@@ -2,6 +2,7 @@ package com.ycandyz.master.dao.mall.goodsManage;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ycandyz.master.dto.mall.MallCategoryDTO;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.entities.mall.goodsManage.MallParentCategory;
 import com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryDTO;
@@ -40,4 +41,6 @@ public interface MallCategoryDao extends BaseMapper<MallCategory> {
     List<OrganizeMallCategoryDTO> selectByShopNo(String shopNo);
 
     int  updateParentCategoryImg(OrganizeMallCategoryVO organizeMallCategoryVO);
+
+    List<MallCategoryDTO> selectAllByShopNo(@Param("shopNo") String shopNo);
 }

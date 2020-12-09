@@ -34,8 +34,8 @@ public class CouponTicketResp {
     @ApiModelProperty(value = "活动结束时间")
     private Date endTime;
 
-    @ApiModelProperty(value = "优惠券状态：0:未开始，1:进行中，2:已结束，3:已停止")
-    private Integer state;
+    @ApiModelProperty(value = "优惠券状态：0:停止；1:启用")
+    private Integer status;
 
     @ApiModelProperty(value = "说明备注")
     private String remark;

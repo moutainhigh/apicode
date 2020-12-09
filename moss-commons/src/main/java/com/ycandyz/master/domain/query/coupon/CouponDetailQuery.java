@@ -28,12 +28,6 @@ public class CouponDetailQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(name = "coupon_detail_no",value = "优惠券详情编码")
-    private String couponDetailNo;
-
-    @ApiModelProperty(name = "coupon_id",value = "优惠券编码")
-    private Long couponId;
-
     @ApiModelProperty(name = "shop_type",value = "适用商品：0:全部，1:指定可用，2:指定不可用")
     private Integer shopType;
 
@@ -46,8 +40,8 @@ public class CouponDetailQuery implements Serializable {
     @ApiModelProperty(name = "discount_money",value = "优惠金额")
     private BigDecimal discountMoney;
 
-    @ApiModelProperty(name = "status",value = "券有效期类型：0:时间段(自然日)，1:领券当日起计算天数，2:领券次日起计算天数")
-    private Integer status;
+    @ApiModelProperty(name = "validity_type",value = "券有效期类型：0:时间段(自然日)，1:领券当日起计算天数，2:领券次日起计算天数")
+    private Integer validityType;
 
     @ApiModelProperty(name = "begin_time",value = "券生效开始时间")
     private Date beginTime;
@@ -88,10 +82,7 @@ public class CouponDetailQuery implements Serializable {
     private Long id;
 
     @ApiModelProperty(name = "ticket_sum",value = "券总数量")
-    private Integer ticketSum;
-
-    @ApiModelProperty(name = "last_ticket_info_no",value = "优惠券最新修改详情编码")
-    private String lastTicketInfoNo;
+    private Integer couponSum;
 
     //商品的编号列表
     @ApiModelProperty(name = "item_no_list",value = "商品编号列表")

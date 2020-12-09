@@ -71,6 +71,9 @@
         select id,category_no,category_name,category_img from mall_category where shop_no = #{shopNo} and status = 1 and layer = 0;
     </select>
 
+    <select id="selectAllByShopNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from mall_category where shop_no = #{shopNo} and status=1
+    </select>
 </mapper>
 
 
