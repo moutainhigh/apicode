@@ -2,6 +2,7 @@ package com.ycandyz.master.controller.miniprogram;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.ycandyz.master.api.*;
 import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanModel;
@@ -53,7 +54,15 @@ public class MpConfigPlanController extends BaseController<MpConfigPlanServiceIm
 	@ApiOperation(value = "✓更新方案", tags = "企业小程序DIY配置")
     @PutMapping(value = "{id}")
 	public CommonResult<MpConfigPlanModel> updateById(@PathVariable Integer id,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MpConfigPlanModel entity) {
-        MpConfigPlan params = new MpConfigPlan();
+
+	    if(entity.getIsDefault() == false){
+            MpConfigPlan mp = service.getOne(new QueryWrapper<MpConfigPlan>().eq("is_default",true).ne("id",id));
+            if(mp == null){
+                return result(false,entity,"必须要存在一个默认模板!");
+            }
+        }
+
+	    MpConfigPlan params = new MpConfigPlan();
         params.setId(id);
         BeanUtil.copyProperties(entity,params);
         return result(service.updatePlan(params),entity,"更改失败!");
