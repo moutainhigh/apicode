@@ -76,6 +76,11 @@ public class MpConfigPlanServiceImpl extends BaseService<MpConfigPlanDao,MpConfi
     public Boolean initPlan(String planName) {
         MpConfigPlan mpConfigPlan = new MpConfigPlan();
         mpConfigPlan.setPlanName(planName);
+        //判断当前是否存在默认模板
+        MpConfigPlan mpm = this.baseMapper.selectOne(new QueryWrapper<MpConfigPlan>().eq("is_default",true));
+        if(mpm == null){
+            mpConfigPlan.setIsDefault(true);
+        }
         this.save(mpConfigPlan);
         //查询默认菜单
         List<MpConfigMenu> baseMenus = configMenuService.list();
