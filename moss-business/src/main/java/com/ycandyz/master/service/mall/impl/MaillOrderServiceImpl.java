@@ -1532,15 +1532,19 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
 
                 return ReturnResponse.success(mallOrderVO);
+            }else if (mallOrderDTO.getStatus()==40){
+                return ReturnResponse.failed("该笔订单已经提货啦～");
             }else if (mallOrderDTO.getStatus()==50){
                 if (mallOrderDTO.getSubStatus()==5050){ //5050-卖家取消（待收货-自提订单）
                     return ReturnResponse.failed("该笔订单已经被商家取消了");
+                }else if (mallOrderDTO.getSubStatus()==5060){   //5060-买家取消（待收货-自提订单）
+                    return ReturnResponse.failed("该笔订单已经被买家取消了");
                 }else {
                     return ReturnResponse.failed("当前订单被取消");
                 }
             }
         }
-        return ReturnResponse.failed("查询提货码未查询到订单");
+        return ReturnResponse.failed("未查询到对应订单");
     }
 
     @Override
@@ -1573,7 +1577,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             mallOrderDao.updateById(mallOrder);
             return queryOrderDetailByUApp(mallPickupUAppQuery.getOrderNo()); //更新成功，返回订单详情
         }
-        return ReturnResponse.failed("未查询到待自提订单");
+        return ReturnResponse.failed("未查询到对应订单");
     }
 
     @Override
