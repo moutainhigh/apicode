@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ycandyz.master.dao.coupon.CouponTicketInfoDao">
+<mapper namespace="com.ycandyz.master.dao.coupon.CouponDetailDao">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.coupon.CouponTicketInfoDTO">
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.coupon.CouponDetailDTO">
         <id column="id" property="id" />
-        <result column="ticket_info_no" property="ticketInfoNo" />
-        <result column="ticket_no" property="ticketNo" />
+        <result column="coupon_detail_no" property="couponDetailNo" />
+        <result column="coupon_id" property="couponId" />
         <result column="name" property="name" />
         <result column="shop_type" property="shopType" />
         <result column="use_type" property="useType" />
         <result column="full_money" property="fullMoney" />
         <result column="discount_money" property="discountMoney" />
         <result column="status" property="status" />
-        <result column="begin_at" property="beginAt" />
-        <result column="end_at" property="endAt" />
+        <result column="begin_time" property="beginTime" />
+        <result column="end_time" property="endTime" />
         <result column="days" property="days" />
         <result column="user_type" property="userType" />
         <result column="take_num" property="takeNum" />
         <result column="superposition" property="superposition" />
         <result column="obtain" property="obtain" />
         <result column="remark" property="remark" />
-        <result column="created_at" property="createdAt" />
-        <result column="update_at" property="updateAt" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, ticket_info_no, ticket_no, name, shop_type, use_type, full_money, discount_money, status, begin_at, end_at, days, user_type, take_num, superposition, obtain, remark, created_at, update_at
+        id, coupon_detail_no, coupon_id, name, shop_type, use_type, full_money, discount_money, status, begin_time, end_time, days, user_type, take_num, superposition, obtain, remark, create_time, update_time
     </sql>
 
 </mapper>

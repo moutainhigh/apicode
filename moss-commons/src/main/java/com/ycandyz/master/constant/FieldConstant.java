@@ -17,7 +17,7 @@ public final class FieldConstant {
     /**
      * 创建用户
      */
-	public static final String CREATE_BY = "createBy";
+	public static final String CREATE_BY = "createdBy";
     /**
      * 修改时间
      */
@@ -25,7 +25,7 @@ public final class FieldConstant {
     /**
      * 修改用户
      */
-	public static final String UPDATE_BY = "updateBy";
+	public static final String UPDATE_BY = "updatedBy";
     /**
      * 逻辑删除标志
      */

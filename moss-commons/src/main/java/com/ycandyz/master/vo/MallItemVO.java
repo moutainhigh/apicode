@@ -91,4 +91,8 @@ public class MallItemVO {
 
     @ApiModelProperty(value = "最高销售价格")
     private BigDecimal highestSalePrice;
+
+    //冗余字段
+    @ApiModelProperty(value = "分类名")
+    private String categoryName;
 }

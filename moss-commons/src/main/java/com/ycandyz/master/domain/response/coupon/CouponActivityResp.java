@@ -3,8 +3,11 @@ package com.ycandyz.master.domain.response.coupon;
 import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * <p>
@@ -19,5 +22,8 @@ import lombok.Setter;
 @Setter
 @TableName("coupon_activity")
 public class CouponActivityResp extends CouponActivity {
+
+    @ApiModelProperty(name = "activity_coupon_list",value = "已选优惠卷")
+    private List<CouponActivityCouponResp> activityCouponList;
 
 }

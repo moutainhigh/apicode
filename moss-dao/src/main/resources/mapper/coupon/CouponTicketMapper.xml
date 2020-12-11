@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ycandyz.master.dao.coupon.CouponTicketDao">
+<mapper namespace="com.ycandyz.master.dao.coupon.CouponDao">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.coupon.CouponTicketInfo">
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.coupon.CouponDetailDTO">
         <id column="id" property="id" />
         <result column="shop_no" property="shopNo" />
-        <result column="ticket_no" property="ticketNo" />
+        <result column="coupon_no" property="couponNo" />
         <result column="name" property="name" />
-        <result column="ticket_sum" property="ticketSum" />
+        <result column="coupon_sum" property="couponSum" />
         <result column="obtain_num" property="obtainNum" />
         <result column="use_num" property="useNum" />
-        <result column="state" property="state" />
-        <result column="last_ticket_info_no" property="lastTicketInfoNo" />
-        <result column="created_at" property="createdAt" />
-        <result column="ticket_info_no" property="ticketInfoNo" />
+        <result column="status" property="status" />
+        <result column="create_time" property="createTime" />
+        <result column="coupon_detail_no" property="couponDetailNo" />
         <result column="shop_type" property="shopType" />
         <result column="use_type" property="useType" />
         <result column="full_money" property="fullMoney" />
         <result column="discount_money" property="discountMoney" />
         <result column="status" property="status" />
-        <result column="begin_at" property="beginAt" />
-        <result column="end_at" property="endAt" />
+        <result column="begin_time" property="beginTime" />
+        <result column="end_time" property="endTime" />
         <result column="days" property="days" />
         <result column="user_type" property="userType" />
         <result column="take_num" property="takeNum" />
@@ -29,35 +28,35 @@
         <result column="obtain" property="obtain" />
         <result column="remark" property="remark" />
         <result column="surplus_num" property="surplusNum" />
-        <result column="ticketCreatedAt" property="ticketCreatedAt" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, shop_no, ticket_no, name, ticket_sum, obtain_num, use_num, state, last_ticket_info_no, created_at, update_at
+        id, shop_no, coupon_no, name, coupon_sum, obtain_num, use_num, status, created_time, update_time
     </sql>
 
-    <select id="queryTicketPageList" parameterType="com.ycandyz.master.domain.query.coupon.CouponTicketQuery" resultMap="BaseResultMap">
+    <select id="queryTicketPageList" parameterType="com.ycandyz.master.domain.query.coupon.CouponQuery" resultMap="BaseResultMap">
         SELECT
             ti.id as ticketId,
             ti.ticket_no,
-            info.ticket_info_no,
+            info.coupon_detail_no,
             ti.name,
             info.status as status,
-            info.begin_at as begin_at,
-            info.end_at as end_at,
+            info.begin_time as begin_time,
+            info.end_time as end_time,
             info.days as days,
-            ti.state,
+            ti.status,
             info.use_type,
             info.full_money,
             info.discount_money,
             ti.obtain_num,
             ti.ticket_sum-ti.obtain_num as surplus_num,
             ti.use_num,
-            ti.created_at as ticketCreatedAt
+            ti.created_time as ticketCreatedAt
         FROM
-            coupon_ticket ti
-            LEFT JOIN coupon_ticket_info info ON ti.last_ticket_info_no = info.ticket_info_no
+            coupon ti
+            LEFT JOIN coupon_detail info ON ti.id = info.coupon_id
+            and info.status=1   /**取最新一条*/
         where
             ti.shop_no=#{p.shopNo}
             <if test="p.name!=null and p.name!=''">
@@ -70,15 +69,15 @@
             </if>
             <if test="p.createdBeginAt!=null">
                 and
-                ti.created_at &gt;= #{p.createdBeginAt}
+                ti.begin_time &gt;= #{p.createdBeginAt}
             </if>
             <if test="p.createdEndAt!=null">
                 and
-                ti.created_at &lt;= #{p.createdEndAt}
+                ti.end_time &lt;= #{p.createdEndAt}
             </if>
     </select>
 
-    <select id="queryTicketDetailByTicketNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="queryTicketDetailByTicketNo" resultMap="BaseResultMap">
         ti.id as ticketId,
             ti.ticket_no,
             ti.ticket_sum,
@@ -90,7 +89,7 @@
             ti.created_at as ticketCreatedAt,
             ti.remark,
 
-            info.ticket_info_no,
+            info.coupon_detail_no,
             info.shop_type,
             info.status as status,
             info.begin_at as begin_at,
@@ -103,11 +102,12 @@
             info.superposition,
             info.obtain
         FROM
-            coupon_ticket ti
-            LEFT JOIN coupon_ticket_info info ON ti.last_ticket_info_no = info.ticket_info_no
+            coupon ti
+            LEFT JOIN coupon_detail info ON ti.id = info.coupon_id
+            and info.status=1   /**取最新一条*/
         where
             ti.shop_no=#{p.shopNo}
             and
-            ti.ticket_no=#{ticketNo}
+            ti.id=#{id}
     </select>
 </mapper>

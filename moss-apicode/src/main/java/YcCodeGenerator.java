@@ -29,7 +29,7 @@ import java.util.*;
 public class YcCodeGenerator {
 
 	protected static final Logger log = LoggerFactory.getLogger(YcCodeGenerator.class);
-
+	
 	private static final String tableName = "coupon_ticket_info";
 	private static final String moduleName = "coupon";
 	private static final boolean createController = true;

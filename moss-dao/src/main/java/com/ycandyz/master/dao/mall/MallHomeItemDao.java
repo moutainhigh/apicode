@@ -42,4 +42,5 @@ public interface MallHomeItemDao extends BaseMapper<MallItem> {
 
     int updateBuyNumByItemNo(@Param("itemNo") String itemNo);
 
+    Page<MallItemResp> selectMallItemPageByCouponId(Page page, @Param("query") MallItemQuery query);
 }

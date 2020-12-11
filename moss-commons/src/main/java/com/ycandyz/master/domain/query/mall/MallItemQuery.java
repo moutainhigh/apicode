@@ -44,4 +44,8 @@ public class MallItemQuery implements Serializable {
     @Condition(condition = ConditionEnum.LIKE)
     private String itemName;
 
+    @ApiModelProperty(value = "优惠券id")
+    @Condition(condition = ConditionEnum.LIKE)
+    private Long couponId;
+
 }

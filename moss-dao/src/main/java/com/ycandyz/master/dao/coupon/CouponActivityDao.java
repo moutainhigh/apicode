@@ -1,5 +1,6 @@
 package com.ycandyz.master.dao.coupon;
 
+import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -12,5 +13,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-11-17
  */
 public interface CouponActivityDao extends BaseMapper<CouponActivity> {
+
+    int updateStatusById(CouponActivityPutModel entity);
 
 }
