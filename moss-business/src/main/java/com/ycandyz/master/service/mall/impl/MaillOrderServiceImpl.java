@@ -1556,7 +1556,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     @Override
     public ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(MallPickupUAppQuery mallPickupUAppQuery) {
         UserVO userVO = getUser();
-        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(mallPickupUAppQuery.getPickupNo(), userVO.getShopNo());
+        MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(mallPickupUAppQuery.getPickupNo(), userVO.getShopNo());
         if (mallOrderDTO!=null){
             //判断pickNo查询到订单是否是orderNo的订单
             if (StringUtils.isNotEmpty(mallPickupUAppQuery.getOrderNo())){
