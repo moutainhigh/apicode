@@ -893,7 +893,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             if (count!=null && count>0) {
                 page = (page - 1) * pageSize;
                 if (nextNo!=null && !"".equals(nextNo)) {
-                    List<String> orderNoList = mallOrderDao.getOrderListByOrderNoUApp(mallOrderUAppQuery, 1, pageSize * page);
+                    List<String> orderNoList = mallOrderDao.getOrderListByOrderNoUApp(mallOrderUAppQuery, page, pageSize);
                     int row = orderNoList.indexOf(nextNo);
                     page = Long.valueOf(row + 1);
                 }
