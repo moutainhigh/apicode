@@ -1123,4 +1123,41 @@
         where mo.shop_no=#{shopNo} and mo.pickup_no=#{pickupNo} and mo.is_del=0 and mo.deliver_type=2
         /**and mo.status=30 and mo.sub_status=3010*/
     </select>
+
+    <select id="getOrderListByOrderNoUApp" resultType="java.lang.String">
+        select
+            mo.order_no
+        FROM
+        mall_order mo
+        LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
+        LEFT JOIN mall_order_detail modetail ON mo.order_no = modetail.order_no
+        LEFT JOIN user	u ON mo.user_id = u.id
+        LEFT JOIN mall_shop_shipping ship ON ship.order_no = mo.order_no
+        WHERE
+        mo.shop_no=#{p.shopNo}
+        and (mo.is_del=0 or mo.is_del=1)
+        <if test="p.mallOrderQuery != null and p.mallOrderQuery != ''">
+            and
+            (mo.order_no  like concat('%',#{p.mallOrderQuery},'%') or mo.cart_order_sn like concat('%',#{p.mallOrderQuery},'%') or u.`name` like concat('%',#{p.mallOrderQuery},'%') OR u.phone like concat('%',#{p.mallOrderQuery},'%') or ship.receiver like concat('%',#{p.mallOrderQuery},'%') OR ship.receiver_phone like concat('%',#{p.mallOrderQuery},'%') or mo.pre_phone like concat('%',#{p.mallOrderQuery},'%'))	/**子订单编号或母订单编号*/
+        </if>
+        <if test="p.status != null">
+            and mo.status=#{p.status}
+        </if>
+        <if test="p.deliverType != null">
+            and mo.deliver_type=#{p.deliverType}
+        </if>
+        <if test="p.orderAtBegin != null">
+            and
+            mo.order_at &gt;= #{p.orderAtBegin} /**下单时间*/
+        </if>
+        <if test="p.orderAtEnd != null">
+            and
+            mo.order_at &lt;= #{p.orderAtEnd} /**下单时间*/
+        </if>
+        /**group by mo.id*/
+        /*order by mo.order_at DESC*/
+        GROUP BY mo.order_no
+        ORDER BY mo.id DESC
+        LIMIT #{page},#{size}
+    </select>
 </mapper>
