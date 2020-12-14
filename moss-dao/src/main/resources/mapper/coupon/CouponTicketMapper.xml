@@ -12,6 +12,7 @@
         <result column="obtain_num" property="obtainNum" />
         <result column="use_num" property="useNum" />
         <result column="status" property="status" />
+        <result column="validity_type" property="validityType" />
         <result column="create_time" property="createTime" />
         <result column="coupon_detail_no" property="couponDetailNo" />
         <result column="shop_type" property="shopType" />
@@ -28,6 +29,7 @@
         <result column="obtain" property="obtain" />
         <result column="remark" property="remark" />
         <result column="surplus_num" property="surplusNum" />
+        <result column="couponStatus" property="couponStatus" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -38,21 +40,22 @@
     <select id="queryTicketPageList" parameterType="com.ycandyz.master.domain.query.coupon.CouponQuery" resultMap="BaseResultMap">
         SELECT
             ti.id as ticketId,
-            ti.ticket_no,
-            info.coupon_detail_no,
+            ti.coupon_no,
             ti.name,
+            info.coupon_detail_no,
             info.status as status,
             info.begin_time as begin_time,
             info.end_time as end_time,
             info.days as days,
-            ti.status,
+            ti.status as couponStatus,
             info.use_type,
             info.full_money,
             info.discount_money,
+            info.validity_type,
             ti.obtain_num,
-            ti.ticket_sum-ti.obtain_num as surplus_num,
+            ti.coupon_sum-ti.obtain_num as surplus_num,
             ti.use_num,
-            ti.created_time as ticketCreatedAt
+            ti.create_time as ticketCreatedAt
         FROM
             coupon ti
             LEFT JOIN coupon_detail info ON ti.id = info.coupon_id
@@ -63,17 +66,28 @@
                 and
                 ti.name like concat('%',#{p.name},'%')
             </if>
-            <if test="p.state!=null">
-                and
-                ti.state = #{p.state}
+            <if test="p.subStatus!=null">
+                <if test="p.subStatus==0">
+                    and ti.status=1
+                    and info.begin_time &gt; now()
+                </if>
+                <if test="p.subStatus==1">
+                    and ti.status=1
+                    and info.begin_time &lt;= now()
+                    and info.end_time &gt;= now()
+                </if>
+                <if test="p.subStatus==2">
+                    and ti.status=1
+                    and info.end_time &lt;= now()
+                </if>
             </if>
-            <if test="p.createdBeginAt!=null">
+            <if test="p.createTimeBegin!=null">
                 and
-                ti.begin_time &gt;= #{p.createdBeginAt}
+                ti.create_time &gt;= #{p.createTimeBegin}
             </if>
-            <if test="p.createdEndAt!=null">
+            <if test="p.createTimeEnd!=null">
                 and
-                ti.end_time &lt;= #{p.createdEndAt}
+                ti.create_time &lt;= #{p.createTimeEnd}
             </if>
     </select>
 

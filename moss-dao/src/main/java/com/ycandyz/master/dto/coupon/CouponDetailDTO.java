@@ -30,6 +30,9 @@ public class CouponDetailDTO extends CouponDetail {
     @ApiModelProperty(value = "优惠券id")
     private Long couponId;
 
+    @ApiModelProperty(value = "优惠券编号")
+    private String couponNo;
+
     @ApiModelProperty(value = "优惠券名称")
     private String name;
 

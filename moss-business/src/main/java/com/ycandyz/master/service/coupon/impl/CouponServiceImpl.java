@@ -83,6 +83,23 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 for (CouponDetailDTO couponDetailDTO : page.getRecords()){
                     couponDetailVO = new CouponDetailVO();
                     BeanUtils.copyProperties(couponDetailDTO, couponDetailVO);
+                    int status = 0;
+                    if (couponDetailDTO.getCouponStatus()==1){
+                        if (couponDetailDTO.getValidityType()==0){
+                            if (couponDetailDTO.getBeginTime().after(new Date())){  //开始时间大于当前时间
+                                status = 0;
+                            }
+                            if (couponDetailDTO.getBeginTime().before(new Date()) && couponDetailDTO.getEndTime().after(new Date())){
+                                status = 1;
+                            }
+                            if (couponDetailDTO.getEndTime().before(new Date())){
+                                status = 2;
+                            }
+                        }
+                    }else if (couponDetailDTO.getCouponStatus()==0){
+                        status = 3;
+                    }
+                    couponDetailVO.setStatus(status);
                     list.add(couponDetailVO);
                 }
             }

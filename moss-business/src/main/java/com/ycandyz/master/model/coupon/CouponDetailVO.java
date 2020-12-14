@@ -55,9 +55,11 @@ public class CouponDetailVO extends CouponDetail {
     private Integer validityType;
 
     @ApiModelProperty(value = "券生效开始时间")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date beginTime;
 
     @ApiModelProperty(value = "券生效结束时间")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date endTime;
 
     @ApiModelProperty(value = "券有效天数")
