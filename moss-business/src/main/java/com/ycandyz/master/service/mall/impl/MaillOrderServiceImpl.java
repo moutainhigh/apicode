@@ -118,7 +118,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> oIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.addAll(oIds);
-                        organizeIds.add(groupOrganizeId.intValue());
                         List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
                         if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
@@ -127,6 +126,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             shopNoAndOrganizeId.putAll(map);
                         }
                     }
+                    //登陆用户所在企业加入初始化中
+                    organizeIds.add(groupOrganizeId.intValue());
+                    if (mallOrderQuery.getShopNo()!=null && mallOrderQuery.getShopNo().size()>0) {
+                        mallOrderQuery.getShopNo().add(userVO.getShopNo());
+                    }else {
+                        mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+                    }
+                    shopNoAndOrganizeId.put(userVO.getShopNo(),groupOrganizeId.intValue());
                 }
             }else {
                 mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
