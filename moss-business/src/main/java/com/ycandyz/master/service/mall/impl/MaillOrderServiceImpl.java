@@ -891,7 +891,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             //获取总条数
             count = mallOrderDao.getTrendMallOrderByUAppPageSize(mallOrderUAppQuery);
             if (count!=null && count>0) {
-//                page = (page - 1) * pageSize;
+                page = (page - 1) * pageSize;
                 if (nextNo!=null && !"".equals(nextNo)) {
                     List<String> orderNoList = mallOrderDao.getOrderListByOrderNoUApp(mallOrderUAppQuery, 0, pageSize * page);
                     int row = orderNoList.indexOf(nextNo);
