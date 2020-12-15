@@ -3,11 +3,15 @@
 
 <mapper namespace="com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao">
     <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.goodsManage.MallCategory">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="shop_no" property="shopNo" jdbcType="VARCHAR"/>
         <result column="category_no" property="categoryNo" jdbcType="VARCHAR"/>
         <result column="parent_category_no" property="parentCategoryNo" jdbcType="VARCHAR"/>
         <result column="category_name" property="categoryName" jdbcType="VARCHAR"/>
         <result column="category_img" property="categoryImg" jdbcType="VARCHAR"/>
         <result column="layer" property="layer" jdbcType="INTEGER" />
+        <result column="sort_value" property="sortValue" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="TINYINT" />
     </resultMap>
 
     <resultMap id="BaseResultMapParent" type="com.ycandyz.master.entities.mall.goodsManage.MallParentCategory">

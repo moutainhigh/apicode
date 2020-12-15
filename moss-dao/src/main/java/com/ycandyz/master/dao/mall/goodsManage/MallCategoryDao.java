@@ -42,5 +42,5 @@ public interface MallCategoryDao extends BaseMapper<MallCategory> {
 
     int  updateParentCategoryImg(OrganizeMallCategoryVO organizeMallCategoryVO);
 
-    List<MallCategoryDTO> selectAllByShopNo(@Param("shopNo") String shopNo);
+    List<MallCategory> selectAllByShopNo(@Param("shopNo") String shopNo);
 }

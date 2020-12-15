@@ -62,7 +62,7 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      * @return
      */
     @ApiOperation(value = "优惠券启用停用")
-    @GetMapping(value = "{id}/switch")
+    @PutMapping(value = "{id}/switch")
     public CommonResult<String> auditState(@PathVariable("id") Long id, @RequestParam("state") Integer state) {
         if (id==null || id==0 || state==null){
             return CommonResult.failed("传入参数为空");
@@ -102,9 +102,12 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      * @return
      */
     @ApiOperation(value = "优惠券的修改")
-    @PutMapping(value = "")
-    public CommonResult<String> updateTicket(@RequestBody CouponDetailQuery couponDetailQuery){
-        CommonResult<String> returnResponse = iCouponService.updateTicket(couponDetailQuery);
+    @PutMapping(value = "/{id}")
+    public CommonResult<String> updateTicket(@PathVariable("id") Long id, @RequestBody CouponDetailQuery couponDetailQuery){
+        if (id==null || id==0){
+            return CommonResult.failed("传入id为空");
+        }
+        CommonResult<String> returnResponse = iCouponService.updateTicket(id,couponDetailQuery);
         return returnResponse;
     }
 

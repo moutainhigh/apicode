@@ -25,7 +25,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("coupon_ticket_info")
+@TableName("coupon_detail")
 @ApiModel(description="优惠券详情表")
 public class CouponDetail extends Model {
 

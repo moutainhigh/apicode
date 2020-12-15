@@ -31,7 +31,7 @@ public interface ICouponService extends IService<Coupon>{
 
     CommonResult<String> insertTicket(CouponDetailQuery couponDetailQuery);
 
-    CommonResult<String> updateTicket(CouponDetailQuery couponDetailQuery);
+    CommonResult<String> updateTicket(Long id, CouponDetailQuery couponDetailQuery);
 
     CommonResult<List<MallCategoryVO>> getCategoryList();
 
