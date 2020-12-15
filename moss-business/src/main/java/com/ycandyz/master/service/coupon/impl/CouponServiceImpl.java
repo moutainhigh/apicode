@@ -150,20 +150,20 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
 
     @Transactional
     @Override
-    public CommonResult<String> updateTicket(CouponDetailQuery couponDetailQuery){
+    public CommonResult<String> updateTicket(Long id, CouponDetailQuery couponDetailQuery){
         UserVO userVO = getUser();  //当前登陆用户
         //更新ticket表
-        Coupon coupon = couponDao.selectById(couponDetailQuery.getId());
+        Coupon coupon = couponDao.selectById(id);
         if (coupon!=null){
             if (!coupon.getShopNo().equals(userVO.getShopNo())){
                 return CommonResult.failed("当前所在门店无权进行此操作");
             }
             //获取优惠卷详情
-            CouponDetail couponDetail = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id", couponDetailQuery.getId()));
+            CouponDetail couponDetail = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id", id));
             if (couponDetail!=null){
                 String ticketInfoNo = couponDetail.getCouponDetailNo();   //优惠券详情编号
                 //获取优惠券关联商品列表
-                List<CouponDetailItem> couponDetailItems = couponDetailItemDao.selectList(new QueryWrapper<CouponDetailItem>().eq("ticket_info_no",couponDetail.getId()));
+                List<CouponDetailItem> couponDetailItems = couponDetailItemDao.selectList(new QueryWrapper<CouponDetailItem>().eq("coupon_detail_id",couponDetail.getId()));
                 List<String> infoItemNoList = null;
                 if (couponDetailItems!=null && couponDetailItems.size()>0){
                     infoItemNoList = couponDetailItems.stream().map(CouponDetailItem::getItemNo).collect(Collectors.toList());
@@ -183,7 +183,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                         !Objects.equals(couponDetail.getRemark(),couponDetailQuery.getRemark()) ||
                         !Objects.equals(infoItemNoList,couponDetailQuery.getItemNoList())){
                     //修改以前的详情为过去时
-                    CouponDetail oldInfo = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id",couponDetailQuery.getId()).eq("status",1));
+                    CouponDetail oldInfo = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id",id).eq("status",1));
                     if (oldInfo!=null){
                         oldInfo.setStatus(0);
                         couponDetailDao.updateById(oldInfo);
@@ -271,22 +271,32 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     @Override
     public CommonResult<List<MallCategoryVO>> getCategoryList() {
         UserVO userVO = getUser();
-        List<MallCategoryDTO> list = mallCategoryDao.selectAllByShopNo(userVO.getShopNo());
+        List<MallCategory> list = mallCategoryDao.selectAllByShopNo(userVO.getShopNo());
         if (list!=null && list.size()>0){
-            List<MallCategoryVO> vos = categoryTree(list,null);
+            List<MallCategoryVO> vos = categoryTree(list,"");
             return CommonResult.success(vos);
         }
         return CommonResult.success(null);
     }
 
-    private List<MallCategoryVO> categoryTree(List<MallCategoryDTO> mallCategoryDTOS, String parentNo){
+    private List<MallCategoryVO> categoryTree(List<MallCategory> dtoList, String parentNo){
         List<MallCategoryVO> list = new ArrayList<>();
         MallCategoryVO mallCategoryVO = null;
-        for (MallCategoryDTO mallCategoryDTO : mallCategoryDTOS){
-            if (mallCategoryDTO.getParentCategoryNo()==parentNo){
+        for (MallCategory mallCategoryDTO : dtoList){
+            if (mallCategoryDTO.getParentCategoryNo().equals(parentNo)){
                 mallCategoryVO = new MallCategoryVO();
-                BeanUtils.copyProperties(mallCategoryDTO,mallCategoryVO);
-                mallCategoryVO.setChaildList(categoryTree(mallCategoryDTOS, mallCategoryVO.getCategoryNo()));
+                mallCategoryVO.setCategoryImg(mallCategoryDTO.getCategoryImg());
+                mallCategoryVO.setCategoryName(mallCategoryDTO.getCategoryName());
+                mallCategoryVO.setCategoryNo(mallCategoryDTO.getCategoryNo());
+                mallCategoryVO.setCreatedTime(mallCategoryDTO.getCreatedTime());
+                mallCategoryVO.setId(mallCategoryDTO.getId());
+                mallCategoryVO.setLayer(mallCategoryDTO.getLayer());
+                mallCategoryVO.setParentCategoryNo(mallCategoryDTO.getParentCategoryNo());
+                mallCategoryVO.setShopNo(mallCategoryDTO.getShopNo());
+                mallCategoryVO.setSortValue(mallCategoryDTO.getSortValue());
+                mallCategoryVO.setStatus(mallCategoryDTO.getStatus());
+                mallCategoryVO.setUpdatedTime(mallCategoryDTO.getUpdatedTime());
+                mallCategoryVO.setChaildList(categoryTree(dtoList, mallCategoryVO.getCategoryNo()));
                 list.add(mallCategoryVO);
             }
         }

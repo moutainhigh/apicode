@@ -1,6 +1,8 @@
 package com.ycandyz.master.model.mall;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ycandyz.master.entities.mall.MallCategory;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -20,6 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @TableName("mall_category")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class MallCategoryVO extends MallCategory {
 
     @ApiModelProperty(value = "子集数组")

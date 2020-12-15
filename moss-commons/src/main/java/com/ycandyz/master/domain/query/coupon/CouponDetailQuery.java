@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -24,6 +27,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(description="优惠券详情表-检索参数")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class CouponDetailQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,9 +48,11 @@ public class CouponDetailQuery implements Serializable {
     private Integer validityType;
 
     @ApiModelProperty(name = "begin_time",value = "券生效开始时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date beginTime;
 
     @ApiModelProperty(name = "end_time",value = "券生效结束时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date endTime;
 
     @ApiModelProperty(name = "days",value = "券有效天数")
