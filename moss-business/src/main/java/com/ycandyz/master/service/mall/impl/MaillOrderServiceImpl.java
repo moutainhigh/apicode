@@ -118,7 +118,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> oIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.addAll(oIds);
-                        organizeIds.add(groupOrganizeId.intValue());
                         List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
                         if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
@@ -127,6 +126,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             shopNoAndOrganizeId.putAll(map);
                         }
                     }
+                    //登陆用户所在企业加入初始化中
+                    organizeIds.add(groupOrganizeId.intValue());
+                    if (mallOrderQuery.getShopNo()!=null && mallOrderQuery.getShopNo().size()>0) {
+                        mallOrderQuery.getShopNo().add(userVO.getShopNo());
+                    }else {
+                        mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+                    }
+                    shopNoAndOrganizeId.put(userVO.getShopNo(),groupOrganizeId.intValue());
                 }
             }else {
                 mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
@@ -876,7 +883,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     }
 
     @Override
-    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long pageSize, String mallOrderQuery, Integer status, Integer deliverType, Long orderAtBegin, Long orderAtEnd) {
+    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(Long page, Long pageSize, String mallOrderQuery, Integer status, Integer deliverType, Long orderAtBegin, Long orderAtEnd, String nextNo) {
         UserVO userVO = getUser();  //获取当前登陆用户
         List<MallOrderUAppVO> list = new ArrayList<>();
         Integer count = null;   //总条数
@@ -891,8 +898,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             //获取总条数
             count = mallOrderDao.getTrendMallOrderByUAppPageSize(mallOrderUAppQuery);
             if (count!=null && count>0) {
+                page = (page - 1) * pageSize;
+                if (nextNo!=null && !"".equals(nextNo)) {
+                    List<String> orderNoList = mallOrderDao.getOrderListByOrderNoUApp(mallOrderUAppQuery, 0, pageSize * page);
+                    int row = orderNoList.indexOf(nextNo);
+                    page = Long.valueOf(row + 1);
+                }
                 //分页
-                List<MallOrderUAppDTO> mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp((page - 1) * pageSize, pageSize, mallOrderUAppQuery);
+                List<MallOrderUAppDTO> mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp(page, pageSize, mallOrderUAppQuery);
                 //page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
                 MallOrderUAppVO mallOrderVo = null;
                 if (mallDTOList != null && mallDTOList.size() > 0) {
@@ -1532,21 +1545,25 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
 
                 return ReturnResponse.success(mallOrderVO);
+            }else if (mallOrderDTO.getStatus()==40){
+                return ReturnResponse.failed("该笔订单已经提货啦～");
             }else if (mallOrderDTO.getStatus()==50){
                 if (mallOrderDTO.getSubStatus()==5050){ //5050-卖家取消（待收货-自提订单）
                     return ReturnResponse.failed("该笔订单已经被商家取消了");
+                }else if (mallOrderDTO.getSubStatus()==5060){   //5060-买家取消（待收货-自提订单）
+                    return ReturnResponse.failed("该笔订单已经被买家取消了");
                 }else {
                     return ReturnResponse.failed("当前订单被取消");
                 }
             }
         }
-        return ReturnResponse.failed("查询提货码未查询到订单");
+        return ReturnResponse.failed("未查询到对应订单");
     }
 
     @Override
     public ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(MallPickupUAppQuery mallPickupUAppQuery) {
         UserVO userVO = getUser();
-        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(mallPickupUAppQuery.getPickupNo(), userVO.getShopNo());
+        MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(mallPickupUAppQuery.getPickupNo(), userVO.getShopNo());
         if (mallOrderDTO!=null){
             //判断pickNo查询到订单是否是orderNo的订单
             if (StringUtils.isNotEmpty(mallPickupUAppQuery.getOrderNo())){
@@ -1555,25 +1572,37 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
                 }
             }
-            Long time = new Date().getTime()/1000;      //获取当前时间到秒
-            mallOrderDTO.setReceiveAt(time.intValue());
-            MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(userVO.getShopNo());
-            if (mallOrderDTO==null){
-                return ReturnResponse.failed("未查询到店铺");
+            if (mallOrderDTO.getStatus() == 30 && mallOrderDTO.getSubStatus() == 3010) {
+                Long time = new Date().getTime() / 1000;      //获取当前时间到秒
+                mallOrderDTO.setReceiveAt(time.intValue());
+                MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(userVO.getShopNo());
+                if (mallOrderDTO == null) {
+                    return ReturnResponse.failed("未查询到店铺");
+                }
+                //更新数据库
+                MallOrder mallOrder = new MallOrder();
+                mallOrder.setId(mallOrderDTO.getId());
+                mallOrder.setReceiveAt(time.intValue());
+                mallOrder.setAfterSalesEndAt(time.intValue() + mallShopDTO.getAsHoldDays() * 24 * 60 * 60);
+                mallOrder.setStatus(40);
+                mallOrder.setSubStatus(4060);
+                Long timeAt = new Date().getTime() / 1000;
+                mallOrder.setReceiveAt(timeAt.intValue());  //更新收货时间
+                mallOrderDao.updateById(mallOrder);
+                return queryOrderDetailByUApp(mallPickupUAppQuery.getOrderNo()); //更新成功，返回订单详情
+            }else if (mallOrderDTO.getStatus()==40){
+                return ReturnResponse.failed("该笔订单已经提货啦～");
+            }else if (mallOrderDTO.getStatus()==50){
+                if (mallOrderDTO.getSubStatus()==5050){ //5050-卖家取消（待收货-自提订单）
+                    return ReturnResponse.failed("该笔订单已经被商家取消了");
+                }else if (mallOrderDTO.getSubStatus()==5060){   //5060-买家取消（待收货-自提订单）
+                    return ReturnResponse.failed("该笔订单已经被买家取消了");
+                }else {
+                    return ReturnResponse.failed("当前订单被取消");
+                }
             }
-            //更新数据库
-            MallOrder mallOrder = new MallOrder();
-            mallOrder.setId(mallOrderDTO.getId());
-            mallOrder.setReceiveAt(time.intValue());
-            mallOrder.setAfterSalesEndAt(time.intValue()+mallShopDTO.getAsHoldDays()*24*60*60);
-            mallOrder.setStatus(40);
-            mallOrder.setSubStatus(4060);
-            Long timeAt = new Date().getTime()/1000;
-            mallOrder.setReceiveAt(timeAt.intValue());  //更新收货时间
-            mallOrderDao.updateById(mallOrder);
-            return queryOrderDetailByUApp(mallPickupUAppQuery.getOrderNo()); //更新成功，返回订单详情
         }
-        return ReturnResponse.failed("未查询到待自提订单");
+        return ReturnResponse.failed("未查询到对应订单");
     }
 
     @Override
