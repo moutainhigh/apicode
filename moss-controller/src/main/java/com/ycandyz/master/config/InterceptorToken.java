@@ -114,15 +114,16 @@ public class InterceptorToken implements HandlerInterceptor {
                     UserVO userVO = new UserVO();
                     userVO.setId(userId);
                     userVO.setOrganizeId(organizeId);
-                    userVO.setShopNo(shopNo);
                     userVO.setPlatform(platform);
-                    if(StrUtil.isEmpty(shopNo) && organizeId != null){
+                    if((StrUtil.isEmpty(shopNo) || SecurityConstant.DEFAULT_SHOP_NO.equals(shopNo)) && organizeId != null){
                         LambdaQueryWrapper<MallShop> queryWrapper = new LambdaQueryWrapper<MallShop>()
                                 .eq(MallShop::getOrganizeId, organizeId);
                         MallShop mallShop = mallShopService.getOne(queryWrapper);
                         if(null != mallShop){
                             userVO.setShopNo(mallShop.getShopNo());
                         }
+                    }else {
+                        userVO.setShopNo(shopNo);
                     }
                     httpServletRequest.getSession().setAttribute(SecurityConstant.USER_TOKEN_HEADER, userVO);
                 }

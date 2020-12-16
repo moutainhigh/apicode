@@ -72,6 +72,8 @@ public interface SecurityConstant {
      */
     String MENU_ID = "menu_id";
 
+    String DEFAULT_SHOP_NO = "0";
+
     /**
      * author的token有效期
      */

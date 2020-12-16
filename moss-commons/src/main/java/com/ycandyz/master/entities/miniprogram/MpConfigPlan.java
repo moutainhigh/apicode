@@ -46,6 +46,9 @@ public class MpConfigPlan extends Model {
    @ApiModelProperty(value = "方案展示图")
    private String stylePicUrl;
 
+   @ApiModelProperty(value = "是否默认模板false：否，true：是")
+   private Boolean isDefault;
+
    @ApiModelProperty(value = "创建时间")
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createTime;

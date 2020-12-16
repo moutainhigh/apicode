@@ -2,6 +2,7 @@ package com.ycandyz.master.service.miniprogram;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.domain.model.miniprogram.ConfigPlanAndMenuModel;
+import com.ycandyz.master.domain.model.miniprogram.MpConfigPlanModel;
 import com.ycandyz.master.entities.miniprogram.MpConfigPlan;
 
 import java.util.List;
@@ -39,4 +40,11 @@ public interface IMpConfigPlanService extends IService<MpConfigPlan>{
      * @return
      */
     int organizeBindPlan(Integer organizeId,Integer planId);
+
+    /**
+     * 更新方案信息
+     * @param mpConfigPlan
+     * @return
+     */
+    Boolean updatePlan(MpConfigPlan mpConfigPlan);
 }

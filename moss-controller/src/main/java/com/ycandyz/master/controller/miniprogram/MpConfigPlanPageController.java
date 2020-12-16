@@ -39,7 +39,7 @@ import com.ycandyz.master.controller.base.BaseController;
 
 @Slf4j
 @RestController
-@RequestMapping("cms/mp/modules")
+@RequestMapping("cms/mp/module")
 @Api(tags="小程序配置-方案页面配置")
 public class MpConfigPlanPageController extends BaseController<MpConfigPlanPageServiceImpl,MpConfigPlanPage,MpConfigPlanPageQuery> {
 
