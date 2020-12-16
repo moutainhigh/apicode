@@ -45,10 +45,16 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> e
     }
 
     public Long getUserId() {
+        if(getUser() == null){
+            return null;
+        }
         return getUser().getId();
     }
 
     public String getUsername() {
+        if(getUser() == null){
+            return null;
+        }
         return getUser().getName();
     }
 
@@ -56,6 +62,9 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> e
      * 获取当前用户登录的店铺编号
      */
     public String getShopNo() {
+        if(getUser() == null){
+            return null;
+        }
         return getUser().getShopNo();
     }
 
