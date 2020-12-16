@@ -122,6 +122,8 @@ public class InterceptorToken implements HandlerInterceptor {
                         if(null != mallShop){
                             userVO.setShopNo(mallShop.getShopNo());
                         }
+                    }else {
+                        userVO.setShopNo(shopNo);
                     }
                     httpServletRequest.getSession().setAttribute(SecurityConstant.USER_TOKEN_HEADER, userVO);
                 }
