@@ -16,6 +16,7 @@ import com.ycandyz.master.domain.query.coupon.CouponQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.coupon.CouponDetailDTO;
+import com.ycandyz.master.dto.coupon.CouponDetailItemDTO;
 import com.ycandyz.master.dto.mall.MallCategoryDTO;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.entities.coupon.CouponDetail;
@@ -144,6 +145,11 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         if (couponTicketInfoDTO!=null){
             couponTicketInfoVO = new CouponDetailVO();
             BeanUtils.copyProperties(couponTicketInfoDTO,couponTicketInfoVO);
+            //获取当前优惠券关联的商品集合
+            List<MallItemResp> couponDetailItemDTOS = couponDetailItemDao.queryByCouponDetailId(couponTicketInfoDTO.getId());
+            if (couponDetailItemDTOS!=null && couponDetailItemDTOS.size()>0){
+                couponTicketInfoVO.setMallItemResps(couponDetailItemDTOS);
+            }
         }
         return CommonResult.success(couponTicketInfoVO);
     }
