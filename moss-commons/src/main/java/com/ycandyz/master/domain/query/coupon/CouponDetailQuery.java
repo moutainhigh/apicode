@@ -67,8 +67,8 @@ public class CouponDetailQuery implements Serializable {
     @ApiModelProperty(name = "superposition",value = "叠加使用：0:购买限制使用一张优惠券")
     private Integer superposition;
 
-    @ApiModelProperty(name = "obtain",value = "领取页面：0:购物车页面直接获取，1:商品详情页直接获取")
-    private Integer obtain;
+    @ApiModelProperty(name = "obtain",value = "领取页面(可多选)：0:购物车页面直接获取，1:商品详情页直接获取")
+    private List<String> obtain;
 
     @ApiModelProperty(name = "remark",value = "说明备注")
     private String remark;

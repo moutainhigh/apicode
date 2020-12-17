@@ -179,7 +179,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                         !Objects.equals(couponDetail.getUserType(),couponDetailQuery.getUserType()) ||
                         !Objects.equals(couponDetail.getTakeNum(),couponDetailQuery.getTakeNum()) ||
                         !Objects.equals(couponDetail.getSuperposition(),couponDetailQuery.getSuperposition()) ||
-                        !Objects.equals(couponDetail.getObtain(),couponDetailQuery.getObtain()) ||
+                        !Objects.equals(Arrays.asList(couponDetail.getObtain()!=null ? couponDetail.getObtain().split(",") : ""),couponDetailQuery.getObtain()) ||
                         !Objects.equals(couponDetail.getRemark(),couponDetailQuery.getRemark()) ||
                         !Objects.equals(infoItemNoList,couponDetailQuery.getItemNoList())){
                     //修改以前的详情为过去时
@@ -197,7 +197,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());
                     ticketInfo.setFullMoney(couponDetailQuery.getFullMoney());
                     ticketInfo.setName(couponDetail.getName());
-                    ticketInfo.setObtain(couponDetailQuery.getObtain());
+                    ticketInfo.setObtain(couponDetailQuery.getObtain().toString());
                     ticketInfo.setRemark(couponDetailQuery.getRemark());
                     ticketInfo.setShopType(couponDetailQuery.getShopType());
                     ticketInfo.setValidityType(couponDetailQuery.getValidityType());
@@ -250,7 +250,14 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());
         ticketInfo.setFullMoney(couponDetailQuery.getFullMoney());
         ticketInfo.setName(couponDetailQuery.getName());
-        ticketInfo.setObtain(couponDetailQuery.getObtain());
+        String stringBuffer = "";
+        if (couponDetailQuery.getObtain()!=null && couponDetailQuery.getObtain().size()>0){
+            for (String str : couponDetailQuery.getObtain()){
+                stringBuffer += str+",";
+            }
+            stringBuffer = stringBuffer.substring(0,stringBuffer.length()-1);
+        }
+        ticketInfo.setObtain(stringBuffer);
         ticketInfo.setRemark(couponDetailQuery.getRemark());
         ticketInfo.setShopType(couponDetailQuery.getShopType());
         ticketInfo.setValidityType(couponDetailQuery.getValidityType());
@@ -390,5 +397,13 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             }
         }
         return name;
+    }
+
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        System.out.println(list.toString());
     }
 }
