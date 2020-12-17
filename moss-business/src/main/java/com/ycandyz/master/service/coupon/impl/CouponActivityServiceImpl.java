@@ -51,7 +51,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         query.setShopNo(getShopNo());
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
-                .select(CouponActivity::getId,CouponActivity::getId,CouponActivity::getTitle,CouponActivity::getBeginTime,CouponActivity::getEndTime,
+                .select(CouponActivity::getId,CouponActivity::getTitle,CouponActivity::getBeginTime,CouponActivity::getEndTime,CouponActivity::getUserType,
                         CouponActivity::getEnabled,CouponActivity::getInletName,CouponActivity::getActivityNum,CouponActivity::getCreateTime)
                 .apply(null != query.getCreateTimeBegin(),
                         "date_format (create_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreateTimeBegin()) + "','%Y-%m-%d')")
@@ -75,6 +75,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
             }else {
                 f.setStatusName(CouponActivityEnum.Status.TYPE_4.getText());
             }
+            f.setActivityRemainNum(f.getActivityNum());
         });
         return p;
     }

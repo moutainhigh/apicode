@@ -93,6 +93,10 @@ public class CouponActivity extends Model {
    @ApiModelProperty(name = "activity_num",value = "活动参与人数")
    private Integer activityNum;
 
+   @ApiModelProperty(name = "activity_remain_num",value = "活动剩余人数")
+   @TableField(exist = false)
+   private Integer activityRemainNum;
+
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    @ApiModelProperty(name = "create_time",value = "创建时间")
    private Date createTime;
