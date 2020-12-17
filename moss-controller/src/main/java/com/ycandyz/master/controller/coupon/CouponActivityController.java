@@ -39,7 +39,7 @@ import com.ycandyz.master.controller.base.BaseController;
 @ApiVersion(group = ApiVersionConstant.API_COUPON)
 @Slf4j
 @RestController
-@RequestMapping("activity")
+@RequestMapping("activity/coupon")
 @Api(tags="优惠卷")
 public class CouponActivityController extends BaseController<CouponActivityServiceImpl,CouponActivity,CouponActivityQuery> {
 
