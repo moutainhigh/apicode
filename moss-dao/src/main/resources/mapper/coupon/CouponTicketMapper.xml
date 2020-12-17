@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.coupon.CouponDetailDTO">
         <id column="id" property="id" />
         <result column="shop_no" property="shopNo" />
+        <result column="coupon_id" property="couponId" />
         <result column="coupon_no" property="couponNo" />
         <result column="name" property="name" />
         <result column="coupon_sum" property="couponSum" />
@@ -30,6 +31,7 @@
         <result column="remark" property="remark" />
         <result column="surplus_num" property="surplusNum" />
         <result column="couponStatus" property="couponStatus" />
+        <result column="ticketCreatedAt" property="ticketCreatedAt" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -39,9 +41,10 @@
 
     <select id="queryTicketPageList" parameterType="com.ycandyz.master.domain.query.coupon.CouponQuery" resultMap="BaseResultMap">
         SELECT
-            ti.id as ticketId,
+            ti.id as coupon_id,
             ti.coupon_no,
             ti.name,
+            info.id,
             info.coupon_detail_no,
             info.status as status,
             info.begin_time as begin_time,
@@ -92,22 +95,23 @@
     </select>
 
     <select id="queryTicketDetailByTicketNo" resultMap="BaseResultMap">
-        ti.id as ticketId,
-            ti.ticket_no,
-            ti.ticket_sum,
+        select
+            ti.id,
+            ti.coupon_no,
+            ti.coupon_sum,
             ti.name,
-            ti.state,
+            ti.status as couponStatus,
             ti.obtain_num,
-            ti.ticket_sum-ti.obtain_num as surplus_num,
+            ti.coupon_sum-ti.obtain_num as surplus_num,
             ti.use_num,
-            ti.created_at as ticketCreatedAt,
-            ti.remark,
+            ti.create_time as ticketCreatedAt,
 
             info.coupon_detail_no,
+            info.remark,
             info.shop_type,
-            info.status as status,
-            info.begin_at as begin_at,
-            info.end_at as end_at,
+            info.validity_type,
+            info.begin_time,
+            info.end_time,
             info.days as days,
             info.use_type,
             info.full_money,
@@ -120,7 +124,7 @@
             LEFT JOIN coupon_detail info ON ti.id = info.coupon_id
             and info.status=1   /**取最新一条*/
         where
-            ti.shop_no=#{p.shopNo}
+            ti.shop_no=#{shopNo}
             and
             ti.id=#{id}
     </select>

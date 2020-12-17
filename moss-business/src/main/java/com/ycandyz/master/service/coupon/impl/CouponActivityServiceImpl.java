@@ -104,13 +104,14 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         t.setCreateBy(getUserId());
         t.setUpdateBy(getUserId());
         t.setShopNo(getShopNo());
+        boolean b = super.save(t);
         entity.getCouponIds().forEach(i -> {
             CouponActivityCoupon at = new CouponActivityCoupon();
             at.setActivityId(t.getId());
             at.setCouponId(i);
             couponActivityCouponService.save(at);
         });
-        return super.save(t);
+        return b;
     }
 
     @Override
