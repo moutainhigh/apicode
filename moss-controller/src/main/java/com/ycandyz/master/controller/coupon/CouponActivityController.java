@@ -40,7 +40,7 @@ import com.ycandyz.master.controller.base.BaseController;
 @Slf4j
 @RestController
 @RequestMapping("activity/coupon")
-@Api(tags="优惠卷")
+@Api(tags="活动-优惠卷")
 public class CouponActivityController extends BaseController<CouponActivityServiceImpl,CouponActivity,CouponActivityQuery> {
 
     @ApiVersion(group = {ApiVersionConstant.API_COUPON_100})
@@ -84,10 +84,12 @@ public class CouponActivityController extends BaseController<CouponActivityServi
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
+    @ApiVersion(group = {ApiVersionConstant.API_COUPON_100})
     @ApiOperation(value = "发卷宝-优惠卷-分页")
-    @GetMapping(value = "coupon")
+    @GetMapping(value = "{id}/coupon")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponActivityCouponResp>> getCouponPage(PageModel page, CouponActivityCouponQuery query) {
+    public CommonResult<BasePageResult<CouponActivityCouponResp>> getCouponPage(PageModel page,@PathVariable Long id, CouponActivityCouponQuery query) {
+        query.setId(id);
         return CommonResult.success(new BasePageResult(service.selectCouponPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
 

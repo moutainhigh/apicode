@@ -171,9 +171,10 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     @Override
     public Page<CouponActivityCouponResp> selectCouponPage(Page page, CouponActivityCouponQuery query) {
         CouponActivityEnum.Type type = CouponActivityEnum.Type.parseCode(query.getType());
+        //AssertUtils.notNull(type, "类型不正确");
         AssertUtils.notNull(getShopNo(), "商店编号不存在");
-        AssertUtils.notNull(query.getId(), "活动编号不能为空");
-        AssertUtils.notNull(type, "类型不正确");
+        AssertUtils.notNull(query.getId(), "发卷宝ID不能为空");
+
         query.setShopNo(getShopNo());
         if(type.getCode().equals(CouponActivityEnum.Type.TYPE_0.getCode())){
             return couponActivityCouponService.selectCouponPage(page,query);
