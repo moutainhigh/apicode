@@ -98,7 +98,7 @@ public class CouponDetailDTO extends CouponDetail {
     private String shopNo;
 
     @ApiModelProperty(value = "券总数量")
-    private Integer ticketSum;
+    private Integer couponSum;
 
     @ApiModelProperty(value = "领取数量")
     private Integer obtainNum;
