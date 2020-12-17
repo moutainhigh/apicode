@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.coupon.CouponDetailDTO">
         <id column="id" property="id" />
         <result column="shop_no" property="shopNo" />
+        <result column="coupon_id" property="couponId" />
         <result column="coupon_no" property="couponNo" />
         <result column="name" property="name" />
         <result column="coupon_sum" property="couponSum" />
@@ -40,9 +41,10 @@
 
     <select id="queryTicketPageList" parameterType="com.ycandyz.master.domain.query.coupon.CouponQuery" resultMap="BaseResultMap">
         SELECT
-            ti.id,
+            ti.id as coupon_id,
             ti.coupon_no,
             ti.name,
+            info.id,
             info.coupon_detail_no,
             info.status as status,
             info.begin_time as begin_time,
