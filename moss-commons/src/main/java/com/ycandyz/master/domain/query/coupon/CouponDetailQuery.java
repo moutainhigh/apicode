@@ -48,12 +48,10 @@ public class CouponDetailQuery implements Serializable {
     private Integer validityType;
 
     @ApiModelProperty(name = "begin_time",value = "券生效开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date beginTime;
+    private Long beginTime;
 
     @ApiModelProperty(name = "end_time",value = "券生效结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date endTime;
+    private Long endTime;
 
     @ApiModelProperty(name = "days",value = "券有效天数")
     private Integer days;
