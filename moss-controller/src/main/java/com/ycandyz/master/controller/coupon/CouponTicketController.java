@@ -78,7 +78,7 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
     @ApiOperation(value = "优惠券详情")
     @GetMapping(value = "/{id}")
     public CommonResult<CouponDetailVO> ticketDetail(@PathVariable("id") Long id) {
-        if (id==null || id>0){
+        if (id==null || id==0){
             return CommonResult.failed("传入参数为空");
         }
         return iCouponService.ticketDetail(id);
