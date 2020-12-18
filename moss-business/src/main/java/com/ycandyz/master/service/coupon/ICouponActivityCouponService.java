@@ -21,11 +21,4 @@ import java.util.List;
  */
 public interface ICouponActivityCouponService extends IService<CouponActivityCoupon>{
 
-    List<CouponActivityCouponResp> list(Long activityId);
-
-    Page<CouponActivityCouponResp> selectCouponPage(Page page, CouponActivityCouponQuery query);
-
-    Page<CouponActivityCouponResp> selectActivityCouponPage(Page page, CouponActivityCouponQuery query);
-
-    Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query);
 }

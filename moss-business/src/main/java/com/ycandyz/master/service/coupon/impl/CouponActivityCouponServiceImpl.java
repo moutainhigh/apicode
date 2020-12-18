@@ -28,23 +28,5 @@ import java.util.List;
 @Service
 public class CouponActivityCouponServiceImpl extends BaseService<CouponActivityCouponDao, CouponActivityCoupon, CouponActivityCouponQuery> implements ICouponActivityCouponService {
 
-    @Override
-    public List<CouponActivityCouponResp> list(Long activityId) {
-        return baseMapper.list(activityId);
-    }
 
-    @Override
-    public Page<CouponActivityCouponResp> selectCouponPage(Page page, CouponActivityCouponQuery query) {
-        return baseMapper.selectCouponPage(page,query);
-    }
-
-    @Override
-    public Page<CouponActivityCouponResp> selectActivityCouponPage(Page page, CouponActivityCouponQuery query) {
-        return baseMapper.selectActivityCouponPage(page,query);
-    }
-
-    @Override
-    public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query) {
-        return baseMapper.selectUserActivityCouponPage(page,query);
-    }
 }

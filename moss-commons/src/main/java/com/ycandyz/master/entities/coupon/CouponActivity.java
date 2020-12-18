@@ -101,7 +101,6 @@ public class CouponActivity extends Model {
    @ApiModelProperty(name = "create_time",value = "创建时间")
    private Date createTime;
 
-   @JsonIgnore
    @ApiParam(hidden = true)
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    @ApiModelProperty(name = "update_time",value = "更新时间")

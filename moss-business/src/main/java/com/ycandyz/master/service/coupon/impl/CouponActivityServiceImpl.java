@@ -17,6 +17,7 @@ import com.ycandyz.master.entities.coupon.CouponActivity;
 import com.ycandyz.master.domain.query.coupon.CouponActivityQuery;
 import com.ycandyz.master.dao.coupon.CouponActivityDao;
 import com.ycandyz.master.entities.coupon.CouponActivityCoupon;
+import com.ycandyz.master.entities.coupon.CouponDetailUser;
 import com.ycandyz.master.service.coupon.ICouponActivityService;
 import com.ycandyz.master.controller.base.BaseService;
 
@@ -45,6 +46,9 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Autowired
     private CouponActivityCouponServiceImpl couponActivityCouponService;
+
+    @Autowired
+    private CouponDetailUserServiceImpl couponDetailUserService;
 
     @Override
     public Page<CouponActivity> page(Page page, CouponActivityQuery query) {
@@ -75,7 +79,11 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
             }else {
                 f.setStatusName(CouponActivityEnum.Status.TYPE_4.getText());
             }
-            f.setActivityRemainNum(f.getActivityNum());
+            //获取活动参与人数
+            LambdaQueryWrapper<CouponDetailUser> countWrapper = new LambdaQueryWrapper<CouponDetailUser>()
+                    .eq(CouponDetailUser::getActivityId, f.getId());
+            Integer c = couponDetailUserService.count(countWrapper);
+            f.setActivityRemainNum(f.getActivityNum()-c);
         });
         return p;
     }
@@ -88,7 +96,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         }
         CouponActivityResp vo = new CouponActivityResp();
         BeanUtils.copyProperties(entity,vo);
-        List<CouponActivityCouponResp> activityCouponList = couponActivityCouponService.list(entity.getId());
+        List<CouponActivityCouponResp> activityCouponList = baseMapper.list(entity.getId());
         vo.setActivityCouponList(activityCouponList);
         return vo;
     }
@@ -179,14 +187,14 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
         query.setShopNo(getShopNo());
         if(type.getCode().equals(CouponActivityEnum.Type.TYPE_0.getCode())){
-            return couponActivityCouponService.selectCouponPage(page,query);
+            return baseMapper.selectCouponPage(page,query);
         }
-        return couponActivityCouponService.selectActivityCouponPage(page,query);
+        return baseMapper.selectActivityCouponPage(page,query);
     }
 
     @Override
     public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query) {
-        Page<CouponDetailUserResp> p = couponActivityCouponService.selectUserActivityCouponPage(page,query);
+        Page<CouponDetailUserResp> p = baseMapper.selectUserActivityCouponPage(page,query);
         if(p.getRecords() != null){
             p.getRecords().stream().forEach(f -> {
                 if(f.getStatus() == 1){

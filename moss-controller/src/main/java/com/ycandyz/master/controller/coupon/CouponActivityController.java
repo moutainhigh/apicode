@@ -59,7 +59,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 	}
 
     @ApiVersion(group = {ApiVersionConstant.API_COUPON_100})
-    @ApiImplicitParam(name="enabled",value="操作类型(0启用,1停止)",required=true,dataType="string")
+    @ApiImplicitParam(name="enabled",value="操作类型(1启用,0停止)",required=true,dataType="string")
     @ApiOperation(value = "启用/停止")
     @PutMapping(value = "{id}/switch")
     public CommonResult<String> switchById(@PathVariable Long id, @RequestParam("enabled") Integer enabled) {
