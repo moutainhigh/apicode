@@ -3,6 +3,7 @@ package com.ycandyz.master.model.coupon;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.entities.coupon.CouponDetail;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -12,6 +13,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -103,7 +105,7 @@ public class CouponDetailVO extends CouponDetail {
     private String shopNo;
 
     @ApiModelProperty(value = "券总数量")
-    private Integer ticketSum;
+    private Integer couponSum;
 
     @ApiModelProperty(value = "领取数量")
     private Integer obtainNum;
@@ -113,4 +115,7 @@ public class CouponDetailVO extends CouponDetail {
 
     @ApiModelProperty(value = "优惠券状态：0:停止,1:开始")
     private Integer couponStatus;
+
+    @ApiModelProperty(value = "关联商品信息")
+    private List<MallItemResp> mallItemResps;
 }

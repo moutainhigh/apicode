@@ -96,7 +96,7 @@
 
     <select id="queryTicketDetailByTicketNo" resultMap="BaseResultMap">
         select
-            ti.id,
+            ti.id as coupon_id,
             ti.coupon_no,
             ti.coupon_sum,
             ti.name,
@@ -106,6 +106,7 @@
             ti.use_num,
             ti.create_time as ticketCreatedAt,
 
+            info.id,
             info.coupon_detail_no,
             info.remark,
             info.shop_type,
