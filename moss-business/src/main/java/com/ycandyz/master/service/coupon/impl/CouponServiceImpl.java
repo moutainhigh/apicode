@@ -11,6 +11,7 @@ import com.ycandyz.master.dao.coupon.CouponDetailItemDao;
 import com.ycandyz.master.dao.mall.MallHomeItemDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.domain.UserVO;
+import com.ycandyz.master.domain.query.coupon.CouponBaseQuery;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
 import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
@@ -337,23 +338,23 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     }
 
     @Override
-    public CommonResult<BasePageResult<MallItemVO>> itemList(Long id, Long page, Long pageSize, String type, String keyword, String category) {
+    public CommonResult<BasePageResult<MallItemVO>> itemList(Page page, CouponBaseQuery query) {
         BasePageResult<MallItemVO> basePageResult = new BasePageResult<>();
-        basePageResult.setPage(page);
-        basePageResult.setPageSize(pageSize);
+        basePageResult.setPage(page.getCurrent());
+        basePageResult.setPageSize(page.getSize());
         UserVO userVO = getUser();
         Page page1 = new Page();
-        page1.setPages(page);
-        page1.setSize(pageSize);
+        page1.setPages(page.getCurrent());
+        page1.setSize(page.getSize());
         MallItemQuery mallItemQuery = new MallItemQuery();
         mallItemQuery.setShopNo(userVO.getShopNo());
-        mallItemQuery.setCategoryNo(category);
-        mallItemQuery.setItemName(keyword);
+        mallItemQuery.setCategoryNo(query.getCategoryNo());
+        mallItemQuery.setItemName(query.getKeyword());
         Page<MallItemResp> mallItemRespPage = null;
-        if (type.equals("all")){
+        if (query.getType().equals("all")){
             mallItemRespPage = mallHomeItemDao.selectMallItemPage(page1,mallItemQuery);
-        }else if (type.equals("choose")){
-            mallItemQuery.setCouponId(id);
+        }else if (query.getType().equals("choose")){
+            mallItemQuery.setCouponId(query.getId());
             mallItemRespPage = mallHomeItemDao.selectMallItemPageByCouponId(page1,mallItemQuery);
         }
         List<MallItemVO> list = new ArrayList<>();

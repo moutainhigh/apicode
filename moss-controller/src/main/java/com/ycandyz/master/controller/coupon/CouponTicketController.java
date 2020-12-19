@@ -1,8 +1,10 @@
 package com.ycandyz.master.controller.coupon;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.*;
 import com.ycandyz.master.config.ApiVersion;
 import com.ycandyz.master.config.ApiVersionConstant;
+import com.ycandyz.master.domain.query.coupon.CouponBaseQuery;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
 import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
@@ -59,7 +61,6 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
     /**
      * 优惠券的启用和停用
      * @param id
-     * @param state
      * @return
      */
     @ApiOperation(value = "优惠券启用停用")
@@ -128,8 +129,8 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "获取所有分类")
     @GetMapping(value = "/item")
-    public CommonResult<BasePageResult<MallItemVO>> itemList(@RequestParam(value = "id",required = false) Long id, @RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam("type") String type, @RequestParam("keyword") String keyword, @RequestParam("category_no") String category_no){
-        return iCouponService.itemList(id,page,pageSize,type,keyword,category_no);
+    public CommonResult<BasePageResult<MallItemVO>> itemList(PageModel page, @RequestParam CouponBaseQuery query){
+        return iCouponService.itemList(new Page(page.getPage(),page.getPageSize()),query);
     }
 
 //    public CommonResult<BasePageResult<>>

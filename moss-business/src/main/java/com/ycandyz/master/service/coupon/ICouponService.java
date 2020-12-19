@@ -3,9 +3,7 @@ package com.ycandyz.master.service.coupon;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.*;
-import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
-import com.ycandyz.master.domain.query.coupon.CouponQuery;
-import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
+import com.ycandyz.master.domain.query.coupon.*;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
 import com.ycandyz.master.model.mall.MallCategoryVO;
@@ -36,5 +34,5 @@ public interface ICouponService extends IService<Coupon>{
 
     CommonResult<List<MallCategoryVO>> getCategoryList();
 
-    CommonResult<BasePageResult<MallItemVO>> itemList(Long id, Long page, Long pageSize, String type, String keyword, String category);
+    CommonResult<BasePageResult<MallItemVO>> itemList(Page page, CouponBaseQuery query);
 }
