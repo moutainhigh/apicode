@@ -118,4 +118,8 @@ public class CouponDetailVO extends CouponDetail {
 
     @ApiModelProperty(value = "关联商品信息")
     private List<MallItemResp> mallItemResps;
+
+    //商品的编号列表
+    @ApiModelProperty(name = "item_no_list",value = "商品编号列表")
+    private List<String> itemNoList;
 }
