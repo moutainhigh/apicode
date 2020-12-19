@@ -221,6 +221,13 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     ticketInfo.setCouponId(couponDetail.getCouponId());
                     ticketInfo.setStatus(1);
                     couponDetailDao.insert(ticketInfo);
+                    //新增优惠券和商品关联表
+                    CouponDetailItem couponDetailItem = new CouponDetailItem();
+                    for (String itemId : couponDetailQuery.getItemNoList()) {
+                        couponDetailItem.setCouponDetailId(ticketInfo.getId());
+                        couponDetailItem.setItemNo(itemId);
+                        couponDetailItemDao.insert(couponDetailItem);
+                    }
                 }
 
                 //最后更新优惠券表
@@ -280,6 +287,13 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         ticketInfo.setUseType(couponDetailQuery.getUseType());
         ticketInfo.setCouponId(couponTicket.getId());
         int flag = couponDetailDao.insert(ticketInfo);
+        //新增优惠券和商品关联表
+        CouponDetailItem couponDetailItem = new CouponDetailItem();
+        for (String itemId : couponDetailQuery.getItemNoList()) {
+            couponDetailItem.setCouponDetailId(ticketInfo.getId());
+            couponDetailItem.setItemNo(itemId);
+            couponDetailItemDao.insert(couponDetailItem);
+        }
         if (flag>0){
             return CommonResult.success("新增成功");
         }
