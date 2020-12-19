@@ -13,6 +13,7 @@ import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.coupon.CouponDetailDTO;
@@ -115,7 +116,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     }
 
     @Override
-    public CommonResult<String> auditState(Long id, Integer state) {
+    public CommonResult<String> auditState(Long id, CouponStateQuery couponStateQuery) {
         UserVO userVO = getUser();  //当前登陆用户
         Coupon coupon = couponDao.selectById(id);
         if (coupon==null){
@@ -124,11 +125,11 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         if (!userVO.getShopNo().equals(coupon.getShopNo())){
             return CommonResult.failed("当前用户登陆门店无权进行此操作");
         }
-        if (coupon.getStatus()==state){
+        if (coupon.getStatus()==couponStateQuery.getState()){
             //当前状态等于传入的状态
             return CommonResult.failed("无需重复操作");
         }
-        coupon.setStatus(state);
+        coupon.setStatus(couponStateQuery.getState());
         coupon.setUpdateTime(new Date());
         int flag = couponDao.updateById(coupon);
         if (flag>0){
@@ -170,7 +171,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 return CommonResult.failed("当前所在门店无权进行此操作");
             }
             //获取优惠卷详情
-            CouponDetail couponDetail = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id", id));
+            CouponDetail couponDetail = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id", id).eq("status",1));
             if (couponDetail!=null){
                 String ticketInfoNo = couponDetail.getCouponDetailNo();   //优惠券详情编号
                 //获取优惠券关联商品列表
@@ -201,8 +202,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     }
                     //有不满足的进入到优惠券详情修改相关代码
                     CouponDetail ticketInfo = new CouponDetail();
-                    ticketInfo.setBeginTime(couponDetailQuery.getBeginTime()!=null && couponDetailQuery.getBeginTime()>0 ? new Date(couponDetailQuery.getBeginTime()*1000) : null);
-                    ticketInfo.setEndTime(couponDetailQuery.getEndTime()!=null && couponDetailQuery.getEndTime()>0 ? new Date(couponDetailQuery.getEndTime()*1000) : null);
+                    ticketInfo.setBeginTime(couponDetailQuery.getBeginTime());
+                    ticketInfo.setEndTime(couponDetailQuery.getEndTime());
                     ticketInfo.setCreateTime(new Date());
                     ticketInfo.setDays(couponDetailQuery.getDays());
                     ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());
@@ -261,8 +262,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
 
         //新增优惠券详情
         CouponDetail ticketInfo = new CouponDetail();
-        ticketInfo.setBeginTime(couponDetailQuery.getBeginTime()!=null && couponDetailQuery.getBeginTime()>0 ? new Date(couponDetailQuery.getBeginTime()*1000) : null);
-        ticketInfo.setEndTime(couponDetailQuery.getEndTime()!=null && couponDetailQuery.getEndTime()>0 ? new Date(couponDetailQuery.getEndTime()*1000) : null);
+        ticketInfo.setBeginTime(couponDetailQuery.getBeginTime());
+        ticketInfo.setEndTime(couponDetailQuery.getEndTime());
         ticketInfo.setCreateTime(new Date());
         ticketInfo.setDays(couponDetailQuery.getDays());
         ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());

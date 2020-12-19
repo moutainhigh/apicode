@@ -5,6 +5,7 @@ import com.ycandyz.master.config.ApiVersion;
 import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
 import com.ycandyz.master.model.mall.MallCategoryVO;
@@ -63,11 +64,11 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "优惠券启用停用")
     @PutMapping(value = "{id}/switch")
-    public CommonResult<String> auditState(@PathVariable("id") Long id, @RequestParam("state") Integer state) {
-        if (id==null || id==0 || state==null){
+    public CommonResult<String> auditState(@PathVariable("id") Long id, @RequestBody CouponStateQuery couponStateQuery) {
+        if (id==null || id==0 || couponStateQuery.getState()==null){
             return CommonResult.failed("传入参数为空");
         }
-        return iCouponService.auditState(id,state);
+        return iCouponService.auditState(id,couponStateQuery);
     }
 
     /**
@@ -130,4 +131,6 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
     public CommonResult<BasePageResult<MallItemVO>> itemList(@RequestParam(value = "id",required = false) Long id, @RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam("type") String type, @RequestParam("keyword") String keyword, @RequestParam("category_no") String category_no){
         return iCouponService.itemList(id,page,pageSize,type,keyword,category_no);
     }
+
+//    public CommonResult<BasePageResult<>>
 }
