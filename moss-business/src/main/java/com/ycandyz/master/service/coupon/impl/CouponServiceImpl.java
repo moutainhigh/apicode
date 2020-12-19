@@ -201,8 +201,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     }
                     //有不满足的进入到优惠券详情修改相关代码
                     CouponDetail ticketInfo = new CouponDetail();
-                    ticketInfo.setBeginTime(couponDetailQuery.getBeginTime()!=null && couponDetailQuery.getBeginTime()>0 ? new Date(couponDetailQuery.getBeginTime()*1000) : null);
-                    ticketInfo.setEndTime(couponDetailQuery.getEndTime()!=null && couponDetailQuery.getEndTime()>0 ? new Date(couponDetailQuery.getEndTime()*1000) : null);
+                    ticketInfo.setBeginTime(couponDetailQuery.getBeginTime());
+                    ticketInfo.setEndTime(couponDetailQuery.getEndTime());
                     ticketInfo.setCreateTime(new Date());
                     ticketInfo.setDays(couponDetailQuery.getDays());
                     ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());
@@ -261,8 +261,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
 
         //新增优惠券详情
         CouponDetail ticketInfo = new CouponDetail();
-        ticketInfo.setBeginTime(couponDetailQuery.getBeginTime()!=null && couponDetailQuery.getBeginTime()>0 ? new Date(couponDetailQuery.getBeginTime()*1000) : null);
-        ticketInfo.setEndTime(couponDetailQuery.getEndTime()!=null && couponDetailQuery.getEndTime()>0 ? new Date(couponDetailQuery.getEndTime()*1000) : null);
+        ticketInfo.setBeginTime(couponDetailQuery.getBeginTime());
+        ticketInfo.setEndTime(couponDetailQuery.getEndTime());
         ticketInfo.setCreateTime(new Date());
         ticketInfo.setDays(couponDetailQuery.getDays());
         ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());
