@@ -170,7 +170,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 .eq(CouponActivity::getId, model.getId());
         CouponActivity entity = baseMapper.selectOne(queryWrapper);
         AssertUtils.notNull(entity, "未匹配到符合条件的记录");
-        if(entity.getEnabled().equals(model.getEnabled())){
+        if(entity.getEnabled().equals(model.getStatus())){
             AssertUtils.notNull(null, "操作失败，状态已更新");
         }
         return this.retBool(baseMapper.updateStatusById(model));
