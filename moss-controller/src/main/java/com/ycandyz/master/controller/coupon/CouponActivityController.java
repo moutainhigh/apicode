@@ -62,7 +62,7 @@ public class CouponActivityController extends BaseController<CouponActivityServi
     @ApiImplicitParam(name="status",value="操作类型(1启用,0停止)",required=true,dataType="int")
     @ApiOperation(value = "启用/停止")
     @PutMapping(value = "{id}/switch")
-    public CommonResult<String> switchById(@PathVariable Long id, @RequestParam("status") Integer status) {
+    public CommonResult<String> switchById(@PathVariable Long id, @RequestBody Integer status) {
         CouponActivityPutModel model = new CouponActivityPutModel();
         model.setId(id);
         model.setEnabled(status);
