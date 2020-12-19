@@ -32,9 +32,9 @@
             coupon_activity_coupon ct
             LEFT JOIN coupon t ON ct.coupon_id = t.id
             LEFT JOIN coupon_detail ti ON ti.coupon_id = t.id
-            AND ti.status = 1
-        WHERE
-            ct.activity_id = #{activityId}
+        WHERE 1=1
+        AND ti.status = 1
+        AND ct.activity_id = #{activityId}
     </select>
 
     <select id="selectCouponPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp">
