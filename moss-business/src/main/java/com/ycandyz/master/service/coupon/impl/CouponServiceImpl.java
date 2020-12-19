@@ -149,8 +149,11 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             List<MallItemResp> couponDetailItemDTOS = couponDetailItemDao.queryByCouponDetailId(couponTicketInfoDTO.getId());
             if (couponDetailItemDTOS!=null && couponDetailItemDTOS.size()>0){
                 couponTicketInfoVO.setMallItemResps(couponDetailItemDTOS);
+                List<String> itemNoList = couponDetailItemDTOS.stream().map(MallItemResp::getItemNo).collect(Collectors.toList());
+                couponTicketInfoVO.setItemNoList(itemNoList);
             }else{
                 couponTicketInfoVO.setMallItemResps(new ArrayList<>());
+                couponTicketInfoVO.setItemNoList(new ArrayList<>());
             }
         }
         return CommonResult.success(couponTicketInfoVO);
