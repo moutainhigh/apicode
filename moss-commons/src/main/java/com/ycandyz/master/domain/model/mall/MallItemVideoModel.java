@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -28,13 +29,26 @@ import java.io.Serializable;
 @ApiModel(description="商品视频信息-参数")
 public class MallItemVideoModel implements Serializable {
 
+    @ApiParam(hidden = true)
+    @ApiModelProperty(value = "商品视频编号")
+    private String videoNo;
+
+    @ApiParam(hidden = true)
+    @ApiModelProperty(value = "商品编号")
+    @Size(max = 64, message = "商品编号长度不能大于64。",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+    private String itemNo;
+
     @ApiModelProperty(value = "视频栏目(0置顶视频,1描述视频)")
     @NotNull(message = "视频栏目不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @Range(min = 0, max = 1, message = "视频栏目类型不正确",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     private Integer type;
 
-    @ApiModelProperty(value = "备注(审核不通过原因)")
     @ApiParam(hidden = true)
-    private String remark;
+    @ApiModelProperty(value = "视频播放地址")
+    private String url;
+
+    @ApiParam(hidden = true)
+    @ApiModelProperty(value = "视频缩略图")
+    private String img;
 
 }

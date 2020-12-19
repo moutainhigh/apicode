@@ -3,7 +3,7 @@ package com.ycandyz.master.model.coupon;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.ycandyz.master.domain.response.mall.MallItemResp;
+import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
 import com.ycandyz.master.entities.coupon.CouponDetail;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -117,7 +117,7 @@ public class CouponDetailVO extends CouponDetail {
     private Integer couponStatus;
 
     @ApiModelProperty(value = "关联商品信息")
-    private List<MallItemResp> mallItemResps;
+    private List<MallItemBaseResp> mallItemResps;
 
     //商品的编号列表
     @ApiModelProperty(name = "item_no_list",value = "商品编号列表")

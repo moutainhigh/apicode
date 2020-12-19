@@ -13,11 +13,9 @@ import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
-import com.ycandyz.master.domain.query.mall.MallItemQuery;
-import com.ycandyz.master.domain.response.mall.MallItemResp;
+import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
+import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
 import com.ycandyz.master.dto.coupon.CouponDetailDTO;
-import com.ycandyz.master.dto.coupon.CouponDetailItemDTO;
-import com.ycandyz.master.dto.mall.MallCategoryDTO;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.entities.coupon.CouponDetail;
 import com.ycandyz.master.entities.coupon.CouponDetailItem;
@@ -146,10 +144,10 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             couponTicketInfoVO = new CouponDetailVO();
             BeanUtils.copyProperties(couponTicketInfoDTO,couponTicketInfoVO);
             //获取当前优惠券关联的商品集合
-            List<MallItemResp> couponDetailItemDTOS = couponDetailItemDao.queryByCouponDetailId(couponTicketInfoDTO.getId());
+            List<MallItemBaseResp> couponDetailItemDTOS = couponDetailItemDao.queryByCouponDetailId(couponTicketInfoDTO.getId());
             if (couponDetailItemDTOS!=null && couponDetailItemDTOS.size()>0){
                 couponTicketInfoVO.setMallItemResps(couponDetailItemDTOS);
-                List<String> itemNoList = couponDetailItemDTOS.stream().map(MallItemResp::getItemNo).collect(Collectors.toList());
+                List<String> itemNoList = couponDetailItemDTOS.stream().map(MallItemBaseResp::getItemNo).collect(Collectors.toList());
                 couponTicketInfoVO.setItemNoList(itemNoList);
             }else{
                 couponTicketInfoVO.setMallItemResps(new ArrayList<>());
@@ -344,11 +342,11 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         Page page1 = new Page();
         page1.setPages(page);
         page1.setSize(pageSize);
-        MallItemQuery mallItemQuery = new MallItemQuery();
+        MallItemBaseQuery mallItemQuery = new MallItemBaseQuery();
         mallItemQuery.setShopNo(userVO.getShopNo());
         mallItemQuery.setCategoryNo(category);
         mallItemQuery.setItemName(keyword);
-        Page<MallItemResp> mallItemRespPage = null;
+        Page<MallItemBaseResp> mallItemRespPage = null;
         if (type.equals("all")){
             mallItemRespPage = mallHomeItemDao.selectMallItemPage(page1,mallItemQuery);
         }else if (type.equals("choose")){
@@ -360,7 +358,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             //获取所有分类集合
             List<MallCategory> mallCategoryList = mallCategoryDao.selectList(new QueryWrapper<MallCategory>().eq("shop_no",userVO.getShopNo()).eq("status",1));
             MallItemVO mallItemVO = null;
-            for (MallItemResp mallItemResp : mallItemRespPage.getRecords()){
+            for (MallItemBaseResp mallItemResp : mallItemRespPage.getRecords()){
                 mallItemVO = mallItemRespToVO(mallItemResp);
                 mallItemVO.setCategoryName(getTreeCategoryName(mallCategoryList,mallItemVO.getCategoryNo()));
                 list.add(mallItemVO);
@@ -376,7 +374,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
      * @param mallItemResp
      * @return
      */
-    private MallItemVO mallItemRespToVO(MallItemResp mallItemResp){
+    private MallItemVO mallItemRespToVO(MallItemBaseResp mallItemResp){
         MallItemVO mallItemVO = new MallItemVO();
         mallItemVO.setItemName(mallItemResp.getItemName());
         mallItemVO.setItemNo(mallItemResp.getItemNo());

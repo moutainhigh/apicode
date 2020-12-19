@@ -112,7 +112,7 @@
         </where>
     </update>
 
-    <select id="selectMallItemPageByCouponId" resultType="com.ycandyz.master.domain.response.mall.MallItemResp">
+    <select id="selectMallItemPageByCouponId" resultType="com.ycandyz.master.domain.response.mall.MallItemBaseResp">
         SELECT
             t.id,
             t.item_no,
