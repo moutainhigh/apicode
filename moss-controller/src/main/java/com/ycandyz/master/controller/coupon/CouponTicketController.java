@@ -127,7 +127,7 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "获取所有分类")
     @GetMapping(value = "/item")
-    public CommonResult<BasePageResult<MallItemVO>> itemList(@RequestParam(value = "id",required = false) Long id, @RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam("type") String type, @RequestParam("keyword") String keyword, @RequestParam("category") String category){
-        return iCouponService.itemList(id,page,pageSize,type,keyword,category);
+    public CommonResult<BasePageResult<MallItemVO>> itemList(@RequestParam(value = "id",required = false) Long id, @RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam("type") String type, @RequestParam("keyword") String keyword, @RequestParam("category_no") String category_no){
+        return iCouponService.itemList(id,page,pageSize,type,keyword,category_no);
     }
 }
