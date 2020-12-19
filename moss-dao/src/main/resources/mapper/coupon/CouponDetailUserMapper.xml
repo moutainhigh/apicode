@@ -23,4 +23,50 @@
         id, user_id, coupon_id, coupon_detail_id, status, order_sn, used_time, create_time, update_time, begin_time, end_time, source, activity_id
     </sql>
 
+    <select id="selectUserCouponList" parameterType="com.ycandyz.master.dto.coupon.CouponUseUserDTO" resultMap="BaseResultMap">
+        select
+            u.id as userId,
+            concat(u.name,' ',u.phone),
+            cdu.used_time,
+            cdu.status,
+            cdu.begin_time,
+            cdu.end_time,
+            cdu.source,
+            cdu.create_time,
+            cd.begin_time,
+            cd.end_time,
+            cd.full_money,
+            cd.discount_money,
+            cd.use_type
+        from
+        coupon_detail_user cdu
+        left join coupon_detail cd on cdu.coupon_detail_id=cd.id
+        left join coupon c on cd.coupon_id=c.id
+        left join user u on cdu.user_id=u.id
+        where
+        1=1
+        <if test="q.userMsg!=null and q.userMsg!=''">
+            and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
+        </if>
+        <if test="q.couponStatus!=null">
+            <if test="q.couponStatus==2">
+                and cdu.status=0 and cdu.begin_time &lt;= now() and cdu.end_time &gt;= now()
+            </if>
+            <if test="q.couponStatus==1">
+                and cdu.status=#{q.couponStatus}
+            </if>
+            <if test="q.couponStatus==3">
+                and cdu.status=0 and cdu.end_time &lt;= now()
+            </if>
+        </if>
+        <if test="q.source!=null">
+            and cdu.source=#{q.source}
+        </if>
+        <if test="q.beginTakeTime!=null">
+            and cdu.create_time &lt;= #{q.beginTakeTime}
+        </if>
+        <if test="q.endTakeTime!=null">
+            and cdu.end_time &gt;= #{q.endTakeTime}
+        </if>
+    </select>
 </mapper>

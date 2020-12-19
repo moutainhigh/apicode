@@ -8,12 +8,14 @@ import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.dao.coupon.CouponDao;
 import com.ycandyz.master.dao.coupon.CouponDetailDao;
 import com.ycandyz.master.dao.coupon.CouponDetailItemDao;
+import com.ycandyz.master.dao.coupon.CouponDetailUserDao;
 import com.ycandyz.master.dao.mall.MallHomeItemDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
 import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
+import com.ycandyz.master.domain.query.coupon.CouponUseUserQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.coupon.CouponDetailDTO;
@@ -22,8 +24,10 @@ import com.ycandyz.master.dto.mall.MallCategoryDTO;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.entities.coupon.CouponDetail;
 import com.ycandyz.master.entities.coupon.CouponDetailItem;
+import com.ycandyz.master.entities.coupon.CouponDetailUser;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
+import com.ycandyz.master.model.coupon.CouponUseUserVO;
 import com.ycandyz.master.model.mall.MallCategoryVO;
 import com.ycandyz.master.service.coupon.ICouponService;
 import com.ycandyz.master.controller.base.BaseService;
@@ -66,6 +70,9 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
 
     @Autowired
     private MallHomeItemDao mallHomeItemDao;
+
+    @Autowired
+    private CouponDetailUserDao couponDetailUserDao;
 
     @Override
     public CommonResult<BasePageResult<CouponDetailVO>> selectPageList(PageModel pageModel, CouponQuery couponQuery) {
@@ -370,6 +377,14 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             basePageResult.setResult(list);
         }
         return CommonResult.success(basePageResult);
+    }
+
+    @Override
+    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(CouponUseUserQuery couponUseUserQuery) {
+        if (couponUseUserQuery.getStatus()==0){ //已领取
+            couponDetailUserDao.selectUserCouponList(couponUseUserQuery);
+        }
+        return null;
     }
 
     /**

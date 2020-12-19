@@ -6,8 +6,10 @@ import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
 import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
+import com.ycandyz.master.domain.query.coupon.CouponUseUserQuery;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
+import com.ycandyz.master.model.coupon.CouponUseUserVO;
 import com.ycandyz.master.model.mall.MallCategoryVO;
 import com.ycandyz.master.service.coupon.ICouponService;
 import com.ycandyz.master.service.coupon.impl.CouponServiceImpl;
@@ -59,7 +61,7 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
     /**
      * 优惠券的启用和停用
      * @param id
-     * @param state
+     * @param couponStateQuery
      * @return
      */
     @ApiOperation(value = "优惠券启用停用")
@@ -132,5 +134,13 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
         return iCouponService.itemList(id,page,pageSize,type,keyword,category);
     }
 
-//    public CommonResult<BasePageResult<>>
+    /**
+     * 获取所有分类
+     * @return
+     */
+    @ApiOperation(value = "获取所有分类")
+    @GetMapping(value = "/statistics")
+    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(@RequestBody CouponUseUserQuery couponUseUserQuery){
+        return iCouponService.getCouponUseList(couponUseUserQuery);
+    }
 }

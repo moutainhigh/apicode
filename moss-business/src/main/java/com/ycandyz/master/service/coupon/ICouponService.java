@@ -6,8 +6,10 @@ import com.ycandyz.master.api.*;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
 import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
+import com.ycandyz.master.domain.query.coupon.CouponUseUserQuery;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
+import com.ycandyz.master.model.coupon.CouponUseUserVO;
 import com.ycandyz.master.model.mall.MallCategoryVO;
 import com.ycandyz.master.vo.MallItemVO;
 
@@ -37,4 +39,6 @@ public interface ICouponService extends IService<Coupon>{
     CommonResult<List<MallCategoryVO>> getCategoryList();
 
     CommonResult<BasePageResult<MallItemVO>> itemList(Long id, Long page, Long pageSize, String type, String keyword, String category);
+
+    CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(CouponUseUserQuery couponUseUserQuery);
 }
