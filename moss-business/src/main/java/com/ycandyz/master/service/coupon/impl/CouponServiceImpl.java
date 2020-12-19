@@ -170,7 +170,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 return CommonResult.failed("当前所在门店无权进行此操作");
             }
             //获取优惠卷详情
-            CouponDetail couponDetail = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id", id));
+            CouponDetail couponDetail = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id", id).eq("status",1));
             if (couponDetail!=null){
                 String ticketInfoNo = couponDetail.getCouponDetailNo();   //优惠券详情编号
                 //获取优惠券关联商品列表
