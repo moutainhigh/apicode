@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -98,6 +99,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         BeanUtils.copyProperties(entity,vo);
         List<CouponActivityCouponResp> activityCouponList = baseMapper.list(entity.getId());
         vo.setActivityCouponList(activityCouponList);
+        List<Long> couponIds = activityCouponList.stream().map(CouponActivityCouponResp::getId).collect(Collectors.toList());
+        vo.setCouponIds(couponIds);
         return vo;
     }
 

@@ -27,7 +27,7 @@
     </update>
 
     <select id="list" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp">
-        SELECT ct.id,t.`name`,t.coupon_sum - t.use_num remain_num,ti.begin_time,ti.end_time
+        SELECT t.id,t.`name`,t.coupon_sum - t.use_num remain_num,ti.begin_time,ti.end_time
         FROM
             coupon_activity_coupon ct
             LEFT JOIN coupon t ON ct.coupon_id = t.id

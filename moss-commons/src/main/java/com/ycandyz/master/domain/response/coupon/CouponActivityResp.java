@@ -26,4 +26,7 @@ public class CouponActivityResp extends CouponActivity {
     @ApiModelProperty(name = "activity_coupon_list",value = "已选优惠卷")
     private List<CouponActivityCouponResp> activityCouponList;
 
+    @ApiModelProperty(name = "coupon_ids",value = "已选优惠卷ID")
+    private List<Long> couponIds;
+
 }
