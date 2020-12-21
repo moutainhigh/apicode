@@ -30,10 +30,10 @@ public class CouponUseUserVO implements java.io.Serializable {
     private String couponName;
     @ApiModelProperty(value = "用户信息")
     private String userMsg;
-    @ApiModelProperty(value = "优惠券来源 0推广,1活动,2页面")
-    private String source;
-    @ApiModelProperty(value = "优惠券状态")
-    private String couponStatus;
+    @ApiModelProperty(value = "优惠券来源 0推广,1活动,2购物车页面直接获取,3商品详情页直接获取")
+    private Integer source;
+    @ApiModelProperty(value = "优惠券状态 使用状态(0未使用,1已使用,2已过期)")
+    private Integer couponStatus;
     @ApiModelProperty(value = "优惠券有效时间类型 0:时间段(自然日)，1:领券当日起计算天数，2:领券次日起计算天数")
     private Integer validityType;
     @ApiModelProperty(value = "优惠券有效时间类型-中文")
@@ -44,9 +44,9 @@ public class CouponUseUserVO implements java.io.Serializable {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date takeTime;
     @ApiModelProperty(value = "订单编号")
-    private String orderNo;
+    private String orderSn;
     @ApiModelProperty(value = "订单金额")
-    private BigDecimal realMoney;
+    private BigDecimal payAmount;
     @ApiModelProperty(value = "订单状态 10-待支付  20-待发货 30-待收货 40-已收货  50-已取消 ")
     private Integer orderStatus;
     @ApiModelProperty(value = "下单时间")

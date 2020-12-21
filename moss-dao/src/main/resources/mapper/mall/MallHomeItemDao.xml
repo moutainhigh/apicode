@@ -137,4 +137,13 @@
         <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
     </select>
 
+    <select id="selectMallItemByCartOrderSn" resultType="com.ycandyz.master.dto.mall.MallItemDTO">
+        select
+            md.item_name
+        from mall_cart_order mco
+        left join mall_order mo on mco.order_sn=mo.cart_order_sn
+        left join mall_order_detail md on mo.order_no=md.order_no
+        where
+        mco.order_sn=#{orderSn}
+    </select>
 </mapper>

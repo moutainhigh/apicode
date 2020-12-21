@@ -23,21 +23,47 @@
         id, user_id, coupon_id, coupon_detail_id, status, order_sn, used_time, create_time, update_time, begin_time, end_time, source, activity_id
     </sql>
 
-    <select id="selectUserCouponList" parameterType="com.ycandyz.master.dto.coupon.CouponUseUserDTO" resultMap="BaseResultMap">
+    <resultMap id="BaseUseUserResultMap" type="com.ycandyz.master.dto.coupon.CouponUseUserDTO">
+        <result column="userId" property="userId" />
+        <result column="userMsg" property="userMsg" />
+        <result column="couponId" property="couponId" />
+        <result column="couponDetailId" property="couponDetailId" />
+        <result column="couponName" property="couponName" />
+        <result column="validityType" property="validityType" />
+        <result column="days" property="days" />
+        <result column="couponStatus" property="couponStatus" />
+        <result column="couponUserBeginTime" property="couponUserBeginTime" />
+        <result column="couponUserEndTime" property="couponUserEndTime" />
+        <result column="source" property="source" />
+        <result column="takeTime" property="takeTime" />
+        <result column="useType" property="useType" />
+        <result column="full_money" property="fullMoney" />
+        <result column="discount_money" property="discountMoney" />
+        <result column="obtain" property="obtain" />
+        <result column="order_sn" property="orderSn" />
+        <result column="pay_amount" property="payAmount" />
+        <result column="orderStatus" property="orderStatus" />
+        <result column="orderAtStr" property="orderAtStr" />
+    </resultMap>
+
+    <select id="selectTakeUserCouponList" parameterType="com.ycandyz.master.domain.query.coupon.CouponUseUserQuery" resultMap="BaseUseUserResultMap">
         select
-            u.id as userId,
-            concat(u.name,' ',u.phone),
-            cdu.used_time,
-            cdu.status,
-            cdu.begin_time,
-            cdu.end_time,
-            cdu.source,
-            cdu.create_time,
-            cd.begin_time,
-            cd.end_time,
-            cd.full_money,
-            cd.discount_money,
-            cd.use_type
+        u.id as userId,
+        concat(u.name,' ',u.phone) as userMsg,
+        cdu.status as couponStatus,
+        cdu.begin_time as couponUserBeginTime,
+        cdu.end_time as couponUserEndTime,
+        cdu.source,
+        cdu.create_time as takeTime,
+        cd.id as couponDetailId,
+        cd.coupon_id as couponId,
+        cd.name as couponName,
+        cd.validity_type as validityType,
+        cd.days as days,
+        cd.use_type as useType,
+        cd.full_money,
+        cd.discount_money,
+        cd.obtain
         from
         coupon_detail_user cdu
         left join coupon_detail cd on cdu.coupon_detail_id=cd.id
@@ -60,7 +86,18 @@
             </if>
         </if>
         <if test="q.source!=null">
-            and cdu.source=#{q.source}
+            <if test="q.source==0">
+                and cdu.source=0
+            </if>
+            <if test="q.source==1">
+                and cdu.source=1
+            </if>
+            <if test="q.source==2">
+                and cdu.source=2 and cd.obtain like concat('%','1','%')
+            </if>
+            <if test="q.source==3">
+                and cdu.source=2 and cd.obtain like concat('%','2','%')
+            </if>
         </if>
         <if test="q.beginTakeTime!=null">
             and cdu.create_time &lt;= #{q.beginTakeTime}
@@ -68,5 +105,61 @@
         <if test="q.endTakeTime!=null">
             and cdu.end_time &gt;= #{q.endTakeTime}
         </if>
+    </select>
+
+    <select id="selectUseUserCouponList" parameterType="com.ycandyz.master.domain.query.coupon.CouponUseUserQuery" resultMap="BaseUseUserResultMap">
+        select
+        u.id as userId,
+        concat(u.name,' ',u.phone) as userMsg,
+        cdu.status as couponStatus,
+        cdu.begin_time as couponUserBeginTime,
+        cdu.end_time as couponUserEndTime,
+        cdu.source,
+        cdu.create_time as takeTime,
+        cd.id as couponDetailId,
+        cd.coupon_id as couponId,
+        cd.name as couponName,
+        cd.validity_type as validityType,
+        cd.days as days,
+        cd.use_type as useType,
+        cd.full_money,
+        cd.discount_money,
+        cd.obtain,
+        mc.order_sn,
+        mc.pay_amount,
+        mc.status as orderStatus,
+        mc.create_time as orderAtStr
+        from
+        coupon_detail_user cdu
+        left join coupon_detail cd on cdu.coupon_detail_id=cd.id
+        left join coupon c on cd.coupon_id=c.id
+        left join user u on cdu.user_id=u.id
+        left join mall_cart_order mc on mc.order_sn=cdu.order_sn
+        where
+        1=1
+        <if test="q.userMsg!=null and q.userMsg!=''">
+            and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
+        </if>
+        <if test="q.source!=null">
+            <if test="q.source==0">
+                and cdu.source=0
+            </if>
+            <if test="q.source==1">
+                and cdu.source=1
+            </if>
+            <if test="q.source==2">
+                and cdu.source=2 and cd.obtain like concat('%','1','%')
+            </if>
+            <if test="q.source==3">
+                and cdu.source=2 and cd.obtain like concat('%','2','%')
+            </if>
+        </if>
+        <if test="q.beginOrderTime!=null">
+            and mc.create_time &lt;= #{q.beginOrderTime}
+        </if>
+        <if test="q.endOrderTime!=null">
+            and mc.create_time &gt;= #{q.endOrderTime}
+        </if>
+        group by cdu.id
     </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.coupon.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.BasePageResult;
@@ -21,11 +22,14 @@ import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.coupon.CouponDetailDTO;
 import com.ycandyz.master.dto.coupon.CouponDetailItemDTO;
+import com.ycandyz.master.dto.coupon.CouponUseUserDTO;
 import com.ycandyz.master.dto.mall.MallCategoryDTO;
+import com.ycandyz.master.dto.mall.MallItemDTO;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.entities.coupon.CouponDetail;
 import com.ycandyz.master.entities.coupon.CouponDetailItem;
 import com.ycandyz.master.entities.coupon.CouponDetailUser;
+import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
 import com.ycandyz.master.model.coupon.CouponUseUserVO;
@@ -381,11 +385,76 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     }
 
     @Override
-    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(CouponUseUserQuery couponUseUserQuery) {
+    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(Page page, CouponUseUserQuery couponUseUserQuery) {
+        BasePageResult<CouponUseUserVO> basePageResult = new BasePageResult<>();
+        basePageResult.setPage(page.getCurrent());
+        basePageResult.setPageSize(page.getSize());
+        List<CouponUseUserVO> list = new ArrayList<>();
+        Page<CouponUseUserDTO> dtoPage = null;
         if (couponUseUserQuery.getStatus()==0){ //已领取
-            couponDetailUserDao.selectUserCouponList(couponUseUserQuery);
+            dtoPage = couponDetailUserDao.selectTakeUserCouponList(page,couponUseUserQuery);
+        }else if (couponUseUserQuery.getStatus()==1){   //已使用
+            dtoPage = couponDetailUserDao.selectUseUserCouponList(page,couponUseUserQuery);
         }
-        return null;
+        if (dtoPage!=null && dtoPage.getRecords().size()>0){
+            CouponUseUserVO vo = null;
+            for (CouponUseUserDTO dto : dtoPage.getRecords()){
+                vo = new CouponUseUserVO();
+                vo.setCouponId(dto.getCouponId());
+                vo.setCouponDetailId(dto.getCouponDetailId());
+                vo.setCouponName(dto.getCouponName());
+                if (dto.getUseType()==0) {
+                    vo.setCouponTypeMsg("减"+dto.getDiscountMoney());
+                }else if (dto.getUseType()==1){
+                    vo.setCouponTypeMsg("满"+dto.getFullMoney()+"减"+dto.getDiscountMoney());
+                }
+                if (dto.getCouponStatus()==0) {
+                    if (dto.getCouponUserEndTime().after(new Date())){  //券失效时间在当前时间后，不过期
+                        vo.setCouponStatus(dto.getCouponStatus());
+                    }else {
+                        vo.setCouponStatus(2);
+                    }
+                }else {
+                    vo.setCouponStatus(dto.getCouponStatus());
+                }
+                vo.setOrderAtStr(dto.getOrderAtStr());
+                vo.setOrderSn(dto.getOrderSn());
+                vo.setOrderStatus(dto.getOrderStatus());
+                vo.setPayAmount(dto.getPayAmount());
+                if (dto.getSource()==2) {
+                    if (dto.getObtain().contains("1")) {
+                        vo.setSource(2);
+                    }else if (dto.getObtain().contains("2")){
+                        vo.setSource(3);
+                    }
+                }else {
+                    vo.setSource(dto.getSource());
+                }
+                vo.setTakeTime(dto.getTakeTime());
+                vo.setUserId(dto.getUserId());
+                vo.setUserMsg(dto.getUserMsg());
+                vo.setValidityType(dto.getValidityType());
+                if (dto.getValidityType()==0){
+                    vo.setValidityTypeMsg(DateUtil.format(dto.getCouponUserBeginTime(),"yyyy-MM-dd HH:mm:ss")+" ~ "+DateUtil.format(dto.getCouponUserEndTime(),"yyyy-MM-dd HH:mm:ss"));
+                }else if (dto.getValidityType()==1){
+                    vo.setValidityTypeMsg("领券当日起"+dto.getDays()+"天内可用");
+                }else if (dto.getValidityType()==2){
+                    vo.setValidityTypeMsg("领券次日起"+dto.getDays()+"天内可用");
+                }
+                List<String> list1 = new ArrayList<>();
+                if (dto.getOrderSn()!=null && !"".equals(dto.getOrderSn())){
+                    List<MallItemDTO> itemDTOS = mallHomeItemDao.selectMallItemByCartOrderSn(dto.getOrderSn());
+                    if (itemDTOS!=null && itemDTOS.size()>0){
+                        List<String> itemNameList = itemDTOS.stream().map(MallItemDTO :: getItemName).collect(Collectors.toList());
+                        vo.setItemNameList(itemNameList);
+                    }
+                }
+                list.add(vo);
+            }
+            basePageResult.setTotal(dtoPage.getTotal());
+            basePageResult.setResult(list);
+        }
+        return CommonResult.success(basePageResult);
     }
 
     /**

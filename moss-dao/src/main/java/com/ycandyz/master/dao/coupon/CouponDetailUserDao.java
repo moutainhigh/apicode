@@ -1,5 +1,6 @@
 package com.ycandyz.master.dao.coupon;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.domain.query.coupon.CouponUseUserQuery;
 import com.ycandyz.master.dto.coupon.CouponUseUserDTO;
 import com.ycandyz.master.entities.coupon.CouponDetailUser;
@@ -18,5 +19,7 @@ import java.util.List;
  */
 public interface CouponDetailUserDao extends BaseMapper<CouponDetailUser> {
 
-    List<CouponUseUserDTO> selectUserCouponList(@Param("p") CouponUseUserQuery couponUseUserQuery);
+    Page<CouponUseUserDTO> selectTakeUserCouponList(Page page, @Param("q") CouponUseUserQuery couponUseUserQuery);
+
+    Page<CouponUseUserDTO> selectUseUserCouponList(Page page, @Param("q") CouponUseUserQuery couponUseUserQuery);
 }
