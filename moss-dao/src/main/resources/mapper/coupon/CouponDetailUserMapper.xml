@@ -70,7 +70,7 @@
         left join coupon c on cd.coupon_id=c.id
         left join user u on cdu.user_id=u.id
         where
-        1=1
+        1=1 and c.shop_no=#{q.shopNo} and c.id=#{q.couponId}
         <if test="q.userMsg!=null and q.userMsg!=''">
             and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
         </if>
@@ -136,7 +136,7 @@
         left join user u on cdu.user_id=u.id
         left join mall_cart_order mc on mc.order_sn=cdu.order_sn
         where
-        1=1
+        1=1 and c.shop_no=#{q.shopNo} and c.id=#{q.couponId}
         <if test="q.userMsg!=null and q.userMsg!=''">
             and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
         </if>
