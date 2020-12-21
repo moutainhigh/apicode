@@ -21,11 +21,11 @@ public class CouponUseUserDTO {
     @ApiModelProperty(value = "优惠券名称")
     private String couponName;
     @ApiModelProperty(value = "用户信息")
-    private String userMsg;
+    private String userName;
     @ApiModelProperty(value = "优惠券来源 0推广,1活动,2页面")
     private Integer source;
     @ApiModelProperty(value = "优惠券状态 使用状态(0未使用,1已使用)")
-    private Integer couponStatus;
+    private Integer status;
     @ApiModelProperty(value = "券生效开始时间 ")
     private Date couponUserBeginTime;
     @ApiModelProperty(value = "券生效结束时间 ")

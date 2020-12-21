@@ -29,11 +29,11 @@ public class CouponUseUserVO implements java.io.Serializable {
     @ApiModelProperty(value = "优惠券名称")
     private String couponName;
     @ApiModelProperty(value = "用户信息")
-    private String userMsg;
+    private String userName;
     @ApiModelProperty(value = "优惠券来源 0推广,1活动,2购物车页面直接获取,3商品详情页直接获取")
     private Integer source;
-    @ApiModelProperty(value = "优惠券状态 使用状态(0未使用,1已使用,2已过期)")
-    private Integer couponStatus;
+    @ApiModelProperty(value = "优惠券状态 1:已使用,2:待使用,3:过期")
+    private Integer status;
     @ApiModelProperty(value = "优惠券有效时间类型 0:时间段(自然日)，1:领券当日起计算天数，2:领券次日起计算天数")
     private Integer validityType;
     @ApiModelProperty(value = "优惠券有效时间类型-中文")
