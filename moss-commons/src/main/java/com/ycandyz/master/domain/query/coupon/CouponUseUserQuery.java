@@ -23,7 +23,7 @@ public class CouponUseUserQuery implements Serializable {
     @ApiModelProperty(name = "coupon_status",value = "优惠券状态 0未使用,1已使用")
     private Integer couponStatus;
 
-    @ApiModelProperty(name = "source",value = "领取来源 0推广,1活动,2页面")
+    @ApiModelProperty(name = "source",value = "优惠券来源 0推广,1活动,2购物车页面直接获取,3商品详情页直接获取")
     private Integer source;
 
     @ApiModelProperty(name = "begin_take_time",value = "领取开始时间")
@@ -32,12 +32,12 @@ public class CouponUseUserQuery implements Serializable {
     @ApiModelProperty(name = "end_take_time",value = "领取结束时间")
     private Data endTakeTime;
 
-    @ApiModelProperty(name = "begin_order_time",value = "领取开始时间")
+    @ApiModelProperty(name = "begin_order_time",value = "下单开始时间")
     private Data beginOrderTime;
 
-    @ApiModelProperty(name = "end_order_time",value = "领取结束时间")
+    @ApiModelProperty(name = "end_order_time",value = "下单结束时间")
     private Data endOrderTime;
 
-    @ApiModelProperty(name = "source",value = "状态：0-全部，1-已使用，2-使用中，3-过期")
+    @ApiModelProperty(name = "source",value = "状态：0-已领取，1-已使用")
     private Integer status;
 }

@@ -142,7 +142,7 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "获取所有分类")
     @GetMapping(value = "/statistics")
-    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(@RequestBody CouponUseUserQuery couponUseUserQuery){
-        return iCouponService.getCouponUseList(couponUseUserQuery);
+    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(PageModel page, CouponUseUserQuery couponUseUserQuery){
+        return iCouponService.getCouponUseList(new Page(page.getPage(),page.getPageSize()),couponUseUserQuery);
     }
 }
