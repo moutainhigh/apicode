@@ -394,9 +394,9 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         Page<CouponUseUserDTO> dtoPage = null;
         couponUseUserQuery.setShopNo(userVO.getShopNo());
         couponUseUserQuery.setCouponId(id);
-        if (couponUseUserQuery.getStatus()==0){ //已领取
+        if (couponUseUserQuery.getPageType()==0){ //已领取
             dtoPage = couponDetailUserDao.selectTakeUserCouponList(page,couponUseUserQuery);
-        }else if (couponUseUserQuery.getStatus()==1){   //已使用
+        }else if (couponUseUserQuery.getPageType()==1){   //已使用
             dtoPage = couponDetailUserDao.selectUseUserCouponList(page,couponUseUserQuery);
         }
         if (dtoPage!=null && dtoPage.getRecords().size()>0){
@@ -411,14 +411,14 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 }else if (dto.getUseType()==1){
                     vo.setCouponTypeMsg("满"+dto.getFullMoney()+"减"+dto.getDiscountMoney());
                 }
-                if (dto.getCouponStatus()==0) {
+                if (dto.getStatus()==0) {
                     if (dto.getCouponUserEndTime().after(new Date())){  //券失效时间在当前时间后，不过期
-                        vo.setCouponStatus(dto.getCouponStatus());
+                        vo.setStatus(2);  //待使用
                     }else {
-                        vo.setCouponStatus(2);
+                        vo.setStatus(3);  //已过期
                     }
                 }else {
-                    vo.setCouponStatus(dto.getCouponStatus());
+                    vo.setStatus(dto.getStatus());  //已使用
                 }
                 vo.setOrderAtStr(dto.getOrderAtStr());
                 vo.setOrderSn(dto.getOrderSn());
@@ -435,7 +435,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 }
                 vo.setTakeTime(dto.getTakeTime());
                 vo.setUserId(dto.getUserId());
-                vo.setUserMsg(dto.getUserMsg());
+                vo.setUserName(dto.getUserName());
                 vo.setValidityType(dto.getValidityType());
                 if (dto.getValidityType()==0){
                     vo.setValidityTypeMsg(DateUtil.format(dto.getCouponUserBeginTime(),"yyyy-MM-dd HH:mm:ss")+" ~ "+DateUtil.format(dto.getCouponUserEndTime(),"yyyy-MM-dd HH:mm:ss"));
@@ -444,7 +444,6 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 }else if (dto.getValidityType()==2){
                     vo.setValidityTypeMsg("领券次日起"+dto.getDays()+"天内可用");
                 }
-                List<String> list1 = new ArrayList<>();
                 if (dto.getOrderSn()!=null && !"".equals(dto.getOrderSn())){
                     List<MallItemDTO> itemDTOS = mallHomeItemDao.selectMallItemByCartOrderSn(dto.getOrderSn());
                     if (itemDTOS!=null && itemDTOS.size()>0){

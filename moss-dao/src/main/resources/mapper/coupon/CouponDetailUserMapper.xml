@@ -25,13 +25,13 @@
 
     <resultMap id="BaseUseUserResultMap" type="com.ycandyz.master.dto.coupon.CouponUseUserDTO">
         <result column="userId" property="userId" />
-        <result column="userMsg" property="userMsg" />
+        <result column="userName" property="userName" />
         <result column="couponId" property="couponId" />
         <result column="couponDetailId" property="couponDetailId" />
         <result column="couponName" property="couponName" />
         <result column="validityType" property="validityType" />
         <result column="days" property="days" />
-        <result column="couponStatus" property="couponStatus" />
+        <result column="status" property="status" />
         <result column="couponUserBeginTime" property="couponUserBeginTime" />
         <result column="couponUserEndTime" property="couponUserEndTime" />
         <result column="source" property="source" />
@@ -49,8 +49,8 @@
     <select id="selectTakeUserCouponList" parameterType="com.ycandyz.master.domain.query.coupon.CouponUseUserQuery" resultMap="BaseUseUserResultMap">
         select
         u.id as userId,
-        concat(u.name,' ',u.phone) as userMsg,
-        cdu.status as couponStatus,
+        concat(u.name,' ',u.phone) as userName,
+        cdu.status as status,
         cdu.begin_time as couponUserBeginTime,
         cdu.end_time as couponUserEndTime,
         cdu.source,
@@ -71,17 +71,17 @@
         left join user u on cdu.user_id=u.id
         where
         1=1 and c.shop_no=#{q.shopNo} and c.id=#{q.couponId}
-        <if test="q.userMsg!=null and q.userMsg!=''">
-            and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
+        <if test="q.userName!=null and q.userName!=''">
+            and u.name like concat('%',#{q.userName},'%') or u.phone like concat('%',#{q.userName},'%')
         </if>
-        <if test="q.couponStatus!=null">
-            <if test="q.couponStatus==2">
+        <if test="q.status!=null">
+            <if test="q.status==2">
                 and cdu.status=0 and cdu.begin_time &lt;= now() and cdu.end_time &gt;= now()
             </if>
-            <if test="q.couponStatus==1">
-                and cdu.status=#{q.couponStatus}
+            <if test="q.status==1">
+                and cdu.status=#{q.status}
             </if>
-            <if test="q.couponStatus==3">
+            <if test="q.status==3">
                 and cdu.status=0 and cdu.end_time &lt;= now()
             </if>
         </if>
@@ -110,8 +110,8 @@
     <select id="selectUseUserCouponList" parameterType="com.ycandyz.master.domain.query.coupon.CouponUseUserQuery" resultMap="BaseUseUserResultMap">
         select
         u.id as userId,
-        concat(u.name,' ',u.phone) as userMsg,
-        cdu.status as couponStatus,
+        concat(u.name,' ',u.phone) as userName,
+        cdu.status as status,
         cdu.begin_time as couponUserBeginTime,
         cdu.end_time as couponUserEndTime,
         cdu.source,
@@ -137,8 +137,8 @@
         left join mall_cart_order mc on mc.order_sn=cdu.order_sn
         where
         1=1 and c.shop_no=#{q.shopNo} and c.id=#{q.couponId}
-        <if test="q.userMsg!=null and q.userMsg!=''">
-            and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
+        <if test="q.userName!=null and q.userName!=''">
+            and u.name like concat('%',#{q.userName},'%') or u.phone like concat('%',#{q.userName},'%')
         </if>
         <if test="q.source!=null">
             <if test="q.source==0">
