@@ -38,7 +38,26 @@
     </select>
 
     <select id="selectCouponPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp">
-        SELECT t.id,t.`name`,t.coupon_sum - t.use_num remain_num,ti.begin_time,ti.end_time,case when ct.id is null then 'false' else 'true' end selected
+        SELECT
+        t.id as coupon_id,
+        t.coupon_no,
+        t.`name`,
+        t.obtain_num,
+        t.use_num,
+        t.coupon_sum - t.use_num surplus_num,
+        t.status as couponStatus,
+        ti.id,
+        ti.begin_time,
+        ti.end_time,
+        ti.coupon_detail_no,
+        ti.status as status,
+        ti.days as days,
+        ti.use_type,
+        ti.full_money,
+        ti.discount_money,
+        ti.validity_type,
+        ct.id activity_coupon_id,
+        case when ct.id is null then 'false' else 'true' end selected
         FROM
         coupon t
         LEFT JOIN coupon_detail ti ON ti.coupon_id = t.id
@@ -53,7 +72,25 @@
     </select>
 
     <select id="selectActivityCouponPage" resultType="com.ycandyz.master.domain.response.coupon.CouponActivityCouponResp">
-        SELECT t.id,t.`name`,t.coupon_sum - t.use_num remain_num,ti.begin_time,ti.end_time,ct.id activity_coupon_id
+        SELECT
+        t.id as coupon_id,
+        t.coupon_no,
+        t.`name`,
+        t.obtain_num,
+        t.use_num,
+        t.coupon_sum - t.use_num surplus_num,
+        t.status as couponStatus,
+        ti.id,
+        ti.begin_time,
+        ti.end_time,
+        ti.coupon_detail_no,
+        ti.status as status,
+        ti.days as days,
+        ti.use_type,
+        ti.full_money,
+        ti.discount_money,
+        ti.validity_type,
+        ct.id activity_coupon_id
         FROM
         coupon_activity_coupon ct
         LEFT JOIN coupon t ON ct.coupon_id = t.id
