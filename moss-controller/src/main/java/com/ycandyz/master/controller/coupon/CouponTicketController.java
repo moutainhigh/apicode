@@ -137,12 +137,12 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
     }
 
     /**
-     * 获取所有分类
+     * 获取所有已经领取的优惠券使用情况
      * @return
      */
-    @ApiOperation(value = "获取所有分类")
-    @GetMapping(value = "/statistics")
-    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(PageModel page, CouponUseUserQuery couponUseUserQuery){
-        return iCouponService.getCouponUseList(new Page(page.getPage(),page.getPageSize()),couponUseUserQuery);
+    @ApiOperation(value = "获取所有已经领取的优惠券使用情况")
+    @GetMapping(value = "/statistics/{id}")
+    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(@PathVariable("id") Long id, PageModel page, CouponUseUserQuery couponUseUserQuery){
+        return iCouponService.getCouponUseList(id,new Page(page.getPage(),page.getPageSize()),couponUseUserQuery);
     }
 }

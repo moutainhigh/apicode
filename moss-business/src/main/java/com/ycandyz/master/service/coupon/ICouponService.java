@@ -41,5 +41,5 @@ public interface ICouponService extends IService<Coupon>{
 
     CommonResult<BasePageResult<MallItemVO>> itemList(Page page, CouponBaseQuery query);
 
-    CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(Page page, CouponUseUserQuery couponUseUserQuery);
+    CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(Long id, Page page, CouponUseUserQuery couponUseUserQuery);
 }

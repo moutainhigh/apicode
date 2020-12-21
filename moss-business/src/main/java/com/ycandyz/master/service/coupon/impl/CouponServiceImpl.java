@@ -385,12 +385,15 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     }
 
     @Override
-    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(Page page, CouponUseUserQuery couponUseUserQuery) {
+    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(Long id, Page page, CouponUseUserQuery couponUseUserQuery) {
+        UserVO userVO = getUser();
         BasePageResult<CouponUseUserVO> basePageResult = new BasePageResult<>();
         basePageResult.setPage(page.getCurrent());
         basePageResult.setPageSize(page.getSize());
         List<CouponUseUserVO> list = new ArrayList<>();
         Page<CouponUseUserDTO> dtoPage = null;
+        couponUseUserQuery.setShopNo(userVO.getShopNo());
+        couponUseUserQuery.setCouponId(id);
         if (couponUseUserQuery.getStatus()==0){ //已领取
             dtoPage = couponDetailUserDao.selectTakeUserCouponList(page,couponUseUserQuery);
         }else if (couponUseUserQuery.getStatus()==1){   //已使用

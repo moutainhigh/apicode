@@ -40,4 +40,10 @@ public class CouponUseUserQuery implements Serializable {
 
     @ApiModelProperty(name = "source",value = "状态：0-已领取，1-已使用")
     private Integer status;
+
+    @ApiModelProperty(name = "shopNo",value = "商店编号")
+    private String shopNo;
+
+    @ApiModelProperty(name = "couponId",value = "优惠券id")
+    private Long couponId;
 }
