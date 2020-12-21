@@ -48,7 +48,7 @@ public class CouponActivityCouponResp {
     private Integer days;
 
     @ApiModelProperty(value = "领取人限制：0:所有用户")
-    private Integer userType;
+    private Integer useType;
 
     @ApiModelProperty(value = "订单满多少元可用")
     private BigDecimal fullMoney;
