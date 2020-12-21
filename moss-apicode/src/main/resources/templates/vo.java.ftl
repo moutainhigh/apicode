@@ -2,7 +2,6 @@ package ${cfg.vo};
 
 import ${cfg.entity}.${entity};
 import com.baomidou.mybatisplus.annotation.TableName;
-
 <#if entityLombokModel>
 import lombok.Getter;
 import lombok.Setter;

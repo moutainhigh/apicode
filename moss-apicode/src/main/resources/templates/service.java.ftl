@@ -3,6 +3,7 @@ package ${cfg.Service};
 import ${superServiceClassPackage};
 import ${cfg.entity}.${entity};
 import ${cfg.model}.${entity}${cfg.modelSuffix};
+
 /**
  * <p>
  * @Description ${table.comment!} 业务接口类

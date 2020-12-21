@@ -64,16 +64,29 @@
     </sql>
 
     <sql id="Home_Column_List">
-        t.id, t.item_no, t.item_name, t.status,t.item_cover, t.price ,t.lowest_sale_price,t.base_sales,t.real_sales
+        t.id, t.item_no, t.item_name, t.status,t.item_cover, t.price ,t.lowest_sale_price,t.base_sales,t.real_sales,t.item_text,t.stock,t.category_no
     </sql>
 
     <select id="selectMallItemPage" resultType="com.ycandyz.master.domain.response.mall.MallItemResp">
-        SELECT <include refid="Home_Column_List"/>
+        SELECT
+           t.id,
+           t.item_no,
+           t.item_name,
+           t.status,t.item_cover,
+           t.price ,
+           t.lowest_sale_price,
+           t.base_sales,
+           t.real_sales,
+           t.item_text,
+           t.stock,
+           t.category_no,
+           t.goods_no
         FROM mall_item t
         WHERE 1=1
         AND t.status = 10
         <if test="query.itemName != null"> and t.item_name like CONCAT('%',#{query.itemName},'%') </if>
         <if test="query.shopNo != null and query.shopNo != ''"> and t.shop_no = #{query.shopNo} </if>
+        <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
     </select>
     
     <select id="selectItemSku" resultType="com.ycandyz.master.dto.mall.MallItemDTO">
@@ -99,5 +112,38 @@
         </where>
     </update>
 
+    <select id="selectMallItemPageByCouponId" resultType="com.ycandyz.master.domain.response.mall.MallItemResp">
+        SELECT
+            t.id,
+            t.item_no,
+            t.item_name,
+            t.status,t.item_cover,
+            t.price ,
+            t.lowest_sale_price,
+            t.base_sales,
+            t.real_sales,
+            t.item_text,
+            t.stock,
+            t.category_no,
+            t.goods_no
+        FROM coupon_detail detail
+        left join coupon_detail_item cditem on detail.id=cditem.coupon_detail_id
+        left join mall_item t on cditem.item_no=t.item_no
+        WHERE 1=1
+        AND t.status = 10 and detail.status=1
+        <if test="query.couponId != null"> and detail.coupon_id=#{query.couponId} </if>
+        <if test="query.itemName != null and query.itemName!=''"> and t.item_name like CONCAT('%',#{query.itemName},'%') </if>
+        <if test="query.shopNo != null and query.shopNo != ''"> and t.shop_no = #{query.shopNo} </if>
+        <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
+    </select>
 
+    <select id="selectMallItemByCartOrderSn" resultType="com.ycandyz.master.dto.mall.MallItemDTO">
+        select
+            md.item_name
+        from mall_cart_order mco
+        left join mall_order mo on mco.order_sn=mo.cart_order_sn
+        left join mall_order_detail md on mo.order_no=md.order_no
+        where
+        mco.order_sn=#{orderSn}
+    </select>
 </mapper>

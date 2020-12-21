@@ -1,11 +1,14 @@
 package com.ycandyz.master.vo;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class MallItemVO {
 
     @ApiModelProperty(value = "商品编号")
@@ -91,4 +94,8 @@ public class MallItemVO {
 
     @ApiModelProperty(value = "最高销售价格")
     private BigDecimal highestSalePrice;
+
+    //冗余字段
+    @ApiModelProperty(value = "分类名")
+    private String categoryName;
 }

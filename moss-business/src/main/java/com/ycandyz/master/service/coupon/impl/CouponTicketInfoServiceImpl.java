@@ -1,9 +1,9 @@
 package com.ycandyz.master.service.coupon.impl;
 
-import com.ycandyz.master.entities.coupon.CouponTicketInfo;
-import com.ycandyz.master.domain.query.coupon.CouponTicketInfoQuery;
-import com.ycandyz.master.dao.coupon.CouponTicketInfoDao;
-import com.ycandyz.master.service.coupon.ICouponTicketInfoService;
+import com.ycandyz.master.dao.coupon.CouponDetailDao;
+import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
+import com.ycandyz.master.entities.coupon.CouponDetail;
+import com.ycandyz.master.service.coupon.ICouponDetailService;
 import com.ycandyz.master.controller.base.BaseService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +20,6 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class CouponTicketInfoServiceImpl extends BaseService<CouponTicketInfoDao,CouponTicketInfo,CouponTicketInfoQuery> implements ICouponTicketInfoService {
+public class CouponTicketInfoServiceImpl extends BaseService<CouponDetailDao,CouponDetail,CouponDetailQuery> implements ICouponDetailService {
 
 }

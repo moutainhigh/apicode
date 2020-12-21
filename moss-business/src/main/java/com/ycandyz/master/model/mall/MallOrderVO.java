@@ -214,6 +214,8 @@ public class MallOrderVO {
     private List<MallItemByMallOrderVO> itemInfoList;
     @ApiModelProperty(value = "所属企业")
     private String organizeName;
+    @ApiModelProperty(value = "是否使用优惠券")
+    private Integer isCoupon;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")

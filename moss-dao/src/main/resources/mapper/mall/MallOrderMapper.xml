@@ -29,6 +29,7 @@
         <result column="orderAtStr" property="orderAtStr" />
         <result column="receiveAtStr" property="receiveAtStr" />
         <result column="discountMoney" property="discountMoney" />
+        <result column="isCoupon" property="isCoupon" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -215,7 +216,8 @@
             modetail.share_user_id,
             uu.`name` as sellerUserName,
             uu.phone as sellerUserPhone,
-            s.amount as shareAmount
+            s.amount as shareAmount,
+            cdu.status as isCoupon
         FROM
         mall_order mo
         LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
@@ -225,6 +227,7 @@
         LEFT JOIN mall_social_share_flow s ON ( s.order_detail_no = modetail.order_detail_no OR s.order_no = mo.order_no )
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
+        LEFT JOIN coupon_detail_user cdu on mo.cart_order_sn=cdu.order_sn
         <if test="p.afterSalesStatus != null">
             <if test="p.afterSalesStatus == 111">    <!--111: 是：申请了售后就是，跟有效期无关-->
                 JOIN mall_after_sales sales ON ( sales.order_detail_no = modetail.order_detail_no OR sales.order_no = mo.order_no )
@@ -502,7 +505,7 @@
             mo.all_money-mo.real_money as shippingMoney,
             mo.all_money,
             mo.shop_no,
-            mo.total_money-mo.real_money as discountMoney,
+            mo.coupon_deducted as discountMoney,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
@@ -532,6 +535,7 @@
         LEFT JOIN mall_social_share_flow s ON IF(mo.order_type=2, s.order_detail_no = modetail.order_detail_no , s.order_no = mo.order_no )
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
+        LEFT JOIN coupon_detail_user cdu on mo.cart_order_sn=cdu.order_sn
         <if test="p.afterSalesStatus != null">
             <if test="p.afterSalesStatus == 111">    <!--111: 是：申请了售后就是，跟有效期无关-->
                 JOIN mall_after_sales sales ON IF(mo.order_type=2, sales.order_detail_no = modetail.order_detail_no , sales.order_no = mo.order_no )
@@ -639,6 +643,9 @@
         </if>
         <if test="p.cancelReason != null">
             and mo.cancel_reason=#{p.cancelReason}
+        </if>
+        <if test="p.isCoupon!=null">
+            cdu.status=#{p.isCoupon}
         </if>
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
@@ -680,7 +687,8 @@
         uu.phone AS sellerUserPhone,
         s.amount AS shareAmount,
         sales.`status` AS after_sales_status,
-        sales.sub_status AS after_sales_sub_status
+        sales.sub_status AS after_sales_sub_status,
+        cdu.status as isCoupon
         FROM
         (
         SELECT
@@ -713,6 +721,7 @@
         LEFT JOIN mall_social_share_flow s ON IF(mo.order_type=2, s.order_detail_no = modetail.order_detail_no , s.order_no = mo.order_no )
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
+        LEFT JOIN coupon_detail_user cdu on mo.cart_order_sn=cdu.order_sn
         <if test="p.afterSalesStatus != null">
             <if test="p.afterSalesStatus == 111">    <!--111: 是：申请了售后就是，跟有效期无关-->
                 JOIN mall_after_sales sales ON IF(mo.order_type=2, sales.order_detail_no = modetail.order_detail_no , sales.order_no = mo.order_no )
@@ -821,6 +830,9 @@
         <if test="p.cancelReason != null">
             and mo.cancel_reason=#{p.cancelReason}
         </if>
+        <if test="p.isCoupon!=null">
+            cdu.status=#{p.isCoupon}
+        </if>
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
         GROUP BY mo.order_no
@@ -834,6 +846,7 @@
         AND s.share_type = 0
         LEFT JOIN user AS uu ON uu.id = s.user_id
         LEFT JOIN mall_after_sales sales ON IF(a.order_type=2, sales.order_detail_no = modetail.order_detail_no , sales.order_no = a.order_no )
+        LEFT JOIN coupon_detail_user cdu on a.cart_order_sn=cdu.order_sn
         ORDER BY a.order_at DESC
     </select>
 

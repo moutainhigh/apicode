@@ -16,5 +16,6 @@ interface ${entity}${cfg.mapperSuffix} : ${superMapperClass}<${entity}>
 <#else>
 public interface ${entity}${cfg.mapperSuffix} extends ${superMapperClass}<${entity}> {
 
+
 }
 </#if>

@@ -37,8 +37,6 @@ import java.util.List;
  */
 public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> extends ServiceImpl<M, T> {
 
-    private static String SHOP_NO = "0";
-
     @Autowired
     public HttpServletRequest request;
 
