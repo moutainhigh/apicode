@@ -351,7 +351,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         basePageResult.setPageSize(page.getSize());
         UserVO userVO = getUser();
         Page page1 = new Page();
-        page1.setPages(page.getCurrent());
+        page1.setCurrent(page.getCurrent());
         page1.setSize(page.getSize());
         MallItemQuery mallItemQuery = new MallItemQuery();
         mallItemQuery.setShopNo(userVO.getShopNo());

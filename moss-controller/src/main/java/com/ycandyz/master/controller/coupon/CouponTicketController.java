@@ -132,7 +132,7 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "获取所有分类")
     @GetMapping(value = "/item")
-    public CommonResult<BasePageResult<MallItemVO>> itemList(PageModel page, @RequestParam CouponBaseQuery query){
+    public CommonResult<BasePageResult<MallItemVO>> itemList(PageModel page, CouponBaseQuery query){
         return iCouponService.itemList(new Page(page.getPage(),page.getPageSize()),query);
     }
 
