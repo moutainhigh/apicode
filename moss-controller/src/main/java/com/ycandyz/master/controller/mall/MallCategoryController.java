@@ -2,7 +2,7 @@ package com.ycandyz.master.controller.mall;
 
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.dto.mall.MallCategoryDTO;
-import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
+import com.ycandyz.master.service.mall.goodsManage.GoodsMallCategoryService;
 import com.ycandyz.master.vo.MallCategoryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class MallCategoryController {
     @Resource
-    private MallCategoryService mallCategoryService;
+    private GoodsMallCategoryService mallCategoryService;
 
     @ApiOperation(value = "添加商品分类",notes = "添加",httpMethod = "POST")
     @PostMapping("/category")

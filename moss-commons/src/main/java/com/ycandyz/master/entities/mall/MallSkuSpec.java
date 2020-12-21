@@ -40,6 +40,9 @@ public class MallSkuSpec extends Model {
    @ApiModelProperty(value = "值")
    private String specValue;
 
+   @ApiModelProperty(value = "图片标识(0不存在,1存在)")
+   private Integer existImg;
+
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createdTime;
 

@@ -30,9 +30,9 @@ public interface IMallItemService extends IService<MallItem>{
 
     Page<MallItemResp> getMallItemPage(Page<MallItem> page, MallItemQuery query);
 
-    boolean insert(MallItemModel entity);
+    boolean insert(MallItemModel model);
 
-    boolean update(MallItemModel entity);
+    boolean update(MallItemModel model);
 
     boolean shelf(MallItemShelfModel model);
 	

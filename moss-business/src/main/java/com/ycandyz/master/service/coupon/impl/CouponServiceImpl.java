@@ -8,8 +8,8 @@ import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.dao.coupon.CouponDao;
 import com.ycandyz.master.dao.coupon.CouponDetailDao;
 import com.ycandyz.master.dao.coupon.CouponDetailItemDao;
-import com.ycandyz.master.dao.mall.MallHomeItemDao;
-import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
+import com.ycandyz.master.dao.mall.MallItemHomeDao;
+import com.ycandyz.master.dao.mall.goodsManage.GoodsMallCategoryDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
@@ -59,10 +59,10 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     private CouponDetailItemDao couponDetailItemDao;
 
     @Autowired
-    private MallCategoryDao mallCategoryDao;
+    private GoodsMallCategoryDao mallCategoryDao;
 
     @Autowired
-    private MallHomeItemDao mallHomeItemDao;
+    private MallItemHomeDao mallHomeItemDao;
 
     @Override
     public CommonResult<BasePageResult<CouponDetailVO>> selectPageList(PageModel pageModel, CouponQuery couponQuery) {

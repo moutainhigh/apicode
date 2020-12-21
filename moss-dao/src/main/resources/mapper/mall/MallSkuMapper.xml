@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallSkuDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.MallSku">
+        <id column="id" property="id" />
+        <result column="item_no" property="itemNo" />
+        <result column="sku_no" property="skuNo" />
+        <result column="sku_name" property="skuName" />
+        <result column="sku_img" property="skuImg" />
+        <result column="sale_price" property="salePrice" />
+        <result column="price" property="price" />
+        <result column="stock" property="stock" />
+        <result column="frozen_stock" property="frozenStock" />
+        <result column="goods_no" property="goodsNo" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+        <result column="real_sales" property="realSales" />
+        <result column="sort_value" property="sortValue" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, item_no, sku_no, sku_name, sku_img, sale_price, price, stock, frozen_stock, goods_no, created_time, updated_time, real_sales, sort_value
+    </sql>
+
+</mapper>

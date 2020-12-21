@@ -188,5 +188,17 @@ public class MallItem extends Model {
    @ApiModelProperty(value = "是否系统屏蔽 0-通过 1-屏蔽")
    private Integer isScreen;
 
+   //非销售类商品
+   @ApiModelProperty(name = "type",value = "商品类型(0非商品,1商品)")
+   private Integer type;
+
+   @ApiModelProperty(name = "non_price_type",value = "非销售商品-价格类型(0不显示,1显示)")
+   private Integer nonPriceType;
+
+   @ApiModelProperty(name = "non_sale_price",value = "非销售商品-售价")
+   private String nonSalePrice;
+
+   @ApiModelProperty(name = "non_price",value = "非销售商品-原价")
+   private String nonPrice;
 
 }

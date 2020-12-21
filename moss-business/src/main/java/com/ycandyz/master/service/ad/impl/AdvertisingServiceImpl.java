@@ -18,9 +18,8 @@ import com.ycandyz.master.entities.mall.MallCategory;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.enums.EnabledEnum;
 import com.ycandyz.master.service.ad.IAdvertisingService;
-import com.ycandyz.master.service.mall.goodsManage.impl.MallItemServiceImpl;
-import com.ycandyz.master.service.mall.impl.MallHomeCategoryServiceImpl;
-import com.ycandyz.master.service.mall.impl.MallHomeItemServiceImpl;
+import com.ycandyz.master.service.mall.impl.MallCategoryServiceImpl;
+import com.ycandyz.master.service.mall.impl.MallItemServiceImpl;
 import com.ycandyz.master.utils.AssertUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +46,9 @@ public class AdvertisingServiceImpl extends BaseService<AdvertisingDao,Advertisi
     @Autowired
     private HomeCategoryServiceImpl homeCategoryService;
     @Autowired
-    private MallHomeItemServiceImpl mallHomeItemService;
+    private MallItemServiceImpl mallHomeItemService;
     @Autowired
-    private MallHomeCategoryServiceImpl mallCategoryService;
+    private MallCategoryServiceImpl mallCategoryService;
 
     @Override
     public boolean removeById(Serializable id) {

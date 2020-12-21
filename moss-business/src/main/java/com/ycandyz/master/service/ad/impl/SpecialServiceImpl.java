@@ -21,8 +21,8 @@ import com.ycandyz.master.entities.mall.MallCategory;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.model.ad.SpecialModel;
 import com.ycandyz.master.service.ad.ISpecialService;
-import com.ycandyz.master.service.mall.impl.MallHomeCategoryServiceImpl;
-import com.ycandyz.master.service.mall.impl.MallHomeItemServiceImpl;
+import com.ycandyz.master.service.mall.impl.MallCategoryServiceImpl;
+import com.ycandyz.master.service.mall.impl.MallItemServiceImpl;
 import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -49,13 +49,13 @@ import java.util.stream.Collectors;
 public class SpecialServiceImpl extends BaseService<SpecialDao,Special,SpecialQuery> implements ISpecialService {
 
     @Autowired
-    private MallHomeItemServiceImpl mallItemService;
+    private MallItemServiceImpl mallItemService;
     @Autowired
     private HomeCategoryServiceImpl homeCategoryService;
     @Autowired
     private SpecailItemServiceImpl specailItemService;
     @Autowired
-    private MallHomeCategoryServiceImpl mallCategoryService;
+    private MallCategoryServiceImpl mallCategoryService;
 
     @Override
     public boolean removeById(Serializable id) {

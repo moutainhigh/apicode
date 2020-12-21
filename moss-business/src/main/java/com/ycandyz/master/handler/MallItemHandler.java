@@ -2,7 +2,7 @@ package com.ycandyz.master.handler;
 
 import com.ycandyz.master.abstracts.AbstractHandler;
 import com.ycandyz.master.api.ReturnResponse;
-import com.ycandyz.master.dao.mall.goodsManage.MallItemDao;
+import com.ycandyz.master.dao.mall.goodsManage.GoodsMallItemDao;
 import com.ycandyz.master.domain.query.risk.ReviewParam;
 import com.ycandyz.master.domain.response.risk.ContentReviewRep;
 import com.ycandyz.master.dto.risk.ContentReviewDTO;
@@ -34,7 +34,7 @@ public class MallItemHandler extends AbstractHandler {
 
 
     @Autowired
-    private MallItemDao mallItemDao;
+    private GoodsMallItemDao mallItemDao;
 
     @Override
     @Transactional

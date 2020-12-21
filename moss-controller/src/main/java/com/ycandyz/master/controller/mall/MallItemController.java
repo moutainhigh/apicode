@@ -9,7 +9,7 @@ import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.entities.mall.MallItem;
-import com.ycandyz.master.service.mall.impl.MallHomeItemServiceImpl;
+import com.ycandyz.master.service.mall.impl.MallItemServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("pms/product")
 @Api(tags="mall-商品")
-public class MallItemController extends BaseController<MallHomeItemServiceImpl,MallItem, MallItemBaseQuery> {
+public class MallItemController extends BaseController<MallItemServiceImpl,MallItem, MallItemBaseQuery> {
 	
 	@ApiOperation(value="新增")
     @PostMapping()
