@@ -40,7 +40,7 @@
         <result column="full_money" property="fullMoney" />
         <result column="discount_money" property="discountMoney" />
         <result column="obtain" property="obtain" />
-        <result column="order_sn" property="orderSn" />
+        <result column="orderSn" property="orderSn" />
         <result column="pay_amount" property="payAmount" />
         <result column="orderStatus" property="orderStatus" />
         <result column="orderAtStr" property="orderAtStr" />
@@ -125,7 +125,7 @@
         cd.full_money,
         cd.discount_money,
         cd.obtain,
-        mc.order_sn,
+        mc.order_sn as orderSn,
         mc.pay_amount,
         mc.status as orderStatus,
         mc.create_time as orderAtStr
@@ -160,6 +160,5 @@
         <if test="q.endOrderTime!=null">
             and mc.create_time &gt;= #{q.endOrderTime}
         </if>
-        group by cdu.id
     </select>
 </mapper>
