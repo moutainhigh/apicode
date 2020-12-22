@@ -1,7 +1,9 @@
 package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ycandyz.master.api.BasePageResult;
 import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
@@ -61,8 +63,8 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 	@ApiOperation(value = "查询分页")
     @GetMapping()
     @SuppressWarnings("unchecked")
-    public CommonResult<Page<MallItemResp>> selectPage(Page page, MallItemQuery query) {
-        return CommonResult.success(service.getMallItemPage(page,query));
+    public CommonResult<BasePageResult<MallItemResp>> selectPage(PageModel page, MallItemQuery query) {
+        return CommonResult.success(new BasePageResult(service.getMallItemPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "通过ID删除")

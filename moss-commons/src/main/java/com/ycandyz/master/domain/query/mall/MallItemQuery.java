@@ -50,11 +50,11 @@ public class MallItemQuery implements Serializable {
     @Condition(condition = ConditionEnum.EQ)
     private Integer type;
 
-    @ApiModelProperty(name = "created_time", value = "起")
+    @ApiModelProperty(name = "created_time_begin", value = "起")
     @Condition(field = "created_time_begin", condition = ConditionEnum.GE)
     private Date createdTimeBegin;
 
-    @ApiModelProperty(name = "created_time", value = "止")
+    @ApiModelProperty(name = "created_time_end", value = "止")
     @Condition(field = "created_time_end", condition = ConditionEnum.LE)
     private Date createdTimeEnd;
 
