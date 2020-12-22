@@ -91,6 +91,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         BasePageResult<CouponDetailVO> infoVOPage = new BasePageResult<>();
         List<CouponDetailVO> list = new ArrayList<>();
         couponQuery.setShopNo(userVO.getShopNo());
+        couponQuery.setName(couponQuery.getName()!=null?couponQuery.getName().trim():null);
         Page pageQuery = new Page(pageModel.getPage(), pageModel.getPageSize());
         Page<CouponDetailDTO> page = null;
         try {
@@ -123,6 +124,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                             if (couponDetailDTO.getEndTime().before(new Date())){
                                 status = 2;
                             }
+                        }else if (couponDetailDTO.getValidityType()==1 || couponDetailDTO.getValidityType()==2){
+                            status = 1;
                         }
                     }else if (couponDetailDTO.getCouponStatus()==0){
                         status = 3;
@@ -384,8 +387,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         page1.setSize(page.getSize());
         MallItemQuery mallItemQuery = new MallItemQuery();
         mallItemQuery.setShopNo(userVO.getShopNo());
-        mallItemQuery.setCategoryNo(query.getCategoryNo());
-        mallItemQuery.setItemName(query.getKeyword());
+        mallItemQuery.setCategoryNo(query.getCategoryNo()!=null?query.getCategoryNo().trim():null);
+        mallItemQuery.setItemName(query.getKeyword()!=null?query.getKeyword().trim():null);
         Page<MallItemResp> mallItemRespPage = null;
         if (query.getType().equals("all")){
             mallItemRespPage = mallHomeItemDao.selectMallItemPage(page1,mallItemQuery);
