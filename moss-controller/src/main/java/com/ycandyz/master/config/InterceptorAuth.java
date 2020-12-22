@@ -61,9 +61,9 @@ public class InterceptorAuth implements HandlerInterceptor {
         String httpPath = method+"|"+path;
         log.info(path);
 
-        if(ConfigUtils.getBoolean(Config.ENABLED) || path.equals("/")){
+        /*if(ConfigUtils.getBoolean(Config.ENABLED) || path.equals("/")){
             return true;
-        }
+        }*/
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         String[] excludeUrls = ArrayUtils.addAll(SecurityConstant.PATTERN_URLS, ignoreUrlsConfig.getUrls());
         boolean flow = Arrays.stream(excludeUrls).anyMatch(p -> antPathMatcher.match(p,path));

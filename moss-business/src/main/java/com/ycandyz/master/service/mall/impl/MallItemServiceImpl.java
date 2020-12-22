@@ -7,13 +7,18 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.mall.MallItemHomeDao;
 import com.ycandyz.master.domain.enums.mall.MallItemEnum;
+import com.ycandyz.master.domain.enums.mall.MallItemVideoEnum;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
 import com.ycandyz.master.domain.model.mall.MallItemSkuModel;
+import com.ycandyz.master.domain.model.mall.MallItemVideoModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.entities.mall.MallItem;
+import com.ycandyz.master.entities.mall.MallItemVideo;
+import com.ycandyz.master.entities.mall.MallSku;
+import com.ycandyz.master.entities.mall.MallSkuSpec;
 import com.ycandyz.master.service.mall.IMallItemService;
 import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.IDGeneratorUtils;
@@ -90,7 +95,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         MallItem t = new MallItem();
         //销售商品
         if(type.getCode().equals(MallItemEnum.Type.Type_0.getCode())){
-            //添加Sku，sepc
+            //商品赋值
             AssertUtils.notNull(model.getSkus(), "商品Sku不能为空");
             List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
             List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
@@ -103,23 +108,51 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
             BeanUtils.copyProperties(model,t);
             baseMapper.insert(t);
+            //添加Sku，sepc
+            model.getSkus().stream().forEach(f -> {
+                AssertUtils.notNull(f.getSkuSpecs(), "Sku规格不能为空");
+                MallSku sku = new MallSku();
+                sku.setItemNo(t.getItemNo());
+                sku.setSkuNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
+                BeanUtils.copyProperties(f,sku);
+                mallSkuService.save(sku);
+                f.getSkuSpecs().stream().forEach(s -> {
+                    MallSkuSpec skuSpec = new MallSkuSpec();
+                    skuSpec.setSkuNo(sku.getSkuNo());
+                    BeanUtils.copyProperties(s,skuSpec);
+                    mallSkuSpecService.save(skuSpec);
+                });
+            });
             //添加视频
+            if(model.getTopVideoList() != null){
+                MallItemVideoModel videoModel = model.getTopVideoList();
+                MallItemVideo video = new MallItemVideo();
+                video.setItemNo(t.getItemNo());
+                video.setType(MallItemVideoEnum.Type.TYPE_0.getCode());
+                BeanUtils.copyProperties(videoModel,video);
+                mallItemVideoService.save(video);
+            }
+            if(model.getDetailVideoList() != null){
+                MallItemVideoModel videoModel = model.getDetailVideoList();
+                MallItemVideo video = new MallItemVideo();
+                video.setItemNo(t.getItemNo());
+                video.setType(MallItemVideoEnum.Type.TYPE_1.getCode());
+                BeanUtils.copyProperties(videoModel,video);
+                mallItemVideoService.save(video);
+            }
         }else{
             MallItemEnum.NonPriceType nonPriceType = MallItemEnum.NonPriceType.parseCode(model.getNonPriceType());
             AssertUtils.notNull(nonPriceType, "价格类型不正确");
+            BeanUtils.copyProperties(model,t);
+            baseMapper.insert(t);
 
         }
-
-
-
-
-
-        return false;
+        return true;
     }
 
     @Override
     public boolean update(MallItemModel entity) {
-        return false;
+        return true;
     }
 
     @Override
