@@ -923,15 +923,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             if (count!=null && count>0) {
                 Long startNum = 0l;
 //                page = (page - 1) * pageSize;
+                List<MallOrderUAppDTO> mallDTOList = null;
                 if (nextNo!=null && !"".equals(nextNo)) {
                     List<String> orderNoList = mallOrderDao.getOrderListByOrderNoUApp(mallOrderUAppQuery, 0, pageSize * page);
                     int row = orderNoList.indexOf(nextNo);
                     startNum = Long.valueOf(row + 1);
+                    //分页
+                    mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp(startNum, pageSize, mallOrderUAppQuery);
                 }else {
                     startNum = page - 1;
+                    //分页
+                    mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp(startNum*pageSize, pageSize, mallOrderUAppQuery);
                 }
-                //分页
-                List<MallOrderUAppDTO> mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp(startNum, pageSize, mallOrderUAppQuery);
                 //page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
                 MallOrderUAppVO mallOrderVo = null;
                 if (mallDTOList != null && mallDTOList.size() > 0) {
