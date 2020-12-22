@@ -26,6 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,6 +92,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         //公共处理赋值
         model.setItemNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
         String itemCover = model.getBanners()[0];
+        String banners = Arrays.toString(model.getBanners());
         model.setItemCover(itemCover);
         MallItem t = new MallItem();
         //销售商品
@@ -107,6 +109,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
 
             BeanUtils.copyProperties(model,t);
+            t.setBanners(banners);
             baseMapper.insert(t);
             //添加Sku，sepc
             model.getSkus().stream().forEach(f -> {
