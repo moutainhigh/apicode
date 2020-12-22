@@ -1,6 +1,7 @@
 package com.ycandyz.master.service.coupon.impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.amazonaws.services.dynamodbv2.xspec.B;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.BasePageResult;
@@ -23,6 +24,7 @@ import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.coupon.CouponDetailDTO;
 import com.ycandyz.master.dto.coupon.CouponDetailItemDTO;
 import com.ycandyz.master.dto.coupon.CouponUseUserDTO;
+import com.ycandyz.master.dto.coupon.CouponUserAndCartOrderDTO;
 import com.ycandyz.master.dto.mall.MallCategoryDTO;
 import com.ycandyz.master.dto.mall.MallItemDTO;
 import com.ycandyz.master.entities.coupon.Coupon;
@@ -45,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,6 +100,17 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 for (CouponDetailDTO couponDetailDTO : page.getRecords()){
                     couponDetailVO = new CouponDetailVO();
                     BeanUtils.copyProperties(couponDetailDTO, couponDetailVO);
+
+                    //获取成交金额
+                    List<CouponUserAndCartOrderDTO> couponUserAndCartOrderDTOS = couponDetailUserDao.queryAmountByCouponId(couponDetailDTO.getCouponId(),userVO.getShopNo());
+                    BigDecimal bigDecimal = new BigDecimal("0");
+                    if (couponUserAndCartOrderDTOS!=null && couponUserAndCartOrderDTOS.size()>0){
+                        for (CouponUserAndCartOrderDTO orderDTO : couponUserAndCartOrderDTOS){
+                            bigDecimal = bigDecimal.add(orderDTO.getPayAmount().add(orderDTO.getCouponDeducted()));
+                        }
+                    }
+                    couponDetailVO.setDealAmount(bigDecimal);
+
                     int status = 0;
                     if (couponDetailDTO.getCouponStatus()==1){
                         if (couponDetailDTO.getValidityType()==0){
@@ -158,6 +172,10 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         if (couponTicketInfoDTO!=null){
             couponTicketInfoVO = new CouponDetailVO();
             BeanUtils.copyProperties(couponTicketInfoDTO,couponTicketInfoVO);
+            //修改领取页面返回参数
+            if (couponTicketInfoDTO.getObtain()!=null && !"".equals(couponTicketInfoDTO.getObtain())){
+                couponTicketInfoVO.setObtainList(Arrays.asList(couponTicketInfoDTO.getObtain().split(",")));
+            }
             //获取当前优惠券关联的商品集合
             List<MallItemResp> couponDetailItemDTOS = couponDetailItemDao.queryByCouponDetailId(couponTicketInfoDTO.getId());
             if (couponDetailItemDTOS!=null && couponDetailItemDTOS.size()>0){
@@ -221,7 +239,14 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());
                     ticketInfo.setFullMoney(couponDetailQuery.getFullMoney());
                     ticketInfo.setName(couponDetail.getName());
-                    ticketInfo.setObtain(couponDetailQuery.getObtain().toString());
+                    String stringBuffer = "";
+                    if (couponDetailQuery.getObtain()!=null && couponDetailQuery.getObtain().size()>0){
+                        for (String str : couponDetailQuery.getObtain()){
+                            stringBuffer += str+",";
+                        }
+                        stringBuffer = stringBuffer.substring(0,stringBuffer.length()-1);
+                    }
+                    ticketInfo.setObtain(stringBuffer);
                     ticketInfo.setRemark(couponDetailQuery.getRemark());
                     ticketInfo.setShopType(couponDetailQuery.getShopType());
                     ticketInfo.setValidityType(couponDetailQuery.getValidityType());
