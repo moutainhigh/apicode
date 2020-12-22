@@ -123,7 +123,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(new Date()),"截止时间不能小于当前时间");
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
-        AssertUtils.isFalse(isEmpty(entity),"该时间区间存在已有活动,请更改时间区间");
+        AssertUtils.isFalse(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
         t.setCreateBy(getUserId());
@@ -144,7 +144,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
-        AssertUtils.isFalse(isEmpty(entity),"该时间区间存在已有活动,请更改时间区间");
+        AssertUtils.isFalse(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
         LambdaQueryWrapper<CouponActivityCoupon> queryWrapper = new LambdaQueryWrapper<CouponActivityCoupon>()
                 .eq(CouponActivityCoupon::getActivityId, entity.getId());
         couponActivityCouponService.remove(queryWrapper);

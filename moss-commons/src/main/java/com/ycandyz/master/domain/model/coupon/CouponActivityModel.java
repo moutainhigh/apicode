@@ -41,7 +41,7 @@ public class CouponActivityModel {
     private Long id;
 
     @Size(max = 40, message = "活动名称不能大于20个字。",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-    @NotBlank(message = "活动名称不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+    @NotBlank(message = "请输入活动名称",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(value = "活动名称", required = true)
     private String title;
 
@@ -74,7 +74,7 @@ public class CouponActivityModel {
     @ApiModelProperty(name = "page_type",value = "页面设置：0店铺页面", required = true)
     private Integer pageType;
 
-    @NotEmpty(message = "优惠卷ID不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+    @NotEmpty(message = "请选择优惠券",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "coupon_ids",value = "优惠卷ID", required = true)
     private List<Long> couponIds;
 
