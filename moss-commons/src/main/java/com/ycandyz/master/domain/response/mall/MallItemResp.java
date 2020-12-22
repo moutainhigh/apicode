@@ -90,6 +90,15 @@ public class MallItemResp implements Serializable {
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createdTime;
 
+   @ApiModelProperty(name = "non_price_type",value = "非销售商品-价格类型(0不显示,1显示)")
+   private Integer nonPriceType;
+
+   @ApiModelProperty(name = "non_sale_price",value = "非销售商品-售价")
+   private String nonSalePrice;
+
+   @ApiModelProperty(name = "non_price",value = "非销售商品-原价")
+   private String nonPrice;
+
 
 
 

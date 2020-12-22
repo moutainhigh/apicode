@@ -137,7 +137,42 @@
         <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
     </select>
     <select id="getMallItemPage" resultType="com.ycandyz.master.domain.response.mall.MallItemResp">
-
+        SELECT
+        t.id,
+        t.shop_no,
+        t.item_no,
+        t.item_name,
+        t.goods_no,
+        t.type,
+        t.category_no,
+        t.price,
+        t.lowest_sale_price,
+        t.highest_sale_price,
+        t.stock,
+        t.frozen_stock,
+        t.base_sales,
+        t.real_sales,
+        t.sort_value,
+        t.status,
+        t.created_time,
+        t.non_price_type,
+        t.non_sale_price,
+        t.non_price,
+        t.item_cover
+        FROM mall_item t
+        WHERE 1=1
+        AND t.status != 10
+        <if test="q.shopNo != null and q.shopNo != ''"> and t.shop_no = #{q.shopNo} </if>
+        <if test="q.itemName != null and q.itemName!=''"> and t.item_name like CONCAT('%',#{q.itemName},'%') </if>
+        <if test="q.categoryNo != null and q.categoryNo != ''"> and t.category_no = #{q.categoryNo} </if>
+        <if test="q.status != null"> and t.status=#{q.status} </if>
+        <if test="q.type != null"> and t.type=#{q.type} </if>
+        <if test="q.createdTimeBegin != null and q.createdTimeBegin != ''"> and date_format(t.created_time,'%Y-%m-%d') >= date_format(q.createdTimeBegin,'%Y-%m-%d') </if>
+        <if test="q.createdTimeEnd != null and q.createdTimeEnd != ''">
+            <![CDATA[
+	            AND date_format(t.created_time,'%Y-%m-%d') <= date_format(q.createdTimeEnd,'%Y-%m-%d')
+	        ]]>
+        </if>
     </select>
 
     <update id="updateByItemNo">

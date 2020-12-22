@@ -46,7 +46,7 @@ public interface MallItemHomeDao extends BaseMapper<MallItem> {
 
     Page<MallItemBaseResp> selectMallItemPageByCouponId(Page page, @Param("query") MallItemBaseQuery query);
 
-    Page<MallItemResp> getMallItemPage(Page page, @Param("query") MallItemQuery query);
+    Page<MallItemResp> getMallItemPage(Page page, @Param("q") MallItemQuery query);
 
     int updateByItemNo(MallItem entity);
 }
