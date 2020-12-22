@@ -75,7 +75,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 .like(StrUtil.isNotEmpty(query.getTitle()),CouponActivity::getTitle,query.getTitle())
                 .eq(CouponActivity::getShopNo, query.getShopNo())
                 //.eq(CouponActivity::getStatus, SpecialEnum.EnabledEnum.DISABLE.getCode())
-                .orderByDesc(CouponActivity::getCreateTime,CouponActivity::getCreateTime);
+                .orderByDesc(CouponActivity::getBeginTime);
         Page<CouponActivity> p = (Page<CouponActivity>) baseMapper.selectPage(page, queryWrapper);
         p.getRecords().stream().forEach(f -> {
             if(CouponActivityEnum.Enabled.TYPE_1.getCode().equals(f.getEnabled())){
