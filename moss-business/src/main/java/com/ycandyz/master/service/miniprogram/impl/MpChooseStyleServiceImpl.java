@@ -1,7 +1,7 @@
 package com.ycandyz.master.service.miniprogram.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
+import com.ycandyz.master.dao.mall.goodsManage.GoodsMallCategoryDao;
 import com.ycandyz.master.dao.miniprogram.*;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.dto.miniprogram.OrganizeMpConfigPlanMenuDTO;
@@ -40,7 +40,7 @@ public class MpChooseStyleServiceImpl implements MpChooseStyleService {
     private MpConfigPlanMenuDao mpConfigPlanMenuDao;
 
     @Autowired
-    private MallCategoryDao mallCategoryDao;
+    private GoodsMallCategoryDao mallCategoryDao;
 
     @Autowired
     private MpConfigModuleBaseDao mpConfigModuleBaseDao;

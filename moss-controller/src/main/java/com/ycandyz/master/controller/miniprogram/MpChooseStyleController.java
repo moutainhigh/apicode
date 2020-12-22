@@ -7,7 +7,7 @@ import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.entities.miniprogram.OrganizeMallCategoryDTO;
 import com.ycandyz.master.model.miniprogram.OrganizeMpConfigMenuVO;
 import com.ycandyz.master.model.miniprogram.OrganizeMpConfigPageSingleMenuVO;
-import com.ycandyz.master.service.mall.goodsManage.MallCategoryService;
+import com.ycandyz.master.service.mall.goodsManage.GoodsMallCategoryService;
 import com.ycandyz.master.service.miniprogram.MpChooseStyleService;
 import com.ycandyz.master.vo.OrganizeMenuMpRequestVO;
 import io.swagger.annotations.Api;
@@ -31,7 +31,7 @@ public class MpChooseStyleController {
     private MpChooseStyleService mpChooseStyleService;
 
     @Resource
-    private MallCategoryService mallCategoryService;
+    private GoodsMallCategoryService mallCategoryService;
 
 
 //    @ApiOperation(value = "查询企业正在使用的小程序全部菜单", tags = "企业小程序DIY配置",httpMethod = "GET")
