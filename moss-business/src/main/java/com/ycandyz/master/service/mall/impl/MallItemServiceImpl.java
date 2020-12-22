@@ -29,6 +29,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
+
 /**
  * <p>
  * @Description 商品表 业务类
@@ -88,15 +91,30 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         //处理specs
         List<MallSpecsModel> specs = new ArrayList<>();
         List<MallSkuSpec> skuSpecs = new ArrayList<>();
+        skus.stream().forEach(s -> {
+            s.getSkuSpecs().stream().forEach(i -> {
+                if(i.getExistImg()==1){
+                    i.setSkuImg(s.getSkuImg());
+                    i.setExistImg(null);
+                }else {
+                    i.setExistImg(null);
+                }
+            });
+        });
         skus.stream().forEach(s -> skuSpecs.addAll(s.getSkuSpecs()));
         Map<String, List<MallSkuSpec>> map = skuSpecs.stream().collect(Collectors.groupingBy(MallSkuSpec::getSpecName));
         for(String key : map.keySet()){
             MallSpecsModel m = new MallSpecsModel();
             m.setSpecName(key);
-            m.setSpecList(map.get(key));
+            List<MallSkuSpec> sk = map.get(key).stream().collect(
+                    collectingAndThen(
+                            toCollection(() -> new TreeSet<>(Comparator.comparing(MallSkuSpec::getSpecValue))), ArrayList::new)
+            );
+            sk.stream().forEach(s -> s.setSpecName(null));
+            m.setSpecList(sk);
             specs.add(m);
         }
-        vo.setSkus(skus);
+        vo.setSpecs(specs);
 
         return vo;
     }
