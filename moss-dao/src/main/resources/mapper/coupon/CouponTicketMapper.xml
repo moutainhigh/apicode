@@ -14,7 +14,6 @@
         <result column="use_num" property="useNum" />
         <result column="status" property="status" />
         <result column="validity_type" property="validityType" />
-        <result column="create_time" property="createTime" />
         <result column="coupon_detail_no" property="couponDetailNo" />
         <result column="shop_type" property="shopType" />
         <result column="use_type" property="useType" />
@@ -31,7 +30,7 @@
         <result column="remark" property="remark" />
         <result column="surplus_num" property="surplusNum" />
         <result column="couponStatus" property="couponStatus" />
-        <result column="ticketCreatedAt" property="ticketCreatedAt" />
+        <result column="tiCreateTime" property="createTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -40,10 +39,12 @@
     </sql>
 
     <select id="queryTicketPageList" parameterType="com.ycandyz.master.domain.query.coupon.CouponQuery" resultMap="BaseResultMap">
-        SELECT
+        select * from
+        (SELECT
             ti.id as coupon_id,
             ti.coupon_no,
             ti.name,
+            ti.create_time as tiCreateTime,
             info.id,
             info.coupon_detail_no,
             info.status as status,
@@ -58,13 +59,20 @@
             ti.obtain_num,
             ti.coupon_sum-ti.obtain_num as surplus_num,
             ti.use_num,
-            ti.create_time as ticketCreatedAt
+            if(
+                ti.`status`=0, 0, if(
+                    info.validity_type!=0, 1, if(
+                        info.begin_time>now(), 1, if(
+                            info.end_time>=now(), 2, 3
+                        )
+                    )
+                )
+            ) as orderType
         FROM
             coupon ti
             LEFT JOIN coupon_detail info ON ti.id = info.coupon_id
-            and info.status=1   /**取最新一条*/
         where
-            ti.shop_no=#{p.shopNo}
+            ti.shop_no=#{p.shopNo} and info.status=1   /**取最新一条*/
             <if test="p.name!=null and p.name!=''">
                 and
                 ti.name like concat('%',#{p.name},'%')
@@ -92,6 +100,8 @@
                 and
                 ti.create_time &lt;= #{p.createTimeEnd}
             </if>
+            ) a
+        order by a.orderType ASC, a.tiCreateTime DESC
     </select>
 
     <select id="queryTicketDetailByTicketNo" resultMap="BaseResultMap">
