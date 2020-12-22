@@ -119,7 +119,13 @@ public class CouponDetailVO extends CouponDetail {
     @ApiModelProperty(value = "关联商品信息")
     private List<MallItemResp> mallItemResps;
 
+    @ApiModelProperty(value = "成交金额   订单金额（含券的金额，不含运费的金额）")
+    private BigDecimal dealAmount;
+
     //商品的编号列表
     @ApiModelProperty(name = "item_no_list",value = "商品编号列表")
     private List<String> itemNoList;
+
+    @ApiModelProperty(name = "obtain_list",value = "领取页面String转数组")
+    private List<String> obtainList;
 }
