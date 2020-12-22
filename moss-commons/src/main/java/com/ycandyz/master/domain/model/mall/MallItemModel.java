@@ -34,6 +34,8 @@ import java.util.List;
 @ApiModel(description="商品信息-参数")
 public class MallItemModel {
 
+    private Long id;
+
     @NotBlank(message = "分类编号不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "category_no",value = "分类编号")
     private String categoryNo;
@@ -130,21 +132,21 @@ public class MallItemModel {
 
     @NotEmpty(message = "轮播图不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(value = "轮播图")
-    private String[] banners;
+    private List<String> banners;
 
     @ApiModelProperty(name = "top_video_list",value = "商品置顶视频")
-    private MallItemVideoModel topVideoList;
+    private List<MallItemVideoModel> topVideoList;
 
     @ApiModelProperty(value = "skus")
     private List<MallItemSkuModel> skus;
 
     @ApiModelProperty(name = "delivery_type",value = "1- 配送 2-自提")
-    private Integer[] deliveryType;
+    private List<Integer> deliveryType;
 
     @ApiModelProperty(name = "pickup_address_ids",value = "配送地址")
-    private Integer[] pickupAddressIds;
+    private List<Integer> pickupAddressIds;
 
     @ApiModelProperty(name = "detail_video_list",value = "商品介绍视频")
-    private MallItemVideoModel detailVideoList;
+    private List<MallItemVideoModel> detailVideoList;
 
 }

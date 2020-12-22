@@ -1,5 +1,6 @@
 package com.ycandyz.master.entities.mall;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -183,6 +184,7 @@ public class MallItem extends Model {
    private String pickupAddressIds;
 
    @ApiModelProperty(value = "1-配送 2-自提")
+   @TableField(exist = false)
    private String deliveryTypeBak;
 
    @ApiModelProperty(value = "是否系统屏蔽 0-通过 1-屏蔽")

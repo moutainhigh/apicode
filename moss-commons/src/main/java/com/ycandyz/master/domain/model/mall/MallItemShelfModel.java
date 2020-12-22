@@ -1,5 +1,7 @@
 package com.ycandyz.master.domain.model.mall;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ycandyz.master.vo.MallSkuVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -19,6 +21,7 @@ import java.math.BigDecimal;
  * @version 2.0
  */
 @Data
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(description="商品上架/下架-参数")

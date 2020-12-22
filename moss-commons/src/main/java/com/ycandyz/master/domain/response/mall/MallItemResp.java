@@ -1,15 +1,19 @@
 package com.ycandyz.master.domain.response.mall;
 
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ycandyz.master.domain.model.mall.MallSpecsModel;
 import com.ycandyz.master.entities.mall.MallItem;
-import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.ycandyz.master.entities.mall.MallItemVideo;
+import com.ycandyz.master.entities.mall.MallSku;
+import com.ycandyz.master.entities.mall.MallSkuSpec;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -18,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -233,6 +238,15 @@ public class MallItemResp implements Serializable {
    private Long auditorId;
 
 
+   @ApiModelProperty(value = "skus")
+   @TableField(exist = false)
+   private List<MallSku> skus;
+
+   private List<MallItemVideo> topVideoList;
+
+   private List<MallItemVideo> detailVideoList;
+
+   private List<MallSpecsModel> specs;
 
 
 }
