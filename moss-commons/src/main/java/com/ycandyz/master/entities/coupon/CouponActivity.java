@@ -86,6 +86,10 @@ public class CouponActivity extends Model {
    @ApiModelProperty(name = "user_type",value = "活动参与人群：0:全部用户，1:仅老用户，2:仅新用户")
    private Integer userType;
 
+   @ApiModelProperty(name = "user_type_name",value = "活动参与人群中文")
+   @TableField(exist = false)
+   private String userTypeName;
+
    @Range(min = 0, max = 2, message = "活页面设置必须为0-2之间", groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    @ApiModelProperty(name = "page_type",value = "页面设置：0店铺页面")
    private Integer pageType;

@@ -85,6 +85,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                     .eq(CouponDetailUser::getActivityId, f.getId());
             Integer c = couponDetailUserService.count(countWrapper);
             f.setActivityRemainNum(f.getActivityNum()-c);
+            CouponActivityEnum.UserType userType = CouponActivityEnum.UserType.parseCode(f.getUserType());
+            f.setUserTypeName(userType.getText());
         });
         return p;
     }

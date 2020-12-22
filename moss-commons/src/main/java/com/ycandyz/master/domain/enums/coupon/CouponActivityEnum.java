@@ -120,15 +120,15 @@ public class CouponActivityEnum {
      * 活动参与人 枚举
      * @author SanGang
      */
-    public enum JoinType implements IEnum<Integer> {
-        TYPE_0(0, "全部用户"),
-        TYPE_1(1, "仅老用户"),
-        TYPE_2(2, "仅新用户");
+    public enum UserType implements IEnum<Integer> {
+        TYPE_0(0, "全部客户"),
+        TYPE_1(1, "仅老客户"),
+        TYPE_2(2, "仅新客户");
 
         private Integer code;
         private String text;
 
-        JoinType(Integer code, String text) {
+        UserType(Integer code, String text) {
             this.code = code;
             this.text = text;
         }
@@ -143,11 +143,11 @@ public class CouponActivityEnum {
             return text;
         }
 
-        public static JoinType parseCode(Integer code) {
+        public static UserType parseCode(Integer code) {
             if (code == null) {
                 return null;
             }
-            for (JoinType value : values()) {
+            for (UserType value : values()) {
                 if (code.equals(value.code)) {
                     return value;
                 }
