@@ -68,9 +68,9 @@ public class SMSALiJob {
         if (list!=null && list.size()>0){
             for (OrganizeDTO organizeDTO : list){
                 if (profileActive.equals("dev") || profileActive.equals("test") || profileActive.equals("pre")){
-                    if (!phone.contains(organizeDTO.getPhone())){
+//                    if (!phone.contains(organizeDTO.getPhone())){
                         continue;
-                    }
+//                    }
                 }
                 List<Object> phoneList = new ArrayList<>();
                 jsonArray = new JSONArray();
