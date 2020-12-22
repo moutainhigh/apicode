@@ -57,7 +57,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         query.setShopNo(getShopNo());
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .select(CouponActivity::getId,CouponActivity::getTitle,CouponActivity::getBeginTime,CouponActivity::getEndTime,CouponActivity::getUserType,
-                        CouponActivity::getEnabled,CouponActivity::getInletName,CouponActivity::getActivityNum,CouponActivity::getCreateTime)
+                        CouponActivity::getEnabled,CouponActivity::getInletName,CouponActivity::getMaxLimit,CouponActivity::getCreateTime)
                 .apply(null != query.getCreateTimeBegin(),
                         "date_format (create_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreateTimeBegin()) + "','%Y-%m-%d')")
                 .apply(null != query.getCreateTimeEnd(),
@@ -84,7 +84,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
             LambdaQueryWrapper<CouponDetailUser> countWrapper = new LambdaQueryWrapper<CouponDetailUser>()
                     .eq(CouponDetailUser::getActivityId, f.getId());
             Integer c = couponDetailUserService.count(countWrapper);
-            f.setActivityRemainNum(f.getActivityNum()-c);
+            f.setActivityNum(c);
+            f.setActivityRemainNum(f.getMaxLimit()-c);
             CouponActivityEnum.UserType userType = CouponActivityEnum.UserType.parseCode(f.getUserType());
             f.setUserTypeName(userType.getText());
         });
