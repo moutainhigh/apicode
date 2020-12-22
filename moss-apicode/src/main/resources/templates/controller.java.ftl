@@ -79,8 +79,8 @@ public class ${table.controllerName} {
 	@ApiOperation(value = "查询分页")
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<${entity}>> selectPage(PageModel page, ${entity}${cfg.querySuffix} query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
+    public CommonResult<BasePageResult<${entity}>> selectPage(PageModel<${entity}> page, ${entity}${cfg.querySuffix} query) {
+        return CommonResult.success(new BasePageResult<>(service.page(new Page<>(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "查询全部")
