@@ -55,6 +55,16 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     public Page<CouponActivity> page(Page page, CouponActivityQuery query) {
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         query.setShopNo(getShopNo());
+        if(StrUtil.isNotEmpty(query.getTitle()) && StrUtil.isNotEmpty(query.getTitle().trim())){
+            if(query.getTitle().contains("%")){
+                String itemName = query.getTitle().replace("%","\\%");
+                query.setTitle(itemName.trim());
+            }else{
+                query.setTitle(query.getTitle().trim());
+            }
+        }else{
+            query.setTitle(null);
+        }
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .select(CouponActivity::getId,CouponActivity::getTitle,CouponActivity::getBeginTime,CouponActivity::getEndTime,CouponActivity::getUserType,
                         CouponActivity::getEnabled,CouponActivity::getInletName,CouponActivity::getMaxLimit,CouponActivity::getCreateTime)
@@ -113,7 +123,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(new Date()),"截止时间不能小于当前时间");
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
-        AssertUtils.isFalse(isEmpty(entity),"该时间区间存在已有活动,请更改时间区间");
+        AssertUtils.isFalse(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
         t.setCreateBy(getUserId());
@@ -134,7 +144,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
-        AssertUtils.isFalse(isEmpty(entity),"该时间区间存在已有活动,请更改时间区间");
+        AssertUtils.isFalse(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
         LambdaQueryWrapper<CouponActivityCoupon> queryWrapper = new LambdaQueryWrapper<CouponActivityCoupon>()
                 .eq(CouponActivityCoupon::getActivityId, entity.getId());
         couponActivityCouponService.remove(queryWrapper);
