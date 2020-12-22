@@ -69,10 +69,10 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         Page<CouponActivity> p = (Page<CouponActivity>) baseMapper.selectPage(page, queryWrapper);
         p.getRecords().stream().forEach(f -> {
             if(CouponActivityEnum.Enabled.TYPE_1.getCode().equals(f.getEnabled())){
-                if(new Date().after(f.getBeginTime())){
+                if(new Date().before(f.getBeginTime())){
                     f.setStatusName(CouponActivityEnum.Status.TYPE_1.getText());
                 }
-                else if(new Date().before(f.getEndTime())){
+                else if(new Date().after(f.getEndTime())){
                     f.setStatusName(CouponActivityEnum.Status.TYPE_3.getText());
                 }else{
                     f.setStatusName(CouponActivityEnum.Status.TYPE_2.getText());
