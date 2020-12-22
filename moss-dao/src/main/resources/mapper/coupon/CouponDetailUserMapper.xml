@@ -161,4 +161,24 @@
             and mc.create_time &gt;= #{q.endOrderTime}
         </if>
     </select>
+
+    <select id="queryAmountByCouponId" resultType="com.ycandyz.master.dto.coupon.CouponUserAndCartOrderDTO">
+        select
+            cu.id,
+            cu.coupon_id as couponId,
+            cu.order_sn as orderSn,
+            mc.total_amount as totalAmount,
+            mc.pay_amount as payAmount,
+            mc.coupon_deducted as couponDeducted,
+            mc.pay_type as payType,
+            mc.status as status
+        from
+        coupon_detail_user cu
+        left join mall_cart_order mc on cu.order_sn=mc.order_sn
+        where
+        cu.status=1
+        and mc.status=20
+        and cu.coupon_id=#{couponId}
+        and mc.shop_no=#{shopNo}
+    </select>
 </mapper>
