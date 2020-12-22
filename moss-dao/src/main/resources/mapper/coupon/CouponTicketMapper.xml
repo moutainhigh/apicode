@@ -60,8 +60,8 @@
             ti.coupon_sum-ti.obtain_num as surplus_num,
             ti.use_num,
             if(
-                ti.`status`=0, 0, if(
-                    info.validity_type!=0, 1, if(
+                ti.`status`=0, 4, if(
+                    info.validity_type!=0, 2, if(
                         info.begin_time>now(), 1, if(
                             info.end_time>=now(), 2, 3
                         )
