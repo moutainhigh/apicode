@@ -1,6 +1,7 @@
 package com.ycandyz.master.entities.mall;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -45,6 +46,10 @@ public class MallSkuSpec extends Model {
 
    @ApiModelProperty(value = "图片标识(0不存在,1存在)")
    private Integer existImg;
+
+   @ApiModelProperty(value = "SKU图片（预留字段）")
+   @TableField(exist = false)
+   private String skuImg;
 
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createdTime;
