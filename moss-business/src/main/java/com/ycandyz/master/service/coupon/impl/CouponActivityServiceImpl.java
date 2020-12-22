@@ -55,6 +55,16 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     public Page<CouponActivity> page(Page page, CouponActivityQuery query) {
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         query.setShopNo(getShopNo());
+        if(StrUtil.isNotEmpty(query.getTitle()) && StrUtil.isNotEmpty(query.getTitle().trim())){
+            if(query.getTitle().contains("%")){
+                String itemName = query.getTitle().replace("%","\\%");
+                query.setTitle(itemName.trim());
+            }else{
+                query.setTitle(query.getTitle().trim());
+            }
+        }else{
+            query.setTitle(null);
+        }
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .select(CouponActivity::getId,CouponActivity::getTitle,CouponActivity::getBeginTime,CouponActivity::getEndTime,CouponActivity::getUserType,
                         CouponActivity::getEnabled,CouponActivity::getInletName,CouponActivity::getMaxLimit,CouponActivity::getCreateTime)
