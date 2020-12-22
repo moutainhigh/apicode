@@ -1,5 +1,6 @@
 package com.ycandyz.master.domain.response.mall;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -40,38 +41,23 @@ public class MallItemResp implements Serializable {
    @ApiModelProperty(name = "shop_no", value = "商店编号")
    private String shopNo;
 
-   @ApiModelProperty(name = "category_no", value = "分类编号")
-   private String categoryNo;
-
    @ApiModelProperty(name = "item_no", value = "商品编号")
    private String itemNo;
 
    @ApiModelProperty(name = "item_name", value = "商品名称")
    private String itemName;
 
-   @ApiModelProperty(name = "item_text", value = "商品描述")
-   private String itemText;
+   @ApiModelProperty(name = "goods_no", value = "货号")
+   private String goodsNo;
 
-   @ApiModelProperty(name = "item_cover", value = "封面图")
-   private String itemCover;
+   @ApiModelProperty(name = "type", value = "商品类型(0非销售商品,1商品)")
+   private Integer type;
 
-   @ApiModelProperty(name = "banners", value = "轮播图，jsonarray")
-   private String banners;
+   @ApiModelProperty(name = "category_no", value = "分类编号")
+   private String categoryNo;
 
-   @ApiModelProperty(name = "base_sales", value = "基础销量")
-   private Integer baseSales;
-
-   @ApiModelProperty(name = "real_sales", value = "实际销量")
-   private Integer realSales;
-
-   @ApiModelProperty(name = "sort_value", value = "排序值")
-   private Integer sortValue;
-
-   @ApiModelProperty(name = "share_descr", value = "分享描述")
-   private String shareDescr;
-
-   @ApiModelProperty(name = "share_img", value = "分享图片")
-   private String shareImg;
+   @ApiModelProperty(name = "category_no_name", value = "分类名称")
+   private String categoryNoName;
 
    @ApiModelProperty(name = "price", value = "原价格")
    private BigDecimal price;
@@ -88,17 +74,45 @@ public class MallItemResp implements Serializable {
    @ApiModelProperty(name = "frozen_stock", value = "冻结库存")
    private Integer frozenStock;
 
-   @ApiModelProperty(name = "sub_stock_method", value = "库存扣减方式，10: 拍下减库存，20: 付款减库存")
-   private Integer subStockMethod;
+   @ApiModelProperty(name = "base_sales", value = "基础销量")
+   private Integer baseSales;
 
-   @ApiModelProperty(name = "goods_no", value = "货号")
-   private String goodsNo;
+   @ApiModelProperty(name = "real_sales", value = "实际销量")
+   private Integer realSales;
 
-   @ApiModelProperty(name = "deliver_method", value = "配送方式，快递: 10, 线下配送：20")
-   private Integer deliverMethod;
+   @ApiModelProperty(name = "sort_value", value = "排序值")
+   private Integer sortValue;
 
    @ApiModelProperty(name = "status", value = "10: 上架中，20: 已下架，30: 售罄，40: 仓库中，50: 删除")
    private Integer status;
+
+   @ApiModelProperty(name = "created_time", value = "添加时间")
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+   private Date createdTime;
+
+
+
+
+   @ApiModelProperty(name = "item_text", value = "商品描述")
+   private String itemText;
+
+   @ApiModelProperty(name = "item_cover", value = "封面图")
+   private String itemCover;
+
+   @ApiModelProperty(name = "banners", value = "轮播图，jsonarray")
+   private String banners;
+
+   @ApiModelProperty(name = "share_descr", value = "分享描述")
+   private String shareDescr;
+
+   @ApiModelProperty(name = "share_img", value = "分享图片")
+   private String shareImg;
+
+   @ApiModelProperty(name = "sub_stock_method", value = "库存扣减方式，10: 拍下减库存，20: 付款减库存")
+   private Integer subStockMethod;
+
+   @ApiModelProperty(name = "deliver_method", value = "配送方式，快递: 10, 线下配送：20")
+   private Integer deliverMethod;
 
    @ApiModelProperty(name = "is_unify_shipping", value = "是否统一运费，0: 否，1:是")
    private Boolean isUnifyShipping;
@@ -124,7 +138,7 @@ public class MallItemResp implements Serializable {
    @ApiModelProperty(name = "qr_code_url", value = "二维码")
    private String qrCodeUrl;
 
-   private Date createdTime;
+
 
    private Date updatedTime;
 
@@ -209,8 +223,7 @@ public class MallItemResp implements Serializable {
    @ApiModelProperty(name = "auditor_id", value = "审核人ID 待审核时为0")
    private Long auditorId;
 
-   @ApiModelProperty(name = "type", value = "商品类型(0销售商品,1非销售商品)")
-   private Integer type;
+
 
 
 }
