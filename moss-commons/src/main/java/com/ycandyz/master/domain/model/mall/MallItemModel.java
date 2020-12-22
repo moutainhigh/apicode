@@ -10,9 +10,11 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * <p>
@@ -29,8 +31,7 @@ import java.math.BigDecimal;
 @ApiModel(description="商品信息-参数")
 public class MallItemModel {
 
-    @Size(max = 40, message = "活动名称不能大于20个字。",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-    @NotBlank(message = "活动名称不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+    @NotBlank(message = "分类编号不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "category_no",value = "分类编号")
     private String categoryNo;
 
@@ -39,8 +40,8 @@ public class MallItemModel {
     @ApiModelProperty(name = "item_no",value = "商品编号")
     private String itemNo;
 
-    @Size(max = 40, message = "活动名称不能大于20个字。",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-    @NotBlank(message = "活动名称不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+    @Size(max = 100, message = "商品名称不能大于50个字。",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
+    @NotBlank(message = "商品名称不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "item_name",value = "商品名称")
     private String itemName;
 
@@ -124,6 +125,7 @@ public class MallItemModel {
     private String nonPrice;
 
 
+    @NotEmpty(message = "轮播图不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(value = "轮播图")
     private String[] banners;
 
@@ -131,7 +133,7 @@ public class MallItemModel {
     private MallItemVideoModel topVideoList;
 
     @ApiModelProperty(value = "skus")
-    private MallSkuVO[] skus;
+    private List<MallItemSkuModel> skus;
 
     @ApiModelProperty(name = "delivery_type",value = "1- 配送 2-自提")
     private Integer[] deliveryType;

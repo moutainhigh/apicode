@@ -9,6 +9,7 @@ import com.ycandyz.master.dao.mall.MallItemHomeDao;
 import com.ycandyz.master.domain.enums.mall.MallItemEnum;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
+import com.ycandyz.master.domain.model.mall.MallItemSkuModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
@@ -19,6 +20,10 @@ import com.ycandyz.master.utils.IDGeneratorUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -75,15 +80,39 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
     @Override
     public boolean insert(MallItemModel model) {
-        //校验
+        //公共校验
+        MallItemEnum.Type type = MallItemEnum.Type.parseCode(model.getType());
+        AssertUtils.notNull(type, "销售非销售商品类型不正确");
+        //公共处理赋值
         model.setItemNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
+        String itemCover = model.getBanners()[0];
+        model.setItemCover(itemCover);
         MallItem t = new MallItem();
-        BeanUtils.copyProperties(model,t);
-        //处理赋值
+        //销售商品
+        if(type.getCode().equals(MallItemEnum.Type.Type_0.getCode())){
+            //添加Sku，sepc
+            AssertUtils.notNull(model.getSkus(), "商品Sku不能为空");
+            List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
+            List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
+            MallItemSkuModel skuModel = skuMinModel.get(0);
+            model.setSalePrice(skuModel.getSalePrice());
+            model.setPrice(skuModel.getPrice());
+            model.setStock(skuModel.getStock());
+            model.setGoodsNo(skuModel.getGoodsNo());
+            model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
 
-        baseMapper.insert(t);
-        //添加Sku，sepc
-        //添加视频
+            BeanUtils.copyProperties(model,t);
+            baseMapper.insert(t);
+            //添加视频
+        }else{
+            MallItemEnum.NonPriceType nonPriceType = MallItemEnum.NonPriceType.parseCode(model.getNonPriceType());
+            AssertUtils.notNull(nonPriceType, "价格类型不正确");
+
+        }
+
+
+
+
 
         return false;
     }

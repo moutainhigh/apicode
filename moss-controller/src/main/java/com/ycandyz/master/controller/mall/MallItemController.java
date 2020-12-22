@@ -10,9 +10,11 @@ import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.service.mall.impl.MallItemServiceImpl;
+import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -33,20 +35,20 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 	
 	@ApiOperation(value="新增")
     @PostMapping()
-	public CommonResult<MallItemModel> insert(MallItemModel entity) {
+	public CommonResult<MallItemModel> insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemModel entity) {
         return result(service.insert(entity),entity,"保存失败!");
 	}
 	
 	@ApiOperation(value = "通过ID更新")
     @PutMapping(value = "{item_no}")
-	public CommonResult<MallItemModel> updateById(@PathVariable String item_no, MallItemModel entity) {
+	public CommonResult<MallItemModel> updateById(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemModel entity) {
         entity.setItemNo(item_no);
         return result(service.update(entity),entity,"更改失败!");
 	}
 
     @ApiOperation(value = "上架/下架商品")
     @PutMapping(value = "shelf")
-    public CommonResult<MallItemShelfModel> shelfById(MallItemShelfModel entity) {
+    public CommonResult<MallItemShelfModel> shelfById(@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemShelfModel entity) {
         return result(service.shelf(entity),entity,"操作失败!");
     }
 	
