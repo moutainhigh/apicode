@@ -73,12 +73,12 @@ public class TemplateComponentServiceImpl extends BaseService<TemplateComponentD
         AssertUtils.notNull(templateId, "未选择模板！");
         Template template = templateDao.selectById(templateId);
         AssertUtils.notNull(template, "模板信息不存在！");
-        List<TemplateDetail> details = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", templateId));
+        List<TemplateDetail> details = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", templateId).orderByAsc("component_order"));
         AssertUtils.notEmpty(details, "动态列信息不存在！");
         List<TemplateTableResp> tableResps = new ArrayList<>();
         details.forEach(vo -> {
             TemplateTableResp tableResp = new TemplateTableResp();
-            if (org.apache.commons.lang3.StringUtils.isNotEmpty(vo.getComponentProperties())) {
+            if (StringUtils.isNotEmpty(vo.getComponentProperties())) {
                 TemplateComponentPropertiesResp propertiesResp = JSONObject.parseObject(vo.getComponentProperties(), TemplateComponentPropertiesResp.class);
                 tableResp.setDetail_id(vo.getId());
                 tableResp.setComponentTitle(propertiesResp.getTitle());
@@ -87,7 +87,6 @@ public class TemplateComponentServiceImpl extends BaseService<TemplateComponentD
                 tableResps.add(tableResp);
             }
         });
-        tableResps.sort(Comparator.comparingInt(TemplateTableResp::getComponentOrder));
         return tableResps;
     }
 }

@@ -24,6 +24,8 @@ public class DateUtils {
 
     public final static String DEFAULT_PATTERN = "yyyy-MM-dd hh:mm:ss";
 
+    public final static String yyyyMMddhhmmsssss = "yyyyMMddhhmmsssss";
+
     public final static String YYYY_MM_DD = "yyyy-MM-dd";
 
     public static final ThreadLocal<SimpleDateFormat> DATE_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat(DEFAULT_PATTERN, Locale.CHINA));
@@ -43,6 +45,13 @@ public class DateUtils {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         DateTime dateTime = DateUtil.parse(dateFormat.format(DateUtil.date()), DEFAULT_PATTERN);
         return dateTime.toJdkDate();
+    }
+
+    public static String getCurrentTime17(){
+        Date getDate = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(yyyyMMddhhmmsssss);
+        String format = dateFormat.format(getDate);
+        return format;
     }
 
     /**

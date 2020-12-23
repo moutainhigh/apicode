@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.BasePageResult;
 import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.constant.DataConstant;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDetailDao;
 import com.ycandyz.master.domain.UserVO;
@@ -136,9 +137,32 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
 
     public BasePageResult<Template> getPage(PageModel<Template> page, TemplateQuery query) {
         UserVO user = getUser();
-        query.setOrganizeId(user.getOrganizeId());
-        query.setTemplateStatus(0);
-        return new BasePageResult<>(this.page(new Page<>(page.getPage(), page.getPageSize()), query));
+        String platform = query.getPlatform() != null ? query.getPlatform().toString() : "0";
+        Page<Template> templateIPage;
+        if (DataConstant.TEMPLATE_PLATFORM_OFFICIAL_ACCOUNTS.equals(platform)) {
+            templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), new QueryWrapper<Template>().eq("organize_id", user.getOrganizeId()).eq("template_status", "0").orderByDesc("created_time"));
+        } else {
+            QueryWrapper<Template> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("organize_id", user.getOrganizeId());
+            queryWrapper.orderByDesc("created_time");
+            if (query.getBeginCreateTime() != null) {
+                queryWrapper.ge("created_time", query.getBeginCreateTime());
+            }
+            if (query.getEndCreateTime() != null) {
+                queryWrapper.le("created_time", query.getEndCreateTime());
+            }
+            if (query.getBeginExpireTime() != null) {
+                queryWrapper.ge("end_time", query.getBeginExpireTime());
+            }
+            if (query.getEndExpireTime() != null) {
+                queryWrapper.le("end_time", query.getEndExpireTime());
+            }
+            if (StringUtils.isNotEmpty(query.getTemplateName())) {
+                queryWrapper.eq("template_name", query.getTemplateName());
+            }
+            templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), queryWrapper);
+        }
+        return new BasePageResult<>(templateIPage);
     }
 
     public TemplateResp getDetailById(Long id) {
@@ -146,6 +170,9 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         AssertUtils.notNull(template, "模板信息不存在");
         TemplateResp templateResp = new TemplateResp();
         BeanUtils.copyProperties(template, templateResp);
+        if (template.getEndTime().compareTo(new Date())<0){
+            templateResp.setTemplateStatus(1);
+        }
         List<TemplateDetail> templateDetails = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", id).eq("component_status", 0));
         List<TemplateDetailResp> detailResps = new ArrayList<>();
         templateDetails.forEach(vo -> {

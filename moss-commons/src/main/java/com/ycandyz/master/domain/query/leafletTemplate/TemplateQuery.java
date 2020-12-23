@@ -1,19 +1,16 @@
 package com.ycandyz.master.domain.query.leafletTemplate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ycandyz.master.annotation.Condition;
 import com.ycandyz.master.enums.ConditionEnum;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -72,30 +69,27 @@ public class TemplateQuery implements Serializable {
     @Condition(condition = ConditionEnum.EQ)
     private Long organizeId;
 
-    @ApiModelProperty(name = "created_time", value = "创建时间起")
-    @Condition(field = "created_time", condition = ConditionEnum.GE)
-    private Date createdTimeS;
-    
-    @ApiModelProperty(name = "created_time", value = "创建时间止")
+    @ApiModelProperty(name = "begin_create_time", value = "创建时间起")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Condition(field = "created_time", condition = ConditionEnum.LE)
-    private Date createdTimeE;
+    private Date beginCreateTime;
 
-    @ApiModelProperty(name = "updated_time", value = "更新时间起")
-    @Condition(field = "updated_time", condition = ConditionEnum.GE)
-    private Date updatedTimeS;
+    @ApiModelProperty(name = "end_create_time", value = "创建时间止")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @Condition(field = "created_time", condition = ConditionEnum.GE)
+    private Date endCreateTime;
+
+    @ApiModelProperty(name = "begin_expire_time", value = "失效时间起")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @Condition(field = "endTime", condition = ConditionEnum.GE)
+    private Date beginExpireTime;
     
-    @ApiModelProperty(name = "updated_time", value = "更新时间止")
-    @Condition(field = "updated_time", condition = ConditionEnum.LE)
-    private Date updatedTimeE;
+    @ApiModelProperty(name = "end_expire_time", value = "失效时间止")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @Condition(field = "endTime", condition = ConditionEnum.LE)
+    private Date endExpireTime;
 
-    @ApiModelProperty(name = "end_time", value = "失效时间起")
-    @Condition(field = "end_time", condition = ConditionEnum.GE)
-    private Date endTimeS;
-    
-    @ApiModelProperty(name = "end_time", value = "失效时间止")
-    @Condition(field = "end_time", condition = ConditionEnum.LE)
-    private Date endTimeE;
-
-
+    @ApiModelProperty(name = "platform", value = "平台")
+    private Integer platform;
 
 }
