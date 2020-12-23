@@ -68,6 +68,11 @@ public interface SecurityConstant {
     String JWT_TOKEN = "x-auth-token";
 
     /**
+     * SOURCE参数名
+     */
+    String SOURCE = "X-Client-Type";
+
+    /**
      * MENU_ID 按钮ID
      */
     String MENU_ID = "menu_id";
