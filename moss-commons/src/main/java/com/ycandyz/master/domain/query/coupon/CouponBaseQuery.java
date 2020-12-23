@@ -29,13 +29,13 @@ import java.util.Date;
 public class CouponBaseQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @ApiModelProperty(name = "id",value = "优惠券id")
     private Long id;
-
+    @ApiModelProperty(name = "type",value = "类型：all-查询全部，choose-查询选中")
     private String type;
-
+    @ApiModelProperty(name = "keyword",value = "关键词")
     private String keyword;
-
+    @ApiModelProperty(name = "category",value = "多级分类，逗号拼接")
     private String categoryNo;
 
 }

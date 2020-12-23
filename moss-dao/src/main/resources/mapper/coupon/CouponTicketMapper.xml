@@ -84,8 +84,8 @@
                 </if>
                 <if test="p.subStatus==1">
                     and ti.status=1
-                    and info.begin_time &lt;= now()
-                    and info.end_time &gt;= now()
+                    and ((info.begin_time &lt;= now()
+                    and info.end_time &gt;= now()) or info.validity_type!=0)
                 </if>
                 <if test="p.subStatus==2">
                     and ti.status=1
