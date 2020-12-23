@@ -442,6 +442,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         Page<CouponUseUserDTO> dtoPage = null;
         couponUseUserQuery.setShopNo(userVO.getShopNo());
         couponUseUserQuery.setCouponId(id);
+        couponUseUserQuery.setUserMsg(couponUseUserQuery.getUserMsg()!=null && !"".equals(couponUseUserQuery.getUserMsg()) ? couponUseUserQuery.getUserMsg().trim() : null);
         if (couponUseUserQuery.getPageType()==0){ //已领取
             dtoPage = couponDetailUserDao.selectTakeUserCouponList(page,couponUseUserQuery);
         }else if (couponUseUserQuery.getPageType()==1){   //已使用
