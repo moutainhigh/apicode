@@ -84,5 +84,6 @@ public class TemplateModel implements Serializable {
     @ApiModelProperty(name = "classify_type", value = "模板类别")
     private Integer classifyType;
 
+
 }
 
