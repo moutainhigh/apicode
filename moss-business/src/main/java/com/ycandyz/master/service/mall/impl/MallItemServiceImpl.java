@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.mall.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -60,19 +61,19 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         MallItem t = baseMapper.selectMallItemById(entity.getId());
         entity.setPickupAddressIds(t.getPickupAddressIds());
         entity.setDeliveryType(t.getDeliveryType());
-
+        if(entity != null){
+            if(StrUtil.isNotEmpty(entity.getBanners())){
+                entity.setBanners(entity.getBanners().replaceAll("\"",""));
+            }
+        }
 
         MallItemResp vo = new MallItemResp();
-        BeanUtils.copyProperties(entity,vo);
+        BeanUtil.copyProperties(entity,vo);
         List<Integer> pl = JSONObject.parseArray(t.getPickupAddressIds(), Integer.class);
         List<Integer> dl = JSONObject.parseArray(t.getDeliveryType(), Integer.class);
-        //List<String> bl = JSONObject.parseArray(t.getBanners(), String.class);
         vo.setPickupAddressIds(pl);
         vo.setDeliveryType(dl);
-        //vo.setBanners(bl);
 
-
-/**/
         //获取sku
         LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
                 .select(MallSku::getSkuNo,MallSku::getSalePrice,MallSku::getPrice,MallSku::getGoodsNo,MallSku::getStock,MallSku::getSkuImg)
