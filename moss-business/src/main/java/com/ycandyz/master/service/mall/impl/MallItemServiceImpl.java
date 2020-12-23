@@ -160,6 +160,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         }
         Page<MallItemPageResp> p =baseMapper.getMallItemPage(page,query);
         p.getRecords().stream().forEach(f -> {
+            f.setCreatedStr(f.getCreatedTime());
             LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
                     .select(MallSku::getGoodsNo)
                     .eq(MallSku::getItemNo, f.getItemNo());
@@ -192,14 +193,27 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         if(type.getCode().equals(MallItemEnum.Type.Type_1.getCode())){
             //商品赋值
             AssertUtils.notNull(model.getSkus(), "商品Sku不能为空");
-            List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
-            List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
-            MallItemSkuModel skuModel = skuMinModel.get(0);
-            model.setSalePrice(skuModel.getSalePrice());
-            model.setPrice(skuModel.getPrice());
-            model.setStock(skuModel.getStock());
-            model.setGoodsNo(skuModel.getGoodsNo());
-            model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
+            List<MallItemSkuModel> skuList = model.getSkus();
+            if(CollectionUtil.isNotEmpty(skuList)){
+                List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
+                List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
+                MallItemSkuModel skuModel = skuMinModel.get(0);
+                model.setSalePrice(skuModel.getSalePrice());
+                model.setPrice(skuModel.getPrice());
+                model.setStock(skuModel.getStock());
+                model.setGoodsNo(skuModel.getGoodsNo());
+                model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
+            }else{
+                List<MallItemSkuModel> newSkuList = new ArrayList<>();
+                MallItemSkuModel skuModel = new MallItemSkuModel();
+                skuModel.setSalePrice(model.getSalePrice());
+                skuModel.setPrice(model.getPrice());
+                skuModel.setStock(model.getStock());
+                skuModel.setGoodsNo(model.getGoodsNo());
+                model.setHighestSalePrice(model.getSalePrice());
+                newSkuList.add(skuModel);
+                skuList = newSkuList;
+            }
 
             BeanUtils.copyProperties(model,t);
             t.setBanners(banners);
