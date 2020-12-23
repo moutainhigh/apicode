@@ -88,4 +88,7 @@ public class MallAfterSales extends Model {
     /**订单详情编号*/
     @ApiModelProperty(value = "订单详情编号")
     private String orderDetailNo;
+    /**优惠券抵扣金额*/
+    @ApiModelProperty(value = "优惠券抵扣金额")
+    private BigDecimal couponDeducted;
 }
