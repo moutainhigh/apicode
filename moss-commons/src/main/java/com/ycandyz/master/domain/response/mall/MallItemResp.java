@@ -16,6 +16,7 @@ import com.ycandyz.master.entities.mall.MallSku;
 import com.ycandyz.master.entities.mall.MallSkuSpec;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -33,11 +34,10 @@ import java.util.List;
  * @since 2020-12-19
  * @version 2.0
  */
-@Getter
-@Setter
+@Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @ApiModel(description="商品表-Resp")
-public class MallItemResp implements Serializable {
+public class MallItemResp {
 
    private static final long serialVersionUID = 1L;
 
@@ -114,7 +114,7 @@ public class MallItemResp implements Serializable {
    private String itemCover;
 
    @ApiModelProperty(name = "banners", value = "轮播图，jsonarray")
-   private String banners;
+   private List<String> banners;
 
    @ApiModelProperty(name = "share_descr", value = "分享描述")
    private String shareDescr;
@@ -220,10 +220,10 @@ public class MallItemResp implements Serializable {
    private BigDecimal shareThirdLevelAmount;
 
    @ApiModelProperty(name = "pickup_address_ids", value = "配送地址")
-   private String pickupAddressIds;
+   private List<Integer> pickupAddressIds;
 
    @ApiModelProperty(name = "delivery_type", value = "1-配送 2-自提")
-   private String deliveryType;
+   private List<Integer> deliveryType;
 
    @ApiModelProperty(name = "is_screen", value = "是否系统屏蔽 0-通过 1-屏蔽")
    private Boolean isScreen;
