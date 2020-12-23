@@ -5,6 +5,7 @@ import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.query.leafletTemplate.TemplateComponentQuery;
 import com.ycandyz.master.domain.response.leafletTemplate.TemplateComponentResp;
+import com.ycandyz.master.domain.response.leafletTemplate.TemplateOriginalResp;
 import com.ycandyz.master.domain.response.leafletTemplate.TemplateTableResp;
 import com.ycandyz.master.entities.leafletTemplate.TemplateComponent;
 import com.ycandyz.master.service.leafletTemplate.impl.TemplateComponentServiceImpl;
@@ -33,8 +34,8 @@ public class TemplateComponentController extends BaseController<TemplateComponen
 
     @ApiOperation(value = "查询全部")
     @GetMapping
-    public CommonResult<BaseResult<List<TemplateComponentResp>>> selectList() {
-        return CommonResult.success(new BaseResult<>(service.listComponents()));
+    public CommonResult<List<TemplateComponentResp>> selectList() {
+        return CommonResult.success((service.listComponents()));
     }
 
     @ApiOperation(value = "查询全部")
