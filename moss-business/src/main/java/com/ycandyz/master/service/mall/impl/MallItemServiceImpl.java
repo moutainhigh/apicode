@@ -189,7 +189,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         model.setItemCover(itemCover);
         MallItem t = new MallItem();
         //销售商品
-        if(type.getCode().equals(MallItemEnum.Type.Type_0.getCode())){
+        if(type.getCode().equals(MallItemEnum.Type.Type_1.getCode())){
             //商品赋值
             AssertUtils.notNull(model.getSkus(), "商品Sku不能为空");
             List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());

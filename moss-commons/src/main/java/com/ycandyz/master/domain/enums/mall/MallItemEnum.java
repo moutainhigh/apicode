@@ -85,8 +85,8 @@ public class MallItemEnum {
     }
 
     public enum Type implements IEnum<Integer> {
-        Type_0(0, "销售商品"),
-        Type_1(1, "非销售商品");
+        Type_0(0, "非销售商品"),
+        Type_1(1, "商品");
 
         private Integer code;
         private String text;
