@@ -70,6 +70,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         vo.setPickupAddressIds(pl);
         vo.setDeliveryType(dl);
         //vo.setBanners(bl);
+
+
 /**/
         //获取sku
         LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()

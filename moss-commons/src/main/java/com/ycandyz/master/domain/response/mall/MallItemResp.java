@@ -114,7 +114,7 @@ public class MallItemResp {
    private String itemCover;
 
    @ApiModelProperty(name = "banners", value = "轮播图，jsonarray")
-   private List<String> banners;
+   private String banners;
 
    @ApiModelProperty(name = "share_descr", value = "分享描述")
    private String shareDescr;
