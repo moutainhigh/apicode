@@ -71,8 +71,8 @@
         left join user u on cdu.user_id=u.id
         where
         1=1 and c.shop_no=#{q.shopNo} and c.id=#{q.couponId}
-        <if test="q.userName!=null and q.userName!=''">
-            and u.name like concat('%',#{q.userName},'%') or u.phone like concat('%',#{q.userName},'%')
+        <if test="q.userMsg!=null and q.userMsg!=''">
+            and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
         </if>
         <if test="q.status!=null">
             <if test="q.status==2">
@@ -137,8 +137,8 @@
         left join mall_cart_order mc on mc.order_sn=cdu.order_sn
         where
         1=1 and c.shop_no=#{q.shopNo} and c.id=#{q.couponId}
-        <if test="q.userName!=null and q.userName!=''">
-            and u.name like concat('%',#{q.userName},'%') or u.phone like concat('%',#{q.userName},'%')
+        <if test="q.userMsg!=null and q.userMsg!=''">
+            and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
         </if>
         <if test="q.source!=null">
             <if test="q.source==0">

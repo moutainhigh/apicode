@@ -19,8 +19,8 @@ import java.util.Date;
 @ApiModel(description="优惠卷-使用统计传参")
 public class CouponUseUserQuery implements Serializable {
 
-    @ApiModelProperty(name = "user_name",value = "用户")
-    private Integer userName;
+    @ApiModelProperty(name = "user_msg",value = "用户")
+    private String userMsg;
 
     @ApiModelProperty(name = "status",value = "优惠券状态 0:全部,1:已使用,2:待使用,3:过期")
     private Integer status;
