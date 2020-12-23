@@ -135,14 +135,14 @@ public class MallOrderController extends BaseController<MaillOrderServiceImpl, M
             @ApiImplicitParam(name="order_at_end",value="下单结束时间",dataType="Long")
     })
     @GetMapping("/u-app/order")
-    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam(value = "mall_order_query", required = false) String mallOrderQuery, @RequestParam(value = "status", required = false) Integer status, @RequestParam(value = "deliver_type", required = false) Integer deliverType, @RequestParam(value = "order_at_begin", required = false) Long orderAtBegin, @RequestParam(value = "order_at_end", required = false) Long orderAtEnd){
+    public CommonResult<BasePageResult<MallOrderUAppVO>> queryMallOrderListByUApp(@RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam(value = "mall_order_query", required = false) String mallOrderQuery, @RequestParam(value = "status", required = false) Integer status, @RequestParam(value = "deliver_type", required = false) Integer deliverType, @RequestParam(value = "order_at_begin", required = false) Long orderAtBegin, @RequestParam(value = "order_at_end", required = false) Long orderAtEnd, @RequestParam(value = "next_no", required = false) String nextNo){
         if (page==null || pageSize==null){
             return CommonResult.failed("请求入参为空");
         }
         if (mallOrderQuery!=null && !"".equals(mallOrderQuery)){
             mallOrderQuery = mallOrderQuery.trim();
         }
-        return mallOrderService.queryMallOrderListByUApp(page,pageSize,mallOrderQuery,status,deliverType,orderAtBegin,orderAtEnd);
+        return mallOrderService.queryMallOrderListByUApp(page,pageSize,mallOrderQuery,status,deliverType,orderAtBegin,orderAtEnd,nextNo);
     }
 
     /**

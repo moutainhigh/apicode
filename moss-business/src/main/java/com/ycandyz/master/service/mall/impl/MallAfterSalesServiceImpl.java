@@ -117,7 +117,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> oids = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.addAll(oids);
-                        organizeIds.add(groupOrganizeId.intValue());
+//                        organizeIds.add(groupOrganizeId.intValue());
                         List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
                         if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
@@ -126,6 +126,14 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                             shopNoAndOrganizeId.putAll(map);
                         }
                     }
+                    //登陆用户所在企业加入初始化中
+                    organizeIds.add(groupOrganizeId.intValue());
+                    if (mallafterSalesQuery.getShopNo()!=null && mallafterSalesQuery.getShopNo().size()>0) {
+                        mallafterSalesQuery.getShopNo().add(userVO.getShopNo());
+                    }else {
+                        mallafterSalesQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
+                    }
+                    shopNoAndOrganizeId.put(userVO.getShopNo(),groupOrganizeId.intValue());
                 }
             }else {
                 mallafterSalesQuery.setShopNo(Arrays.asList(userVO.getShopNo()));

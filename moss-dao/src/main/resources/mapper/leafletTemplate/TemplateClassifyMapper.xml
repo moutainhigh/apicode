@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.leafletTemplate.TemplateClassifyDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.leafletTemplate.TemplateClassify">
+        <id column="id" property="id" />
+        <result column="classify_name" property="classifyName" />
+        <result column="classify_type" property="classifyType" />
+        <result column="classify_img" property="classifyImg" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, classify_name, classify_type, classify_img, created_time, updated_time
+    </sql>
+
+</mapper>

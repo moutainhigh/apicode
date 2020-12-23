@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.leafletTemplate.TemplateOriginalDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.leafletTemplate.TemplateOriginal">
+        <id column="id" property="id" />
+        <result column="template_name" property="templateName" />
+        <result column="share_title" property="shareTitle" />
+        <result column="share_desc" property="shareDesc" />
+        <result column="share_img" property="shareImg" />
+        <result column="template_img" property="templateImg" />
+        <result column="user_id" property="userId" />
+        <result column="organize_id" property="organizeId" />
+        <result column="components" property="components" />
+        <result column="classify_type" property="classifyType" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, template_name, share_title, share_desc, share_img, template_img, user_id, organize_id, components, classify_type, created_time, updated_time
+    </sql>
+
+    <select id="getByType" resultMap="BaseResultMap" >
+        select * from template_original where status = 0
+        and(classify_type = #{arg0}
+        <if test="arg1 != null">
+            or organize_id = #{arg1}
+        </if>
+        )
+    </select>
+
+</mapper>

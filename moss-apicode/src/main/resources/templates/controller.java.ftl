@@ -79,13 +79,13 @@ public class ${table.controllerName} {
 	@ApiOperation(value = "查询分页")
     @GetMapping(value = "page")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<${entity}>> getPage(PageModel page, ${entity}${cfg.querySuffix} query) {
-        return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
+    public CommonResult<BasePageResult<${entity}>> selectPage(PageModel<${entity}> page, ${entity}${cfg.querySuffix} query) {
+        return CommonResult.success(new BasePageResult<>(service.page(new Page<>(page.getPage(),page.getPageSize()),query)));
     }
     
     @ApiOperation(value = "查询全部")
     @GetMapping
-    public CommonResult<BaseResult<List<${entity}>>> getList(${entity}${cfg.querySuffix} query) {
+    public CommonResult<BaseResult<List<${entity}>>> selectList(${entity}${cfg.querySuffix} query) {
         return CommonResult.success(new BaseResult<List<${entity}>>(service.list(query)));
     }
     
@@ -95,6 +95,12 @@ public class ${table.controllerName} {
         return result(service.removeById(id),null,"删除失败!");
 	}
 
+    @ApiImplicitParam(name="ids",value="ID集合(1,2,3)",required=true,allowMultiple=true,dataType="int")
+   	@ApiOperation(value = "通过ids批量删除")
+    @DeleteMapping(value = "delete")
+	public CommonResult deleteBatch(String ids) {
+        return result(service.deleteByIds(Convert.toLongArray(ids)),null,"删除失败!");
+	}
     
 }
 </#if>

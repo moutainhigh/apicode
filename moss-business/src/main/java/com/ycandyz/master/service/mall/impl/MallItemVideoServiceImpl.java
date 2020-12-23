@@ -5,30 +5,21 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.constant.SymbolConstant;
 import com.ycandyz.master.constant.VideoConstant;
-import com.ycandyz.master.domain.enums.mall.MallItemVideoEnum;
-import com.ycandyz.master.domain.query.base.BaseBankQuery;
-import com.ycandyz.master.entities.base.BaseBank;
-import com.ycandyz.master.entities.mall.MallItemVideo;
-import com.ycandyz.master.domain.query.mall.MallItemVideoQuery;
-import com.ycandyz.master.dao.mall.MallItemVideoDao;
-import com.ycandyz.master.exception.BusinessException;
-import com.ycandyz.master.service.mall.IMallItemVideoService;
 import com.ycandyz.master.controller.base.BaseService;
-
-import com.ycandyz.master.utils.*;
-import it.sauronsoftware.jave.Encoder;
-import it.sauronsoftware.jave.MultimediaInfo;
+import com.ycandyz.master.dao.mall.MallItemVideoDao;
+import com.ycandyz.master.domain.query.mall.MallItemVideoQuery;
+import com.ycandyz.master.entities.mall.MallItemVideo;
+import com.ycandyz.master.service.mall.IMallItemVideoService;
+import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.FileUtil;
+import com.ycandyz.master.utils.S3UploadFile;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.UUID;
 
