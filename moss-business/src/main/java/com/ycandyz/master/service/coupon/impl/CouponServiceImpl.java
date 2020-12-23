@@ -210,18 +210,28 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 if (couponDetailItems!=null && couponDetailItems.size()>0){
                     infoItemNoList = couponDetailItems.stream().map(CouponDetailItem::getItemNo).collect(Collectors.toList());
                 }
+                List<String> list1 = Arrays.asList(couponDetail.getObtain()!=null ? couponDetail.getObtain().split(",") : new String[]{""});
+                List<String> list2 = couponDetailQuery.getObtainList()==null ? new ArrayList<>() : couponDetailQuery.getObtainList();
+                List<String> differenceList = null;
+                if (list1.size()>=list2.size()) {
+                    differenceList = list1.stream().filter(obtain -> !list2.contains(obtain)).collect(Collectors.toList());    //取差集
+                }else if (list2.size()>list1.size()){
+                    differenceList = list2.stream().filter(obtain -> !list1.contains(obtain)).collect(Collectors.toList());    //取差集
+                }
+
+
                 if (!Objects.equals(couponDetail.getBeginTime(),couponDetailQuery.getBeginTime()) ||
                         !Objects.equals(couponDetail.getEndTime(),couponDetailQuery.getEndTime()) ||
                         !Objects.equals(couponDetail.getShopType(),couponDetailQuery.getShopType()) ||
                         !Objects.equals(couponDetail.getUseType(),couponDetailQuery.getUserType()) ||
-                        !Objects.equals(couponDetail.getFullMoney(),couponDetailQuery.getFullMoney()) ||
-                        !Objects.equals(couponDetail.getDiscountMoney(),couponDetailQuery.getDiscountMoney()) ||
+                        couponDetail.getFullMoney().compareTo(couponDetailQuery.getFullMoney())!=0 ||
+                        couponDetail.getDiscountMoney().compareTo(couponDetailQuery.getDiscountMoney())!=0 ||
                         !Objects.equals(couponDetail.getValidityType(),couponDetailQuery.getValidityType()) ||
-                        !Objects.equals(couponDetail.getDays(),couponDetailQuery.getDays()) ||
+                        !Objects.equals(couponDetail.getDays(),couponDetailQuery.getDays()==null?0:couponDetailQuery.getDays()) ||
                         !Objects.equals(couponDetail.getUserType(),couponDetailQuery.getUserType()) ||
                         !Objects.equals(couponDetail.getTakeNum(),couponDetailQuery.getTakeNum()) ||
                         !Objects.equals(couponDetail.getSuperposition(),couponDetailQuery.getSuperposition()) ||
-                        !Objects.equals(Arrays.asList(couponDetail.getObtain()!=null ? couponDetail.getObtain().split(",") : ""),couponDetailQuery.getObtain()) ||
+                        differenceList.size()!=0 ||
                         !Objects.equals(couponDetail.getRemark(),couponDetailQuery.getRemark()) ||
                         !Objects.equals(infoItemNoList,couponDetailQuery.getItemNoList())){
                     //修改以前的详情为过去时
@@ -240,8 +250,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     ticketInfo.setFullMoney(couponDetailQuery.getFullMoney());
                     ticketInfo.setName(couponDetail.getName());
                     String stringBuffer = "";
-                    if (couponDetailQuery.getObtain()!=null && couponDetailQuery.getObtain().size()>0){
-                        for (String str : couponDetailQuery.getObtain()){
+                    if (couponDetailQuery.getObtainList()!=null && couponDetailQuery.getObtainList().size()>0){
+                        for (String str : couponDetailQuery.getObtainList()){
                             stringBuffer += str+",";
                         }
                         stringBuffer = stringBuffer.substring(0,stringBuffer.length()-1);
@@ -307,8 +317,8 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         ticketInfo.setFullMoney(couponDetailQuery.getFullMoney());
         ticketInfo.setName(couponDetailQuery.getName());
         String stringBuffer = "";
-        if (couponDetailQuery.getObtain()!=null && couponDetailQuery.getObtain().size()>0){
-            for (String str : couponDetailQuery.getObtain()){
+        if (couponDetailQuery.getObtainList()!=null && couponDetailQuery.getObtainList().size()>0){
+            for (String str : couponDetailQuery.getObtainList()){
                 stringBuffer += str+",";
             }
             stringBuffer = stringBuffer.substring(0,stringBuffer.length()-1);
