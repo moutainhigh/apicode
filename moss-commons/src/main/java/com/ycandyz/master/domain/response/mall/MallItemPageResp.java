@@ -32,15 +32,15 @@ public class MallItemPageResp {
    @ApiModelProperty(name = "category_no", value = "分类编号")
    private String categoryNo;
 
-   //
+   //已处理
    @ApiModelProperty(name = "category_txt", value = "分类名称")
    private String categoryTxt;
 
-   //
+   //？
    @ApiModelProperty(name = "children_organize_name", value = "集团名称")
    private String childrenOrganizeName;
 
-   //
+   //已处理
    @ApiModelProperty(name = "created_str", value = "创建时间 yyyy-MM-dd HH:mm:ss")
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createdStr;
@@ -52,7 +52,7 @@ public class MallItemPageResp {
    @ApiModelProperty(name = "goods_no", value = "货号")
    private String goodsNo;
 
-   //
+   //已处理
    @ApiModelProperty(name = "goods_no_list", value = "全部货号")
    private List<String> goodsNoList;
 
@@ -74,21 +74,23 @@ public class MallItemPageResp {
    @ApiModelProperty(name = "lowest_sale_price", value = "最低销售价格")
    private BigDecimal lowestSalePrice;
 
-   //
+   //？
    @ApiModelProperty(name = "organize_id", value = "机构ID")
    private Long organizeId;
 
-   @ApiModelProperty(name = "real_sales", value = "实际销量")
-   private Integer realSales;
-
-   //
+   //lowest_sale_price
    @ApiModelProperty(name = "sale_price",value = "商品-售价")
    private BigDecimal salePrice;
 
    @ApiModelProperty(name = "price", value = "原价格")
    private BigDecimal price;
 
-   //
+   @ApiModelProperty(name = "base_sales", value = "销量")
+   private Integer baseSales;
+
+   @ApiModelProperty(name = "real_sales", value = "销量")
+   private Integer realSales;
+   //已处理
    @ApiModelProperty(name = "sales", value = "销量")
    private Integer sales;
 
