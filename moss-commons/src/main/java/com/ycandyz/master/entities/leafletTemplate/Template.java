@@ -75,4 +75,7 @@ public class Template extends Model {
    @ApiModelProperty(name = "end_time", value = "失效时间")
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date endTime;
+
+   @ApiModelProperty(name = "classify_type", value = "模板类别")
+   private Integer classifyType;
 }

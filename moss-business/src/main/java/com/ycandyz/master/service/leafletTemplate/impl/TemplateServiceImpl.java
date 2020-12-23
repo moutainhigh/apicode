@@ -137,12 +137,18 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
 
     public BasePageResult<Template> getPage(PageModel<Template> page, TemplateQuery query) {
         UserVO user = getUser();
-        String platform = query.getPlatform() != null ? query.getPlatform().toString() : "0";
+        String source = user.getSource();
         Page<Template> templateIPage;
-        if (DataConstant.TEMPLATE_PLATFORM_OFFICIAL_ACCOUNTS.equals(platform)) {
+        QueryWrapper<Template> queryWrapper = new QueryWrapper<>();
+        if (!DataConstant.TEMPLATE_PLATFORM_WEB.equals(source)) {
+            queryWrapper.eq("organize_id",user.getOrganizeId());
+            queryWrapper.eq("template_status","0");
+            if (query.getClassifyType()!=null){
+                queryWrapper.eq("classify_type",query.getClassifyType());
+            }
+            queryWrapper.orderByDesc("created_time");
             templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), new QueryWrapper<Template>().eq("organize_id", user.getOrganizeId()).eq("template_status", "0").orderByDesc("created_time"));
         } else {
-            QueryWrapper<Template> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("organize_id", user.getOrganizeId());
             queryWrapper.orderByDesc("created_time");
             if (query.getBeginCreateTime() != null) {
