@@ -24,11 +24,11 @@ public class TemplateComponentPropertiesModel implements Serializable {
    @ApiModelProperty(name = "placeholder", value = "提示语")
    private String placeholder;
 
-   @ApiModelProperty(name = "custom_length", value = "自定义长度")
-   private Integer customLength;
+   @ApiModelProperty(name = "content_custom_length", value = "自定义长度")
+   private Integer contentCustomLength;
 
-   @ApiModelProperty(name = "default_length", value = "默认长度")
-   private Integer defaultLength;
+   @ApiModelProperty(name = "content_max_length", value = "默认长度")
+   private Integer contentMaxLength;
 
    @ApiModelProperty(name = "title", value = "标题")
    private String title;

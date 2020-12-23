@@ -1,8 +1,8 @@
 package com.ycandyz.master.controller.leafletTemplate;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.BasePageResult;
 import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.query.leafletTemplate.TemplateContentQuery;
 import com.ycandyz.master.domain.response.leafletTemplate.TemplateContentResp;
@@ -28,7 +28,7 @@ public class TemplateContentController extends BaseController<TemplateContentSer
 
     @ApiOperation(value = "查询动态列表内容分页")
     @GetMapping(value = "")
-    public CommonResult<BasePageResult<TemplateContentResp>> selectPage(Page<TemplateContent> page, TemplateContentQuery contentQuery) {
+    public CommonResult<BasePageResult<TemplateContentResp>> selectPage(PageModel page, TemplateContentQuery contentQuery) {
         return CommonResult.success(new BasePageResult<>(service.getContentPage(page, contentQuery)));
     }
 
