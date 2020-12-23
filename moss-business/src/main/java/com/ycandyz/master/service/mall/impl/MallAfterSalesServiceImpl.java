@@ -676,7 +676,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         UserVO userVO = getUser();  //获取当前登陆用户
         MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",orderNo).eq("shop_no",userVO.getShopNo()));
         if (mallOrder!=null){
-            BigDecimal shippingMoney = mallOrder.getAllMoney().subtract(mallOrder.getRealMoney());  //运费
+            BigDecimal shippingMoney = mallOrder.getAllMoney().subtract(mallOrder.getRealMoney());  //运费（allmoney-realmoney）
             BigDecimal salesMoney = new BigDecimal(0);      //已经退掉的运费
             List<MallAfterSales> mallAfterSalesList = mallAfterSalesDao.selectList(new QueryWrapper<MallAfterSales>().eq("order_no",orderNo).eq("shop_no",userVO.getShopNo()));
             if (mallAfterSalesList!=null) {
@@ -684,7 +684,10 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                     if (sales.getSubStatus()==1020 || sales.getSubStatus()==1040 || sales.getSubStatus()==1060 || sales.getSubStatus()==1090 || sales.getSubStatus()==2040 || sales.getSubStatus()==2050){
                         continue;
                     }
-                    BigDecimal salesShippingMoney = sales.getMoney().subtract(sales.getPrice().multiply(new BigDecimal(sales.getQuantity())));
+                    BigDecimal itemAmount = sales.getPrice().multiply(new BigDecimal(sales.getQuantity()));
+                    BigDecimal realmoney = itemAmount.compareTo(sales.getCouponDeducted())<=0 ? BigDecimal.ZERO : itemAmount.subtract(sales.getCouponDeducted());
+                    BigDecimal salesShippingMoney = sales.getMoney().subtract(realmoney);
+//                    BigDecimal salesShippingMoney = sales.getMoney().subtract(sales.getPrice().multiply(new BigDecimal(sales.getQuantity())));
                     salesMoney = salesMoney.add(salesShippingMoney);
                 }
             }
