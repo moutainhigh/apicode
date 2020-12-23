@@ -93,10 +93,10 @@
                 and cdu.source=1
             </if>
             <if test="q.source==2">
-                and cdu.source=2 and cd.obtain like concat('%','1','%')
+                and cdu.source=2 and cd.obtain like concat('%','0','%')
             </if>
             <if test="q.source==3">
-                and cdu.source=2 and cd.obtain like concat('%','2','%')
+                and cdu.source=2 and cd.obtain like concat('%','1','%')
             </if>
         </if>
         <if test="q.beginTakeTime!=null">
@@ -148,10 +148,10 @@
                 and cdu.source=1
             </if>
             <if test="q.source==2">
-                and cdu.source=2 and cd.obtain like concat('%','1','%')
+                and cdu.source=2 and cd.obtain like concat('%','0','%')
             </if>
             <if test="q.source==3">
-                and cdu.source=2 and cd.obtain like concat('%','2','%')
+                and cdu.source=2 and cd.obtain like concat('%','1','%')
             </if>
         </if>
         <if test="q.beginOrderTime!=null">
