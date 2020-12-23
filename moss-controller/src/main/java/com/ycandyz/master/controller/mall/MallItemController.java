@@ -10,6 +10,7 @@ import com.ycandyz.master.domain.model.mall.MallItemModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
+import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.entities.base.BaseBank;
 import com.ycandyz.master.entities.mall.MallItem;
@@ -71,7 +72,7 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 	@ApiOperation(value = "查询分页")
     @GetMapping()
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<MallItemResp>> selectPage(PageModel page, MallItemQuery query) {
+    public CommonResult<BasePageResult<MallItemPageResp>> selectPage(PageModel page, MallItemQuery query) {
         return CommonResult.success(new BasePageResult(service.getMallItemPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
     

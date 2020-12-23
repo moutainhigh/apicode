@@ -15,6 +15,8 @@ import com.ycandyz.master.domain.enums.mall.MallItemVideoEnum;
 import com.ycandyz.master.domain.model.mall.*;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
+import com.ycandyz.master.domain.response.mall.MallCategoryResp;
+import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.entities.mall.MallItemVideo;
@@ -52,6 +54,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     private MallSkuServiceImpl mallSkuService;
     @Autowired
     private MallSkuSpecServiceImpl mallSkuSpecService;
+    @Autowired
+    private MallCategoryServiceImpl mallCategoryService;
 
     @Override
     public MallItemResp getByItemNo(String itemNo) {
@@ -143,7 +147,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     }
 
     @Override
-    public Page<MallItemResp> getMallItemPage(Page<MallItem> page, MallItemQuery query) {
+    public Page<MallItemPageResp> getMallItemPage(Page<MallItem> page, MallItemQuery query) {
         if(StrUtil.isNotEmpty(query.getItemName()) && StrUtil.isNotEmpty(query.getItemName().trim())){
             if(query.getItemName().contains("%")){
                 String itemName = query.getItemName().replace("%","\\%");
@@ -154,7 +158,19 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         }else{
             query.setItemName(null);
         }
-        Page<MallItemResp> p =baseMapper.getMallItemPage(page,query);
+        Page<MallItemPageResp> p =baseMapper.getMallItemPage(page,query);
+        p.getRecords().stream().forEach(f -> {
+            LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
+                    .select(MallSku::getGoodsNo)
+                    .eq(MallSku::getItemNo, f.getItemNo());
+            List<String> goodsNoList = mallSkuService.list(skuWrapper).stream().map(MallSku::getGoodsNo).collect(Collectors.toList());
+            f.setGoodsNoList(goodsNoList);
+            MallCategoryResp categoryResp = mallCategoryService.getByChildCategoryNo(null,f.getCategoryNo());
+            if(categoryResp != null){
+                String categoryTxt = mallCategoryService.getByChildCategoryNo(categoryResp.getCategoryName(),categoryResp.getCategory());
+                f.setCategoryTxt(categoryTxt);
+            }
+        });
         return p;
     }
 

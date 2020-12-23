@@ -43,8 +43,6 @@ public class MallItemModel {
     @ApiModelProperty(name = "category_no",value = "分类编号")
     private String categoryNo;
 
-    @Size(max = 40, message = "活动名称不能大于20个字。",groups = {ValidatorContract.OnUpdate.class})
-    @NotBlank(message = "活动名称不能为空",groups = {ValidatorContract.OnUpdate.class})
     @ApiModelProperty(name = "item_no",value = "商品编号")
     private String itemNo;
 
@@ -89,8 +87,6 @@ public class MallItemModel {
     @ApiModelProperty(name = "limit_cycle_type",value = "限制周期，10:每天，20:每周, 30:每月，40:每年，50总身")
     private Integer limitCycleType;
 
-    @Range(min = 1, max = 1000000, message = "赠送上限人数范围为1-1000000之间", groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
-    @NotNull(message = "活赠送上限人数不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "limit_skus",value = "限购数量")
     private Integer limitSkus;
 
