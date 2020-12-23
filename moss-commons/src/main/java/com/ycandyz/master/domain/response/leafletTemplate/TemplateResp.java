@@ -86,5 +86,7 @@ public class TemplateResp implements Serializable {
     @ApiModelProperty(name = "components", value = "组件信息")
     private List<TemplateDetailResp> components;
 
+    @ApiModelProperty(name = "classify_type", value = "模板类别")
+    private Integer classifyType;
 }
 

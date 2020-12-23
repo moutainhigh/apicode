@@ -50,6 +50,7 @@ public class TemplateOriginalServiceImpl extends BaseService<TemplateOriginalDao
         templateOriginalResp.setShareDesc(original.getShareDesc());
         templateOriginalResp.setShareImg(original.getShareImg());
         templateOriginalResp.setShareTitle(original.getShareTitle());
+        templateOriginalResp.setClassifyType(type);
         return templateOriginalResp;
     }
 

@@ -90,4 +90,7 @@ public class UserVO extends User {
 
     @ApiModelProperty(value = "商店号")
     private String shopNo;
+
+    @ApiModelProperty(value = "来源 App MiniProgram web")
+    private String source;
 }

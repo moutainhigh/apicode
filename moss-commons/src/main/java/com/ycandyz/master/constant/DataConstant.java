@@ -30,8 +30,9 @@ public final class DataConstant {
     }
 
     //模板平台类型
-    public static final String TEMPLATE_PLATFORM_OFFICIAL_ACCOUNTS = "0";
-    public static final String TEMPLATE_PLATFORM_PC = "1";
+    public static final String TEMPLATE_PLATFORM_APP = "App";
+    public static final String TEMPLATE_PLATFORM_MINIPROGRAM = "MiniProgram";
+    public static final String TEMPLATE_PLATFORM_WEB = "web";
 
     //模板失效状态
     public static final int TEMPLATE_STATUS_NORMAL = 0;//正常

@@ -57,5 +57,8 @@ public class TemplateOriginalResp implements Serializable {
    @ApiModelProperty(name = "components", value = "模板组件")
    private List<OriginalTemplateComponentResp> components;
 
+   @ApiModelProperty(name = "classify_type", value = "模板类别")
+   private Integer classifyType;
+
 }
 
