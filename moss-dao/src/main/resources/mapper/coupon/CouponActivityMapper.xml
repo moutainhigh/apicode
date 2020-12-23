@@ -105,7 +105,7 @@
 
     <select id="selectUserActivityCouponPage" resultType="com.ycandyz.master.domain.response.coupon.CouponDetailUserResp">
         SELECT
-        uti.id,uti.status,uti.create_time,uti.end_time,ti.use_type,ti.full_money,ti.discount_money,u.`name`,u.phone
+        uti.id,uti.status,uti.create_time,uti.end_time,ti.use_type,ti.full_money,ti.discount_money,u.`name` username,u.phone
         FROM
         coupon_detail_user uti
         LEFT JOIN coupon_detail ti ON uti.coupon_detail_id = ti.id
