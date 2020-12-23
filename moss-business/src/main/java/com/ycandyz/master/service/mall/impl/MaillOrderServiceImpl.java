@@ -950,7 +950,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
 
                         //总计金额 商品总价+运费
-                        mallOrderVo.setAllMoney(mallOrderDTO.getTotalMoney().add(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney())));
+                        mallOrderVo.setTotalMoney(mallOrderDTO.getTotalMoney().add(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney())));
 
                         //order_at;payed_at;receive_at时间转换为字符串
                         if (mallOrderVo.getOrderAt()!=null && mallOrderVo.getOrderAt()>0) {
