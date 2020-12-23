@@ -11,6 +11,7 @@ import com.ycandyz.master.constant.DataConstant;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDetailDao;
 import com.ycandyz.master.domain.UserVO;
+import com.ycandyz.master.domain.model.leafletTemplate.TemplateComponentPropertiesModel;
 import com.ycandyz.master.domain.model.leafletTemplate.TemplateDetailModel;
 import com.ycandyz.master.domain.model.leafletTemplate.TemplateModel;
 import com.ycandyz.master.domain.query.leafletTemplate.TemplateQuery;
@@ -36,12 +37,9 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 /**
- * <p>
- *
  * @author WenXin
  * @version 2.0
  * @Description 模板定义表 业务类
- * </p>
  * @since 2020-12-17
  */
 @Slf4j
@@ -82,6 +80,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
                 log.error("组件属性信息为空");
                 throw new BusinessException("请添加组件属性信息！");
             }
+            this.checkContentLength(vo.getComponentProperties());
             vo.setTemplateId(t.getId());
             vo.setComponentOrder(i);
             String componentStr = JSONObject.toJSONString(vo.getComponentProperties());
@@ -122,6 +121,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
                 TemplateDetailModel vo = detailModels.get(i);
                 TemplateDetail templateDetail = new TemplateDetail();
                 AssertUtils.notNull(vo.getComponentProperties(), "请添加组件信息");
+                this.checkContentLength(vo.getComponentProperties());
                 vo.setTemplateId(model.getId());
                 vo.setComponentOrder(i);
                 String componentStr = JSONObject.toJSONString(vo.getComponentProperties());
@@ -135,16 +135,23 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         return true;
     }
 
+    private void checkContentLength(TemplateComponentPropertiesModel componentProperties) {
+        if (componentProperties.getContentCustomLength() > componentProperties.getContentMaxLength()) {
+            log.error("自定义组件长度超于组件默认长度，自定义长度：{}，组件默认长度：{}", componentProperties.getContentCustomLength(), componentProperties.getContentMaxLength());
+            throw new BusinessException("标题为：" + componentProperties.getTitle() + "组件自定义长度不符！");
+        }
+    }
+
     public BasePageResult<Template> getPage(PageModel<Template> page, TemplateQuery query) {
         UserVO user = getUser();
         String source = user.getSource();
         Page<Template> templateIPage;
         QueryWrapper<Template> queryWrapper = new QueryWrapper<>();
         if (!DataConstant.TEMPLATE_PLATFORM_WEB.equals(source)) {
-            queryWrapper.eq("organize_id",user.getOrganizeId());
-            queryWrapper.eq("template_status","0");
-            if (query.getClassifyType()!=null){
-                queryWrapper.eq("classify_type",query.getClassifyType());
+            queryWrapper.eq("organize_id", user.getOrganizeId());
+            queryWrapper.eq("template_status", "0");
+            if (query.getClassifyType() != null) {
+                queryWrapper.eq("classify_type", query.getClassifyType());
             }
             queryWrapper.orderByDesc("created_time");
             templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), new QueryWrapper<Template>().eq("organize_id", user.getOrganizeId()).eq("template_status", "0").orderByDesc("created_time"));
@@ -176,7 +183,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         AssertUtils.notNull(template, "模板信息不存在");
         TemplateResp templateResp = new TemplateResp();
         BeanUtils.copyProperties(template, templateResp);
-        if (template.getEndTime().compareTo(new Date())<0){
+        if (template.getEndTime().compareTo(new Date()) < 0) {
             templateResp.setTemplateStatus(1);
         }
         List<TemplateDetail> templateDetails = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", id).eq("component_status", 0));

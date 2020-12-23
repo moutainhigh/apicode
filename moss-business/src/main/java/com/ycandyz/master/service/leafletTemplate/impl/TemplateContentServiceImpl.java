@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.constant.DataConstant;
 import com.ycandyz.master.dao.leafletTemplate.TemplateContentDao;
@@ -73,11 +74,11 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
         return super.updateById(t);
     }
 
-    public Page<TemplateContentResp> getContentPage(Page<TemplateContent> page, TemplateContentQuery query) {
+    public Page<TemplateContentResp> getContentPage(PageModel page, TemplateContentQuery query) {
         AssertUtils.notNull(query.getTemplateId(), "请选择模板！");
         Template template = templateDao.selectById(query.getTemplateId());
         AssertUtils.notNull(template, "模板信息不存在！");
-        IPage<TemplateContent> templateContentsPage = templateContentDao.selectPage(page, new QueryWrapper<TemplateContent>().eq("template_id", query.getTemplateId()).orderByDesc("created_time"));
+        IPage<TemplateContent> templateContentsPage = templateContentDao.selectPage(new Page<>(page.getPage(),page.getPageSize()), new QueryWrapper<TemplateContent>().eq("template_id", query.getTemplateId()).orderByDesc("created_time"));
         List<TemplateContent> templateContents = templateContentsPage.getRecords();
         AssertUtils.notEmpty(templateContents, "无模板相关组件内容！");
         List<TemplateContentResp> tableContents = new ArrayList<>();
@@ -88,15 +89,17 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
                 BeanUtils.copyProperties(vo, templateContentResp);
                 List<TemplateTableContentResp> contentResps = JSONObject.parseArray(vo.getComponentContent(), TemplateTableContentResp.class);
                 templateContentResp.setComponentContents(contentResps);
-                templateContentResp.setUserPhone(user.getPhone());
+                if (user != null) {
+                    templateContentResp.setUserPhone(user.getPhone());
+                }
                 tableContents.add(templateContentResp);
             }
         });
         Page<TemplateContentResp> resultPages = new Page<>();
-        resultPages.setCurrent(page.getCurrent());
+        resultPages.setCurrent(page.getPage());
         resultPages.setPages(templateContentsPage.getPages());
         resultPages.setRecords(tableContents);
-        resultPages.setSize(page.getSize());
+        resultPages.setSize(page.getPageSize());
         resultPages.setTotal(templateContentsPage.getTotal());
         return resultPages;
     }

@@ -36,11 +36,8 @@ public class TemplateComponentPropertiesResp implements Serializable {
    @ApiModelProperty(name = "title_max_length", value = "标题")
    private String placeholderMaxLength;
 
-   @ApiModelProperty(name = "custom_length", value = "标题")
-   private String customLength;
-
-   @ApiModelProperty(name = "default_length", value = "标题")
-   private String defaultLength;
+   @ApiModelProperty(name = "content_custom_length", value = "标题")
+   private String contentCustomLength;
 
    @ApiModelProperty(name = "is_required", value = "是否必填（0：是，1：否）")
    private Integer isRequired;
