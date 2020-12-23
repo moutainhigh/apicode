@@ -1,12 +1,17 @@
 package com.ycandyz.master.controller.coupon;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.*;
 import com.ycandyz.master.config.ApiVersion;
 import com.ycandyz.master.config.ApiVersionConstant;
+import com.ycandyz.master.domain.query.coupon.CouponBaseQuery;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
+import com.ycandyz.master.domain.query.coupon.CouponUseUserQuery;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
+import com.ycandyz.master.model.coupon.CouponUseUserVO;
 import com.ycandyz.master.model.mall.MallCategoryVO;
 import com.ycandyz.master.service.coupon.ICouponService;
 import com.ycandyz.master.service.coupon.impl.CouponServiceImpl;
@@ -63,11 +68,11 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "优惠券启用停用")
     @PutMapping(value = "{id}/switch")
-    public CommonResult<String> auditState(@PathVariable("id") Long id, @RequestParam("state") Integer state) {
-        if (id==null || id==0 || state==null){
+    public CommonResult<String> auditState(@PathVariable("id") Long id, @RequestBody CouponStateQuery couponStateQuery) {
+        if (id==null || id==0 || couponStateQuery.getState()==null){
             return CommonResult.failed("传入参数为空");
         }
-        return iCouponService.auditState(id,state);
+        return iCouponService.auditState(id,couponStateQuery);
     }
 
     /**
@@ -78,7 +83,7 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
     @ApiOperation(value = "优惠券详情")
     @GetMapping(value = "/{id}")
     public CommonResult<CouponDetailVO> ticketDetail(@PathVariable("id") Long id) {
-        if (id==null || id>0){
+        if (id==null || id==0){
             return CommonResult.failed("传入参数为空");
         }
         return iCouponService.ticketDetail(id);
@@ -127,7 +132,17 @@ public class CouponTicketController extends BaseController<CouponServiceImpl,Cou
      */
     @ApiOperation(value = "获取所有分类")
     @GetMapping(value = "/item")
-    public CommonResult<BasePageResult<MallItemVO>> itemList(@RequestParam(value = "id",required = false) Long id, @RequestParam("page") Long page, @RequestParam("page_size") Long pageSize, @RequestParam("type") String type, @RequestParam("keyword") String keyword, @RequestParam("category") String category){
-        return iCouponService.itemList(id,page,pageSize,type,keyword,category);
+    public CommonResult<BasePageResult<MallItemVO>> itemList(PageModel page, CouponBaseQuery query){
+        return iCouponService.itemList(new Page(page.getPage(),page.getPageSize()),query);
+    }
+
+    /**
+     * 获取所有已经领取的优惠券使用情况
+     * @return
+     */
+    @ApiOperation(value = "获取所有已经领取的优惠券使用情况")
+    @GetMapping(value = "/statistics/{id}")
+    public CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(@PathVariable("id") Long id, PageModel page, CouponUseUserQuery couponUseUserQuery){
+        return iCouponService.getCouponUseList(id,new Page(page.getPage(),page.getPageSize()),couponUseUserQuery);
     }
 }

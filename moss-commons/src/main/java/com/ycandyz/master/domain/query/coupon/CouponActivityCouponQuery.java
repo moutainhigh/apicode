@@ -37,6 +37,6 @@ public class CouponActivityCouponQuery implements Serializable {
     private String name;
 
     @ApiModelProperty(value = "类型(0全部,1已选)",required=true)
-    private Integer type;
+    private Integer type = 1;
 
 }

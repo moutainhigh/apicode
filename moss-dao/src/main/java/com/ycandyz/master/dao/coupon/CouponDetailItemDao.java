@@ -1,7 +1,11 @@
 package com.ycandyz.master.dao.coupon;
 
+import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
 import com.ycandyz.master.entities.coupon.CouponDetailItem;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CouponDetailItemDao extends BaseMapper<CouponDetailItem> {
 
+    List<MallItemBaseResp> queryByCouponDetailId(@Param("couponDetailId") Long couponDetailId);
 }

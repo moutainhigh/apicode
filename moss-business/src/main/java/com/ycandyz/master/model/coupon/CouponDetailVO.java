@@ -3,6 +3,7 @@ package com.ycandyz.master.model.coupon;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
 import com.ycandyz.master.entities.coupon.CouponDetail;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -12,6 +13,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -75,7 +77,7 @@ public class CouponDetailVO extends CouponDetail {
     private Integer superposition;
 
     @ApiModelProperty(value = "领取页面：0:购物车页面直接获取，1:商品详情页直接获取")
-    private Integer obtain;
+    private String obtain;
 
     @ApiModelProperty(value = "说明备注")
     private String remark;
@@ -103,7 +105,7 @@ public class CouponDetailVO extends CouponDetail {
     private String shopNo;
 
     @ApiModelProperty(value = "券总数量")
-    private Integer ticketSum;
+    private Integer couponSum;
 
     @ApiModelProperty(value = "领取数量")
     private Integer obtainNum;
@@ -113,4 +115,17 @@ public class CouponDetailVO extends CouponDetail {
 
     @ApiModelProperty(value = "优惠券状态：0:停止,1:开始")
     private Integer couponStatus;
+
+    @ApiModelProperty(value = "关联商品信息")
+    private List<MallItemBaseResp> mallItemResps;
+
+    @ApiModelProperty(value = "成交金额   订单金额（含券的金额，不含运费的金额）")
+    private BigDecimal dealAmount;
+
+    //商品的编号列表
+    @ApiModelProperty(name = "item_no_list",value = "商品编号列表")
+    private List<String> itemNoList;
+
+    @ApiModelProperty(name = "obtain_list",value = "领取页面String转数组")
+    private List<String> obtainList;
 }

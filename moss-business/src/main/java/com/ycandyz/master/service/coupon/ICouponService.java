@@ -5,8 +5,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.*;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
+import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
+import com.ycandyz.master.domain.query.coupon.CouponUseUserQuery;
+import com.ycandyz.master.domain.query.coupon.*;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
+import com.ycandyz.master.model.coupon.CouponUseUserVO;
 import com.ycandyz.master.model.mall.MallCategoryVO;
 import com.ycandyz.master.vo.MallItemVO;
 
@@ -25,7 +29,7 @@ public interface ICouponService extends IService<Coupon>{
 
     CommonResult<BasePageResult<CouponDetailVO>> selectPageList(PageModel pageModel, CouponQuery couponQuery);
 
-    CommonResult<String> auditState(Long id, Integer state);
+    CommonResult<String> auditState(Long id, CouponStateQuery couponStateQuery);
 
     CommonResult<CouponDetailVO> ticketDetail(Long id);
 
@@ -35,5 +39,7 @@ public interface ICouponService extends IService<Coupon>{
 
     CommonResult<List<MallCategoryVO>> getCategoryList();
 
-    CommonResult<BasePageResult<MallItemVO>> itemList(Long id, Long page, Long pageSize, String type, String keyword, String category);
+    CommonResult<BasePageResult<MallItemVO>> itemList(Page page, CouponBaseQuery query);
+
+    CommonResult<BasePageResult<CouponUseUserVO>> getCouponUseList(Long id, Page page, CouponUseUserQuery couponUseUserQuery);
 }

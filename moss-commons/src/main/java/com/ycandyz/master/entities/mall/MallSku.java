@@ -1,10 +1,13 @@
 package com.ycandyz.master.entities.mall;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -12,6 +15,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -24,6 +28,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @TableName("mall_sku")
 @ApiModel(description="sku表")
 public class MallSku extends Model {
@@ -70,6 +75,10 @@ public class MallSku extends Model {
 
    @ApiModelProperty(value = "同一item_no中的sku的排序值")
    private Integer sortValue;
+
+   @ApiModelProperty(value = "skuSpecs")
+   @TableField(exist = false)
+   private List<MallSkuSpec> skuSpecs;
 
 
 }

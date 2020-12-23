@@ -1,28 +1,19 @@
 package com.ycandyz.master.controller.mall;
 
 import com.ycandyz.master.api.*;
-import com.ycandyz.master.domain.model.mall.MallItemVideoModel;
-import com.ycandyz.master.domain.query.ad.SpecailItemQuery;
-import com.ycandyz.master.entities.mall.MallItem;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import cn.hutool.core.convert.Convert;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import com.ycandyz.master.validation.ValidatorContract;
 import com.ycandyz.master.entities.mall.MallItemVideo;
 import com.ycandyz.master.domain.query.mall.MallItemVideoQuery;
 import com.ycandyz.master.service.mall.impl.MallItemVideoServiceImpl;
 import com.ycandyz.master.controller.base.BaseController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * <p>

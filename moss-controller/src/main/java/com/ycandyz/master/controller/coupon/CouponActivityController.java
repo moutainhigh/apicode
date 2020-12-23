@@ -39,8 +39,8 @@ import com.ycandyz.master.controller.base.BaseController;
 @ApiVersion(group = ApiVersionConstant.API_COUPON)
 @Slf4j
 @RestController
-@RequestMapping("activity")
-@Api(tags="优惠卷")
+@RequestMapping("activity/coupon")
+@Api(tags="活动-优惠卷")
 public class CouponActivityController extends BaseController<CouponActivityServiceImpl,CouponActivity,CouponActivityQuery> {
 
     @ApiVersion(group = {ApiVersionConstant.API_COUPON_100})
@@ -59,13 +59,11 @@ public class CouponActivityController extends BaseController<CouponActivityServi
 	}
 
     @ApiVersion(group = {ApiVersionConstant.API_COUPON_100})
-    @ApiImplicitParam(name="enabled",value="操作类型(0启用,1停止)",required=true,dataType="string")
+    @ApiImplicitParam(name="status",value="操作类型(1启用,0停止)",required=true,dataType="int")
     @ApiOperation(value = "启用/停止")
     @PutMapping(value = "{id}/switch")
-    public CommonResult<String> switchById(@PathVariable Long id, @RequestParam("enabled") Integer enabled) {
-        CouponActivityPutModel model = new CouponActivityPutModel();
+    public CommonResult<String> switchById(@PathVariable Long id, @RequestBody CouponActivityPutModel model) {
         model.setId(id);
-        model.setEnabled(enabled);
         return result(service.switchById(model),null,"操作失败!");
     }
 
@@ -84,10 +82,12 @@ public class CouponActivityController extends BaseController<CouponActivityServi
         return CommonResult.success(new BasePageResult(service.page(new Page(page.getPage(),page.getPageSize()),query)));
     }
 
+    @ApiVersion(group = {ApiVersionConstant.API_COUPON_100})
     @ApiOperation(value = "发卷宝-优惠卷-分页")
-    @GetMapping(value = "coupon")
+    @GetMapping(value = "{id}/coupon")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<CouponActivityCouponResp>> getCouponPage(PageModel page, CouponActivityCouponQuery query) {
+    public CommonResult<BasePageResult<CouponActivityCouponResp>> getCouponPage(PageModel page,@PathVariable Long id, CouponActivityCouponQuery query) {
+        query.setId(id);
         return CommonResult.success(new BasePageResult(service.selectCouponPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
 

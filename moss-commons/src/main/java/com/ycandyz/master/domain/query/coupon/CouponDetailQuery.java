@@ -48,11 +48,11 @@ public class CouponDetailQuery implements Serializable {
     private Integer validityType;
 
     @ApiModelProperty(name = "begin_time",value = "券生效开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date beginTime;
 
     @ApiModelProperty(name = "end_time",value = "券生效结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date endTime;
 
     @ApiModelProperty(name = "days",value = "券有效天数")
@@ -67,8 +67,8 @@ public class CouponDetailQuery implements Serializable {
     @ApiModelProperty(name = "superposition",value = "叠加使用：0:购买限制使用一张优惠券")
     private Integer superposition;
 
-    @ApiModelProperty(name = "obtain",value = "领取页面：0:购物车页面直接获取，1:商品详情页直接获取")
-    private Integer obtain;
+    @ApiModelProperty(name = "obtain_list",value = "领取页面(可多选)：0:购物车页面直接获取，1:商品详情页直接获取")
+    private List<String> obtainList;
 
     @ApiModelProperty(name = "remark",value = "说明备注")
     private String remark;

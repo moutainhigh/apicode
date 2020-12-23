@@ -3,7 +3,7 @@
 <mapper namespace="com.ycandyz.master.dao.coupon.CouponDetailItemDao">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.coupon.CouponDetailItem">
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.dto.coupon.CouponDetailItemDTO">
         <id column="id" property="id" />
         <result column="item_no" property="itemNo" />
         <result column="coupon_detail_id" property="couponDetailId" />
@@ -16,4 +16,24 @@
         id, item_no, coupon_detail_id, create_time,update_time
     </sql>
 
+    <select id="queryByCouponDetailId" resultType="com.ycandyz.master.domain.response.mall.MallItemBaseResp">
+        SELECT
+            t.id,
+            t.item_no,
+            t.item_name,
+            t.status,t.item_cover,
+            t.price ,
+            t.lowest_sale_price,
+            t.base_sales,
+            t.real_sales,
+            t.item_text,
+            t.stock,
+            t.category_no,
+            t.goods_no
+        FROM coupon_detail_item cditem
+        left join mall_item t on cditem.item_no=t.item_no
+        WHERE 1=1
+        AND t.status = 10
+        and cditem.coupon_detail_id=#{couponDetailId}
+    </select>
 </mapper>

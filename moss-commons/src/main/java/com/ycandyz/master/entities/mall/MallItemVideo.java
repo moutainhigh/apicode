@@ -8,6 +8,8 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -31,6 +33,7 @@ import javax.validation.constraints.Size;
  */
 @Getter
 @Setter
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @TableName("mall_item_video")
 @ApiModel(description="商品视频信息")
 public class MallItemVideo extends Model {
@@ -40,6 +43,10 @@ public class MallItemVideo extends Model {
    @TableId(value = "id", type = IdType.AUTO)
    @ApiParam(hidden = true)
    private Long id;
+
+   @ApiParam(hidden = true)
+   @ApiModelProperty(value = "视频编号")
+   private String videoNo;
 
    @ApiParam(hidden = true)
    @ApiModelProperty(value = "商品编号")

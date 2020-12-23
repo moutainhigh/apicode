@@ -83,4 +83,76 @@ public class MallItemEnum {
             return null;
         }
     }
+
+    public enum Type implements IEnum<Integer> {
+        Type_0(0, "销售商品"),
+        Type_1(1, "非销售商品");
+
+        private Integer code;
+        private String text;
+
+        Type(Integer code, String text) {
+            this.code = code;
+            this.text = text;
+        }
+
+        @Override
+        public Integer getCode() {
+            return code;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        public static MallItemEnum.Type parseCode(Integer code) {
+            if (code == null) {
+                return null;
+            }
+            for (MallItemEnum.Type value : values()) {
+                if (code.equals(value.code)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
+    public enum NonPriceType implements IEnum<Integer> {
+        Type_0(0, "非销售商品-价格类型-不显示"),
+        Type_1(1, "非销售商品-价格类型-显示");
+
+        private Integer code;
+        private String text;
+
+        NonPriceType(Integer code, String text) {
+            this.code = code;
+            this.text = text;
+        }
+
+        @Override
+        public Integer getCode() {
+            return code;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        public static MallItemEnum.NonPriceType parseCode(Integer code) {
+            if (code == null) {
+                return null;
+            }
+            for (MallItemEnum.NonPriceType value : values()) {
+                if (code.equals(value.code)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
+
 }

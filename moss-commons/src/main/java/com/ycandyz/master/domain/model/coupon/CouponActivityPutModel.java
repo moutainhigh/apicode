@@ -42,6 +42,6 @@ public class CouponActivityPutModel extends Model {
    @Range(min = 0, max = 1, message = "类型必须为0或1", groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    @NotNull(message = "操作类型不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
    @ApiModelProperty(value = "操作类型(1启用,0停止)",required=true)
-   private Integer enabled;
+   private Integer status;
 
 }

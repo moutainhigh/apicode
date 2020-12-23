@@ -70,7 +70,7 @@ public class CouponDetailDTO extends CouponDetail {
     private Integer superposition;
 
     @ApiModelProperty(value = "领取页面：0:购物车页面直接获取，1:商品详情页直接获取")
-    private Integer obtain;
+    private String obtain;
 
     @ApiModelProperty(value = "说明备注")
     private String remark;
@@ -98,7 +98,7 @@ public class CouponDetailDTO extends CouponDetail {
     private String shopNo;
 
     @ApiModelProperty(value = "券总数量")
-    private Integer ticketSum;
+    private Integer couponSum;
 
     @ApiModelProperty(value = "领取数量")
     private Integer obtainNum;
