@@ -157,7 +157,10 @@
         t.item_name,
         t.item_no,
         t.lowest_sale_price,
+        t.lowest_sale_price sale_price,
+        t.base_sales,
         t.real_sales,
+        t.base_sales + t.real_sales sales,
         t.price,
         t.shop_no,
         t.sort_value,
@@ -167,11 +170,17 @@
         t.non_price_type,
         t.non_sale_price,
         t.non_price,
-        t.qr_code_url
+        t.qr_code_url,
+        s.organize_id,
+        s.shop_name children_organize_name
         FROM mall_item t
+        LEFT JOIN mall_shop s ON t.shop_no = s.shop_no
         WHERE 1=1
         AND t.status != 10
-        <if test="q.shopNo != null and q.shopNo != ''"> and t.shop_no = #{q.shopNo} </if>
+        AND t.shop_no in
+        <foreach collection="q.shopNoList" item="shopNo" index="index" open="(" close=")" separator=",">
+            #{shopNo}
+        </foreach>
         <if test="q.itemName != null and q.itemName!=''"> and t.item_name like CONCAT('%',#{q.itemName},'%') </if>
         <if test="q.categoryNo != null and q.categoryNo != ''"> and t.category_no = #{q.categoryNo} </if>
         <if test="q.status != null"> and t.status=#{q.status} </if>

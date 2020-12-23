@@ -68,11 +68,10 @@ public class MallCategoryServiceImpl extends BaseService<MallHomeCategoryDao, Ma
     }
 
     public String getByChildCategoryNo(String s,MallCategoryResp i) {
-        if(null == i || i.getCategory() == null){
+        if(null == i){
             return s;
         }else{
-            i.setCategoryName(s + ">" + i.getCategoryName());
-            return getByChildCategoryNo(i.getCategoryName(),i.getCategory());
+            return getByChildCategoryNo(s + ">" + i.getCategoryName(),i.getCategory());
         }
     }
 

@@ -6,10 +6,14 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.mall.MallItemHomeDao;
+import com.ycandyz.master.dao.mall.MallShopDao;
+import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.domain.enums.mall.MallItemEnum;
 import com.ycandyz.master.domain.enums.mall.MallItemVideoEnum;
 import com.ycandyz.master.domain.model.mall.*;
@@ -18,10 +22,9 @@ import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallCategoryResp;
 import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
-import com.ycandyz.master.entities.mall.MallItem;
-import com.ycandyz.master.entities.mall.MallItemVideo;
-import com.ycandyz.master.entities.mall.MallSku;
-import com.ycandyz.master.entities.mall.MallSkuSpec;
+import com.ycandyz.master.dto.mall.MallShopDTO;
+import com.ycandyz.master.entities.mall.*;
+import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.service.mall.IMallItemService;
 import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.IDGeneratorUtils;
@@ -56,6 +59,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     private MallSkuSpecServiceImpl mallSkuSpecService;
     @Autowired
     private MallCategoryServiceImpl mallCategoryService;
+    @Autowired
+    private OrganizeRelDao organizeRelDao;
+    @Autowired
+    private MallShopDao mallShopDao;
 
     @Override
     public MallItemResp getByItemNo(String itemNo) {
@@ -148,6 +155,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
     @Override
     public Page<MallItemPageResp> getMallItemPage(Page<MallItem> page, MallItemQuery query) {
+        AssertUtils.notNull(query.getIsGroup(), "是否企业标识不能为空");
         if(StrUtil.isNotEmpty(query.getItemName()) && StrUtil.isNotEmpty(query.getItemName().trim())){
             if(query.getItemName().contains("%")){
                 String itemName = query.getItemName().replace("%","\\%");
@@ -158,6 +166,58 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         }else{
             query.setItemName(null);
         }
+        //
+        List<Integer> organizeIds = new ArrayList<>();  //保存企业id，用于批量查询
+        Map<String, Integer> shopNoAndOrganizeId = new HashMap<>(); //保存shopNo和organizeid    map<shopNo,organizeid>
+        if (query.getIsGroup().equals("0")){   //当前登陆为企业账户
+            query.setShopNoList(Arrays.asList(getShopNo()));
+            organizeIds.add(getOrganizeId().intValue());
+            shopNoAndOrganizeId.put(getShopNo(),getOrganizeId().intValue());
+        }else if (query.getIsGroup().equals("1")){ //集团
+            if (query.getChildrenOrganizeId()==null || "".equals(query.getChildrenOrganizeId()) || query.getChildrenOrganizeId().equals("0")){
+                //查询集团所有数据
+                Long groupOrganizeId = getOrganizeId();   //集团id
+                if (groupOrganizeId!=null) {
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status",2));
+                    if (organizeRels != null && organizeRels.size() > 0) {
+                        List<Integer> oids = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
+                        organizeIds.addAll(oids);
+//                        organizeIds.add(groupOrganizeId.intValue());
+                        List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
+                        if (mallShopDTOS!=null && mallShopDTOS.size()>0){
+                            List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
+                            query.setShopNoList(shopNos);
+                            Map<String, Integer> map = mallShopDTOS.stream().collect(Collectors.toMap(MallShopDTO::getShopNo, MallShopDTO::getOrganizeId));
+                            shopNoAndOrganizeId.putAll(map);
+                        }
+                    }
+                    //登陆用户所在企业加入初始化中
+                    organizeIds.add(groupOrganizeId.intValue());
+                    if (query.getShopNoList()!=null && query.getShopNoList().size()>0) {
+                        query.getShopNoList().add(getShopNo());
+                    }else {
+                        query.setShopNoList(Arrays.asList(getShopNo()));
+                    }
+                    shopNoAndOrganizeId.put(getShopNo(),groupOrganizeId.intValue());
+                }
+            }else {
+                query.setShopNoList(Arrays.asList(getShopNo()));
+                organizeIds.add(Integer.valueOf(query.getChildrenOrganizeId()));
+                MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", query.getChildrenOrganizeId()));
+                if (mallShop!=null){
+                    query.setShopNoList(Arrays.asList(mallShop.getShopNo()));
+                    shopNoAndOrganizeId.put(mallShop.getShopNo(), Integer.valueOf(query.getChildrenOrganizeId()));
+                }else {
+                    Page<MallItemPageResp> p = new Page<>();
+                    p.setSize(page.getSize());
+                    p.setRecords(new ArrayList<>());
+                    p.setCurrent(page.getCurrent());
+                    p.setPages(page.getPages());
+                    return p;
+                }
+            }
+        }
+
         Page<MallItemPageResp> p =baseMapper.getMallItemPage(page,query);
         p.getRecords().stream().forEach(f -> {
             f.setCreatedStr(f.getCreatedTime());
@@ -192,7 +252,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         //销售商品
         if(type.getCode().equals(MallItemEnum.Type.Type_1.getCode())){
             //商品赋值
-            AssertUtils.notNull(model.getSkus(), "商品Sku不能为空");
             List<MallItemSkuModel> skuList = model.getSkus();
             if(CollectionUtil.isNotEmpty(skuList)){
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
@@ -203,16 +262,38 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
+
+                //添加Sku，sepc
+                for (int i=0;i< model.getSkus().size();i++){
+                    MallItemSkuModel f = model.getSkus().get(i);
+                    AssertUtils.notNull(f.getSkuSpecs(), "Sku规格不能为空");
+                    MallSku sku = new MallSku();
+                    sku.setItemNo(model.getItemNo());
+                    sku.setSkuNo(model.getItemNo()+"_"+StrUtil.toString(IDGeneratorUtils.getLongId()));
+                    BeanUtils.copyProperties(f,sku);
+                    sku.setSortValue(i);
+                    mallSkuService.save(sku);
+                    f.getSkuSpecs().stream().forEach(s -> {
+                        MallSkuSpec skuSpec = new MallSkuSpec();
+                        skuSpec.setSkuNo(sku.getSkuNo());
+                        BeanUtils.copyProperties(s,skuSpec);
+                        mallSkuSpecService.save(skuSpec);
+                    });
+                }
             }else{
-                List<MallItemSkuModel> newSkuList = new ArrayList<>();
                 MallItemSkuModel skuModel = new MallItemSkuModel();
                 skuModel.setSalePrice(model.getSalePrice());
                 skuModel.setPrice(model.getPrice());
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
                 model.setHighestSalePrice(model.getSalePrice());
-                newSkuList.add(skuModel);
-                skuList = newSkuList;
+
+                MallSku sku = new MallSku();
+                BeanUtils.copyProperties(skuModel,sku);
+                sku.setSortValue(0);
+                sku.setItemNo(model.getItemNo());
+                sku.setSkuNo("default_"+model.getItemNo());
+                mallSkuService.save(sku);
             }
 
             BeanUtils.copyProperties(model,t);
@@ -220,23 +301,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             t.setDeliveryType(JSONUtil.toJsonStr(model.getDeliveryType()));
             t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddressIds()));
             baseMapper.insert(t);
-            //添加Sku，sepc
-            for (int i=0;i< model.getSkus().size();i++){
-                MallItemSkuModel f = model.getSkus().get(i);
-                AssertUtils.notNull(f.getSkuSpecs(), "Sku规格不能为空");
-                MallSku sku = new MallSku();
-                sku.setItemNo(t.getItemNo());
-                sku.setSkuNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
-                BeanUtils.copyProperties(f,sku);
-                sku.setSortValue(i);
-                mallSkuService.save(sku);
-                f.getSkuSpecs().stream().forEach(s -> {
-                    MallSkuSpec skuSpec = new MallSkuSpec();
-                    skuSpec.setSkuNo(sku.getSkuNo());
-                    BeanUtils.copyProperties(s,skuSpec);
-                    mallSkuSpecService.save(skuSpec);
-                });
-            }
+
             //添加视频
             if(CollectionUtil.isNotEmpty(model.getTopVideoList())){
                 MallItemVideoModel videoModel = model.getTopVideoList().get(0);
@@ -286,22 +351,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         model.setItemCover(itemCover);
         MallItem t = new MallItem();
         //销售商品
-        if(type.getCode().equals(MallItemEnum.Type.Type_0.getCode())){
-            //商品赋值
-            AssertUtils.notNull(model.getSkus(), "商品Sku不能为空");
-            List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
-            List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
-            MallItemSkuModel skuModel = skuMinModel.get(0);
-            model.setSalePrice(skuModel.getSalePrice());
-            model.setPrice(skuModel.getPrice());
-            model.setStock(skuModel.getStock());
-            model.setGoodsNo(skuModel.getGoodsNo());
-            model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
-
-            BeanUtils.copyProperties(model,t);
-            t.setBanners(banners);
-            baseMapper.updateById(t);
-
+        if(type.getCode().equals(MallItemEnum.Type.Type_1.getCode())){
             //先删除旧数据，再添加
             LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
                     .eq(MallSku::getItemNo, model.getItemNo());
@@ -313,23 +363,56 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 skuSpeclist.stream().forEach(i -> mallSkuSpecService.removeById(i.getId()));
             });
             mallSkuService.remove(skuWrapper);
+
             //添加Sku，sepc
-            for (int i=0;i< model.getSkus().size();i++){
-                MallItemSkuModel f = model.getSkus().get(i);
-                AssertUtils.notNull(f.getSkuSpecs(), "Sku规格不能为空");
+            List<MallItemSkuModel> skuList = model.getSkus();
+            if(CollectionUtil.isNotEmpty(skuList)){
+                List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
+                List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
+                MallItemSkuModel skuModel = skuMinModel.get(0);
+                model.setSalePrice(skuModel.getSalePrice());
+                model.setPrice(skuModel.getPrice());
+                model.setStock(skuModel.getStock());
+                model.setGoodsNo(skuModel.getGoodsNo());
+                model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
+
+                //添加Sku，sepc
+                for (int i=0;i< model.getSkus().size();i++){
+                    MallItemSkuModel f = model.getSkus().get(i);
+                    AssertUtils.notNull(f.getSkuSpecs(), "Sku规格不能为空");
+                    MallSku sku = new MallSku();
+                    sku.setItemNo(model.getItemNo());
+                    sku.setSkuNo(model.getItemNo()+"_"+StrUtil.toString(IDGeneratorUtils.getLongId()));
+                    BeanUtils.copyProperties(f,sku);
+                    sku.setSortValue(i);
+                    mallSkuService.save(sku);
+                    f.getSkuSpecs().stream().forEach(s -> {
+                        MallSkuSpec skuSpec = new MallSkuSpec();
+                        skuSpec.setSkuNo(sku.getSkuNo());
+                        BeanUtils.copyProperties(s,skuSpec);
+                        mallSkuSpecService.save(skuSpec);
+                    });
+                }
+            }else{
+                MallItemSkuModel skuModel = new MallItemSkuModel();
+                skuModel.setSalePrice(model.getSalePrice());
+                skuModel.setPrice(model.getPrice());
+                skuModel.setStock(model.getStock());
+                skuModel.setGoodsNo(model.getGoodsNo());
+                model.setHighestSalePrice(model.getSalePrice());
+
                 MallSku sku = new MallSku();
-                sku.setItemNo(t.getItemNo());
-                sku.setSkuNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
-                BeanUtils.copyProperties(f,sku);
-                sku.setSortValue(i);
+                BeanUtils.copyProperties(skuModel,sku);
+                sku.setSortValue(0);
+                sku.setItemNo(model.getItemNo());
+                sku.setSkuNo("default_"+model.getItemNo());
                 mallSkuService.save(sku);
-                f.getSkuSpecs().stream().forEach(s -> {
-                    MallSkuSpec skuSpec = new MallSkuSpec();
-                    skuSpec.setSkuNo(sku.getSkuNo());
-                    BeanUtils.copyProperties(s,skuSpec);
-                    mallSkuSpecService.save(skuSpec);
-                });
             }
+
+            BeanUtils.copyProperties(model,t);
+            t.setBanners(banners);
+            baseMapper.updateById(t);
+
             //添加视频
             if(CollectionUtil.isNotEmpty(model.getTopVideoList())){
                 //先删除旧数据，再添加

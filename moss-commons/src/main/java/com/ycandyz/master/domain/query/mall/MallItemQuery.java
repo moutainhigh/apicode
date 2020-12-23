@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.util.List;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -34,6 +36,9 @@ public class MallItemQuery implements Serializable {
     @Condition(condition = ConditionEnum.EQ)
     private String shopNo;
 
+    @ApiModelProperty(value = "商家编号")
+    private List<String> shopNoList;
+
     @ApiModelProperty(name = "item_name", value = "商品名称")
     @Condition(condition = ConditionEnum.EQ)
     private String itemName;
@@ -57,6 +62,16 @@ public class MallItemQuery implements Serializable {
     @ApiModelProperty(name = "created_time_end", value = "止")
     @Condition(field = "created_time_end", condition = ConditionEnum.LE)
     private Date createdTimeEnd;
+
+    @ApiModelProperty(name = "is_group", value = "1集团，0非集团")
+    @Condition(condition = ConditionEnum.EQ)
+    private String isGroup;
+
+    @ApiModelProperty(name = "children_organize_id", value = "集团ID")
+    @Condition(condition = ConditionEnum.EQ)
+    private String childrenOrganizeId;
+
+
 
 
 }
