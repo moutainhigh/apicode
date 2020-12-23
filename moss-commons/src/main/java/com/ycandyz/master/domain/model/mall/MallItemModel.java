@@ -36,6 +36,9 @@ public class MallItemModel {
 
     private Long id;
 
+    @ApiModelProperty(name = "shop_no",value = "商店编号")
+    private String shopNo;
+
     @NotBlank(message = "分类编号不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "category_no",value = "分类编号")
     private String categoryNo;

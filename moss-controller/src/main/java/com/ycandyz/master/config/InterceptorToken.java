@@ -62,6 +62,7 @@ public class InterceptorToken implements HandlerInterceptor {
         log.info(path);
         String url = httpServletRequest.getRequestURI();
         String token = httpServletRequest.getHeader(SecurityConstant.JWT_TOKEN);
+        String source = httpServletRequest.getHeader(SecurityConstant.SOURCE);
         String method = httpServletRequest.getMethod();
         if (!method.equals("OPTIONS")){
             log.info(token);
@@ -115,6 +116,7 @@ public class InterceptorToken implements HandlerInterceptor {
                     userVO.setId(userId);
                     userVO.setOrganizeId(organizeId);
                     userVO.setPlatform(platform);
+                    userVO.setSource(source);
                     if((StrUtil.isEmpty(shopNo) || SecurityConstant.DEFAULT_SHOP_NO.equals(shopNo)) && organizeId != null){
                         LambdaQueryWrapper<MallShop> queryWrapper = new LambdaQueryWrapper<MallShop>()
                                 .eq(MallShop::getOrganizeId, organizeId);

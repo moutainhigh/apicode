@@ -1,8 +1,10 @@
 package com.ycandyz.master.service.mall.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -56,8 +58,21 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, itemNo);
         MallItem entity = baseMapper.selectOne(queryWrapper);
+        MallItem t = baseMapper.selectMallItemById(entity.getId());
+        entity.setPickupAddressIds(t.getPickupAddressIds());
+        entity.setDeliveryType(t.getDeliveryType());
+        if(entity != null){
+            if(StrUtil.isNotEmpty(entity.getBanners())){
+                entity.setBanners(entity.getBanners().replaceAll("\"",""));
+            }
+        }
+
         MallItemResp vo = new MallItemResp();
-        BeanUtils.copyProperties(entity,vo);
+        BeanUtil.copyProperties(entity,vo);
+        List<Integer> pl = JSONObject.parseArray(t.getPickupAddressIds(), Integer.class);
+        List<Integer> dl = JSONObject.parseArray(t.getDeliveryType(), Integer.class);
+        vo.setPickupAddressIds(pl);
+        vo.setDeliveryType(dl);
 
         //获取sku
         LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
@@ -146,7 +161,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     @Override
     public boolean insert(MallItemModel model) {
         // TODO shipping_no 值从哪来
-        model.setShippingNo("111");
+        model.setShippingNo(model.getShippingNo() !=null?model.getShippingNo():"");
+        model.setShopNo(getShopNo());
         //公共校验
         MallItemEnum.Type type = MallItemEnum.Type.parseCode(model.getType());
         AssertUtils.notNull(type, "商品类型不正确");
@@ -171,6 +187,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
             BeanUtils.copyProperties(model,t);
             t.setBanners(banners);
+            t.setDeliveryType(JSONUtil.toJsonStr(model.getDeliveryType()));
+            t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddressIds()));
             baseMapper.insert(t);
             //添加Sku，sepc
             for (int i=0;i< model.getSkus().size();i++){
