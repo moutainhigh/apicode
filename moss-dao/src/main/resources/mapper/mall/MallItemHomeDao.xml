@@ -145,29 +145,29 @@
         <if test="query.shopNo != null and query.shopNo != ''"> and t.shop_no = #{query.shopNo} </if>
         <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
     </select>
-    <select id="getMallItemPage" resultType="com.ycandyz.master.domain.response.mall.MallItemResp">
+    <select id="getMallItemPage" resultType="com.ycandyz.master.domain.response.mall.MallItemPageResp">
         SELECT
         t.id,
-        t.shop_no,
-        t.item_no,
-        t.item_name,
-        t.goods_no,
-        t.type,
         t.category_no,
-        t.price,
-        t.lowest_sale_price,
+        t.created_time,
+        t.goods_no,
         t.highest_sale_price,
-        t.stock,
-        t.frozen_stock,
-        t.base_sales,
+        t.is_screen,
+        t.item_cover,
+        t.item_name,
+        t.item_no,
+        t.lowest_sale_price,
         t.real_sales,
+        t.price,
+        t.shop_no,
         t.sort_value,
         t.status,
-        t.created_time,
+        t.stock,
+        t.type,
         t.non_price_type,
         t.non_sale_price,
         t.non_price,
-        t.item_cover
+        t.qr_code_url
         FROM mall_item t
         WHERE 1=1
         AND t.status != 10

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
+import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.mall.MallItemDTO;
 import com.ycandyz.master.entities.mall.MallItem;
@@ -55,7 +56,7 @@ public interface MallItemHomeDao extends BaseMapper<MallItem> {
     List<MallItemDTO> selectMallItemByCartOrderSn(@Param("orderSn") String orderSn);
     Page<MallItemBaseResp> selectMallItemPageByCouponId(Page page, @Param("query") MallItemBaseQuery query);
 
-    Page<MallItemResp> getMallItemPage(Page page, @Param("q") MallItemQuery query);
+    Page<MallItemPageResp> getMallItemPage(Page page, @Param("q") MallItemQuery query);
 
     int updateByItemNo(MallItem entity);
 }

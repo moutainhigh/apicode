@@ -43,47 +43,59 @@ public class MallItemResp {
 
    private Long id;
 
-   @ApiModelProperty(name = "shop_no", value = "商店编号")
-   private String shopNo;
+   @ApiModelProperty(name = "category_no", value = "分类编号")
+   private String categoryNo;
 
-   @ApiModelProperty(name = "item_no", value = "商品编号")
-   private String itemNo;
+   @ApiModelProperty(name = "category_txt", value = "分类名称")
+   private String categoryTxt;
 
-   @ApiModelProperty(name = "item_name", value = "商品名称")
-   private String itemName;
+   @ApiModelProperty(name = "children_organize_name", value = "集团名称")
+   private String childrenOrganizeName;
+
+   @ApiModelProperty(name = "created_str", value = "创建时间 yyyy-MM-dd HH:mm:ss")
+   private String createdStr;
 
    @ApiModelProperty(name = "goods_no", value = "货号")
    private String goodsNo;
 
-   @ApiModelProperty(name = "type", value = "商品类型(0非销售商品,1商品)")
-   private Integer type;
-
-   @ApiModelProperty(name = "category_no", value = "分类编号")
-   private String categoryNo;
-
-   @ApiModelProperty(name = "category_no_name", value = "分类名称")
-   private String categoryNoName;
-
-   @ApiModelProperty(name = "price", value = "原价格")
-   private BigDecimal price;
-
-   @ApiModelProperty(name = "lowest_sale_price", value = "最低销售价格")
-   private BigDecimal lowestSalePrice;
+   @ApiModelProperty(name = "goods_no_list", value = "全部货号")
+   private String goodsNoList;
 
    @ApiModelProperty(name = "highest_sale_price", value = "最高销售价格")
    private BigDecimal highestSalePrice;
 
-   @ApiModelProperty(name = "stock", value = "库存")
-   private Integer stock;
+   @ApiModelProperty(name = "is_screen", value = "是否系统屏蔽 0-通过 1-屏蔽")
+   private Boolean isScreen;
 
-   @ApiModelProperty(name = "frozen_stock", value = "冻结库存")
-   private Integer frozenStock;
+   @ApiModelProperty(name = "item_cover", value = "封面图")
+   private String itemCover;
 
-   @ApiModelProperty(name = "base_sales", value = "基础销量")
-   private Integer baseSales;
+   @ApiModelProperty(name = "item_name", value = "商品名称")
+   private String itemName;
+
+   @ApiModelProperty(name = "item_no", value = "商品编号")
+   private String itemNo;
+
+   @ApiModelProperty(name = "lowest_sale_price", value = "最低销售价格")
+   private BigDecimal lowestSalePrice;
+
+   @ApiModelProperty(name = "organize_id", value = "机构ID")
+   private Long organizeId;
 
    @ApiModelProperty(name = "real_sales", value = "实际销量")
    private Integer realSales;
+
+   @ApiModelProperty(name = "sale_price",value = "商品-售价")
+   private BigDecimal salePrice;
+
+   @ApiModelProperty(name = "price", value = "原价格")
+   private BigDecimal price;
+
+   @ApiModelProperty(name = "sales", value = "销量")
+   private Integer sales;
+
+   @ApiModelProperty(name = "shop_no", value = "商店编号")
+   private String shopNo;
 
    @ApiModelProperty(name = "sort_value", value = "排序值")
    private Integer sortValue;
@@ -91,9 +103,12 @@ public class MallItemResp {
    @ApiModelProperty(name = "status", value = "10: 上架中，20: 已下架，30: 售罄，40: 仓库中，50: 删除")
    private Integer status;
 
-   @ApiModelProperty(name = "created_time", value = "添加时间")
-   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-   private Date createdTime;
+   @ApiModelProperty(name = "stock", value = "库存")
+   private Integer stock;
+
+   //非销售类商品
+   @ApiModelProperty(name = "type",value = "商品类型(0非商品,1商品)")
+   private Integer type;
 
    @ApiModelProperty(name = "non_price_type",value = "非销售商品-价格类型(0不显示,1显示)")
    private Integer nonPriceType;
@@ -107,11 +122,21 @@ public class MallItemResp {
 
 
 
+   @ApiModelProperty(name = "category_no_name", value = "分类名称")
+   private String categoryNoName;
+
+   @ApiModelProperty(name = "frozen_stock", value = "冻结库存")
+   private Integer frozenStock;
+
+   @ApiModelProperty(name = "base_sales", value = "基础销量")
+   private Integer baseSales;
+
+   @ApiModelProperty(name = "created_time", value = "添加时间")
+   @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+   private Date createdTime;
+
    @ApiModelProperty(name = "item_text", value = "商品描述")
    private String itemText;
-
-   @ApiModelProperty(name = "item_cover", value = "封面图")
-   private String itemCover;
 
    @ApiModelProperty(name = "banners", value = "轮播图，jsonarray")
    private List<String> banners;
@@ -225,8 +250,7 @@ public class MallItemResp {
    @ApiModelProperty(name = "delivery_type", value = "1-配送 2-自提")
    private List<Integer> deliveryType;
 
-   @ApiModelProperty(name = "is_screen", value = "是否系统屏蔽 0-通过 1-屏蔽")
-   private Boolean isScreen;
+
 
    @ApiModelProperty(name = "audit_status", value = "审核状态 0待审核 1人工审核通过 2人工审核不通过（屏蔽）")
    private Boolean auditStatus;

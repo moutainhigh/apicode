@@ -10,6 +10,7 @@ import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
 import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
+import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.entities.mall.MallItem;
 
@@ -28,7 +29,7 @@ public interface IMallItemService extends IService<MallItem>{
 
     boolean deleteByItemNo(String itemNo);
 
-    Page<MallItemResp> getMallItemPage(Page<MallItem> page, MallItemQuery query);
+    Page<MallItemPageResp> getMallItemPage(Page<MallItem> page, MallItemQuery query);
 
     boolean insert(MallItemModel model);
 
