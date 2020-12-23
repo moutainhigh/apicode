@@ -262,7 +262,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     ticketInfo.setDays(couponDetailQuery.getDays());
                     ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());
                     ticketInfo.setFullMoney(couponDetailQuery.getFullMoney());
-                    ticketInfo.setName(couponDetail.getName());
+                    ticketInfo.setName(couponDetailQuery.getName());
                     String stringBuffer = "";
                     if (couponDetailQuery.getObtainList()!=null && couponDetailQuery.getObtainList().size()>0){
                         for (String str : couponDetailQuery.getObtainList()){
@@ -293,7 +293,6 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 }
 
                 //最后更新优惠券表
-                coupon.setUpdateTime(new Date());
                 coupon.setName(couponDetailQuery.getName());
                 coupon.setCouponSum(couponDetailQuery.getCouponSum());
                 couponDao.updateById(coupon);
@@ -474,9 +473,9 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 vo.setOrderStatus(dto.getOrderStatus());
                 vo.setPayAmount(dto.getPayAmount());
                 if (dto.getSource()==2) {
-                    if (dto.getObtain().contains("1")) {
+                    if (dto.getObtain().contains("0")) {
                         vo.setSource(2);
-                    }else if (dto.getObtain().contains("2")){
+                    }else if (dto.getObtain().contains("1")){
                         vo.setSource(3);
                     }
                 }else {
@@ -562,10 +561,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     }
 
     public static void main(String[] args) {
-        List<String> list = new ArrayList<>();
-        list.add("1");
-        list.add("2");
-        list.add("3");
-        System.out.println(list.toString());
+        String obtain = "0";
+        System.out.println(obtain.contains("1"));
     }
 }
