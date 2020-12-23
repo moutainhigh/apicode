@@ -99,6 +99,13 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     couponDetailVO = new CouponDetailVO();
                     BeanUtils.copyProperties(couponDetailDTO, couponDetailVO);
 
+                    if (couponDetailDTO.getObtain()!=null && !"".equals(couponDetailDTO.getObtain())){
+                        couponDetailVO.setObtainList(Arrays.asList(couponDetailDTO.getObtain().split(",")));
+                    }else {
+                        couponDetailVO.setObtainList(new ArrayList<>());
+                    }
+                    couponDetailVO.setObtain(null);
+
                     //获取成交金额
                     List<CouponUserAndCartOrderDTO> couponUserAndCartOrderDTOS = couponDetailUserDao.queryAmountByCouponId(couponDetailDTO.getCouponId(),userVO.getShopNo());
                     BigDecimal bigDecimal = new BigDecimal("0");
@@ -175,7 +182,11 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             //修改领取页面返回参数
             if (couponTicketInfoDTO.getObtain()!=null && !"".equals(couponTicketInfoDTO.getObtain())){
                 couponTicketInfoVO.setObtainList(Arrays.asList(couponTicketInfoDTO.getObtain().split(",")));
+            }else {
+                couponTicketInfoVO.setObtainList(new ArrayList<>());
             }
+            couponTicketInfoVO.setObtain(null);
+
             //获取当前优惠券关联的商品集合
             List<MallItemBaseResp> couponDetailItemDTOS = couponDetailItemDao.queryByCouponDetailId(couponTicketInfoDTO.getId());
             if (couponDetailItemDTOS!=null && couponDetailItemDTOS.size()>0){
