@@ -32,6 +32,8 @@ public interface MallItemHomeDao extends BaseMapper<MallItem> {
      */
     List<MallItemDTO> selectItemSku(@Param("skuNos") List<String> skuNos);
 
+    MallItem selectMallItemById(Long id);
+
 
     /**
      * 按库存编号修改

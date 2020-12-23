@@ -88,6 +88,15 @@
         <if test="query.shopNo != null and query.shopNo != ''"> and t.shop_no = #{query.shopNo} </if>
         <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
     </select>
+
+    <select id="selectMallItemById" resultType="com.ycandyz.master.entities.mall.MallItem">
+        SELECT
+        t.pickup_address_ids,
+        t.delivery_type
+        FROM mall_item t
+        WHERE 1=1
+        AND t.id = #{id}
+    </select>
     
     <select id="selectItemSku" resultType="com.ycandyz.master.dto.mall.MallItemDTO">
         SELECT i.id,i.item_no,i.item_name,s.sku_no,i.`status`,i.stock,i.initial_purchases,i.limit_cycle_type,i.limit_skus,i.limit_orders,s.stock AS sku_stock

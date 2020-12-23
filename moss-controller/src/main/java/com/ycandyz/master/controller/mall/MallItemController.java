@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.BasePageResult;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.PageModel;
+import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
+import com.ycandyz.master.entities.base.BaseBank;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.service.mall.impl.MallItemServiceImpl;
 import com.ycandyz.master.validation.ValidatorContract;
@@ -40,6 +42,12 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 	public CommonResult<MallItemModel> insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemModel entity) {
         return result(service.insert(entity),entity,"保存失败!");
 	}
+
+    @ApiOperation(value = "通过ID")
+    @GetMapping(value = "select/{id}")
+    public CommonResult<MallItem> getById(@PathVariable Long id) {
+        return CommonResult.success(service.getById(id));
+    }
 	
 	@ApiOperation(value = "通过ID更新")
     @PutMapping(value = "{item_no}")
