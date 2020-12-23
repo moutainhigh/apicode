@@ -44,8 +44,6 @@ public interface MallItemHomeDao extends BaseMapper<MallItem> {
 
     int updateBuyNumByItemNo(@Param("itemNo") String itemNo);
 
-<<<<<<< HEAD:moss-dao/src/main/java/com/ycandyz/master/dao/mall/MallHomeItemDao.java
-    Page<MallItemResp> selectMallItemPageByCouponId(Page page, @Param("query") MallItemQuery query);
 
     /**
      * 通过购物车订单编号，查询商品集合
@@ -53,11 +51,9 @@ public interface MallItemHomeDao extends BaseMapper<MallItem> {
      * @return
      */
     List<MallItemDTO> selectMallItemByCartOrderSn(@Param("orderSn") String orderSn);
-=======
     Page<MallItemBaseResp> selectMallItemPageByCouponId(Page page, @Param("query") MallItemBaseQuery query);
 
     Page<MallItemResp> getMallItemPage(Page page, @Param("q") MallItemQuery query);
 
     int updateByItemNo(MallItem entity);
->>>>>>> dev-item-hsg:moss-dao/src/main/java/com/ycandyz/master/dao/mall/MallItemHomeDao.java
 }

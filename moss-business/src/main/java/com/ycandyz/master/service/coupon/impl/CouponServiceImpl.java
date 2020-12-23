@@ -1,7 +1,6 @@
 package com.ycandyz.master.service.coupon.impl;
 
 import cn.hutool.core.date.DateUtil;
-import com.amazonaws.services.dynamodbv2.xspec.B;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.BasePageResult;
@@ -10,39 +9,26 @@ import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.dao.coupon.CouponDao;
 import com.ycandyz.master.dao.coupon.CouponDetailDao;
 import com.ycandyz.master.dao.coupon.CouponDetailItemDao;
-<<<<<<< HEAD
 import com.ycandyz.master.dao.coupon.CouponDetailUserDao;
-import com.ycandyz.master.dao.mall.MallHomeItemDao;
-import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
-=======
 import com.ycandyz.master.dao.mall.MallItemHomeDao;
 import com.ycandyz.master.dao.mall.goodsManage.GoodsMallCategoryDao;
->>>>>>> dev-item-hsg
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.coupon.CouponBaseQuery;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
 import com.ycandyz.master.domain.query.coupon.CouponQuery;
-<<<<<<< HEAD
 import com.ycandyz.master.domain.query.coupon.CouponStateQuery;
 import com.ycandyz.master.domain.query.coupon.CouponUseUserQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.coupon.CouponDetailDTO;
-import com.ycandyz.master.dto.coupon.CouponDetailItemDTO;
 import com.ycandyz.master.dto.coupon.CouponUseUserDTO;
 import com.ycandyz.master.dto.coupon.CouponUserAndCartOrderDTO;
-import com.ycandyz.master.dto.mall.MallCategoryDTO;
 import com.ycandyz.master.dto.mall.MallItemDTO;
-=======
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
-import com.ycandyz.master.dto.coupon.CouponDetailDTO;
->>>>>>> dev-item-hsg
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.entities.coupon.CouponDetail;
 import com.ycandyz.master.entities.coupon.CouponDetailItem;
-import com.ycandyz.master.entities.coupon.CouponDetailUser;
-import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
 import com.ycandyz.master.model.coupon.CouponUseUserVO;
@@ -394,25 +380,14 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         basePageResult.setPageSize(page.getSize());
         UserVO userVO = getUser();
         Page page1 = new Page();
-<<<<<<< HEAD
         page1.setCurrent(page.getCurrent());
         page1.setSize(page.getSize());
-        MallItemQuery mallItemQuery = new MallItemQuery();
+        MallItemBaseQuery mallItemQuery = new MallItemBaseQuery();
         mallItemQuery.setShopNo(userVO.getShopNo());
         mallItemQuery.setCategoryNo(query.getCategoryNo()!=null?query.getCategoryNo().trim():null);
         mallItemQuery.setItemName(query.getKeyword()!=null?query.getKeyword().trim():null);
-        Page<MallItemResp> mallItemRespPage = null;
-        if (query.getType().equals("all")){
-=======
-        page1.setPages(page);
-        page1.setSize(pageSize);
-        MallItemBaseQuery mallItemQuery = new MallItemBaseQuery();
-        mallItemQuery.setShopNo(userVO.getShopNo());
-        mallItemQuery.setCategoryNo(category);
-        mallItemQuery.setItemName(keyword);
         Page<MallItemBaseResp> mallItemRespPage = null;
-        if (type.equals("all")){
->>>>>>> dev-item-hsg
+        if (query.getType().equals("all")){
             mallItemRespPage = mallHomeItemDao.selectMallItemPage(page1,mallItemQuery);
         }else if (query.getType().equals("choose")){
             mallItemQuery.setCouponId(query.getId());
