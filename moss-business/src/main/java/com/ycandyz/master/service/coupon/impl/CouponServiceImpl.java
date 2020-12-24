@@ -253,8 +253,12 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     }
                     //有不满足的进入到优惠券详情修改相关代码
                     CouponDetail ticketInfo = new CouponDetail();
-                    ticketInfo.setBeginTime(couponDetailQuery.getBeginTime());
-                    ticketInfo.setEndTime(couponDetailQuery.getEndTime());
+                    if (couponDetailQuery.getBeginTime()!=null) {
+                        ticketInfo.setBeginTime(DateUtil.offsetHour(couponDetailQuery.getBeginTime(), -8));
+                    }
+                    if (couponDetailQuery.getEndTime()!=null) {
+                        ticketInfo.setEndTime(DateUtil.offsetHour(couponDetailQuery.getEndTime(), -8));
+                    }
                     ticketInfo.setCreateTime(new Date());
                     ticketInfo.setDays(couponDetailQuery.getDays());
                     ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());
@@ -303,13 +307,11 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     @Override
     public CommonResult<String> insertTicket(CouponDetailQuery couponDetailQuery) {
         UserVO userVO = getUser();  //当前登陆用户
-        Date current = new Date();
         String ticketInfoNo = String.valueOf(IDGeneratorUtils.getLongId());
         String ticketNo = String.valueOf(IDGeneratorUtils.getLongId());
 
         //新增优惠券
         Coupon couponTicket = new Coupon();
-        couponTicket.setUpdateTime(current);
         couponTicket.setName(couponDetailQuery.getName());
         couponTicket.setCouponSum(couponDetailQuery.getCouponSum());
         couponTicket.setShopNo(userVO.getShopNo());
@@ -319,9 +321,12 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
 
         //新增优惠券详情
         CouponDetail ticketInfo = new CouponDetail();
-        ticketInfo.setBeginTime(couponDetailQuery.getBeginTime());
-        ticketInfo.setEndTime(couponDetailQuery.getEndTime());
-        ticketInfo.setCreateTime(new Date());
+        if (couponDetailQuery.getBeginTime()!=null) {
+            ticketInfo.setBeginTime(DateUtil.offsetHour(couponDetailQuery.getBeginTime(), -8));
+        }
+        if (couponDetailQuery.getEndTime()!=null) {
+            ticketInfo.setEndTime(DateUtil.offsetHour(couponDetailQuery.getEndTime(), -8));
+        }
         ticketInfo.setDays(couponDetailQuery.getDays());
         ticketInfo.setDiscountMoney(couponDetailQuery.getDiscountMoney());
         ticketInfo.setFullMoney(couponDetailQuery.getFullMoney());
@@ -340,7 +345,6 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         ticketInfo.setSuperposition(couponDetailQuery.getSuperposition());
         ticketInfo.setTakeNum(couponDetailQuery.getTakeNum());
         ticketInfo.setCouponDetailNo(ticketInfoNo);
-        ticketInfo.setUpdateTime(current);
         ticketInfo.setUserType(couponDetailQuery.getUserType());
         ticketInfo.setUseType(couponDetailQuery.getUseType());
         ticketInfo.setCouponId(couponTicket.getId());
