@@ -57,11 +57,12 @@
             info.discount_money,
             info.validity_type,
             ti.obtain_num,
+            ti.coupon_sum,
             ti.coupon_sum-ti.obtain_num as surplus_num,
             ti.use_num,
             if(
                 ti.`status`=0, 4, if(
-                    info.validity_type!=0, 2, if(
+                    info.validity_type!=0, if(ti.coupon_sum &lt;= ti.obtain_num,2,1), if(
                         info.begin_time>now(), 1, if(
                             info.end_time>=now(), 2, 3
                         )
@@ -84,12 +85,13 @@
                 </if>
                 <if test="p.subStatus==1">
                     and ti.status=1
-                    and ((info.begin_time &lt;= now()
-                    and info.end_time &gt;= now()) or info.validity_type!=0)
+                    and ((info.validity_type=0 and info.begin_time &lt;= now()
+                    and info.end_time &gt;= now()) or (info.validity_type!=0 and ti.coupon_sum &gt; ti.obtain_num))
                 </if>
                 <if test="p.subStatus==2">
                     and ti.status=1
-                    and info.end_time &lt;= now()
+                    and ((info.validity_type=0 and info.end_time &lt;= now())
+                    or (info.validity_type!=0 and ti.coupon_sum &lt;= ti.obtain_num))
                 </if>
             </if>
             <if test="p.createTimeBegin!=null">
