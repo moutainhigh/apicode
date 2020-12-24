@@ -39,4 +39,6 @@ public class MallOrderByAfterSalesVO {
     private BigDecimal allMoney;
     @ApiModelProperty(value = "发货方式:1-配送 2-自提")
     private Integer deliverType;
+    @ApiModelProperty(value = "订单最大优惠金额")
+    private BigDecimal orderCouponDeducted;
 }

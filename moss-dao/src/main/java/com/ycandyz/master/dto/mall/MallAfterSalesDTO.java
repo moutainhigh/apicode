@@ -120,6 +120,8 @@ public class MallAfterSalesDTO {
     private BigDecimal refundMoney;
     @ApiModelProperty(value = "所属企业")
     private String organizeName;
+    @ApiModelProperty(value = "售后订单中最大的优惠面额")
+    private BigDecimal saleCouponDeducted;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")
