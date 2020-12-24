@@ -31,7 +31,7 @@ public class CouponDetailUserResp {
     private Long userId;
 
     @ApiModelProperty(value = "姓名")
-    private String name;
+    private String username;
 
     @ApiModelProperty(value = "手机号码")
     private String phone;
@@ -47,6 +47,9 @@ public class CouponDetailUserResp {
 
     @ApiModelProperty(name = "status", value = "优惠券状态分类：0:待使用,1:过期,2:已使用")
     private Integer status;
+
+    @ApiModelProperty(name = "statusName", value = "优惠券状态中文")
+    private String statusName;
 
     @ApiModelProperty(value = "操作类型(1启用,0停止)",required=true)
     private Integer enabled;

@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.domain.enums.coupon.CouponActivityEnum;
+import com.ycandyz.master.domain.enums.coupon.CouponActivityUserEnum;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.query.coupon.CouponActivityCouponQuery;
@@ -215,10 +216,13 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
             p.getRecords().stream().forEach(f -> {
                 if(f.getStatus() == 1){
                     f.setStatus(2);
+                    f.setStatusName(CouponActivityUserEnum.Status.parseCode(f.getStatus()).getText());
                 }else if(f.getEndTime().before(new Date())){
                     f.setStatus(1);
+                    f.setStatusName(CouponActivityUserEnum.Status.parseCode(f.getStatus()).getText());
                 }else{
                     f.setStatus(0);
+                    f.setStatusName(CouponActivityUserEnum.Status.parseCode(f.getStatus()).getText());
                 }
             });
         }
