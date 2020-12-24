@@ -31,8 +31,8 @@ public class TemplateContentResp implements Serializable {
     @ApiModelProperty(name = "template_id", value = "模板id")
     private Integer templateId;
 
-    @ApiModelProperty(name = "component_content", value = "组件内容")
-    private List<TemplateTableContentResp> componentContents;
+    @ApiModelProperty(name = "contents", value = "组件内容")
+    private List<TemplateTableContentResp> contents;
 
     @ApiModelProperty(name = "user_id", value = "创建人")
     private Long userId;
