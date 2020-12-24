@@ -34,8 +34,8 @@ public class TemplateComponentController extends BaseController<TemplateComponen
 
     @ApiOperation(value = "查询全部")
     @GetMapping
-    public CommonResult<List<TemplateComponentResp>> selectList() {
-        return CommonResult.success((service.listComponents()));
+    public CommonResult<BaseResult<List<TemplateComponentResp>>> selectList() {
+        return CommonResult.success(new BaseResult<>(service.listComponents()));
     }
 
     @ApiOperation(value = "查询全部")
