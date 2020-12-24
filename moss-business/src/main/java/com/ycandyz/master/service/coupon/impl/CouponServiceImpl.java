@@ -12,6 +12,7 @@ import com.ycandyz.master.dao.coupon.CouponDetailDao;
 import com.ycandyz.master.dao.coupon.CouponDetailItemDao;
 import com.ycandyz.master.dao.coupon.CouponDetailUserDao;
 import com.ycandyz.master.dao.mall.MallHomeItemDao;
+import com.ycandyz.master.dao.mall.MallOrderDao;
 import com.ycandyz.master.dao.mall.goodsManage.MallCategoryDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.coupon.CouponBaseQuery;
@@ -32,6 +33,7 @@ import com.ycandyz.master.entities.coupon.CouponDetail;
 import com.ycandyz.master.entities.coupon.CouponDetailItem;
 import com.ycandyz.master.entities.coupon.CouponDetailUser;
 import com.ycandyz.master.entities.mall.MallItem;
+import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
 import com.ycandyz.master.model.coupon.CouponUseUserVO;
@@ -42,6 +44,7 @@ import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import com.ycandyz.master.vo.MallItemVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,6 +84,9 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
 
     @Autowired
     private CouponDetailUserDao couponDetailUserDao;
+
+    @Autowired
+    private MallOrderDao mallOrderDao;
 
     @Override
     public CommonResult<BasePageResult<CouponDetailVO>> selectPageList(PageModel pageModel, CouponQuery couponQuery) {
@@ -507,6 +513,27 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                         List<String> itemNameList = itemDTOS.stream().map(MallItemDTO :: getItemName).collect(Collectors.toList());
                         vo.setItemNameList(itemNameList);
                     }
+                    List<MallOrder> mallOrders = mallOrderDao.selectList(new QueryWrapper<MallOrder>().eq("cart_order_sn",dto.getOrderSn()));
+                    List<String> orderNoList = new ArrayList<>();
+                    List<String> childOrderStatus = new ArrayList<>();
+                    if (mallOrders!=null && mallOrders.size()>0){
+                        for (MallOrder mallOrder : mallOrders) {
+                            orderNoList.add(mallOrder.getOrderNo());
+                            if (mallOrder.getStatus()==10){
+                                childOrderStatus.add("待支付");
+                            }else if (mallOrder.getStatus()==20){
+                                childOrderStatus.add("待发货");
+                            }else if (mallOrder.getStatus()==30){
+                                childOrderStatus.add("待收货");
+                            }else if (mallOrder.getStatus()==40){
+                                childOrderStatus.add("已收货");
+                            }else if (mallOrder.getStatus()==50){
+                                childOrderStatus.add("已取消");
+                            }
+                        }
+                    }
+                    vo.setOrderNoList(orderNoList);
+                    vo.setChildOrderStatusList(childOrderStatus);
                 }
                 list.add(vo);
             }
