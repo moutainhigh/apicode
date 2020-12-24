@@ -176,7 +176,7 @@
         FROM mall_item t
         LEFT JOIN mall_shop s ON t.shop_no = s.shop_no
         WHERE 1=1
-        AND t.status != 10
+        AND t.status != 50
         AND t.shop_no in
         <foreach collection="q.shopNoList" item="shopNo" index="index" open="(" close=")" separator=",">
             #{shopNo}
