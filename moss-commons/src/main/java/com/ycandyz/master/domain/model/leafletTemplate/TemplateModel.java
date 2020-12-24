@@ -75,7 +75,7 @@ public class TemplateModel implements Serializable {
 
     @NotNull(message = "失效时间不能为空", groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "end_time", value = "失效时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date endTime;
 
     @ApiModelProperty(name = "components", value = "模板明细")
