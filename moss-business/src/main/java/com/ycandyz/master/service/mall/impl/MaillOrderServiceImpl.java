@@ -180,7 +180,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
 
                         //列表中显示的总计金额，是   商品总价+运费
-                        mallOrderVo.setAllMoney(mallOrderDTO.getTotalMoney().add(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney())));
+                        mallOrderVo.setTotalMoney(mallOrderDTO.getTotalMoney().add(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney())));
 
                         //是否使用优惠券
                         if (mallOrderDTO.getIsCoupon()==null){
@@ -570,6 +570,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         if (mallOrderDTO != null){
             mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+
+            //运费
+            mallOrderVO.setShippingMoney(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney()));
 
             //拼接是否使用优惠券
             List<CouponDetailUser> list = couponDetailUserDao.selectList(new QueryWrapper<CouponDetailUser>().eq("order_sn",mallOrderVO.getCartOrderSn()));
