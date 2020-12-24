@@ -209,6 +209,8 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             mallOrder.setSubStatus(3010);
             Long timeAt = new Date().getTime() / 1000;
             mallOrder.setSendAt(timeAt.intValue()); //更新商家发货时间
+            mallOrder.setCreatedTime(null);
+            mallOrder.setUpdatedTime(null);
             mallOrderDao.updateById(mallOrder);
         }
 
@@ -403,6 +405,8 @@ public class MallShopShippingServiceImpl extends BaseService<MallShopShippingDao
             mallOrder.setSubStatus(3010);
             Long timeAt = new Date().getTime() / 1000;
             mallOrder.setSendAt(timeAt.intValue()); //更新商家发货时间
+            mallOrder.setCreatedTime(null);
+            mallOrder.setUpdatedTime(null);
             mallOrderDao.updateById(mallOrder);
         }
 
