@@ -40,10 +40,6 @@ public class TemplateClassifyQuery implements Serializable {
     @Condition(condition = ConditionEnum.EQ)
     private String classifyName;
 
-    @ApiModelProperty(name = "classify_type", value = "类别标识（0：报名表，1：投票管理，2：问卷调查，3：信息收集）")
-    @Condition(condition = ConditionEnum.EQ)
-    private Integer classifyType;
-
     @ApiModelProperty(name = "classify_img", value = "分类配图")
     @Condition(condition = ConditionEnum.EQ)
     private String classifyImg;

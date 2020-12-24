@@ -81,8 +81,8 @@ public class TemplateModel implements Serializable {
     @ApiModelProperty(name = "components", value = "模板明细")
     private List<TemplateDetailModel> components;
 
-    @ApiModelProperty(name = "classify_type", value = "模板类别")
-    private Integer classifyType;
+    @ApiModelProperty(name = "classify_id", value = "模板类别id")
+    private Integer classifyId;
 
 
 }

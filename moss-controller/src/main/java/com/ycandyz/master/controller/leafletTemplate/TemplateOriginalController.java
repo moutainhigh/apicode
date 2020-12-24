@@ -27,9 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class TemplateOriginalController extends BaseController<TemplateOriginalServiceImpl,TemplateOriginal,TemplateOriginalQuery> {
 
 	@ApiOperation(value = "查询根据类型")
-    @GetMapping(value = "{type}")
-	public CommonResult<TemplateOriginalResp> getByType(@PathVariable Integer type) {
-        return CommonResult.success(service.getByType(type));
+    @GetMapping(value = "{id}")
+	public CommonResult<TemplateOriginalResp> getByType(@PathVariable Integer id) {
+        return CommonResult.success(service.getByType(id));
     }
     
 }

@@ -89,7 +89,7 @@ public class TemplateQuery implements Serializable {
     @Condition(field = "endTime", condition = ConditionEnum.LE)
     private Date endExpireTime;
 
-    @ApiModelProperty(name = "classify_type", value = "平台")
-    private Integer classifyType;
+    @ApiModelProperty(name = "classify_id", value = "模板类别id")
+    private Integer classifyId;
 
 }

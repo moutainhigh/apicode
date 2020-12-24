@@ -8,6 +8,7 @@ import com.ycandyz.master.api.BasePageResult;
 import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.constant.DataConstant;
+import com.ycandyz.master.dao.leafletTemplate.TemplateClassifyDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDetailDao;
 import com.ycandyz.master.domain.UserVO;
@@ -19,6 +20,7 @@ import com.ycandyz.master.domain.response.leafletTemplate.TemplateComponentPrope
 import com.ycandyz.master.domain.response.leafletTemplate.TemplateDetailResp;
 import com.ycandyz.master.domain.response.leafletTemplate.TemplateResp;
 import com.ycandyz.master.entities.leafletTemplate.Template;
+import com.ycandyz.master.entities.leafletTemplate.TemplateClassify;
 import com.ycandyz.master.entities.leafletTemplate.TemplateDetail;
 import com.ycandyz.master.exception.BusinessException;
 import com.ycandyz.master.service.leafletTemplate.ITemplateService;
@@ -49,6 +51,8 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
     private TemplateDao templateDao;
     @Resource
     private TemplateDetailDao templateDetailDao;
+    @Resource
+    private TemplateClassifyDao templateClassifyDao;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -150,11 +154,11 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         if (!DataConstant.TEMPLATE_PLATFORM_WEB.equals(source)) {
             queryWrapper.eq("organize_id", user.getOrganizeId());
             queryWrapper.eq("template_status", "0");
-            if (query.getClassifyType() != null) {
-                queryWrapper.eq("classify_type", query.getClassifyType());
+            if (query.getClassifyId() != null) {
+                queryWrapper.eq("classify_id", query.getClassifyId());
             }
             queryWrapper.orderByDesc("created_time");
-            templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), new QueryWrapper<Template>().eq("organize_id", user.getOrganizeId()).eq("template_status", "0").orderByDesc("created_time"));
+            templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), queryWrapper);
         } else {
             queryWrapper.eq("organize_id", user.getOrganizeId());
             queryWrapper.orderByDesc("created_time");
@@ -181,8 +185,12 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
     public TemplateResp getDetailById(Long id) {
         Template template = super.getById(id);
         AssertUtils.notNull(template, "模板信息不存在");
+        TemplateClassify templateClassify = templateClassifyDao.selectById(template.getClassifyId());
+        AssertUtils.notNull(templateClassify, "模板类别信息不存在");
         TemplateResp templateResp = new TemplateResp();
         BeanUtils.copyProperties(template, templateResp);
+        templateResp.setClassifyName(templateClassify.getClassifyName());
+        templateResp.setClassifyId(templateClassify.getId());
         if (template.getEndTime().compareTo(new Date()) < 0) {
             templateResp.setTemplateStatus(1);
         }

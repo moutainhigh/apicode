@@ -14,6 +14,6 @@ import java.util.List;
  */
 public interface TemplateOriginalDao extends BaseMapper<TemplateOriginal> {
 
-    List<TemplateOriginal> getByType(@Param("type") Integer type, @Param("organizeId") Long organizeId);
+    List<TemplateOriginal> getByType(@Param("id") Integer id, @Param("organizeId") Long organizeId);
 
 }
