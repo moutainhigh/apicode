@@ -38,7 +38,7 @@ public class TemplateComponentController extends BaseController<TemplateComponen
         return CommonResult.success(new BaseResult<>(service.listComponents()));
     }
 
-    @ApiOperation(value = "查询全部")
+    @ApiOperation(value = "查询动态列表列")
     @GetMapping(value = "{templateId}")
     public CommonResult<BaseResult<List<TemplateTableResp>>> selectList(@PathVariable Long templateId) {
         return CommonResult.success(new BaseResult<>(service.getTableList(templateId)));

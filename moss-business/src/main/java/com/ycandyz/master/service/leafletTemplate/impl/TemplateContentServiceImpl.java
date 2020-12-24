@@ -88,7 +88,7 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
                 TemplateContentResp templateContentResp = new TemplateContentResp();
                 BeanUtils.copyProperties(vo, templateContentResp);
                 List<TemplateTableContentResp> contentResps = JSONObject.parseArray(vo.getComponentContent(), TemplateTableContentResp.class);
-                templateContentResp.setComponentContents(contentResps);
+                templateContentResp.setContents(contentResps);
                 if (user != null) {
                     templateContentResp.setUserPhone(user.getPhone());
                 }
@@ -132,7 +132,7 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
                     contentMap.put("手机系统", DataConstant.CONTENT_CHANNEL_MAP.get(vo.getPlatform().toString()));
                 }
                 contentMap.put("提交时间", vo.getCreatedTime());
-                content.forEach(contentVo -> contentMap.put(contentVo.getTitle(), contentVo.getContent()));
+                content.forEach(contentVo -> contentMap.put(contentVo.getTitle(), contentVo.getComponentContent()));
                 maps.add(contentMap);
             }
         });
