@@ -23,6 +23,7 @@ import com.ycandyz.master.service.coupon.ICouponActivityService;
 import com.ycandyz.master.controller.base.BaseService;
 
 import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,9 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public Page<CouponActivity> page(Page page, CouponActivityQuery query) {
+        query.setCreateTimeBegin(DateUtils.toZeroZoneTime(query.getCreateTimeBegin()));
+        query.setCreateTimeEnd(DateUtils.toZeroZoneTime(query.getCreateTimeEnd()));
+
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         query.setShopNo(getShopNo());
         if(StrUtil.isNotEmpty(query.getTitle()) && StrUtil.isNotEmpty(query.getTitle().trim())){
@@ -126,11 +130,16 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public boolean insert(CouponActivityModel entity) {
+        entity.setBeginTime(DateUtils.toZeroZoneTime(entity.getBeginTime()));
+        entity.setEndTime(DateUtils.toZeroZoneTime(entity.getEndTime()));
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(new Date()),"截止时间不能小于当前时间");
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
-        AssertUtils.isNull(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
+        CouponActivity couponActivity = isEmpty(entity);
+        if(couponActivity != null){
+            AssertUtils.isFalse(true,"该活动时间与"+couponActivity.getTitle()+"活动时间重叠，请重新选择时间");
+        }
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
         t.setCreateBy(getUserId());
@@ -148,10 +157,15 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public boolean update(CouponActivityModel entity) {
+        entity.setBeginTime(DateUtils.toZeroZoneTime(entity.getBeginTime()));
+        entity.setEndTime(DateUtils.toZeroZoneTime(entity.getEndTime()));
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
-        AssertUtils.isNull(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
+        CouponActivity couponActivity = isEmpty(entity);
+        if(couponActivity != null){
+            AssertUtils.isFalse(true,"该活动时间与"+couponActivity.getTitle()+"活动时间重叠，请重新选择时间");
+        }
         LambdaQueryWrapper<CouponActivityCoupon> queryWrapper = new LambdaQueryWrapper<CouponActivityCoupon>()
                 .eq(CouponActivityCoupon::getActivityId, entity.getId());
         couponActivityCouponService.remove(queryWrapper);
@@ -172,11 +186,11 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .eq(CouponActivity::getShopNo, getShopNo())
                 .eq(CouponActivity::getEnabled, CouponActivityEnum.Enabled.TYPE_1.getCode())
-                .ge(CouponActivity::getEndTime,new Date())
-                /*.and(obj -> obj.between(CouponActivity::getBeginTime, model.getBeginTime(),model.getEndTime())
+                .ge(CouponActivity::getEndTime,DateUtils.toZeroZoneTime(new Date()))
+                .and(obj -> obj.between(CouponActivity::getBeginTime, model.getBeginTime(),model.getEndTime())
                         .or(obj1 -> obj1.between(CouponActivity::getEndTime, model.getBeginTime(),model.getEndTime()))
                         .or(obj1 -> obj1.lt(CouponActivity::getBeginTime,model.getBeginTime()).gt(CouponActivity::getEndTime,model.getEndTime()))
-                )*/
+                )
                 .notIn(model.getId() != null ,CouponActivity::getId, model.getId());
         List<CouponActivity> list = baseMapper.selectList(queryWrapper);
         List<CouponActivity> newlist = list.stream().filter(f -> {
@@ -207,9 +221,11 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         if(entity.getEnabled().equals(model.getStatus())){
             AssertUtils.notNull(null, "操作失败，状态已更新");
         }
-        CouponActivityModel checkModel = new CouponActivityModel();
-        checkModel.setId(entity.getId());
         if(CouponActivityEnum.Enabled.TYPE_1.getCode().equals(model.getStatus())){
+            CouponActivityModel checkModel = new CouponActivityModel();
+            checkModel.setId(entity.getId());
+            checkModel.setBeginTime(DateUtils.toZeroZoneTime(entity.getBeginTime()));
+            checkModel.setEndTime(DateUtils.toZeroZoneTime(entity.getEndTime()));
             CouponActivity couponActivity = isEmpty(checkModel);
             if(couponActivity != null){
                 AssertUtils.isFalse(true,"该活动时间与"+couponActivity.getTitle()+"活动时间重叠，无法启用");
@@ -239,6 +255,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query) {
+        query.setCreateTimeBegin(DateUtils.toZeroZoneTime(query.getCreateTimeBegin()));
+        query.setCreateTimeEnd(DateUtils.toZeroZoneTime(query.getCreateTimeEnd()));
         Page<CouponDetailUserResp> p = baseMapper.selectUserActivityCouponPage(page,query);
         if(p.getRecords() != null){
             p.getRecords().stream().forEach(f -> {

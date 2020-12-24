@@ -50,12 +50,12 @@ public class CouponActivityModel {
     @ApiModelProperty(name = "inlet_name",value = "活动入口名称", required = true)
     private String inletName;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "活动开始时间不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "begin_time",value = "活动开始时间", required = true)
     private Date beginTime;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "活动结束时间不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "end_time",value = "活动结束时间", required = true)
     private Date endTime;
