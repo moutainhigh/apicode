@@ -49,7 +49,7 @@ public class MallSkuSpec extends Model {
 
    @ApiModelProperty(value = "SKU图片（预留字段）")
    @TableField(exist = false)
-   private String skuImg;
+   private String specImg;
 
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createdTime;
