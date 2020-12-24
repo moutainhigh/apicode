@@ -129,6 +129,8 @@ public class MallAfterSalesVO {
     private BigDecimal refundMoney;
     @ApiModelProperty(value = "所属企业")
     private String organizeName;
+    @ApiModelProperty(value = "售后详情-总计金额")
+    private BigDecimal saleAllMoney;
 
     /**卖家收货时间字符串*/
     @ApiModelProperty(value = "卖家收货时间字符串")
