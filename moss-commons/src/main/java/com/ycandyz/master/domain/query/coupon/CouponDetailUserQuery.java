@@ -48,11 +48,11 @@ public class CouponDetailUserQuery implements Serializable {
 
     @ApiModelProperty(name = "create_time_begin",value = "创建时间起")
     @Condition(field = "create_time", condition = ConditionEnum.GE)
-    private Date createTimeBegin;
+    private Date createBeginTime;
 
     @ApiModelProperty(name = "create_time_end",value = "创建时间止")
     @Condition(field = "create_time", condition = ConditionEnum.LE)
-    private Date createTimeEnd;
+    private Date createEndTime;
 
 
 }
