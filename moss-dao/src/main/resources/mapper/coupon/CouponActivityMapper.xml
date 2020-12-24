@@ -113,14 +113,14 @@
         LEFT JOIN user u ON u.id = uti.user_id
         WHERE 1=1
         AND uti.activity_id = #{q.id}
-        <if test="q.createTimeBegin != null">
+        <if test="q.createBeginTime != null">
             <![CDATA[
-	            AND uti.create_time > #{q.createTimeBegin}
+	            AND uti.create_time > #{q.createBeginTime}
 	        ]]>
         </if>
-        <if test="q.createTimeEnd != null">
+        <if test="q.createEndTime != null">
             <![CDATA[
-	            AND date(uti.create_time) <= date(#{q.createTimeEnd})
+	            AND date(uti.create_time) <= date(#{q.createEndTime})
 	        ]]>
         </if>
         <if test="q.status != null and q.status == 2"> AND uti.status = 1 </if>

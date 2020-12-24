@@ -259,8 +259,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query) {
-        query.setCreateTimeBegin(DateUtils.toZeroZoneTime(query.getCreateTimeBegin()));
-        query.setCreateTimeEnd(DateUtils.toZeroZoneTime(query.getCreateTimeEnd()));
+        query.setCreateBeginTime(DateUtils.toZeroZoneTime(query.getCreateBeginTime()));
+        query.setCreateEndTime(DateUtils.toZeroZoneTime(query.getCreateEndTime()));
         Page<CouponDetailUserResp> p = baseMapper.selectUserActivityCouponPage(page,query);
         if(p.getRecords() != null){
             p.getRecords().stream().forEach(f -> {
