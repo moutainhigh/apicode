@@ -54,5 +54,9 @@ public class CouponUseUserVO implements java.io.Serializable {
     private Date orderAtStr;
     @ApiModelProperty(value = "商品名称")
     private List<String> itemNameList;
+    @ApiModelProperty(value = "子订单编号列表")
+    private List<String> orderNoList;
+    @ApiModelProperty(value = "子订单状态列表")
+    private List<String> childOrderStatusList;
 
 }
