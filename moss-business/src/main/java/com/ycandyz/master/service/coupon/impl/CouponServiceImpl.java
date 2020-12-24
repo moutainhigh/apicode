@@ -111,7 +111,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     BigDecimal bigDecimal = new BigDecimal("0");
                     if (couponUserAndCartOrderDTOS!=null && couponUserAndCartOrderDTOS.size()>0){
                         for (CouponUserAndCartOrderDTO orderDTO : couponUserAndCartOrderDTOS){
-                            bigDecimal = bigDecimal.add(orderDTO.getPayAmount().add(orderDTO.getCouponDeducted()));
+                            bigDecimal = bigDecimal.add(orderDTO.getOrderTotalMoney());
                         }
                     }
                     couponDetailVO.setDealAmount(bigDecimal);
@@ -210,6 +210,9 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         if (coupon!=null){
             if (!coupon.getShopNo().equals(userVO.getShopNo())){
                 return CommonResult.failed("当前所在门店无权进行此操作");
+            }
+            if (coupon.getObtainNum()>=couponDetailQuery.getCouponSum()){
+                return CommonResult.failed("当前已领取优惠券数量小于发放数量");
             }
             //获取优惠卷详情
             CouponDetail couponDetail = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id", id).eq("status",1));
@@ -444,6 +447,10 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         couponUseUserQuery.setShopNo(userVO.getShopNo());
         couponUseUserQuery.setCouponId(id);
         couponUseUserQuery.setUserMsg(couponUseUserQuery.getUserMsg()!=null && !"".equals(couponUseUserQuery.getUserMsg()) ? couponUseUserQuery.getUserMsg().trim() : null);
+        couponUseUserQuery.setBeginOrderTime(couponUseUserQuery.getBeginOrderTime()!=null ? DateUtil.offsetHour(couponUseUserQuery.getBeginOrderTime(),-8) : null);
+        couponUseUserQuery.setEndOrderTime(couponUseUserQuery.getEndOrderTime()!=null ? DateUtil.offsetHour(couponUseUserQuery.getEndOrderTime(),-8) : null);
+        couponUseUserQuery.setBeginTakeTime(couponUseUserQuery.getBeginTakeTime()!=null ? DateUtil.offsetHour(couponUseUserQuery.getBeginTakeTime(),-8) : null);
+        couponUseUserQuery.setEndTakeTime(couponUseUserQuery.getEndTakeTime()!=null ? DateUtil.offsetHour(couponUseUserQuery.getEndTakeTime(),-8) : null);
         if (couponUseUserQuery.getPageType()==0){ //已领取
             dtoPage = couponDetailUserDao.selectTakeUserCouponList(page,couponUseUserQuery);
         }else if (couponUseUserQuery.getPageType()==1){   //已使用
@@ -474,15 +481,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 vo.setOrderSn(dto.getOrderSn());
                 vo.setOrderStatus(dto.getOrderStatus());
                 vo.setPayAmount(dto.getPayAmount());
-                if (dto.getSource()==2) {
-                    if (dto.getObtain().contains("0")) {
-                        vo.setSource(2);
-                    }else if (dto.getObtain().contains("1")){
-                        vo.setSource(3);
-                    }
-                }else {
-                    vo.setSource(dto.getSource());
-                }
+                vo.setSource(dto.getSource());
                 vo.setTakeTime(dto.getTakeTime());
                 vo.setUserId(dto.getUserId());
                 vo.setUserName(dto.getUserName());
