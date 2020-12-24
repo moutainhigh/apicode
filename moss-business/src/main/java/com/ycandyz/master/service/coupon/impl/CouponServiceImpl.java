@@ -129,7 +129,11 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                                 status = 2;
                             }
                         }else if (couponDetailDTO.getValidityType()==1 || couponDetailDTO.getValidityType()==2){
-                            status = 1;
+                            if (couponDetailDTO.getCouponSum()<=couponDetailDTO.getObtainNum()){
+                                status = 2;
+                            }else {
+                                status = 1;
+                            }
                         }
                     }else if (couponDetailDTO.getCouponStatus()==0){
                         status = 3;
@@ -211,7 +215,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             if (!coupon.getShopNo().equals(userVO.getShopNo())){
                 return CommonResult.failed("当前所在门店无权进行此操作");
             }
-            if (coupon.getObtainNum()>=couponDetailQuery.getCouponSum()){
+            if (coupon.getObtainNum()>couponDetailQuery.getCouponSum()){
                 return CommonResult.failed("当前已领取优惠券数量小于发放数量");
             }
             //获取优惠卷详情
@@ -428,6 +432,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             for (MallItemBaseResp mallItemResp : mallItemRespPage.getRecords()){
                 mallItemVO = mallItemRespToVO(mallItemResp);
                 mallItemVO.setCategoryName(getTreeCategoryName(mallCategoryList,mallItemVO.getCategoryNo()));
+                mallItemVO.setPrice(mallItemResp.getHighestSalePrice().compareTo(mallItemResp.getLowestSalePrice())>0 ? mallItemResp.getLowestSalePrice() : mallItemResp.getHighestSalePrice());
                 list.add(mallItemVO);
             }
             basePageResult.setTotal(mallItemRespPage.getTotal());
