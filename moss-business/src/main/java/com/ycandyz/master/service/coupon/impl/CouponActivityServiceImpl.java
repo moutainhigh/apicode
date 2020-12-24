@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,19 +77,23 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 .like(StrUtil.isNotEmpty(query.getTitle()),CouponActivity::getTitle,query.getTitle())
                 .eq(CouponActivity::getShopNo, query.getShopNo())
                 //.eq(CouponActivity::getStatus, SpecialEnum.EnabledEnum.DISABLE.getCode())
-                .orderByDesc(CouponActivity::getBeginTime);
+                .orderByDesc(CouponActivity::getCreateTime);
         Page<CouponActivity> p = (Page<CouponActivity>) baseMapper.selectPage(page, queryWrapper);
         p.getRecords().stream().forEach(f -> {
             if(CouponActivityEnum.Enabled.TYPE_1.getCode().equals(f.getEnabled())){
                 if(new Date().before(f.getBeginTime())){
+                    f.setStatus(CouponActivityEnum.Status.TYPE_1.getCode());
                     f.setStatusName(CouponActivityEnum.Status.TYPE_1.getText());
                 }
                 else if(new Date().after(f.getEndTime())){
+                    f.setStatus(CouponActivityEnum.Status.TYPE_3.getCode());
                     f.setStatusName(CouponActivityEnum.Status.TYPE_3.getText());
                 }else{
+                    f.setStatus(CouponActivityEnum.Status.TYPE_2.getCode());
                     f.setStatusName(CouponActivityEnum.Status.TYPE_2.getText());
                 }
             }else {
+                f.setStatus(CouponActivityEnum.Status.TYPE_4.getCode());
                 f.setStatusName(CouponActivityEnum.Status.TYPE_4.getText());
             }
             //获取活动参与人数
@@ -100,6 +105,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
             CouponActivityEnum.UserType userType = CouponActivityEnum.UserType.parseCode(f.getUserType());
             f.setUserTypeName(userType.getText());
         });
+        p.setRecords(p.getRecords().stream().sorted(Comparator.comparing(CouponActivity::getStatus)).collect(Collectors.toList()));
         return p;
     }
 
@@ -124,7 +130,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(new Date()),"截止时间不能小于当前时间");
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
-        AssertUtils.isFalse(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
+        AssertUtils.isNull(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
         CouponActivity t = new CouponActivity();
         BeanUtils.copyProperties(entity,t);
         t.setCreateBy(getUserId());
@@ -145,7 +151,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
-        AssertUtils.isFalse(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
+        AssertUtils.isNull(isEmpty(entity),"与已有发券活动时间重叠，请重新选择时间");
         LambdaQueryWrapper<CouponActivityCoupon> queryWrapper = new LambdaQueryWrapper<CouponActivityCoupon>()
                 .eq(CouponActivityCoupon::getActivityId, entity.getId());
         couponActivityCouponService.remove(queryWrapper);
@@ -162,19 +168,33 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         return super.updateById(t);
     }
 
-    private boolean isEmpty(CouponActivityModel model){
+    private CouponActivity isEmpty(CouponActivityModel model){
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .eq(CouponActivity::getShopNo, getShopNo())
-                .and(obj -> obj.between(CouponActivity::getBeginTime, model.getBeginTime(),model.getEndTime())
+                .eq(CouponActivity::getEnabled, CouponActivityEnum.Enabled.TYPE_1.getCode())
+                .ge(CouponActivity::getEndTime,new Date())
+                /*.and(obj -> obj.between(CouponActivity::getBeginTime, model.getBeginTime(),model.getEndTime())
                         .or(obj1 -> obj1.between(CouponActivity::getEndTime, model.getBeginTime(),model.getEndTime()))
                         .or(obj1 -> obj1.lt(CouponActivity::getBeginTime,model.getBeginTime()).gt(CouponActivity::getEndTime,model.getEndTime()))
-                )
+                )*/
                 .notIn(model.getId() != null ,CouponActivity::getId, model.getId());
         List<CouponActivity> list = baseMapper.selectList(queryWrapper);
-        if(CollectionUtil.isEmpty(list)){
-            return false;
+        List<CouponActivity> newlist = list.stream().filter(f -> {
+            if(new Date().before(f.getBeginTime())){
+                f.setStatus(CouponActivityEnum.Status.TYPE_1.getCode());
+                return true;
+            }else if(new Date().after(f.getEndTime())){
+                f.setStatus(CouponActivityEnum.Status.TYPE_3.getCode());
+                return false;
+            }else{
+                f.setStatus(CouponActivityEnum.Status.TYPE_2.getCode());
+                return true;
+            }
+        }).collect(Collectors.toList());;
+        if(CollectionUtil.isNotEmpty(newlist)){
+            return newlist.get(0);
         }
-        return true;
+        return null;
     }
 
     @Override
@@ -186,6 +206,14 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         AssertUtils.notNull(entity, "未匹配到符合条件的记录");
         if(entity.getEnabled().equals(model.getStatus())){
             AssertUtils.notNull(null, "操作失败，状态已更新");
+        }
+        CouponActivityModel checkModel = new CouponActivityModel();
+        checkModel.setId(entity.getId());
+        if(CouponActivityEnum.Enabled.TYPE_1.getCode().equals(model.getStatus())){
+            CouponActivity couponActivity = isEmpty(checkModel);
+            if(couponActivity != null){
+                AssertUtils.isFalse(true,"该活动时间与"+couponActivity.getTitle()+"活动时间重叠，无法启用");
+            }
         }
         return this.retBool(baseMapper.updateStatusById(model));
     }
