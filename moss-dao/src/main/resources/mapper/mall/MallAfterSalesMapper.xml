@@ -26,6 +26,7 @@
         <result column="created_time" property="createdTime" />
         <result column="createdAtStr" property="createdAtStr" />
         <result column="shop_no" property="shopNo" />
+        <result column="sale_coupon_deducted" property="saleCouponDeducted" />
         <collection property="order" ofType="com.ycandyz.master.dto.mall.MallOrderByAfterSalesDTO">
             <result column="moOrderNo" property="orderNo" />
             <result column="moStatus" property="orderStatus" />
@@ -74,6 +75,7 @@
             sales.created_time,
             sales.shop_no,
             concat(u.`name`,' ',u.phone) as userName,
+            sales.coupon_deducted as sale_coupon_deducted,
 
             mo.order_no as moOrderNo,
             mo.status as moStatus,
@@ -187,6 +189,7 @@
             sales.audit_second_at,
             sales.created_time,
             sales.shop_no,
+            sales.coupon_deducted as sale_coupon_deducted,
 
             mo.order_no as moOrderNo,
             mo.status as moStatus,
