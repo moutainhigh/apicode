@@ -116,7 +116,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
     @Override
     public CouponActivityResp selectById(Long id) {
         CouponActivity entity = baseMapper.selectById(id);
-        if(null == entity){
+        if(null == entity || !entity.getShopNo().equals(getShopNo())){
             return null;
         }
         CouponActivityResp vo = new CouponActivityResp();
@@ -160,6 +160,10 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         entity.setBeginTime(DateUtils.toZeroZoneTime(entity.getBeginTime()));
         entity.setEndTime(DateUtils.toZeroZoneTime(entity.getEndTime()));
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
+        CouponActivity ca = baseMapper.selectById(entity.getId());
+        if(null == ca || !ca.getShopNo().equals(getShopNo())){
+            return false;
+        }
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(entity.getBeginTime()),"截止时间不能大于开始时间");
         CouponActivity couponActivity = isEmpty(entity);
@@ -255,8 +259,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public Page<CouponDetailUserResp> selectUserActivityCouponPage(Page page, CouponDetailUserQuery query) {
-        query.setCreateTimeBegin(DateUtils.toZeroZoneTime(query.getCreateTimeBegin()));
-        query.setCreateTimeEnd(DateUtils.toZeroZoneTime(query.getCreateTimeEnd()));
+        query.setCreateBeginTime(DateUtils.toZeroZoneTime(query.getCreateBeginTime()));
+        query.setCreateEndTime(DateUtils.toZeroZoneTime(query.getCreateEndTime()));
         Page<CouponDetailUserResp> p = baseMapper.selectUserActivityCouponPage(page,query);
         if(p.getRecords() != null){
             p.getRecords().stream().forEach(f -> {
