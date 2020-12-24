@@ -13,8 +13,8 @@ import lombok.*;
 @ApiModel(value="订单详情", description="订单详情查询VO")
 public class UserVO extends User {
 
-    @ApiModelProperty(value = "后台用户id")
-    private Long id;
+//    @ApiModelProperty(value = "后台用户id")
+//    private Long id;
 
     @ApiModelProperty(value = "注册平台 0-企业 1-个人版app 2-代理商 3-有传后台 4-企业代理商合并 5-企业版app")
     private Integer registPlatfrom;
