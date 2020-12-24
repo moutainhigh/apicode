@@ -31,11 +31,11 @@ public class TemplateOriginalServiceImpl extends BaseService<TemplateOriginalDao
     private TemplateOriginalDao originalDao;
 
     @Override
-    public TemplateOriginalResp getByType(Integer type) {
+    public TemplateOriginalResp getByType(Integer id) {
         UserVO user = getUser();
         Long organizeId = user.getOrganizeId();
-        AssertUtils.notNull(type, "请选择模板类型！");
-        List<TemplateOriginal> originals = originalDao.getByType(type, organizeId);
+        AssertUtils.notNull(id, "请选择模板类型！");
+        List<TemplateOriginal> originals = originalDao.getByType(id, organizeId);
         AssertUtils.notEmpty(originals, "当前类型下无默认模板！");
         TemplateOriginal original = originals.get(0);
         String componentsStr = original.getComponents();
@@ -50,7 +50,8 @@ public class TemplateOriginalServiceImpl extends BaseService<TemplateOriginalDao
         templateOriginalResp.setShareDesc(original.getShareDesc());
         templateOriginalResp.setShareImg(original.getShareImg());
         templateOriginalResp.setShareTitle(original.getShareTitle());
-        templateOriginalResp.setClassifyType(type);
+        templateOriginalResp.setClassifyName(original.getClassifyName());
+        templateOriginalResp.setClassifyId(id);
         return templateOriginalResp;
     }
 

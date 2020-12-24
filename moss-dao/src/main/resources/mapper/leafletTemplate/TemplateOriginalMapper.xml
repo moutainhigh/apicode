@@ -16,6 +16,7 @@
         <result column="classify_type" property="classifyType" />
         <result column="created_time" property="createdTime" />
         <result column="updated_time" property="updatedTime" />
+        <result column="classify_name" property="classifyName" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -24,10 +25,10 @@
     </sql>
 
     <select id="getByType" resultMap="BaseResultMap" >
-        select * from template_original where status = 0
-        and(classify_type = #{arg0}
+        select o.*,c.classify_name from template_original o left join template_classify c on o.classify_id = o.id where o.status = 0 and c.status = 0
+        and(o.classify_id = #{arg0}
         <if test="arg1 != null">
-            or organize_id = #{arg1}
+            or o.organize_id = #{arg1}
         </if>
         )
     </select>
