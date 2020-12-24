@@ -257,7 +257,7 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             }
 
             //总计金额拼接
-            mallAfterSalesVO.setAllMoney(mallAfterSalesDTO.getMoney());
+            mallAfterSalesVO.setSaleAllMoney(mallAfterSalesDTO.getMoney());
 
 
             //计算本次退款记录的退款金额
