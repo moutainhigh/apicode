@@ -29,4 +29,6 @@ public class CouponUserAndCartOrderDTO {
     private Integer payType;
     @ApiModelProperty(value = "订单状态：10->待付款； 20 已支付；30->已取消")
     private Integer status;
+    @ApiModelProperty(value = "mall_order表中的total_money字段值")
+    private BigDecimal orderTotalMoney;
 }

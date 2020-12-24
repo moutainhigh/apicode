@@ -574,6 +574,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             //运费
             mallOrderVO.setShippingMoney(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney()));
 
+            //优惠金额
+            mallOrderVO.setDiscountMoney(mallOrderDTO.getTotalMoney().subtract(mallOrderDTO.getRealMoney()));
+
             //拼接是否使用优惠券
             List<CouponDetailUser> list = couponDetailUserDao.selectList(new QueryWrapper<CouponDetailUser>().eq("order_sn",mallOrderVO.getCartOrderSn()));
             if (list!=null && list.size()>0){
