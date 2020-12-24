@@ -8,13 +8,17 @@ spring:
       file-size-threshold: 25MB #当文件达到多少时进行磁盘写入
   application:
     name: ycandyz-master-controller
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: UTC
   profiles:
-    active: test
+    active: dev
 
 logging:
   config: classpath:logback-spring.xml
 
 after-sales-days: 7
+video-local-path: /tmp/upload/video/
 
 # mybatis-plus
 mybatis-plus:
@@ -24,4 +28,3 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
-video-local-path: /tmp/upload/video

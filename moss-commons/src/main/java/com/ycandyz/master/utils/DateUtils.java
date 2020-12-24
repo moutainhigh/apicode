@@ -22,6 +22,7 @@ import java.util.TimeZone;
 @Component
 public class DateUtils {
 
+
     public final static String DEFAULT_PATTERN = "yyyy-MM-dd hh:mm:ss";
 
     public final static String YYYY_MM_DD = "yyyy-MM-dd";

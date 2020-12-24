@@ -10,6 +10,7 @@ import com.ycandyz.master.api.RequestParams;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.constant.CommonConstant;
 import com.ycandyz.master.controller.base.BaseService;
+import com.ycandyz.master.dao.coupon.CouponDetailUserDao;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.dao.organize.OrganizeDao;
 import com.ycandyz.master.dao.organize.OrganizeRelDao;
@@ -20,6 +21,7 @@ import com.ycandyz.master.domain.query.mall.MallOrderUAppQuery;
 import com.ycandyz.master.domain.query.mall.uApp.MallPickupUAppQuery;
 import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.dto.mall.*;
+import com.ycandyz.master.entities.coupon.CouponDetailUser;
 import com.ycandyz.master.entities.mall.MallAfterSales;
 import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.entities.mall.MallShop;
@@ -92,6 +94,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
     @Autowired
     private MallOrderDetailDao mallOrderDetailDao;
+
+    @Autowired
+    private CouponDetailUserDao couponDetailUserDao;
 
     @Value("${excel.sheet}")
     private int num;
@@ -173,6 +178,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         }
                         mallOrderVo = new MallOrderVO();
                         BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
+
+                        //列表中显示的总计金额，是   商品总价+运费
+                        mallOrderVo.setTotalMoney(mallOrderDTO.getTotalMoney().add(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney())));
+
+                        //是否使用优惠券
+                        if (mallOrderDTO.getIsCoupon()==null){
+                            mallOrderVo.setIsCoupon(0);
+                        }
 
                         //获取企业名称，拼接进入返回值中
                         String fullName = organizeIdAndName.get(shopNoAndOrganizeId.get(mallOrderVo.getShopNo()));
@@ -337,6 +350,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
         if (list!=null && list.size()>0) {
             for (MallOrderDTO mallOrderDTO : list) {
+
+                //是否使用优惠券
+                if (mallOrderDTO.getIsCoupon()==null){
+                    mallOrderDTO.setIsCoupon(0);
+                }
 
                 //order_at;payed_at;receive_at时间转换为字符串
                 if (mallOrderDTO.getOrderAt()!=null && mallOrderDTO.getOrderAt()>0) {
@@ -552,6 +570,17 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         if (mallOrderDTO != null){
             mallOrderVO = new MallOrderVO();
             BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+
+            //运费
+            mallOrderVO.setShippingMoney(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney()));
+
+            //拼接是否使用优惠券
+            List<CouponDetailUser> list = couponDetailUserDao.selectList(new QueryWrapper<CouponDetailUser>().eq("order_sn",mallOrderVO.getCartOrderSn()));
+            if (list!=null && list.size()>0){
+                mallOrderVO.setIsCoupon(1);
+            }else {
+                mallOrderVO.setIsCoupon(0);
+            }
 
             //order_at;payed_at;receive_at时间转换为字符串
             if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
@@ -922,6 +951,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         }
                         mallOrderVo = new MallOrderUAppVO();
                         BeanUtils.copyProperties(mallOrderDTO, mallOrderVo);
+
+                        //总计金额 商品总价+运费
+                        mallOrderVo.setTotalMoney(mallOrderDTO.getTotalMoney().add(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney())));
 
                         //order_at;payed_at;receive_at时间转换为字符串
                         if (mallOrderVo.getOrderAt()!=null && mallOrderVo.getOrderAt()>0) {

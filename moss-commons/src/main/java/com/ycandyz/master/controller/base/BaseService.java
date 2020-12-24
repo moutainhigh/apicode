@@ -39,19 +39,22 @@ import java.util.List;
 public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> extends ServiceImpl<M, T> {
 
     @Autowired
-    public HttpServletRequest request;
+    protected HttpServletRequest request;
 
     private static String SHOP_NO = "0";
 
-    public UserVO getUser() {
+    protected UserVO getUser() {
         return (UserVO)request.getSession().getAttribute(SecurityConstant.USER_TOKEN_HEADER);
     }
 
-    public Long getUserId() {
+    protected Long getUserId() {
+        if(getUser() == null){
+            return null;
+        }
         return getUser().getId();
     }
 
-    public String getUsername() {
+    protected String getUsername() {
         return getUser().getName();
     }
 
@@ -91,13 +94,6 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> e
         AssertUtils.notNull(closeAt, "时间不能为空");
         DateTime dateTimeReceive = DateUtil.offset(DateTime.of(closeAt*1000L), DateField.DAY_OF_WEEK, 0);
         return DateUtil.between(dateTimeReceive,DateTime.now(), DateUnit.SECOND);
-    }
-
-    public String queryEndDate(Date date){
-        if(null == date){
-            return null;
-        }
-        return DateUtil.formatDate(DateUtil.offset(date, DateField.DAY_OF_WEEK, 1));
     }
 
     public boolean remove(Wrapper wrapper) {

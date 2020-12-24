@@ -43,5 +43,6 @@ public class ${table.serviceImplName} extends ${superServiceImplClass}<${entity}
         return super.updateById(t);
     }
 
+
 }
 </#if>

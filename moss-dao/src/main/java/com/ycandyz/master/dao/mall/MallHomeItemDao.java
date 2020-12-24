@@ -42,4 +42,12 @@ public interface MallHomeItemDao extends BaseMapper<MallItem> {
 
     int updateBuyNumByItemNo(@Param("itemNo") String itemNo);
 
+    Page<MallItemResp> selectMallItemPageByCouponId(Page page, @Param("query") MallItemQuery query);
+
+    /**
+     * 通过购物车订单编号，查询商品集合
+     * @param orderSn
+     * @return
+     */
+    List<MallItemDTO> selectMallItemByCartOrderSn(@Param("orderSn") String orderSn);
 }
