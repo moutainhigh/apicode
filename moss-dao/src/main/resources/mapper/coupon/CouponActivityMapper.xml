@@ -136,7 +136,7 @@
             	AND uti.end_time > NOW()
             ]]>
         </if>
-        <if test="q.username != null and q.username != ''"> AND (u.name like CONCAT('%',#{q.username},'%') or u.phone = #{q.username}) </if>
+        <if test="q.userName != null and q.userName != ''"> AND (u.name like CONCAT('%',#{q.userName},'%') or u.phone = #{q.userName}) </if>
         <if test="q.phone != null and q.phone != ''"> AND u.phone = #{q.phone} </if>
     </select>
 

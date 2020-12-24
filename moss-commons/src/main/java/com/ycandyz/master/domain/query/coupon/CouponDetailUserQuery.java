@@ -37,7 +37,7 @@ public class CouponDetailUserQuery implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "用户名/手机号")
-    private String username;
+    private String userName;
 
     @ApiParam(hidden = true)
     @ApiModelProperty(value = "手机号")
