@@ -46,6 +46,13 @@ public class DateUtils {
         return dateTime.toJdkDate();
     }
 
+    public static Date toZeroZoneTime(Date date){
+        if(date == null ){
+            return null;
+        }
+        return DateUtil.offsetHour(date,-8);
+    }
+
     /**
      *  为时间加一定天数
      * @param date

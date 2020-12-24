@@ -38,7 +38,7 @@ public class JacksonConfiguration {
     /** 默认时间格式 */
     public static final String TIME_FORMAT = "HH:mm:ss";
     /** 默认时区 Asia/Shanghai */
-    public static final String TIME_ZONE = "UTC";
+    public static final String TIME_ZONE = "Asia/Shanghai";
 
     @Bean
     public ObjectMapper serializingObjectMapper() {
