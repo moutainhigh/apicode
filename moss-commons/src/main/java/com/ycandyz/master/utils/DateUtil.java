@@ -89,14 +89,11 @@ public class DateUtil {
     /*
      * 将时间戳转换为时间
      */
-    public static String stampToDateString(String stap){
-        if (StringUtils.isEmpty(stap)) {
-            return null;
+    public static Date stampToDate(Long stap){
+        if (stap == null) {
+            return new Date();
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date(new Long(stap) * 1000L);
-        String time = simpleDateFormat.format(date);
-        return time;
+        return new Date(stap * 1000L-8*60*60*1000);
     }
 
     /*

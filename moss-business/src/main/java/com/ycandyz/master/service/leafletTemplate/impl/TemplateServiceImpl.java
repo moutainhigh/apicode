@@ -25,6 +25,7 @@ import com.ycandyz.master.entities.leafletTemplate.TemplateDetail;
 import com.ycandyz.master.exception.BusinessException;
 import com.ycandyz.master.service.leafletTemplate.ITemplateService;
 import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -60,6 +61,10 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         log.info("模板创建开始");
         Template t = new Template();
         BeanUtils.copyProperties(model, t);
+        if (model.getEndTime() != null) {
+            Date date = DateUtil.stampToDate(model.getEndTime());
+            t.setEndTime(date);
+        }
         UserVO user = getUser();
         t.setCreatedTime(new Date());
         t.setUserId(user.getId());
@@ -103,6 +108,10 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         log.info("模板修改开始");
         Template t = new Template();
         BeanUtils.copyProperties(model, t);
+        if (model.getEndTime() != null) {
+            Date date = DateUtil.stampToDate(model.getEndTime());
+            t.setEndTime(date);
+        }
         if (null == model.getId()) {
             log.error("入参模板id为空");
             throw new BusinessException("模板信息不存在！");
