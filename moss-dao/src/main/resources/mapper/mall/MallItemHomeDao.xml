@@ -200,9 +200,9 @@
     <select id="selectMallItemByCartOrderSn" resultType="com.ycandyz.master.dto.mall.MallItemDTO">
         select
             md.item_name
-        from mall_cart_order mco
-        left join mall_order mo on mco.order_sn=mo.cart_order_sn
-        left join mall_order_detail md on mo.order_no=md.order_no
+        from mall_order_detail md
+        left join mall_order mo on mo.order_no=md.order_no
+        left join mall_cart_order mco on mco.order_sn=mo.cart_order_sn
         where
         mco.order_sn=#{orderSn}
     </select>

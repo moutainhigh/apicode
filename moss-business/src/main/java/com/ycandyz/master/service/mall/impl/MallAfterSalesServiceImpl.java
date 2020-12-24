@@ -206,8 +206,11 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         //支付方式拼接
                         mallAfterSalesVO.setPayType(mallOrderByAfterSalesVO.getPayType());
 
-                        //总计金额拼接
-                        mallAfterSalesVO.setAllMoney(mallOrderByAfterSalesVO.getAllMoney());
+                        BigDecimal shippingMoney = mallOrderByAfterSalesVO.getAllMoney().subtract(mallOrderByAfterSalesVO.getRealMoney());
+
+                        //总计金额：商品总价+运费
+                        mallAfterSalesVO.setAllMoney(mallOrderByAfterSalesVO.getTotalMoney().add(shippingMoney));
+
                     }
                     MallOrderDetailByAfterSalesDTO mallOrderDetailByAfterSalesDTO = mallAfterSalesDTO.getDetails();
                     if (mallOrderDetailByAfterSalesDTO!=null){
@@ -223,7 +226,6 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         //商品名称拼接
                         mallAfterSalesVO.setItemName(mallOrderDetailByAfterSalesVO.getItemName());
                     }
-
                     list.add(mallAfterSalesVO);
                 }
             }
@@ -254,17 +256,27 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 mallAfterSalesVO.setCreatedAtStr(orderAtStr);
             }
 
+            //总计金额拼接
+            mallAfterSalesVO.setAllMoney(mallAfterSalesDTO.getMoney());
+
+
+            //计算本次退款记录的退款金额
+//                mallAfterSalesVO.setRefundMoney(mallAfterSalesDTO.getSkuPrice().multiply(new BigDecimal(mallAfterSalesDTO.getSkuQuantity())));
+            mallAfterSalesVO.setRefundMoney(mallAfterSalesDTO.getMoney());
+
             MallOrderByAfterSalesDTO mallOrderByAfterSalesDTO = mallAfterSalesDTO.getOrder();
             Integer orderType = null;   //订单的类型，用来区分是新老订单
             if (mallOrderByAfterSalesDTO!=null){
                 //关联订单
                 MallOrderByAfterSalesVO mallOrderByAfterSalesVO = new MallOrderByAfterSalesVO();
                 BeanUtils.copyProperties(mallOrderByAfterSalesDTO, mallOrderByAfterSalesVO);
+
+                //运费
+                mallOrderByAfterSalesVO.setShippingMoney((mallOrderByAfterSalesVO.getAllMoney().subtract(mallOrderByAfterSalesVO.getRealMoney())).toString());
+
                 mallAfterSalesVO.setOrder(mallOrderByAfterSalesVO);
                 orderType = mallOrderByAfterSalesDTO.getOrderType();
 
-                //总计金额拼接
-                mallAfterSalesVO.setAllMoney(mallOrderByAfterSalesVO.getAllMoney());
             }
 
             //订单详情
@@ -453,8 +465,6 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 }
             }
             mallAfterSalesVO.setState(state);
-            //计算本次退款记录的退款金额
-            mallAfterSalesVO.setRefundMoney(mallAfterSalesDTO.getSkuPrice().multiply(new BigDecimal(mallAfterSalesDTO.getSkuQuantity())));
         }
         return ReturnResponse.success(mallAfterSalesVO);
     }
