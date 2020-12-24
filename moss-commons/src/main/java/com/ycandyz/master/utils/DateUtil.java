@@ -3,8 +3,11 @@ package com.ycandyz.master.utils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 @Slf4j
@@ -95,6 +98,21 @@ public class DateUtil {
         }
         return new Date(stap * 1000L-8*60*60*1000);
     }
+
+
+    public static Date getNowDateShort() {
+        Calendar c = Calendar.getInstance();
+        Date now = c.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String format = simpleDateFormat.format(now);
+        try {
+            now = simpleDateFormat.parse(format);
+        } catch (ParseException e) {
+            log.error("时间转换失败");
+        }
+        return now;
+    }
+
 
     /*
      * 转yyyyMMdd HH:mm:

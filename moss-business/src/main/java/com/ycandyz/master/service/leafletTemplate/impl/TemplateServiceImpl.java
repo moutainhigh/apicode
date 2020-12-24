@@ -200,7 +200,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         BeanUtils.copyProperties(template, templateResp);
         templateResp.setClassifyName(templateClassify.getClassifyName());
         templateResp.setClassifyId(templateClassify.getId());
-        if (template.getEndTime().compareTo(new Date()) < 0) {
+        if (template.getEndTime().compareTo(DateUtil.getNowDateShort()) < 0) {
             templateResp.setTemplateStatus(1);
         }
         List<TemplateDetail> templateDetails = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", id).eq("component_status", 0));
