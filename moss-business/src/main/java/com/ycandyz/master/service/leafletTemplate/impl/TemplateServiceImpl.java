@@ -166,6 +166,9 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
             if (query.getClassifyId() != null) {
                 queryWrapper.eq("classify_id", query.getClassifyId());
             }
+            if(query.getId()!=null){
+                queryWrapper.lt("id",query.getId());
+            }
             queryWrapper.orderByDesc("created_time");
             templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), queryWrapper);
         } else {
