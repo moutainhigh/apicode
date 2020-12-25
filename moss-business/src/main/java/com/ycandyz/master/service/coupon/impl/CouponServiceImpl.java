@@ -12,6 +12,7 @@ import com.ycandyz.master.dao.coupon.CouponDetailItemDao;
 import com.ycandyz.master.dao.coupon.CouponDetailUserDao;
 import com.ycandyz.master.dao.mall.MallItemHomeDao;
 import com.ycandyz.master.dao.mall.goodsManage.GoodsMallCategoryDao;
+import com.ycandyz.master.dao.mall.MallOrderDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.coupon.CouponBaseQuery;
 import com.ycandyz.master.domain.query.coupon.CouponDetailQuery;
@@ -29,6 +30,9 @@ import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
 import com.ycandyz.master.entities.coupon.Coupon;
 import com.ycandyz.master.entities.coupon.CouponDetail;
 import com.ycandyz.master.entities.coupon.CouponDetailItem;
+import com.ycandyz.master.entities.coupon.CouponDetailUser;
+import com.ycandyz.master.entities.mall.MallItem;
+import com.ycandyz.master.entities.mall.MallOrder;
 import com.ycandyz.master.entities.mall.goodsManage.MallCategory;
 import com.ycandyz.master.model.coupon.CouponDetailVO;
 import com.ycandyz.master.model.coupon.CouponUseUserVO;
@@ -39,6 +43,7 @@ import com.ycandyz.master.controller.base.BaseService;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import com.ycandyz.master.vo.MallItemVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,6 +84,9 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
     @Autowired
     private CouponDetailUserDao couponDetailUserDao;
 
+    @Autowired
+    private MallOrderDao mallOrderDao;
+
     @Override
     public CommonResult<BasePageResult<CouponDetailVO>> selectPageList(PageModel pageModel, CouponQuery couponQuery) {
         UserVO userVO = getUser();  //当前登陆用户
@@ -111,7 +119,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                     BigDecimal bigDecimal = new BigDecimal("0");
                     if (couponUserAndCartOrderDTOS!=null && couponUserAndCartOrderDTOS.size()>0){
                         for (CouponUserAndCartOrderDTO orderDTO : couponUserAndCartOrderDTOS){
-                            bigDecimal = bigDecimal.add(orderDTO.getPayAmount().add(orderDTO.getCouponDeducted()));
+                            bigDecimal = bigDecimal.add(orderDTO.getOrderTotalMoney());
                         }
                     }
                     couponDetailVO.setDealAmount(bigDecimal);
@@ -129,7 +137,11 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                                 status = 2;
                             }
                         }else if (couponDetailDTO.getValidityType()==1 || couponDetailDTO.getValidityType()==2){
-                            status = 1;
+                            if (couponDetailDTO.getCouponSum()<=couponDetailDTO.getObtainNum()){
+                                status = 2;
+                            }else {
+                                status = 1;
+                            }
                         }
                     }else if (couponDetailDTO.getCouponStatus()==0){
                         status = 3;
@@ -210,6 +222,9 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         if (coupon!=null){
             if (!coupon.getShopNo().equals(userVO.getShopNo())){
                 return CommonResult.failed("当前所在门店无权进行此操作");
+            }
+            if (coupon.getObtainNum()>couponDetailQuery.getCouponSum()){
+                return CommonResult.failed("当前已领取优惠券数量小于发放数量");
             }
             //获取优惠卷详情
             CouponDetail couponDetail = couponDetailDao.selectOne(new QueryWrapper<CouponDetail>().eq("coupon_id", id).eq("status",1));
@@ -425,6 +440,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
             for (MallItemBaseResp mallItemResp : mallItemRespPage.getRecords()){
                 mallItemVO = mallItemRespToVO(mallItemResp);
                 mallItemVO.setCategoryName(getTreeCategoryName(mallCategoryList,mallItemVO.getCategoryNo()));
+                mallItemVO.setPrice(mallItemResp.getHighestSalePrice().compareTo(mallItemResp.getLowestSalePrice())>0 ? mallItemResp.getLowestSalePrice() : mallItemResp.getHighestSalePrice());
                 list.add(mallItemVO);
             }
             basePageResult.setTotal(mallItemRespPage.getTotal());
@@ -444,6 +460,10 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
         couponUseUserQuery.setShopNo(userVO.getShopNo());
         couponUseUserQuery.setCouponId(id);
         couponUseUserQuery.setUserMsg(couponUseUserQuery.getUserMsg()!=null && !"".equals(couponUseUserQuery.getUserMsg()) ? couponUseUserQuery.getUserMsg().trim() : null);
+        couponUseUserQuery.setBeginOrderTime(couponUseUserQuery.getBeginOrderTime()!=null ? DateUtil.offsetHour(couponUseUserQuery.getBeginOrderTime(),-8) : null);
+        couponUseUserQuery.setEndOrderTime(couponUseUserQuery.getEndOrderTime()!=null ? DateUtil.offsetHour(couponUseUserQuery.getEndOrderTime(),-8) : null);
+        couponUseUserQuery.setBeginTakeTime(couponUseUserQuery.getBeginTakeTime()!=null ? DateUtil.offsetHour(couponUseUserQuery.getBeginTakeTime(),-8) : null);
+        couponUseUserQuery.setEndTakeTime(couponUseUserQuery.getEndTakeTime()!=null ? DateUtil.offsetHour(couponUseUserQuery.getEndTakeTime(),-8) : null);
         if (couponUseUserQuery.getPageType()==0){ //已领取
             dtoPage = couponDetailUserDao.selectTakeUserCouponList(page,couponUseUserQuery);
         }else if (couponUseUserQuery.getPageType()==1){   //已使用
@@ -474,15 +494,7 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                 vo.setOrderSn(dto.getOrderSn());
                 vo.setOrderStatus(dto.getOrderStatus());
                 vo.setPayAmount(dto.getPayAmount());
-                if (dto.getSource()==2) {
-                    if (dto.getObtain().contains("0")) {
-                        vo.setSource(2);
-                    }else if (dto.getObtain().contains("1")){
-                        vo.setSource(3);
-                    }
-                }else {
-                    vo.setSource(dto.getSource());
-                }
+                vo.setSource(dto.getSource());
                 vo.setTakeTime(dto.getTakeTime());
                 vo.setUserId(dto.getUserId());
                 vo.setUserName(dto.getUserName());
@@ -500,6 +512,27 @@ public class CouponServiceImpl extends BaseService<CouponDao,Coupon,CouponQuery>
                         List<String> itemNameList = itemDTOS.stream().map(MallItemDTO :: getItemName).collect(Collectors.toList());
                         vo.setItemNameList(itemNameList);
                     }
+                    List<MallOrder> mallOrders = mallOrderDao.selectList(new QueryWrapper<MallOrder>().eq("cart_order_sn",dto.getOrderSn()));
+                    List<String> orderNoList = new ArrayList<>();
+                    List<String> childOrderStatus = new ArrayList<>();
+                    if (mallOrders!=null && mallOrders.size()>0){
+                        for (MallOrder mallOrder : mallOrders) {
+                            orderNoList.add(mallOrder.getOrderNo());
+                            if (mallOrder.getStatus()==10){
+                                childOrderStatus.add("待支付");
+                            }else if (mallOrder.getStatus()==20){
+                                childOrderStatus.add("待发货");
+                            }else if (mallOrder.getStatus()==30){
+                                childOrderStatus.add("待收货");
+                            }else if (mallOrder.getStatus()==40){
+                                childOrderStatus.add("已收货");
+                            }else if (mallOrder.getStatus()==50){
+                                childOrderStatus.add("已取消");
+                            }
+                        }
+                    }
+                    vo.setOrderNoList(orderNoList);
+                    vo.setChildOrderStatusList(childOrderStatus);
                 }
                 list.add(vo);
             }

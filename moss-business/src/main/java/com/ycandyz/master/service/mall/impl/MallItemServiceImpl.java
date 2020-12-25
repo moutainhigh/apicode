@@ -120,7 +120,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         skus.stream().forEach(s -> {
             s.getSkuSpecs().stream().forEach(i -> {
                 if(i.getExistImg()==1){
-                    i.setSkuImg(s.getSkuImg());
+                    i.setSpecImg(s.getSkuImg());
                     i.setExistImg(null);
                 }else {
                     i.setExistImg(null);

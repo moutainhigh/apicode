@@ -72,7 +72,7 @@
         where
         1=1 and c.shop_no=#{q.shopNo} and c.id=#{q.couponId}
         <if test="q.userMsg!=null and q.userMsg!=''">
-            and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
+            and (u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%'))
         </if>
         <if test="q.status!=null">
             <if test="q.status==2">
@@ -86,24 +86,13 @@
             </if>
         </if>
         <if test="q.source!=null">
-            <if test="q.source==0">
-                and cdu.source=0
-            </if>
-            <if test="q.source==1">
-                and cdu.source=1
-            </if>
-            <if test="q.source==2">
-                and cdu.source=2 and cd.obtain like concat('%','0','%')
-            </if>
-            <if test="q.source==3">
-                and cdu.source=2 and cd.obtain like concat('%','1','%')
-            </if>
+            and cdu.source=#{q.source}
         </if>
         <if test="q.beginTakeTime!=null">
-            and cdu.create_time &lt;= #{q.beginTakeTime}
+            and cdu.create_time &gt;= #{q.beginTakeTime}
         </if>
         <if test="q.endTakeTime!=null">
-            and cdu.end_time &gt;= #{q.endTakeTime}
+            and cdu.create_time &lt;= #{q.endTakeTime}
         </if>
     </select>
 
@@ -136,29 +125,18 @@
         left join user u on cdu.user_id=u.id
         left join mall_cart_order mc on mc.order_sn=cdu.order_sn
         where
-        1=1 and c.shop_no=#{q.shopNo} and c.id=#{q.couponId}
+        1=1 and c.shop_no=#{q.shopNo} and c.id=#{q.couponId} and cdu.order_sn is not null and cdu.order_sn!=''
         <if test="q.userMsg!=null and q.userMsg!=''">
-            and u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%')
+            and (u.name like concat('%',#{q.userMsg},'%') or u.phone like concat('%',#{q.userMsg},'%'))
         </if>
         <if test="q.source!=null">
-            <if test="q.source==0">
-                and cdu.source=0
-            </if>
-            <if test="q.source==1">
-                and cdu.source=1
-            </if>
-            <if test="q.source==2">
-                and cdu.source=2 and cd.obtain like concat('%','0','%')
-            </if>
-            <if test="q.source==3">
-                and cdu.source=2 and cd.obtain like concat('%','1','%')
-            </if>
+            and cdu.source=#{q.source}
         </if>
         <if test="q.beginOrderTime!=null">
-            and mc.create_time &lt;= #{q.beginOrderTime}
+            and mc.create_time &gt;= #{q.beginOrderTime}
         </if>
         <if test="q.endOrderTime!=null">
-            and mc.create_time &gt;= #{q.endOrderTime}
+            and mc.create_time &lt;= #{q.endOrderTime}
         </if>
     </select>
 
@@ -171,10 +149,12 @@
             mc.pay_amount as payAmount,
             mc.coupon_deducted as couponDeducted,
             mc.pay_type as payType,
-            mc.status as status
+            mc.status as status,
+            mo.total_money as orderTotalMoney
         from
         coupon_detail_user cu
         left join mall_cart_order mc on cu.order_sn=mc.order_sn
+        left join mall_order mo on mc.order_sn=mo.cart_order_sn
         where
         cu.status=1
         and mc.status=20
