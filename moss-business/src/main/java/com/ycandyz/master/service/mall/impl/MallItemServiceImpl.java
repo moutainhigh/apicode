@@ -124,6 +124,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                     i.setExistImg(null);
                 }else {
                     i.setExistImg(null);
+                    i.setSpecImg("");
                 }
             });
         });
@@ -336,7 +337,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     @Override
     public boolean update(MallItemModel model) {
         // TODO shipping_no 值从哪来
-        model.setShippingNo("111");
+        model.setShippingNo(model.getShippingNo() !=null?model.getShippingNo():"");
         //公共校验
         MallItemEnum.Type type = MallItemEnum.Type.parseCode(model.getType());
         AssertUtils.notNull(type, "商品类型不正确");
