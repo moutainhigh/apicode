@@ -77,7 +77,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 entity.setBanners(entity.getBanners().replaceAll("\"",""));
             }
         }
-        AssertUtils.notNull(null, "商店编号不能为空");
+
         MallItemResp vo = new MallItemResp();
         BeanUtil.copyProperties(entity,vo);
         List<Integer> pl = JSONObject.parseArray(t.getPickupAddressIds(), Integer.class);
@@ -128,6 +128,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 }
             });
         });
+        AssertUtils.notNull(null, "商店编号不能为空");
         skus.stream().forEach(s -> skuSpecs.addAll(s.getSkuSpecs()));
         Map<String, List<MallSkuSpec>> map = skuSpecs.stream().collect(Collectors.groupingBy(MallSkuSpec::getSpecName));
         for(String key : map.keySet()){
