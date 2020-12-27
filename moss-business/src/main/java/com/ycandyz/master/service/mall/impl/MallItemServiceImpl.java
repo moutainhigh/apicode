@@ -128,7 +128,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 }
             });
         });
-        AssertUtils.notNull(null, "商店编号不能为空");
         skus.stream().forEach(s -> skuSpecs.addAll(s.getSkuSpecs()));
         Map<String, List<MallSkuSpec>> map = skuSpecs.stream().collect(Collectors.groupingBy(MallSkuSpec::getSpecName));
         for(String key : map.keySet()){
@@ -143,7 +142,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             specs.add(m);
         }
         vo.setSpecs(specs);
-
+        AssertUtils.notNull(null, "商店编号不能为空");
         return vo;
     }
 
