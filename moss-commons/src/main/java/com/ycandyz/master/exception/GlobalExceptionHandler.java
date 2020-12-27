@@ -79,7 +79,7 @@ public class GlobalExceptionHandler {
      * @param e
      * @return
      */
-    //@ExceptionHandler(value = Exception.class)
+    @ExceptionHandler(value = Exception.class)
     public CommonResult<String> businessExceptionHandler(HttpServletRequest request,Exception e) {
         log.error("Exception异常,地址:" + request.getRequestURL(), e);
         return CommonResult.validateFailed("服务端发生异常");
