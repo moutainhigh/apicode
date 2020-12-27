@@ -32,6 +32,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -66,38 +67,80 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
     @Override
     public MallItemResp getByItemNo(String itemNo) {
+        MallItemResp vo = new MallItemResp();
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, itemNo);
         MallItem entity = baseMapper.selectOne(queryWrapper);
-        MallItem t = baseMapper.selectMallItemById(entity.getId());
-        entity.setPickupAddressIds(t.getPickupAddressIds());
-        entity.setDeliveryType(t.getDeliveryType());
         if(entity != null){
             if(StrUtil.isNotEmpty(entity.getBanners())){
                 entity.setBanners(entity.getBanners().replaceAll("\"",""));
             }
         }
-
-        MallItemResp vo = new MallItemResp();
+        MallItem t = baseMapper.selectMallItemById(entity.getId());
+        //entity.setPickupAddressIds(t.getPickupAddressIds());
+        //entity.setDeliveryType(t.getDeliveryType());
         BeanUtil.copyProperties(entity,vo);
         List<Integer> pl = JSONObject.parseArray(t.getPickupAddressIds(), Integer.class);
         List<Integer> dl = JSONObject.parseArray(t.getDeliveryType(), Integer.class);
         vo.setPickupAddressIds(pl);
         vo.setDeliveryType(dl);
+        MallItemEnum.Type type = MallItemEnum.Type.parseCode(entity.getType());
+        if(MallItemEnum.Type.Type_1.getCode().equals(type.getCode())){
+//获取sku
+            LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
+                    .select(MallSku::getSkuNo,MallSku::getSalePrice,MallSku::getPrice,MallSku::getGoodsNo,MallSku::getStock,MallSku::getSkuImg)
+                    .eq(MallSku::getItemNo, vo.getItemNo());
+            List<MallSku> skus = mallSkuService.list(skuWrapper);
+            skus.stream().forEach(f -> {
+                LambdaQueryWrapper<MallSkuSpec> skuSpecWrapper = new LambdaQueryWrapper<MallSkuSpec>()
+                        .select(MallSkuSpec::getSpecName,MallSkuSpec::getSpecValue,MallSkuSpec::getExistImg)
+                        .eq(MallSkuSpec::getSkuNo, f.getSkuNo());
+                List<MallSkuSpec> skuSpeclist = mallSkuSpecService.list(skuSpecWrapper);
+                f.setSkuSpecs(skuSpeclist);
+            });
+            vo.setSkus(skus);
 
-        //获取sku
-        LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
-                .select(MallSku::getSkuNo,MallSku::getSalePrice,MallSku::getPrice,MallSku::getGoodsNo,MallSku::getStock,MallSku::getSkuImg)
-                .eq(MallSku::getItemNo, vo.getItemNo());
-        List<MallSku> skus = mallSkuService.list(skuWrapper);
-        skus.stream().forEach(f -> {
-            LambdaQueryWrapper<MallSkuSpec> skuSpecWrapper = new LambdaQueryWrapper<MallSkuSpec>()
-                    .select(MallSkuSpec::getSpecName,MallSkuSpec::getSpecValue,MallSkuSpec::getExistImg)
-                    .eq(MallSkuSpec::getSkuNo, f.getSkuNo());
-            List<MallSkuSpec> skuSpeclist = mallSkuSpecService.list(skuSpecWrapper);
-            f.setSkuSpecs(skuSpeclist);
-        });
-        vo.setSkus(skus);
+            //处理specs
+            List<MallSpecsModel> specs = new ArrayList<>();
+            List<MallSkuSpec> skuSpecs = new ArrayList<>();
+            skus.stream().forEach(s -> {
+                s.getSkuSpecs().stream().forEach(i -> {
+                    if(i.getExistImg()==1){
+                        i.setSpecImg(s.getSkuImg());
+                        i.setExistImg(null);
+                    }else {
+                        i.setExistImg(null);
+                        i.setSpecImg("");
+                    }
+                });
+            });
+            skus.stream().forEach(s -> skuSpecs.addAll(s.getSkuSpecs()));
+            Map<String, List<MallSkuSpec>> map = skuSpecs.stream().collect(Collectors.groupingBy(MallSkuSpec::getSpecName));
+            for(String key : map.keySet()){
+                MallSpecsModel m = new MallSpecsModel();
+                m.setSpecName(key);
+                List<MallSkuSpec> sk = map.get(key).stream().collect(
+                        collectingAndThen(
+                                toCollection(() -> new TreeSet<>(Comparator.comparing(MallSkuSpec::getSpecValue))), ArrayList::new)
+                );
+                //sk.stream().forEach(s -> s.setSpecName(null));
+                m.setSpecList(sk);
+                specs.add(m);
+            }
+            vo.setSpecs(specs);
+
+        }
+
+        //TODO 处理分类名称与一级分类
+        LambdaQueryWrapper<MallCategory> categoryWrapper = new LambdaQueryWrapper<MallCategory>()
+                .eq(MallCategory::getCategoryNo, vo.getCategoryNo());
+        MallCategory category = mallCategoryService.getOne(categoryWrapper);
+        vo.setCategoryName(category.getCategoryName());
+        vo.setParentCategoryNo(category.getParentCategoryNo());
+        LambdaQueryWrapper<MallCategory> pcWrapper = new LambdaQueryWrapper<MallCategory>()
+                .eq(MallCategory::getCategoryNo, category.getParentCategoryNo());
+        MallCategory pc = mallCategoryService.getOne(pcWrapper);
+        vo.setParentCategoryName(pc.getCategoryName());
 
         //获取置顶视频
         LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
@@ -114,34 +157,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         List<MallItemVideo> detailVideo = mallItemVideoService.list(detailVideoWrapper);
         vo.setDetailVideoList(detailVideo);
 
-        //处理specs
-        List<MallSpecsModel> specs = new ArrayList<>();
-        List<MallSkuSpec> skuSpecs = new ArrayList<>();
-        skus.stream().forEach(s -> {
-            s.getSkuSpecs().stream().forEach(i -> {
-                if(i.getExistImg()==1){
-                    i.setSpecImg(s.getSkuImg());
-                    i.setExistImg(null);
-                }else {
-                    i.setExistImg(null);
-                    i.setSpecImg("");
-                }
-            });
-        });
-        skus.stream().forEach(s -> skuSpecs.addAll(s.getSkuSpecs()));
-        Map<String, List<MallSkuSpec>> map = skuSpecs.stream().collect(Collectors.groupingBy(MallSkuSpec::getSpecName));
-        for(String key : map.keySet()){
-            MallSpecsModel m = new MallSpecsModel();
-            m.setSpecName(key);
-            List<MallSkuSpec> sk = map.get(key).stream().collect(
-                    collectingAndThen(
-                            toCollection(() -> new TreeSet<>(Comparator.comparing(MallSkuSpec::getSpecValue))), ArrayList::new)
-            );
-            //sk.stream().forEach(s -> s.setSpecName(null));
-            m.setSpecList(sk);
-            specs.add(m);
-        }
-        vo.setSpecs(specs);
+        vo.setSales(entity.getBaseSales()+entity.getRealSales());
 
         return vo;
     }
@@ -328,6 +344,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             AssertUtils.notNull(nonPriceType, "价格类型不正确");
             BeanUtils.copyProperties(model,t);
             t.setBanners(banners);
+
+            //非空字段填充
+            t.setItemText("");
+            t.setHighestSalePrice(BigDecimal.ZERO);
             baseMapper.insert(t);
 
         }

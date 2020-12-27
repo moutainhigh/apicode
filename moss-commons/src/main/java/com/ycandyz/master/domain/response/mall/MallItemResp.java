@@ -46,6 +46,15 @@ public class MallItemResp {
    @ApiModelProperty(name = "category_no", value = "分类编号")
    private String categoryNo;
 
+   @ApiModelProperty(name = "category_name", value = "分类名称")
+   private String categoryName;
+
+   @ApiModelProperty(name = "parent_category_no", value = "一级分类编号")
+   private String parentCategoryNo;
+
+   @ApiModelProperty(name = "parent_category_name", value = "一级分类名称")
+   private String parentCategoryName;
+
    @ApiModelProperty(name = "category_txt", value = "分类名称")
    private String categoryTxt;
 
@@ -65,7 +74,7 @@ public class MallItemResp {
    private BigDecimal highestSalePrice;
 
    @ApiModelProperty(name = "is_screen", value = "是否系统屏蔽 0-通过 1-屏蔽")
-   private Boolean isScreen;
+   private Integer isScreen;
 
    @ApiModelProperty(name = "item_cover", value = "封面图")
    private String itemCover;
@@ -154,7 +163,7 @@ public class MallItemResp {
    private Integer deliverMethod;
 
    @ApiModelProperty(name = "is_unify_shipping", value = "是否统一运费，0: 否，1:是")
-   private Boolean isUnifyShipping;
+   private Integer isUnifyShipping;
 
    @ApiModelProperty(name = "shipping_no", value = "运费模版编号")
    private String shippingNo;
@@ -185,13 +194,13 @@ public class MallItemResp {
    private Integer visits;
 
    @ApiModelProperty(name = "is_updated_share", value = "是否设置过分销")
-   private Boolean isUpdatedShare;
+   private Integer isUpdatedShare;
 
    @ApiModelProperty(name = "is_enable_share", value = "是否开启分销 0:不开启 1:开启")
-   private Boolean isEnableShare;
+   private Integer isEnableShare;
 
    @ApiModelProperty(name = "share_method", value = "U团长分销佣金的方式0:按比例 1:按金额")
-   private Boolean shareMethod;
+   private Integer shareMethod;
 
    @ApiModelProperty(name = "share_rate", value = "U团长分销佣金按比例")
    private BigDecimal shareRate;
@@ -200,7 +209,7 @@ public class MallItemResp {
    private BigDecimal shareAmount;
 
    @ApiModelProperty(name = "share_level_method", value = "U团长管理佣金的方式0:按比例 1:按金额")
-   private Boolean shareLevelMethod;
+   private Integer shareLevelMethod;
 
    @ApiModelProperty(name = "share_level_rate", value = "U团长管理佣金按比例")
    private BigDecimal shareLevelRate;
@@ -209,10 +218,10 @@ public class MallItemResp {
    private BigDecimal shareLevelAmount;
 
    @ApiModelProperty(name = "share_second_method", value = "U达人参与分佣的方式0:按比例 1:按金额 ")
-   private Boolean shareSecondMethod;
+   private Integer shareSecondMethod;
 
    @ApiModelProperty(name = "share_second_level_method", value = "U达人参与管理佣金的方式0:按比例 1:按金额 ")
-   private Boolean shareSecondLevelMethod;
+   private Integer shareSecondLevelMethod;
 
    @ApiModelProperty(name = "share_second_rate", value = "U达人分销佣金按比例")
    private BigDecimal shareSecondRate;
@@ -227,10 +236,10 @@ public class MallItemResp {
    private BigDecimal shareSecondLevelAmount;
 
    @ApiModelProperty(name = "share_third_method", value = "U掌柜参与分佣的方式0:按比例 1:按金额 ")
-   private Boolean shareThirdMethod;
+   private Integer shareThirdMethod;
 
    @ApiModelProperty(name = "share_third_level_method", value = "U掌柜参与管理佣金的方式0:按比例 1:按金额 ")
-   private Boolean shareThirdLevelMethod;
+   private Integer shareThirdLevelMethod;
 
    @ApiModelProperty(name = "share_third_rate", value = "U掌柜分销佣金按比例")
    private BigDecimal shareThirdRate;
@@ -244,6 +253,10 @@ public class MallItemResp {
    @ApiModelProperty(name = "share_third_level_amount", value = "U掌柜管理佣金按金额")
    private BigDecimal shareThirdLevelAmount;
 
+   //TODO 和 pickupAddressIds 有啥区别
+   @ApiModelProperty(name = "pickup_addr_ids", value = "配送地址")
+   private List<Integer> pickupAddrIds;
+
    @ApiModelProperty(name = "pickup_address_ids", value = "配送地址")
    private List<Integer> pickupAddressIds;
 
@@ -253,7 +266,7 @@ public class MallItemResp {
 
 
    @ApiModelProperty(name = "audit_status", value = "审核状态 0待审核 1人工审核通过 2人工审核不通过（屏蔽）")
-   private Boolean auditStatus;
+   private Integer auditStatus;
 
    @ApiModelProperty(name = "audited_at", value = "审核时间")
    private Integer auditedAt;
@@ -262,14 +275,17 @@ public class MallItemResp {
    private Long auditorId;
 
 
-   @ApiModelProperty(value = "skus")
+   @ApiModelProperty(value = "商品Sku")
    @TableField(exist = false)
    private List<MallSku> skus;
 
+   @ApiModelProperty(value = "置顶视频")
    private List<MallItemVideo> topVideoList;
 
+   @ApiModelProperty(value = "详情视频")
    private List<MallItemVideo> detailVideoList;
 
+   @ApiModelProperty(value = "规格")
    private List<MallSpecsModel> specs;
 
 

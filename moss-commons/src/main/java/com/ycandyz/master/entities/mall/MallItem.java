@@ -98,7 +98,7 @@ public class MallItem extends Model {
    private Integer status;
 
    @ApiModelProperty(value = "是否统一运费，0: 否，1:是")
-   private Boolean isUnifyShipping;
+   private Integer isUnifyShipping;
 
    @ApiModelProperty(value = "运费模版编号")
    private String shippingNo;
@@ -126,10 +126,10 @@ public class MallItem extends Model {
    private Date updatedTime;
 
    @ApiModelProperty(value = "是否开启分销 0:不开启 1:开启")
-   private Boolean isEnableShare;
+   private Integer isEnableShare;
 
    @ApiModelProperty(value = "参与分佣的方式0:按比例 1:按金额")
-   private Boolean shareMethod;
+   private Integer shareMethod;
 
    @ApiModelProperty(value = "分销比例")
    private BigDecimal shareRate;
@@ -141,13 +141,13 @@ public class MallItem extends Model {
    private Integer visits;
 
    @ApiModelProperty(value = "是否设置过分销")
-   private Boolean isUpdatedShare;
+   private Integer isUpdatedShare;
 
    @ApiModelProperty(value = "U达人参与分佣的方式0:按比例 1:按金额 ")
-   private Boolean shareSecondMethod;
+   private Integer shareSecondMethod;
 
    @ApiModelProperty(value = "U达人参与管理佣金的方式0:按比例 1:按金额 ")
-   private Boolean shareSecondLevelMethod;
+   private Integer shareSecondLevelMethod;
 
    @ApiModelProperty(value = "U达人分销佣金按比例")
    private BigDecimal shareSecondRate;
@@ -162,10 +162,10 @@ public class MallItem extends Model {
    private BigDecimal shareSecondLevelAmount;
 
    @ApiModelProperty(value = "U掌柜参与分佣的方式0:按比例 1:按金额 ")
-   private Boolean shareThirdMethod;
+   private Integer shareThirdMethod;
 
    @ApiModelProperty(value = "U掌柜参与管理佣金的方式0:按比例 1:按金额 ")
-   private Boolean shareThirdLevelMethod;
+   private Integer shareThirdLevelMethod;
 
    @ApiModelProperty(value = "U掌柜分销佣金按比例")
    private BigDecimal shareThirdRate;
