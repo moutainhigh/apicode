@@ -137,7 +137,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                     collectingAndThen(
                             toCollection(() -> new TreeSet<>(Comparator.comparing(MallSkuSpec::getSpecValue))), ArrayList::new)
             );
-            sk.stream().forEach(s -> s.setSpecName(null));
+            //sk.stream().forEach(s -> s.setSpecName(null));
             m.setSpecList(sk);
             specs.add(m);
         }
