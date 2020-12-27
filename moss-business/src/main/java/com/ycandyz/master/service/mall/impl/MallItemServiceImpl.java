@@ -77,7 +77,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 entity.setBanners(entity.getBanners().replaceAll("\"",""));
             }
         }
-
+        AssertUtils.notNull(null, "商店编号不能为空");
         MallItemResp vo = new MallItemResp();
         BeanUtil.copyProperties(entity,vo);
         List<Integer> pl = JSONObject.parseArray(t.getPickupAddressIds(), Integer.class);
