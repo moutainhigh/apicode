@@ -471,6 +471,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             AssertUtils.notNull(nonPriceType, "价格类型不正确");
             BeanUtils.copyProperties(model,t);
             t.setBanners(banners);
+
+            //非空字段填充
+            t.setItemText("");
+            t.setHighestSalePrice(BigDecimal.ZERO);
             baseMapper.updateById(t);
 
         }
