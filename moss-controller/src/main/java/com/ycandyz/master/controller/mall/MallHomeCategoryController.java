@@ -6,7 +6,7 @@ import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.query.mall.MallCategoryQuery;
 import com.ycandyz.master.entities.mall.MallCategory;
-import com.ycandyz.master.service.mall.impl.MallHomeCategoryServiceImpl;
+import com.ycandyz.master.service.mall.impl.MallCategoryServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -30,7 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("mall-category")
 @Api(tags="mall-商品分类表")
-public class MallHomeCategoryController extends BaseController<MallHomeCategoryServiceImpl,MallCategory,MallCategoryQuery> {
+public class MallHomeCategoryController extends BaseController<MallCategoryServiceImpl,MallCategory,MallCategoryQuery> {
 	
 	@ApiOperation(value="新增")
     @PostMapping(value = "insert")

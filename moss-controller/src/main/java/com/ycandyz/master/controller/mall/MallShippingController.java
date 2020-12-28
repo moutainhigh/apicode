@@ -8,7 +8,7 @@ import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.dto.mall.MallShippingDTO;
 import com.ycandyz.master.dto.mall.MallShippingKwDTO;
 import com.ycandyz.master.dto.mall.MallShippingRegionProvinceDTO;
-import com.ycandyz.master.service.mall.goodsManage.MallShippingService;
+import com.ycandyz.master.service.mall.goodsManage.GoodsMallShippingService;
 import com.ycandyz.master.vo.MallShippingVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -26,7 +26,7 @@ import java.util.List;
 public class MallShippingController {
 
     @Resource
-    private MallShippingService mallShippingService;
+    private GoodsMallShippingService mallShippingService;
 
     @ApiOperation(value = "添加运费模版",notes = "添加",httpMethod = "POST")
     @PostMapping("/shipping")

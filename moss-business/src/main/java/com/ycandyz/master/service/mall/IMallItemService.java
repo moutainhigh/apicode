@@ -2,7 +2,15 @@ package com.ycandyz.master.service.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
+import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
+import com.ycandyz.master.domain.model.mall.MallItemModel;
+import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
+import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
+import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
+import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
+import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.entities.mall.MallItem;
 
@@ -17,6 +25,16 @@ import com.ycandyz.master.entities.mall.MallItem;
  */
 public interface IMallItemService extends IService<MallItem>{
 
-    Page<MallItemResp> selectMallItemPage(Page<MallItem> page, MallItemQuery query);
+    MallItemResp getByItemNo(String itemNo);
+
+    boolean deleteByItemNo(String itemNo);
+
+    Page<MallItemPageResp> getMallItemPage(Page<MallItem> page, MallItemQuery query);
+
+    boolean insert(MallItemModel model);
+
+    boolean update(MallItemModel model);
+
+    boolean shelf(MallItemShelfModel model);
 	
 }

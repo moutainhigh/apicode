@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.leafletTemplate.TemplateDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.leafletTemplate.Template">
+        <id column="id" property="id" />
+        <result column="template_name" property="templateName" />
+        <result column="share_title" property="shareTitle" />
+        <result column="share_desc" property="shareDesc" />
+        <result column="share_img" property="shareImg" />
+        <result column="template_img" property="templateImg" />
+        <result column="submit_restriction" property="submitRestriction" />
+        <result column="template_status" property="templateStatus" />
+        <result column="user_id" property="userId" />
+        <result column="organize_id" property="organizeId" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+        <result column="end_time" property="endTime" />
+        <result column="classify_id" property="classifyId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, template_name, share_title, share_desc, share_img, template_img, submit_restriction, template_status, user_id, organize_id, created_time, updated_time, end_time
+    </sql>
+    <insert id="saveTemplate"  useGeneratedKeys="true" keyProperty="id" keyColumn="id"  parameterType="com.ycandyz.master.entities.leafletTemplate.Template">
+        INSERT INTO template ( template_name, share_title, share_desc, share_img, template_img, submit_restriction, template_status, user_id, organize_id, created_time, end_time,classify_id )
+        VALUES
+        (#{templateName},#{shareTitle},#{shareDesc},#{shareImg},#{templateImg},
+         #{submitRestriction},'0',#{userId},#{organizeId},now() ,#{endTime},#{classifyId})
+    </insert>
+</mapper>

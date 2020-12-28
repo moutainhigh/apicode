@@ -3,8 +3,7 @@ package ${cfg.vo};
 import ${cfg.entity}.${entity};
 import com.baomidou.mybatisplus.annotation.TableName;
 <#if entityLombokModel>
-import lombok.Getter;
-import lombok.Setter;
+ import lombok.Data;
 </#if>
 
 /**
@@ -17,8 +16,7 @@ import lombok.Setter;
  * @version 2.0
  */
 <#if entityLombokModel>
-@Getter
-@Setter
+@Data
 </#if>
 <#if table.convert>
 @TableName("${table.name}")

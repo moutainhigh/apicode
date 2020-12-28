@@ -1,10 +1,9 @@
 package com.ycandyz.master.controller.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.PageInfo;
 import com.ycandyz.master.api.PageResult;
 import com.ycandyz.master.api.ReturnResponse;
-import com.ycandyz.master.service.mall.goodsManage.MallSpecService;
+import com.ycandyz.master.service.mall.goodsManage.GoodsMallSpecService;
 import com.ycandyz.master.vo.MallSpecKeyWordVO;
 import com.ycandyz.master.vo.MallSpecSingleVO;
 import com.ycandyz.master.vo.MallSpecVO;
@@ -25,7 +24,7 @@ import java.util.List;
 public class MallSpecController {
 
     @Resource
-    private MallSpecService mallSpecService;
+    private GoodsMallSpecService mallSpecService;
 
     @ApiOperation(value = "添加规格模版",notes = "add",httpMethod = "POST")
     @PostMapping("/spec")

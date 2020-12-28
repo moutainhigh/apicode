@@ -30,8 +30,8 @@ public class YcCodeGenerator {
 
 	protected static final Logger log = LoggerFactory.getLogger(YcCodeGenerator.class);
 	
-	private static final String tableName = "coupon_detail_user";
-	private static final String moduleName = "coupon";
+	private static final String tableName = "mall_sku_spec";
+	private static final String moduleName = "mall";
 	private static final boolean createController = false;
 	//生成文件所在目录层级
 	private static final String daoName = "moss-dao";
