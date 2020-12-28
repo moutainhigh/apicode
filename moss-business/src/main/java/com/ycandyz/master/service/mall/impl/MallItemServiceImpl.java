@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.mall.MallItemHomeDao;
@@ -25,12 +26,15 @@ import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.mall.MallShopDTO;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.entities.organize.OrganizeRel;
+import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.service.mall.IMallItemService;
+import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -64,6 +68,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     private OrganizeRelDao organizeRelDao;
     @Autowired
     private MallShopDao mallShopDao;
+    @Autowired
+    private TabooCheckService tabooCheckService;
 
     @Override
     public MallItemResp getByItemNo(String itemNo) {
@@ -255,14 +261,30 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         return p;
     }
 
+    @Transactional
     @Override
-    public boolean insert(MallItemModel model) {
+    public CommonResult insert(MallItemModel model) {
         // TODO shipping_no 值从哪来
         model.setShippingNo(model.getShippingNo() !=null?model.getShippingNo():"");
         model.setShopNo(getShopNo());
         //公共校验
         MallItemEnum.Type type = MallItemEnum.Type.parseCode(model.getType());
         AssertUtils.notNull(type, "商品类型不正确");
+
+        //敏感词校验
+        List<String> lists = new ArrayList<>();
+        StringBuffer txt = new StringBuffer();
+        lists.add(model.getItemName());
+        lists.add(model.getItemText());
+        lists.add(model.getShareDescr());
+        lists.stream().forEach(s->txt.append(s));
+        List<String> result = tabooCheckService.check(txt.toString());
+        if (result != null && result.size() >0 ){
+            JSONObject data = new JSONObject();
+            data.put("code",2500);
+            return CommonResult.success(data,"检测到提交信息涉嫌违规，请重新确认后提交");
+        }
+
         //公共处理赋值
         model.setItemNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
         String itemCover = model.getBanners().get(0);
@@ -355,11 +377,12 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             baseMapper.insert(t);
 
         }
-        return true;
+        return CommonResult.success("保存成功");
     }
 
+    @Transactional
     @Override
-    public boolean update(MallItemModel model) {
+    public CommonResult update(MallItemModel model) {
         // TODO shipping_no 值从哪来
         model.setShippingNo(model.getShippingNo() !=null?model.getShippingNo():"");
         //公共校验
@@ -367,6 +390,21 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         AssertUtils.notNull(type, "商品类型不正确");
         //公共处理赋值
         AssertUtils.notNull(model.getItemNo(), "商品编号不能为空");
+
+        //敏感词校验
+        List<String> lists = new ArrayList<>();
+        StringBuffer txt = new StringBuffer();
+        lists.add(model.getItemName());
+        lists.add(model.getItemText());
+        lists.add(model.getShareDescr());
+        lists.stream().forEach(s->txt.append(s));
+        List<String> result = tabooCheckService.check(txt.toString());
+        if (result != null && result.size() >0 ){
+            JSONObject data = new JSONObject();
+            data.put("code",2500);
+            return CommonResult.success(data,"检测到提交信息涉嫌违规，请重新确认后提交");
+        }
+
         LambdaQueryWrapper<MallItem> itemWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, model.getItemNo());
         MallItem item = baseMapper.selectOne(itemWrapper);
@@ -375,6 +413,13 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         String banners = JSONUtil.toJsonStr(model.getBanners());
         model.setItemCover(itemCover);
         MallItem t = new MallItem();
+
+        //更新商品时，审核通过初始化字段
+        t.setIsScreen(0);
+        t.setAuditStatus(0);
+        t.setAuditedAt(0);
+        t.setAuditorId(0l);
+
         //销售商品
         if(type.getCode().equals(MallItemEnum.Type.Type_1.getCode())){
             //先删除旧数据，再添加
@@ -482,7 +527,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             baseMapper.updateById(t);
 
         }
-        return true;
+        return CommonResult.success("保存成功");
     }
 
     @Override
