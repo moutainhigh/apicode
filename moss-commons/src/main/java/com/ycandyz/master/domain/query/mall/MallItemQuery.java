@@ -1,5 +1,6 @@
 package com.ycandyz.master.domain.query.mall;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ycandyz.master.annotation.Condition;
 import com.ycandyz.master.enums.ConditionEnum;
 
@@ -57,10 +58,12 @@ public class MallItemQuery implements Serializable {
 
     @ApiModelProperty(name = "created_time_begin", value = "起")
     @Condition(field = "created_time_begin", condition = ConditionEnum.GE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createdTimeBegin;
 
     @ApiModelProperty(name = "created_time_end", value = "止")
     @Condition(field = "created_time_end", condition = ConditionEnum.LE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createdTimeEnd;
 
     @ApiModelProperty(name = "is_group", value = "1集团，0非集团")

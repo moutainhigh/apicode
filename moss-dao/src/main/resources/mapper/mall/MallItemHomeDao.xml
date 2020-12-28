@@ -186,10 +186,10 @@
         <if test="q.categoryNo != null and q.categoryNo != ''"> and t.category_no = #{q.categoryNo} </if>
         <if test="q.status != null"> and t.status=#{q.status} </if>
         <if test="q.type != null"> and t.type=#{q.type} </if>
-        <if test="q.createdTimeBegin != null and q.createdTimeBegin != ''"> and date_format(t.created_time,'%Y-%m-%d') >= date_format(q.createdTimeBegin,'%Y-%m-%d') </if>
-        <if test="q.createdTimeEnd != null and q.createdTimeEnd != ''">
+        <if test="q.createdTimeBegin != null"> and date_format(t.created_time,'%Y-%m-%d') >= date_format(#{q.createdTimeBegin},'%Y-%m-%d') </if>
+        <if test="q.createdTimeEnd != null">
             <![CDATA[
-	            AND date_format(t.created_time,'%Y-%m-%d') <= date_format(q.createdTimeEnd,'%Y-%m-%d')
+	            AND date_format(t.created_time,'%Y-%m-%d') <= date_format(#{q.createdTimeEnd},'%Y-%m-%d')
 	        ]]>
         </if>
     </select>
