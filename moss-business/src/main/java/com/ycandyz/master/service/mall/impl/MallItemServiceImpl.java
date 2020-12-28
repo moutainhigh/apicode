@@ -158,6 +158,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         vo.setDetailVideoList(detailVideo);
 
         vo.setSales(entity.getBaseSales()+entity.getRealSales());
+        vo.setSalePrice(entity.getLowestSalePrice());
 
         return vo;
     }
@@ -279,7 +280,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
-
+                model.setLowestSalePrice(skuMinModel.get(0).getSalePrice());
                 //添加Sku，sepc
                 for (int i=0;i< model.getSkus().size();i++){
                     MallItemSkuModel f = model.getSkus().get(i);
@@ -304,7 +305,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
                 model.setHighestSalePrice(model.getSalePrice());
-
+                model.setLowestSalePrice(model.getSalePrice());
                 MallSku sku = new MallSku();
                 BeanUtils.copyProperties(skuModel,sku);
                 sku.setSortValue(0);
