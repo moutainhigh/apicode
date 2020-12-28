@@ -40,8 +40,8 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 	
 	@ApiOperation(value="新增")
     @PostMapping()
-	public CommonResult<MallItemModel> insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemModel entity) {
-        return result(service.insert(entity),entity,"保存失败!");
+	public CommonResult insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemModel entity) {
+        return service.insert(entity);
 	}
 
     @ApiOperation(value = "通过ID")
@@ -52,9 +52,9 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 	
 	@ApiOperation(value = "通过ID更新")
     @PutMapping(value = "{item_no}")
-	public CommonResult<MallItemModel> updateById(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemModel entity) {
+	public CommonResult updateById(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemModel entity) {
         entity.setItemNo(item_no);
-        return result(service.update(entity),entity,"更改失败!");
+        return service.update(entity);
 	}
 
     @ApiOperation(value = "上架/下架商品")

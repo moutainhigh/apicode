@@ -112,6 +112,9 @@ public class MallItemModel {
     @ApiModelProperty(name = "goods_no",value = "货号")
     private String goodsNo;
 
+    @ApiModelProperty(name = "lowest_sale_price",value = "最低销售价格")
+    private BigDecimal lowestSalePrice;
+
     @ApiModelProperty(name = "highest_sale_price",value = "最高销售价格")
     private BigDecimal highestSalePrice;
 
@@ -142,8 +145,8 @@ public class MallItemModel {
     @ApiModelProperty(name = "delivery_type",value = "1- 配送 2-自提")
     private List<Integer> deliveryType;
 
-    @ApiModelProperty(name = "pickup_address_ids",value = "配送地址")
-    private List<Integer> pickupAddressIds;
+    @ApiModelProperty(name = "pickup_addr_ids",value = "配送地址")
+    private List<Integer> pickupAddrIds;
 
     @ApiModelProperty(name = "detail_video_list",value = "商品介绍视频")
     private List<MallItemVideoModel> detailVideoList;

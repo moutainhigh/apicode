@@ -205,4 +205,13 @@ public class MallItem extends Model {
    @ApiModelProperty(name = "non_price",value = "非销售商品-原价")
    private String nonPrice;
 
+   @ApiModelProperty(name = "audit_status",value = "审核状态 0待审核 1人工审核通过 2人工审核不通过（屏蔽）")
+   private Integer auditStatus;
+
+   @ApiModelProperty(name = "audited_at",value = "审核时间")
+   private Integer auditedAt;
+
+   @ApiModelProperty(name = "auditor_id",value = "审核人ID 待审核时为0")
+   private Long auditorId;
+
 }
