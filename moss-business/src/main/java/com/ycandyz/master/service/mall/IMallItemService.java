@@ -2,6 +2,7 @@ package com.ycandyz.master.service.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
@@ -31,9 +32,9 @@ public interface IMallItemService extends IService<MallItem>{
 
     Page<MallItemPageResp> getMallItemPage(Page<MallItem> page, MallItemQuery query);
 
-    boolean insert(MallItemModel model);
+    CommonResult insert(MallItemModel model);
 
-    boolean update(MallItemModel model);
+    CommonResult update(MallItemModel model);
 
     boolean shelf(MallItemShelfModel model);
 	
