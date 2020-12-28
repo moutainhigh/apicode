@@ -145,8 +145,8 @@ public class MallItemModel {
     @ApiModelProperty(name = "delivery_type",value = "1- 配送 2-自提")
     private List<Integer> deliveryType;
 
-    @ApiModelProperty(name = "pickup_address_ids",value = "配送地址")
-    private List<Integer> pickupAddressIds;
+    @ApiModelProperty(name = "pickup_addr_ids",value = "配送地址")
+    private List<Integer> pickupAddrIds;
 
     @ApiModelProperty(name = "detail_video_list",value = "商品介绍视频")
     private List<MallItemVideoModel> detailVideoList;

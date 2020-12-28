@@ -317,7 +317,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             BeanUtils.copyProperties(model,t);
             t.setBanners(banners);
             t.setDeliveryType(JSONUtil.toJsonStr(model.getDeliveryType()));
-            t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddressIds()));
+            t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddrIds()));
             baseMapper.insert(t);
 
             //添加视频
