@@ -137,10 +137,12 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         MallCategory category = mallCategoryService.getOne(categoryWrapper);
         vo.setCategoryName(category.getCategoryName());
         vo.setParentCategoryNo(category.getParentCategoryNo());
-        LambdaQueryWrapper<MallCategory> pcWrapper = new LambdaQueryWrapper<MallCategory>()
-                .eq(MallCategory::getCategoryNo, category.getParentCategoryNo());
-        MallCategory pc = mallCategoryService.getOne(pcWrapper);
-        vo.setParentCategoryName(pc.getCategoryName());
+        if(category.getParentCategoryNo() != null && !category.getParentCategoryNo().trim().equals("")){
+            LambdaQueryWrapper<MallCategory> pcWrapper = new LambdaQueryWrapper<MallCategory>()
+                    .eq(MallCategory::getCategoryNo, category.getParentCategoryNo());
+            MallCategory pc = mallCategoryService.getOne(pcWrapper);
+            vo.setParentCategoryName(pc.getCategoryName());
+        }
 
         //获取置顶视频
         LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
