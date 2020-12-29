@@ -316,6 +316,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
                 MallItemSkuModel skuModel = skuMinModel.get(0);
+                AssertUtils.notNull(skuModel.getStock(), "库存不能为空");
                 model.setPrice(skuModel.getPrice());
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
@@ -325,6 +326,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 for (int i=0;i< model.getSkus().size();i++){
                     MallItemSkuModel f = model.getSkus().get(i);
                     AssertUtils.notNull(f.getSkuSpecs(), "Sku规格不能为空");
+                    AssertUtils.notNull(f.getStock(), "库存不能为空");
+                    AssertUtils.notNull(f.getSalePrice(),"销售价格不能为空");
+                    AssertUtils.maxLimit(f.getPrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
+                    AssertUtils.maxLimit(f.getSalePrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     MallSku sku = new MallSku();
                     sku.setItemNo(model.getItemNo());
                     sku.setSkuNo(model.getItemNo()+"_"+StrUtil.toString(IDGeneratorUtils.getLongId()));
@@ -340,6 +345,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 }
             }else{
                 MallItemSkuModel skuModel = new MallItemSkuModel();
+                AssertUtils.notNull(model.getStock(), "库存不能为空");
                 skuModel.setPrice(model.getPrice());
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
@@ -457,6 +463,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         LambdaQueryWrapper<MallItem> itemWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, model.getItemNo());
         MallItem item = baseMapper.selectOne(itemWrapper);
+        if (!item.getShopNo().equals(getShopNo())){
+            return CommonResult.failed("当前门店无权进行修改操作");
+        }
         model.setId(item.getId());
         String itemCover = model.getBanners().get(0);
         String banners = JSONUtil.toJsonStr(model.getBanners());
