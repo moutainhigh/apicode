@@ -370,8 +370,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
         }else{
             MallItemEnum.NonPriceType nonPriceType = MallItemEnum.NonPriceType.parseCode(model.getNonPriceType());
-            AssertUtils.notNull(nonPriceType, "价格类型不正确");
-            AssertUtils.notNull(model.getNonSalePrice(), "售价不能为空");
+            if(nonPriceType.getCode() == 1){
+                AssertUtils.notNull(nonPriceType, "价格类型不正确");
+                AssertUtils.notNull(model.getNonSalePrice(), "售价不能为空");
+            }
             BeanUtils.copyProperties(model,t);
             t.setBanners(banners);
 
