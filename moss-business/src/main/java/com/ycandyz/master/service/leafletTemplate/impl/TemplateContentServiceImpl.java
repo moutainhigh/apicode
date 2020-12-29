@@ -84,14 +84,16 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
         List<TemplateContentResp> tableContents = new ArrayList<>();
         templateContents.forEach(vo -> {
             if (StringUtils.isNotEmpty(vo.getComponentContent())) {
-                User user = userDao.selectById(vo.getUserId());
                 TemplateContentResp templateContentResp = new TemplateContentResp();
+                if (null != vo.getUserId()){
+                    User user = userDao.selectById(vo.getUserId());
+                    if (user != null) {
+                        templateContentResp.setUserPhone(user.getPhone());
+                    }
+                }
                 BeanUtils.copyProperties(vo, templateContentResp);
                 List<TemplateTableContentResp> contentResps = JSONObject.parseArray(vo.getComponentContent(), TemplateTableContentResp.class);
                 templateContentResp.setContents(contentResps);
-                if (user != null) {
-                    templateContentResp.setUserPhone(user.getPhone());
-                }
                 tableContents.add(templateContentResp);
             }
         });
