@@ -317,7 +317,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
                 MallItemSkuModel skuModel = skuMinModel.get(0);
                 AssertUtils.notNull(skuModel.getStock(), "库存不能为空");
-                model.setPrice(skuModel.getPrice());
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
@@ -346,7 +345,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             }else{
                 MallItemSkuModel skuModel = new MallItemSkuModel();
                 AssertUtils.notNull(model.getStock(), "库存不能为空");
-                skuModel.setPrice(model.getPrice());
+                skuModel.setPrice(model.getSalePrice());
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
                 model.setHighestSalePrice(model.getSalePrice());
@@ -498,7 +497,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
                 MallItemSkuModel skuModel = skuMinModel.get(0);
-                model.setPrice(skuModel.getPrice());
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
@@ -525,7 +523,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 }
             }else{
                 MallItemSkuModel skuModel = new MallItemSkuModel();
-                skuModel.setPrice(model.getPrice());
+                skuModel.setPrice(model.getSalePrice());
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
                 model.setHighestSalePrice(model.getSalePrice());
