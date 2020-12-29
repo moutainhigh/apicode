@@ -25,6 +25,7 @@ import com.ycandyz.master.domain.response.mall.MallCategoryResp;
 import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.mall.MallShopDTO;
+import com.ycandyz.master.entities.ad.HomeCategory;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.enums.ResultEnum;
@@ -279,6 +280,12 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     @Transactional
     @Override
     public CommonResult insert(MallItemModel model) {
+        //校验商品名称
+        LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
+                .eq(MallItem::getItemName,model.getItemName());
+        List<MallItem> checkName = baseMapper.selectList(queryWrapper);
+        AssertUtils.isNotEmpty(checkName, "商品名称重复");
+
         // TODO shipping_no 值从哪来
         model.setShippingNo(model.getShippingNo() !=null?model.getShippingNo():"");
         model.setShopNo(getShopNo());
@@ -317,7 +324,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
                 MallItemSkuModel skuModel = skuMinModel.get(0);
                 AssertUtils.notNull(skuModel.getStock(), "库存不能为空");
-                model.setPrice(skuModel.getPrice());
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
@@ -346,6 +352,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             }else{
                 MallItemSkuModel skuModel = new MallItemSkuModel();
                 AssertUtils.notNull(model.getStock(), "库存不能为空");
+                skuModel.setSalePrice(model.getSalePrice());
                 skuModel.setPrice(model.getPrice());
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
@@ -366,21 +373,21 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
             //新增默认分销数据入库
             MallSocialSetting mallSocialSetting = mallSocialSettingDao.selectOne(new QueryWrapper<MallSocialSetting>().eq("shop_no",getShopNo()));
-            socialToItem(t,mallSocialSetting);
+            if(mallSocialSetting != null){
+                socialToItem(t,mallSocialSetting);
+            }
+
             baseMapper.insert(t);
 
         }else{
             MallItemEnum.NonPriceType nonPriceType = MallItemEnum.NonPriceType.parseCode(model.getNonPriceType());
-            AssertUtils.notNull(nonPriceType, "价格类型不正确");
-            AssertUtils.notNull(model.getNonSalePrice(), "售价不能为空");
+            if(nonPriceType.getCode() == 1){
+                AssertUtils.notNull(nonPriceType, "价格类型不正确");
+                AssertUtils.notNull(model.getNonSalePrice(), "售价不能为空");
+            }
             BeanUtils.copyProperties(model,t);
             t.setBanners(banners);
-
-            //t.setItemText("");
             t.setHighestSalePrice(BigDecimal.ZERO);
-            //新增默认分销数据入库
-            MallSocialSetting mallSocialSetting = mallSocialSettingDao.selectOne(new QueryWrapper<MallSocialSetting>().eq("shop_no",getShopNo()));
-            socialToItem(t,mallSocialSetting);
             baseMapper.insert(t);
 
         }
@@ -415,6 +422,11 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
      * @param mallSocialSetting
      */
     private void socialToItem(MallItem t, MallSocialSetting mallSocialSetting){
+        if(mallSocialSetting.getIsDefaultItem()){
+            t.setIsEnableShare(1);
+        }else{
+            t.setIsEnableShare(0);
+        }
         t.setShareMethod(mallSocialSetting.getShareMethod());
         t.setShareRate(mallSocialSetting.getShareRate());
         t.setShareAmount(mallSocialSetting.getShareAmount());
@@ -438,6 +450,13 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     @Transactional
     @Override
     public CommonResult update(MallItemModel model) {
+
+        //校验商品名称
+        LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
+                .eq(MallItem::getItemName,model.getItemName());
+        List<MallItem> checkName = baseMapper.selectList(queryWrapper);
+        AssertUtils.isNotEmpty(checkName, "商品名称重复");
+
         // TODO shipping_no 值从哪来
         model.setShippingNo(model.getShippingNo() !=null?model.getShippingNo():"");
         //公共校验
@@ -498,7 +517,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
                 MallItemSkuModel skuModel = skuMinModel.get(0);
-                model.setPrice(skuModel.getPrice());
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
@@ -525,9 +543,11 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 }
             }else{
                 MallItemSkuModel skuModel = new MallItemSkuModel();
+                skuModel.setSalePrice(model.getSalePrice());
                 skuModel.setPrice(model.getPrice());
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
+                skuModel.setSalePrice(model.getSalePrice());
                 model.setHighestSalePrice(model.getSalePrice());
                 model.setLowestSalePrice(model.getSalePrice());
 
@@ -540,7 +560,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             }
 
             BeanUtils.copyProperties(model,t);
+            t.setPrice(model.getPrice()==null ? BigDecimal.ZERO : model.getPrice());
             t.setBanners(banners);
+            t.setPickupAddressIds(model.getPickupAddrIds().toString());
             baseMapper.updateById(t);
 
         }else{
@@ -548,9 +570,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             AssertUtils.notNull(nonPriceType, "价格类型不正确");
             BeanUtils.copyProperties(model,t);
             t.setBanners(banners);
-
-            //非空字段填充
-            //t.setItemText("");
             t.setHighestSalePrice(BigDecimal.ZERO);
             baseMapper.updateById(t);
 
