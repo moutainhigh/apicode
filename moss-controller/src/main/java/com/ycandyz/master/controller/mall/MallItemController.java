@@ -59,8 +59,8 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 
     @ApiOperation(value = "上架/下架商品")
     @PutMapping(value = "shelf")
-    public CommonResult<MallItemShelfModel> shelfById(@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemShelfModel entity) {
-        return result(service.shelf(entity),entity,"操作失败!");
+    public CommonResult shelfById(@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemShelfModel entity) {
+        return service.shelf(entity);
     }
 	
 	@ApiOperation(value = "查询根据ID")
@@ -79,7 +79,7 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
     @ApiOperation(value = "通过ID删除")
     @DeleteMapping(value = "{item_no}")
 	public CommonResult deleteById(@PathVariable String item_no) {
-        return result(service.deleteByItemNo(item_no),null,"删除失败!");
+        return service.deleteByItemNo(item_no);
 	}
 
 

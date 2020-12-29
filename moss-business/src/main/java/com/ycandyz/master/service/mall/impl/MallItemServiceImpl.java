@@ -14,6 +14,7 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.mall.MallItemHomeDao;
 import com.ycandyz.master.dao.mall.MallShopDao;
+import com.ycandyz.master.dao.mall.MallSocialSettingDao;
 import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.domain.enums.mall.MallItemEnum;
 import com.ycandyz.master.domain.enums.mall.MallItemVideoEnum;
@@ -27,6 +28,7 @@ import com.ycandyz.master.dto.mall.MallShopDTO;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.enums.ResultEnum;
+import com.ycandyz.master.exception.BusinessException;
 import com.ycandyz.master.service.mall.IMallItemService;
 import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.utils.AssertUtils;
@@ -70,6 +72,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     private MallShopDao mallShopDao;
     @Autowired
     private TabooCheckService tabooCheckService;
+    @Autowired
+    private MallSocialSettingDao mallSocialSettingDao;
 
     @Override
     public MallItemResp getByItemNo(String itemNo) {
@@ -172,11 +176,22 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     }
 
     @Override
-    public boolean deleteByItemNo(String itemNo) {
+    public CommonResult deleteByItemNo(String itemNo) {
+        MallItem mallItem = baseMapper.selectOne(new QueryWrapper<MallItem>().eq("item_no",itemNo));
+        if (mallItem!=null){
+            if (!mallItem.getShopNo().equals(getShopNo())){
+                return CommonResult.failed("当前商品不属于该门店");
+            }
+        }
         MallItem entity = new MallItem();
         entity.setItemNo(itemNo);
         entity.setStatus(MallItemEnum.Status.START_50.getCode());
-        return SqlHelper.retBool(baseMapper.updateByItemNo(entity));
+        int i = baseMapper.updateByItemNo(entity);
+        if (i>0){
+            return CommonResult.success("删除成功");
+        }else {
+            return CommonResult.failed("删除失败");
+        }
     }
 
     @Override
@@ -270,6 +285,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         //公共校验
         MallItemEnum.Type type = MallItemEnum.Type.parseCode(model.getType());
         AssertUtils.notNull(type, "商品类型不正确");
+        AssertUtils.maxLimit(model.getPrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
+        AssertUtils.maxLimit(model.getSalePrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
 
         //敏感词校验
         List<String> lists = new ArrayList<>();
@@ -299,6 +316,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
                 MallItemSkuModel skuModel = skuMinModel.get(0);
+                AssertUtils.notNull(skuModel.getStock(), "库存不能为空");
                 model.setPrice(skuModel.getPrice());
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
@@ -308,6 +326,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 for (int i=0;i< model.getSkus().size();i++){
                     MallItemSkuModel f = model.getSkus().get(i);
                     AssertUtils.notNull(f.getSkuSpecs(), "Sku规格不能为空");
+                    AssertUtils.notNull(f.getStock(), "库存不能为空");
+                    AssertUtils.notNull(f.getSalePrice(),"销售价格不能为空");
+                    AssertUtils.maxLimit(f.getPrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
+                    AssertUtils.maxLimit(f.getSalePrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     MallSku sku = new MallSku();
                     sku.setItemNo(model.getItemNo());
                     sku.setSkuNo(model.getItemNo()+"_"+StrUtil.toString(IDGeneratorUtils.getLongId()));
@@ -323,6 +345,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 }
             }else{
                 MallItemSkuModel skuModel = new MallItemSkuModel();
+                AssertUtils.notNull(model.getStock(), "库存不能为空");
                 skuModel.setPrice(model.getPrice());
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
@@ -340,6 +363,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             t.setBanners(banners);
             t.setDeliveryType(JSONUtil.toJsonStr(model.getDeliveryType()));
             t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddrIds()));
+
+            //新增默认分销数据入库
+            MallSocialSetting mallSocialSetting = mallSocialSettingDao.selectOne(new QueryWrapper<MallSocialSetting>().eq("shop_no",getShopNo()));
+            socialToItem(t,mallSocialSetting);
             baseMapper.insert(t);
 
         }else{
@@ -351,6 +378,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
             //t.setItemText("");
             t.setHighestSalePrice(BigDecimal.ZERO);
+            //新增默认分销数据入库
+            MallSocialSetting mallSocialSetting = mallSocialSettingDao.selectOne(new QueryWrapper<MallSocialSetting>().eq("shop_no",getShopNo()));
+            socialToItem(t,mallSocialSetting);
             baseMapper.insert(t);
 
         }
@@ -377,6 +407,32 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         }
 
         return CommonResult.success("保存成功");
+    }
+
+    /**
+     * 吧当前门店的分销佣金分成比例保存到该门店的商品中
+     * @param t
+     * @param mallSocialSetting
+     */
+    private void socialToItem(MallItem t, MallSocialSetting mallSocialSetting){
+        t.setShareMethod(mallSocialSetting.getShareMethod());
+        t.setShareRate(mallSocialSetting.getShareRate());
+        t.setShareAmount(mallSocialSetting.getShareAmount());
+        t.setShareLevelMethod(mallSocialSetting.getShareLevelMethod());
+        t.setShareLevelRate(mallSocialSetting.getShareLevelRate());
+        t.setShareLevelAmount(mallSocialSetting.getShareLevelAmount());
+        t.setShareSecondMethod(mallSocialSetting.getShareSecondMethod());
+        t.setShareSecondLevelMethod(mallSocialSetting.getShareSecondLevelMethod());
+        t.setShareSecondRate(mallSocialSetting.getShareSecondRate());
+        t.setShareSecondAmount(mallSocialSetting.getShareSecondAmount());
+        t.setShareSecondLevelRate(mallSocialSetting.getShareSecondLevelRate());
+        t.setShareSecondLevelAmount(mallSocialSetting.getShareSecondLevelAmount());
+        t.setShareThirdMethod(mallSocialSetting.getShareThirdMethod());
+        t.setShareThirdLevelMethod(mallSocialSetting.getShareThirdLevelMethod());
+        t.setShareThirdRate(mallSocialSetting.getShareThirdRate());
+        t.setShareThirdAmount(mallSocialSetting.getShareThirdAmount());
+        t.setShareThirdLevelRate(mallSocialSetting.getShareThirdLevelRate());
+        t.setShareThirdLevelAmount(mallSocialSetting.getShareThirdLevelAmount());
     }
 
     @Transactional
@@ -407,6 +463,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         LambdaQueryWrapper<MallItem> itemWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, model.getItemNo());
         MallItem item = baseMapper.selectOne(itemWrapper);
+        if (!item.getShopNo().equals(getShopNo())){
+            return CommonResult.failed("当前门店无权进行修改操作");
+        }
         model.setId(item.getId());
         String itemCover = model.getBanners().get(0);
         String banners = JSONUtil.toJsonStr(model.getBanners());
@@ -449,6 +508,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 for (int i=0;i< model.getSkus().size();i++){
                     MallItemSkuModel f = model.getSkus().get(i);
                     AssertUtils.notNull(f.getSkuSpecs(), "Sku规格不能为空");
+                    AssertUtils.maxLimit(f.getPrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
+                    AssertUtils.maxLimit(f.getSalePrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     MallSku sku = new MallSku();
                     sku.setItemNo(model.getItemNo());
                     sku.setSkuNo(model.getItemNo()+"_"+StrUtil.toString(IDGeneratorUtils.getLongId()));
@@ -495,6 +556,21 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
         }
 
+        
+        if(CollectionUtil.isEmpty(model.getTopVideoList())){
+            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                    .eq(MallItemVideo::getItemNo, model.getItemNo())
+                    .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_0.getCode());
+            mallItemVideoService.remove(videoWrapper);
+        }
+
+        if(CollectionUtil.isEmpty(model.getDetailVideoList())){
+            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                    .eq(MallItemVideo::getItemNo, model.getItemNo())
+                    .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_1.getCode());
+            mallItemVideoService.remove(videoWrapper);
+        }
+
         //添加视频
         if(CollectionUtil.isNotEmpty(model.getTopVideoList())){
             //先删除旧数据，再添加
@@ -532,15 +608,21 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     }
 
     @Override
-    public boolean shelf(MallItemShelfModel model) {
+    public CommonResult shelf(MallItemShelfModel model) {
         MallItemEnum.Status status = MallItemEnum.Status.parseCode(model.getStatus());
         AssertUtils.notNull(status, "状态不正确");
         for (String itemNo : model.getItemNoList()) {
+            MallItem mallItem = baseMapper.selectOne(new QueryWrapper<MallItem>().eq("item_no",itemNo));
+            if (mallItem!=null){
+                if (!mallItem.getShopNo().equals(getShopNo())){
+                    throw new BusinessException("当前商品不属于该门店,无权操作");
+                }
+            }
             MallItem entity = new MallItem();
             entity.setItemNo(itemNo);
             entity.setStatus(status.getCode());
-            SqlHelper.retBool(baseMapper.updateByItemNo(entity));
+            baseMapper.updateByItemNo(entity);
         }
-        return true;
+        return CommonResult.success("操作成功!");
     }
 }
