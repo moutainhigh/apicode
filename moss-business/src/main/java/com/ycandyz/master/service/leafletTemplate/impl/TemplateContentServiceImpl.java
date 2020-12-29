@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.leafletTemplate.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSONObject;
@@ -80,7 +81,10 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
         AssertUtils.notNull(template, "模板信息不存在！");
         IPage<TemplateContent> templateContentsPage = templateContentDao.selectPage(new Page<>(page.getPage(),page.getPageSize()), new QueryWrapper<TemplateContent>().eq("template_id", query.getTemplateId()).orderByDesc("created_time"));
         List<TemplateContent> templateContents = templateContentsPage.getRecords();
-        AssertUtils.notEmpty(templateContents, "无模板相关组件内容！");
+        Page<TemplateContentResp> resultPages = new Page<>();
+        if (CollectionUtil.isEmpty(templateContents)){
+            return resultPages;
+        }
         List<TemplateContentResp> tableContents = new ArrayList<>();
         templateContents.forEach(vo -> {
             if (StringUtils.isNotEmpty(vo.getComponentContent())) {
@@ -97,7 +101,6 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
                 tableContents.add(templateContentResp);
             }
         });
-        Page<TemplateContentResp> resultPages = new Page<>();
         resultPages.setCurrent(page.getPage());
         resultPages.setPages(templateContentsPage.getPages());
         resultPages.setRecords(tableContents);
