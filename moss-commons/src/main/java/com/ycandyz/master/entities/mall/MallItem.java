@@ -214,4 +214,12 @@ public class MallItem extends Model {
    @ApiModelProperty(name = "auditor_id",value = "审核人ID 待审核时为0")
    private Long auditorId;
 
+   @ApiModelProperty(name = "share_level_method",value = "U团长管理佣金的方式0:按比例 1:按金额")
+   private Integer shareLevelMethod;
+
+   @ApiModelProperty(name = "share_level_rate",value = "U团长管理佣金按比例")
+   private BigDecimal shareLevelRate;
+
+   @ApiModelProperty(name = "share_level_amount",value = "U团长管理佣金按金额")
+   private BigDecimal shareLevelAmount;
 }

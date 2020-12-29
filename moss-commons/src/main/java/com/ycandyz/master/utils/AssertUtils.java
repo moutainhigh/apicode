@@ -6,6 +6,7 @@ import com.ycandyz.master.exception.BusinessException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -163,5 +164,16 @@ public final class AssertUtils {
         }
     }
 
-
+    /**
+     * BigDecimal字符长度限制
+     *
+     * @param text    传入金额
+     * @param maxNum  最大值
+     * @param message 错误信息
+     */
+    public static void maxLimit(BigDecimal text, BigDecimal maxNum, String message) {
+        if (text!=null && text.compareTo(maxNum)>0){
+            throw new BusinessException(message);
+        }
+    }
 }
