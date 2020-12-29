@@ -547,6 +547,21 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
         }
 
+        
+        if(CollectionUtil.isEmpty(model.getTopVideoList())){
+            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                    .eq(MallItemVideo::getItemNo, model.getItemNo())
+                    .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_0.getCode());
+            mallItemVideoService.remove(videoWrapper);
+        }
+
+        if(CollectionUtil.isEmpty(model.getDetailVideoList())){
+            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                    .eq(MallItemVideo::getItemNo, model.getItemNo())
+                    .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_1.getCode());
+            mallItemVideoService.remove(videoWrapper);
+        }
+
         //添加视频
         if(CollectionUtil.isNotEmpty(model.getTopVideoList())){
             //先删除旧数据，再添加
