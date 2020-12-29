@@ -176,4 +176,18 @@ public final class AssertUtils {
             throw new BusinessException(message);
         }
     }
+
+
+
+    /**
+     * 数组不为空则抛异常
+     *
+     * @param collection   集合
+     * @param message 错误信息
+     */
+    public static void isNotEmpty(Collection<?> collection, String message) {
+        if (CollectionUtil.isNotEmpty(collection)) {
+            throw new BusinessException(message);
+        }
+    }
 }
