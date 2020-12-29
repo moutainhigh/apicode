@@ -28,7 +28,7 @@ public interface IMallItemService extends IService<MallItem>{
 
     MallItemResp getByItemNo(String itemNo);
 
-    boolean deleteByItemNo(String itemNo);
+    CommonResult deleteByItemNo(String itemNo);
 
     Page<MallItemPageResp> getMallItemPage(Page<MallItem> page, MallItemQuery query);
 
@@ -36,6 +36,6 @@ public interface IMallItemService extends IService<MallItem>{
 
     CommonResult update(MallItemModel model);
 
-    boolean shelf(MallItemShelfModel model);
+    CommonResult shelf(MallItemShelfModel model);
 	
 }

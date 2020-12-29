@@ -2,6 +2,7 @@ package com.ycandyz.master.domain.model.mall;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.ycandyz.master.validation.annotaion.Length;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,9 +29,11 @@ import java.util.List;
 public class MallItemSkuModel {
 
     @ApiModelProperty(name = "sale_price",value = "销售价格")
+    @Length(max = 9, message = "销售价格不能大于999999.99")
     private BigDecimal salePrice;
 
     @ApiModelProperty(name = "price",value = "原价")
+    @Length(max = 9, message = "原价不能大于999999.99")
     private BigDecimal price;
 
     @ApiModelProperty(name = "goods_no",value = "货号")
