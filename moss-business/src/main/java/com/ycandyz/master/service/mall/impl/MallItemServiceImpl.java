@@ -528,6 +528,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 skuModel.setPrice(model.getSalePrice());
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
+                skuModel.setSalePrice(model.getSalePrice());
                 model.setHighestSalePrice(model.getSalePrice());
                 model.setLowestSalePrice(model.getSalePrice());
 
@@ -540,7 +541,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             }
 
             BeanUtils.copyProperties(model,t);
+            t.setPrice(model.getPrice()==null ? BigDecimal.ZERO : model.getPrice());
             t.setBanners(banners);
+            t.setPickupAddressIds(model.getPickupAddrIds().toString());
             baseMapper.updateById(t);
 
         }else{

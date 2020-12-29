@@ -192,6 +192,7 @@
 	            AND date_format(t.created_time,'%Y-%m-%d') <= date_format(#{q.createdTimeEnd},'%Y-%m-%d')
 	        ]]>
         </if>
+        order by t.sort_value DESC,t.created_time DESC
     </select>
 
     <update id="updateByItemNo">
