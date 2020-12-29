@@ -344,26 +344,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddrIds()));
             baseMapper.insert(t);
 
-            //添加视频
-            if(CollectionUtil.isNotEmpty(model.getTopVideoList())){
-                MallItemVideoModel videoModel = model.getTopVideoList().get(0);
-                MallItemVideo video = new MallItemVideo();
-                videoModel.setItemNo(t.getItemNo());
-                videoModel.setType(MallItemVideoEnum.Type.TYPE_0.getCode());
-                BeanUtils.copyProperties(videoModel,video);
-                video.setVideoNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
-                video.setImg("");
-                mallItemVideoService.save(video);
-            }
-            if(CollectionUtil.isNotEmpty(model.getDetailVideoList())){
-                MallItemVideoModel videoModel = model.getDetailVideoList().get(0);
-                MallItemVideo video = new MallItemVideo();
-                videoModel.setItemNo(t.getItemNo());
-                videoModel.setType(MallItemVideoEnum.Type.TYPE_1.getCode());
-                BeanUtils.copyProperties(videoModel,video);
-                video.setVideoNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
-                mallItemVideoService.save(video);
-            }
         }else{
             MallItemEnum.NonPriceType nonPriceType = MallItemEnum.NonPriceType.parseCode(model.getNonPriceType());
             AssertUtils.notNull(nonPriceType, "价格类型不正确");
@@ -371,12 +351,33 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             BeanUtils.copyProperties(model,t);
             t.setBanners(banners);
 
-            //非空字段填充
-            t.setItemText("");
+            //t.setItemText("");
             t.setHighestSalePrice(BigDecimal.ZERO);
             baseMapper.insert(t);
 
         }
+
+        //添加视频
+        if(CollectionUtil.isNotEmpty(model.getTopVideoList())){
+            MallItemVideoModel videoModel = model.getTopVideoList().get(0);
+            MallItemVideo video = new MallItemVideo();
+            videoModel.setItemNo(t.getItemNo());
+            videoModel.setType(MallItemVideoEnum.Type.TYPE_0.getCode());
+            BeanUtils.copyProperties(videoModel,video);
+            video.setVideoNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
+            video.setImg("");
+            mallItemVideoService.save(video);
+        }
+        if(CollectionUtil.isNotEmpty(model.getDetailVideoList())){
+            MallItemVideoModel videoModel = model.getDetailVideoList().get(0);
+            MallItemVideo video = new MallItemVideo();
+            videoModel.setItemNo(t.getItemNo());
+            videoModel.setType(MallItemVideoEnum.Type.TYPE_1.getCode());
+            BeanUtils.copyProperties(videoModel,video);
+            video.setVideoNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
+            mallItemVideoService.save(video);
+        }
+
         return CommonResult.success("保存成功");
     }
 
@@ -445,6 +446,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
+                model.setLowestSalePrice(skuMinModel.get(0).getSalePrice());
 
                 //添加Sku，sepc
                 for (int i=0;i< model.getSkus().size();i++){
@@ -470,6 +472,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
                 model.setHighestSalePrice(model.getSalePrice());
+                model.setLowestSalePrice(model.getSalePrice());
 
                 MallSku sku = new MallSku();
                 BeanUtils.copyProperties(skuModel,sku);
@@ -483,38 +486,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             t.setBanners(banners);
             baseMapper.updateById(t);
 
-            //添加视频
-            if(CollectionUtil.isNotEmpty(model.getTopVideoList())){
-                //先删除旧数据，再添加
-                LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
-                        .eq(MallItemVideo::getItemNo, model.getItemNo())
-                        .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_0.getCode());
-                mallItemVideoService.remove(videoWrapper);
-
-                MallItemVideoModel videoModel = model.getTopVideoList().get(0);
-                MallItemVideo video = new MallItemVideo();
-                videoModel.setItemNo(t.getItemNo());
-                videoModel.setType(MallItemVideoEnum.Type.TYPE_0.getCode());
-                BeanUtils.copyProperties(videoModel,video);
-                video.setVideoNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
-                video.setImg("");
-                mallItemVideoService.save(video);
-            }
-            if(CollectionUtil.isNotEmpty(model.getDetailVideoList())){
-                //先删除旧数据，再添加
-                LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
-                        .eq(MallItemVideo::getItemNo, model.getItemNo())
-                        .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_1.getCode());
-                mallItemVideoService.remove(videoWrapper);
-
-                MallItemVideoModel videoModel = model.getDetailVideoList().get(0);
-                MallItemVideo video = new MallItemVideo();
-                videoModel.setItemNo(t.getItemNo());
-                videoModel.setType(MallItemVideoEnum.Type.TYPE_1.getCode());
-                BeanUtils.copyProperties(videoModel,video);
-                video.setVideoNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
-                mallItemVideoService.save(video);
-            }
         }else{
             MallItemEnum.NonPriceType nonPriceType = MallItemEnum.NonPriceType.parseCode(model.getNonPriceType());
             AssertUtils.notNull(nonPriceType, "价格类型不正确");
@@ -522,11 +493,45 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             t.setBanners(banners);
 
             //非空字段填充
-            t.setItemText("");
+            //t.setItemText("");
             t.setHighestSalePrice(BigDecimal.ZERO);
             baseMapper.updateById(t);
 
         }
+
+        //添加视频
+        if(CollectionUtil.isNotEmpty(model.getTopVideoList())){
+            //先删除旧数据，再添加
+            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                    .eq(MallItemVideo::getItemNo, model.getItemNo())
+                    .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_0.getCode());
+            mallItemVideoService.remove(videoWrapper);
+
+            MallItemVideoModel videoModel = model.getTopVideoList().get(0);
+            MallItemVideo video = new MallItemVideo();
+            videoModel.setItemNo(t.getItemNo());
+            videoModel.setType(MallItemVideoEnum.Type.TYPE_0.getCode());
+            BeanUtils.copyProperties(videoModel,video);
+            video.setVideoNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
+            video.setImg("");
+            mallItemVideoService.save(video);
+        }
+        if(CollectionUtil.isNotEmpty(model.getDetailVideoList())){
+            //先删除旧数据，再添加
+            LambdaQueryWrapper<MallItemVideo> videoWrapper = new LambdaQueryWrapper<MallItemVideo>()
+                    .eq(MallItemVideo::getItemNo, model.getItemNo())
+                    .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_1.getCode());
+            mallItemVideoService.remove(videoWrapper);
+
+            MallItemVideoModel videoModel = model.getDetailVideoList().get(0);
+            MallItemVideo video = new MallItemVideo();
+            videoModel.setItemNo(t.getItemNo());
+            videoModel.setType(MallItemVideoEnum.Type.TYPE_1.getCode());
+            BeanUtils.copyProperties(videoModel,video);
+            video.setVideoNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
+            mallItemVideoService.save(video);
+        }
+
         return CommonResult.success("保存成功");
     }
 
