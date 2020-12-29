@@ -35,7 +35,7 @@ public class TemplateClassifyController extends BaseController<TemplateClassifyS
     @GetMapping(value = "/page")
     public CommonResult<BasePageResult<TemplateClassify>> selectPage(PageModel<TemplateClassify> page, TemplateClassifyQuery query) {
         //查询未删除的模板分类
-        query.setStatus(0);
+        query.setStatus(1);
         return CommonResult.success(new BasePageResult<>(service.page(new Page<>(page.getPage(),page.getPageSize()),query)));
     }
 
@@ -43,7 +43,7 @@ public class TemplateClassifyController extends BaseController<TemplateClassifyS
     @GetMapping
     public CommonResult<BaseResult<List<TemplateClassify>>> selectPage(TemplateClassifyQuery query) {
         //查询未删除的模板分类
-        query.setStatus(0);
+        query.setStatus(1);
         return CommonResult.success(new BaseResult<>(service.list(query)));
     }
 

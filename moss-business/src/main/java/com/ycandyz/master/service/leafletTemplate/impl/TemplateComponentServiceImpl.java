@@ -46,7 +46,7 @@ public class TemplateComponentServiceImpl extends BaseService<TemplateComponentD
 
     @Override
     public List<TemplateComponentResp> listComponents() {
-        List<TemplateComponent> parentComponents = componentDao.selectList(new QueryWrapper<TemplateComponent>().eq("parent_id", 0).eq("component_status", 0));
+        List<TemplateComponent> parentComponents = componentDao.selectList(new QueryWrapper<TemplateComponent>().eq("parent_id", 0).eq("component_status", 1));
         AssertUtils.notEmpty(parentComponents, "无可选组件，请联系管理员创建组件！");
         List<TemplateComponentResp> componentResps = new ArrayList<>();
         parentComponents.forEach(vo -> {

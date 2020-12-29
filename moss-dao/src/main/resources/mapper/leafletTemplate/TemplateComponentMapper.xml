@@ -27,7 +27,7 @@
     </sql>
 
     <select id="getChildList" resultMap="ChildResultMap" parameterType="java.lang.Long">
-        select c.component_name,c.component_type,c.component_properties from template_component c where c.parent_id = #{parentId} and c.component_status = 0;
+        select c.component_name,c.component_type,c.component_properties from template_component c where c.parent_id = #{parentId} and c.component_status = 1;
     </select>
 
 </mapper>
