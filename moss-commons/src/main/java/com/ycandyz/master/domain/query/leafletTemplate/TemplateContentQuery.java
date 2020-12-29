@@ -1,5 +1,7 @@
 package com.ycandyz.master.domain.query.leafletTemplate;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ycandyz.master.annotation.Condition;
 import com.ycandyz.master.enums.ConditionEnum;
 
@@ -27,6 +29,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @ApiModel(description="模板内容表-检索参数")
 public class TemplateContentQuery implements Serializable {
 
