@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallSocialSettingDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.MallSocialSetting">
+        <id column="id" property="id" />
+        <result column="shop_no" property="shopNo" />
+        <result column="organize_id" property="organizeId" />
+        <result column="is_default_item" property="isDefaultItem" />
+        <result column="withdraw_method" property="withdrawMethod" />
+        <result column="withdraw_lowest_amount" property="withdrawLowestAmount" />
+        <result column="withdraw_limit_cycle" property="withdrawLimitCycle" />
+        <result column="withdraw_limit_times" property="withdrawLimitTimes" />
+        <result column="tax_rate" property="taxRate" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+        <result column="bank_no" property="bankNo" />
+        <result column="account_bank" property="accountBank" />
+        <result column="account_name" property="accountName" />
+        <result column="settle_cycle" property="settleCycle" />
+        <result column="account_province" property="accountProvince" />
+        <result column="account_city" property="accountCity" />
+        <result column="account_bank_branch" property="accountBankBranch" />
+        <result column="share_standard" property="shareStandard" />
+        <result column="is_enable" property="isEnable" />
+        <result column="share_level_type" property="shareLevelType" />
+        <result column="share_whole_method" property="shareWholeMethod" />
+        <result column="share_method" property="shareMethod" />
+        <result column="share_rate" property="shareRate" />
+        <result column="share_amount" property="shareAmount" />
+        <result column="share_level_method" property="shareLevelMethod" />
+        <result column="share_level_rate" property="shareLevelRate" />
+        <result column="share_level_amount" property="shareLevelAmount" />
+        <result column="share_second_method" property="shareSecondMethod" />
+        <result column="share_second_level_method" property="shareSecondLevelMethod" />
+        <result column="share_second_rate" property="shareSecondRate" />
+        <result column="share_second_amount" property="shareSecondAmount" />
+        <result column="share_second_level_rate" property="shareSecondLevelRate" />
+        <result column="share_second_level_amount" property="shareSecondLevelAmount" />
+        <result column="share_third_method" property="shareThirdMethod" />
+        <result column="share_third_level_method" property="shareThirdLevelMethod" />
+        <result column="share_third_rate" property="shareThirdRate" />
+        <result column="share_third_amount" property="shareThirdAmount" />
+        <result column="share_third_level_rate" property="shareThirdLevelRate" />
+        <result column="share_third_level_amount" property="shareThirdLevelAmount" />
+        <result column="upgrade_second_level_method" property="upgradeSecondLevelMethod" />
+        <result column="upgrade_second_level_max_trade" property="upgradeSecondLevelMaxTrade" />
+        <result column="upgrade_second_level_max_partner" property="upgradeSecondLevelMaxPartner" />
+        <result column="upgrade_third_level_method" property="upgradeThirdLevelMethod" />
+        <result column="upgrade_third_level_max_trade" property="upgradeThirdLevelMaxTrade" />
+        <result column="upgrade_third_level_max_partner" property="upgradeThirdLevelMaxPartner" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_no, organize_id, is_default_item, withdraw_method, withdraw_lowest_amount, withdraw_limit_cycle, withdraw_limit_times, tax_rate, created_time, updated_time, bank_no, account_bank, account_name, settle_cycle, account_province, account_city, account_bank_branch, share_standard, is_enable, share_level_type, share_whole_method, share_method, share_rate, share_amount, share_level_method, share_level_rate, share_level_amount, share_second_method, share_second_level_method, share_second_rate, share_second_amount, share_second_level_rate, share_second_level_amount, share_third_method, share_third_level_method, share_third_rate, share_third_amount, share_third_level_rate, share_third_level_amount, upgrade_second_level_method, upgrade_second_level_max_trade, upgrade_second_level_max_partner, upgrade_third_level_method, upgrade_third_level_max_trade, upgrade_third_level_max_partner
+    </sql>
+
+</mapper>
