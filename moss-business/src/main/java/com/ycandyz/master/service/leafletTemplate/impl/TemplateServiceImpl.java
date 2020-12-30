@@ -162,7 +162,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         QueryWrapper<Template> queryWrapper = new QueryWrapper<>();
         if (!DataConstant.TEMPLATE_PLATFORM_WEB.equals(source)) {
             queryWrapper.eq("organize_id", user.getOrganizeId());
-            queryWrapper.eq("template_status", "0");
+            queryWrapper.eq("template_status", "1");
             if (query.getClassifyId() != null) {
                 queryWrapper.eq("classify_id", query.getClassifyId());
             }
@@ -204,9 +204,9 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         templateResp.setClassifyName(templateClassify.getClassifyName());
         templateResp.setClassifyId(templateClassify.getId());
         if (template.getEndTime().compareTo(DateUtil.getNowDateShort()) < 0) {
-            templateResp.setTemplateStatus(1);
+            templateResp.setTemplateStatus(3);
         }
-        List<TemplateDetail> templateDetails = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", id).eq("component_status", 0));
+        List<TemplateDetail> templateDetails = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", id).eq("component_status", 1));
         List<TemplateDetailResp> detailResps = new ArrayList<>();
         templateDetails.forEach(vo -> {
             String componentProperties = vo.getComponentProperties();
@@ -232,7 +232,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         log.info("逻辑删除模板开始，模板id为：{}", id);
         Template template = super.getById(id);
         AssertUtils.notNull(template, "模板信息不存在");
-        template.setTemplateStatus(1);
+        template.setTemplateStatus(3);
         int i = templateDao.updateById(template);
         log.info("删除模板完成，删除条数为：{}条", i);
         return i == 1;
