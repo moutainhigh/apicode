@@ -91,5 +91,8 @@ public class TemplateResp implements Serializable {
 
     @ApiModelProperty(name = "classify_id", value = "模板类别id")
     private Long classifyId;
+
+    @ApiModelProperty(name = "max_components_count", value = "最大组件数")
+    private String maxComponentsCount;
 }
 

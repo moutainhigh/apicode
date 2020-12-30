@@ -205,6 +205,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         BeanUtils.copyProperties(template, templateResp);
         templateResp.setClassifyName(templateClassify.getClassifyName());
         templateResp.setClassifyId(templateClassify.getId());
+        templateResp.setMaxComponentsCount(templateClassify.getMaxComponentsCount());
         if (template.getEndTime().compareTo(DateUtil.getNowDateShort()) < 0) {
             templateResp.setTemplateStatus(3);
         }
