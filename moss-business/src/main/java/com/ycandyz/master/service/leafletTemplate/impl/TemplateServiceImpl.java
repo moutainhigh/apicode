@@ -160,7 +160,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         String source = user.getSource();
         Page<Template> templateIPage;
         QueryWrapper<Template> queryWrapper = new QueryWrapper<>();
-        if (DataConstant.TEMPLATE_PLATFORM_APP.equals(source)) {
+        if (!DataConstant.TEMPLATE_PLATFORM_WEB.equals(source)) {
             queryWrapper.eq("organize_id", user.getOrganizeId());
             queryWrapper.eq("template_status", "1");
             if (query.getClassifyId() != null) {
@@ -175,16 +175,16 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
             queryWrapper.eq("organize_id", user.getOrganizeId());
             queryWrapper.orderByDesc("created_time");
             if (query.getBeginCreateTime() != null) {
-                queryWrapper.ge("created_time", query.getBeginCreateTime());
+                queryWrapper.ge("created_time", cn.hutool.core.date.DateUtil.offsetHour(query.getBeginCreateTime(),-8) );
             }
             if (query.getEndCreateTime() != null) {
-                queryWrapper.le("created_time", query.getEndCreateTime());
+                queryWrapper.le("created_time", cn.hutool.core.date.DateUtil.offsetHour(query.getEndCreateTime(),-8));
             }
             if (query.getBeginExpireTime() != null) {
-                queryWrapper.ge("end_time", query.getBeginExpireTime());
+                queryWrapper.ge("end_time", cn.hutool.core.date.DateUtil.offsetHour(query.getBeginExpireTime(),-8));
             }
             if (query.getEndExpireTime() != null) {
-                queryWrapper.le("end_time", query.getEndExpireTime());
+                queryWrapper.le("end_time", cn.hutool.core.date.DateUtil.offsetHour(query.getEndExpireTime(),-8));
             }
             if (StringUtils.isNotEmpty(query.getTemplateName())) {
                 queryWrapper.eq("template_name", query.getTemplateName());
