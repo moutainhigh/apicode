@@ -162,6 +162,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 .eq(MallItemVideo::getItemNo, vo.getItemNo())
                 .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_0.getCode());
         List<MallItemVideo> topVideo = mallItemVideoService.list(videoWrapper);
+        for(MallItemVideo topVo: topVideo){
+            topVo.setUrl(FileUtil.unicodetoString(topVo.getUrl()));
+        }
         vo.setTopVideoList(topVideo);
         //获取详情视频
         LambdaQueryWrapper<MallItemVideo> detailVideoWrapper = new LambdaQueryWrapper<MallItemVideo>()
@@ -169,6 +172,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 .eq(MallItemVideo::getItemNo, vo.getItemNo())
                 .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_1.getCode());
         List<MallItemVideo> detailVideo = mallItemVideoService.list(detailVideoWrapper);
+        for(MallItemVideo detailVo: detailVideo){
+            detailVo.setImg(FileUtil.unicodetoString(detailVo.getImg()));
+            detailVo.setUrl(FileUtil.unicodetoString(detailVo.getUrl()));
+        }
         vo.setDetailVideoList(detailVideo);
 
         vo.setSales(entity.getBaseSales()+entity.getRealSales());

@@ -120,8 +120,8 @@ public class MallItemVideoEnum {
     }
 
     public enum Type implements IEnum<Integer> {
-        TYPE_0(0, "置顶视频"),
-        TYPE_1(1, "详情视频");
+        TYPE_0(1, "置顶视频"),
+        TYPE_1(2, "详情视频");
 
         private Integer code;
         private String text;
