@@ -160,7 +160,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         String source = user.getSource();
         Page<Template> templateIPage;
         QueryWrapper<Template> queryWrapper = new QueryWrapper<>();
-        if (!DataConstant.TEMPLATE_PLATFORM_WEB.equals(source)) {
+        if (DataConstant.TEMPLATE_PLATFORM_APP.equals(source)) {
             queryWrapper.eq("organize_id", user.getOrganizeId());
             queryWrapper.eq("template_status", "1");
             if (query.getClassifyId() != null) {
