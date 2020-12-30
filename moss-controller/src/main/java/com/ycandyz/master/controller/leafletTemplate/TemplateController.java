@@ -58,7 +58,7 @@ public class TemplateController extends BaseController<TemplateServiceImpl, Temp
     @ApiOperation(value = "通过ID删除")
     @DeleteMapping(value = "{id}")
     public CommonResult deleteById(@PathVariable Long id) {
-        return result(service.deleteTemplate(id), null, "删除失败!");
+        return CommonResult.success(service.deleteTemplate(id), "操作成功!");
     }
 
 
