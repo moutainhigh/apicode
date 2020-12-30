@@ -187,7 +187,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
                 queryWrapper.le("end_time", cn.hutool.core.date.DateUtil.offsetHour(query.getEndExpireTime(),-8));
             }
             if (StringUtils.isNotEmpty(query.getTemplateName())) {
-                queryWrapper.eq("template_name", query.getTemplateName());
+                queryWrapper.like("template_name", query.getTemplateName());
             }
             templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), queryWrapper);
         }
