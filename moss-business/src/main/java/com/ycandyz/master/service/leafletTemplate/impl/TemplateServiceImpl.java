@@ -127,8 +127,13 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         log.info("模板主表修改完成，修改人：{}，修改人所属企业：{}", user.getId(), user.getOrganizeId());
         if (CollectionUtil.isNotEmpty(model.getDelArray())) {
             //删除组件信息
-            int deleteCount = templateDetailDao.deleteBatchIds(model.getDelArray());
-            log.info("删除原有模板副表信息，删除组件数：{}个", deleteCount);
+            for (Long detailId : model.getDelArray()) {
+                TemplateDetail templateDetail = new TemplateDetail();
+                templateDetail.setId(detailId);
+                templateDetail.setComponentStatus(0);
+                templateDetailDao.updateById(templateDetail);
+            }
+            log.info("删除原有模板副表信息，删除组件数：{}个", model.getDelArray().size());
         }
         List<TemplateDetailModel> detailModels = model.getComponents();
         if (CollectionUtil.isNotEmpty(detailModels)) {
