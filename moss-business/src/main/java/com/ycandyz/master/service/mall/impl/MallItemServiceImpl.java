@@ -33,6 +33,7 @@ import com.ycandyz.master.exception.BusinessException;
 import com.ycandyz.master.service.mall.IMallItemService;
 import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.FileUtil;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,6 +173,20 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
         vo.setSales(entity.getBaseSales()+entity.getRealSales());
         vo.setSalePrice(entity.getLowestSalePrice());
+
+        //解码图片中包含unioncode编码的路径
+        vo.setItemCover(FileUtil.unicodetoString(vo.getItemCover()));
+        List<String> itemBannerList = new ArrayList<>();
+        List<String> itemBanners = vo.getBanners();
+        if (itemBanners!=null && itemBanners.size()>0) {
+            itemBanners.forEach(banner -> {
+                String ban = FileUtil.unicodetoString(banner);
+                itemBannerList.add(ban);
+            });
+            vo.setBanners(itemBannerList);
+        }
+        vo.setShareImg(FileUtil.unicodetoString(vo.getShareImg()));
+        vo.setQrCodeUrl(FileUtil.unicodetoString(vo.getQrCodeUrl()));
 
         return vo;
     }
@@ -568,7 +583,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             BeanUtils.copyProperties(model,t);
             t.setPrice(model.getPrice()==null ? BigDecimal.ZERO : model.getPrice());
             t.setBanners(banners);
-            t.setPickupAddressIds(model.getPickupAddrIds().toString());
+            t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddrIds()));
             baseMapper.updateById(t);
 
         }else{
