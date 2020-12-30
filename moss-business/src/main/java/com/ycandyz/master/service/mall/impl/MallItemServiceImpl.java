@@ -583,7 +583,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             BeanUtils.copyProperties(model,t);
             t.setPrice(model.getPrice()==null ? BigDecimal.ZERO : model.getPrice());
             t.setBanners(banners);
-            t.setPickupAddressIds(model.getPickupAddrIds().toString());
+            t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddrIds()));
             baseMapper.updateById(t);
 
         }else{
