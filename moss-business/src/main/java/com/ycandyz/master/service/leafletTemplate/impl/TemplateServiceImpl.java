@@ -125,11 +125,18 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         t.setUserId(user.getId());
         templateDao.updateById(t);
         log.info("模板主表修改完成，修改人：{}，修改人所属企业：{}", user.getId(), user.getOrganizeId());
+        if (CollectionUtil.isNotEmpty(model.getDelArray())) {
+            //删除组件信息
+            for (Long detailId : model.getDelArray()) {
+                TemplateDetail templateDetail = new TemplateDetail();
+                templateDetail.setId(detailId);
+                templateDetail.setComponentStatus(0);
+                templateDetailDao.updateById(templateDetail);
+            }
+            log.info("删除原有模板副表信息，删除组件数：{}个", model.getDelArray().size());
+        }
         List<TemplateDetailModel> detailModels = model.getComponents();
         if (CollectionUtil.isNotEmpty(detailModels)) {
-            log.info("删除原有模板副表信息，模板id为：{}", t.getId());
-            int deleteCount = templateDetailDao.deleteByTemplateId(t.getId());
-            log.info("删除原有模板副表信息，删除组件数：{}个", deleteCount);
             IntStream.range(0, detailModels.size()).forEach(i -> {
                 TemplateDetailModel vo = detailModels.get(i);
                 TemplateDetail templateDetail = new TemplateDetail();
@@ -140,7 +147,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
                 String componentStr = JSONObject.toJSONString(vo.getComponentProperties());
                 BeanUtils.copyProperties(vo, templateDetail);
                 templateDetail.setComponentProperties(componentStr);
-                templateDetailDao.insert(templateDetail);
+                templateDetailDao.updateById(templateDetail);
             });
         }
         log.info("模板副表修改完成，共重新添加：{}个", detailModels.size());
@@ -166,8 +173,8 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
             if (query.getClassifyId() != null) {
                 queryWrapper.eq("classify_id", query.getClassifyId());
             }
-            if(query.getId()!=null){
-                queryWrapper.lt("id",query.getId());
+            if (query.getId() != null) {
+                queryWrapper.lt("id", query.getId());
             }
             queryWrapper.orderByDesc("created_time");
             templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), queryWrapper);
@@ -175,19 +182,19 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
             queryWrapper.eq("organize_id", user.getOrganizeId());
             queryWrapper.orderByDesc("created_time");
             if (query.getBeginCreateTime() != null) {
-                queryWrapper.ge("created_time", query.getBeginCreateTime());
+                queryWrapper.ge("created_time", cn.hutool.core.date.DateUtil.offsetHour(query.getBeginCreateTime(), -8));
             }
             if (query.getEndCreateTime() != null) {
-                queryWrapper.le("created_time", query.getEndCreateTime());
+                queryWrapper.le("created_time", cn.hutool.core.date.DateUtil.offsetHour(query.getEndCreateTime(), -8));
             }
             if (query.getBeginExpireTime() != null) {
-                queryWrapper.ge("end_time", query.getBeginExpireTime());
+                queryWrapper.ge("end_time", cn.hutool.core.date.DateUtil.offsetHour(query.getBeginExpireTime(), -8));
             }
             if (query.getEndExpireTime() != null) {
-                queryWrapper.le("end_time", query.getEndExpireTime());
+                queryWrapper.le("end_time", cn.hutool.core.date.DateUtil.offsetHour(query.getEndExpireTime(), -8));
             }
             if (StringUtils.isNotEmpty(query.getTemplateName())) {
-                queryWrapper.eq("template_name", query.getTemplateName());
+                queryWrapper.like("template_name", query.getTemplateName());
             }
             templateIPage = (Page<Template>) baseMapper.selectPage(new Page<>(page.getPage(), page.getPageSize()), queryWrapper);
         }
@@ -203,6 +210,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         BeanUtils.copyProperties(template, templateResp);
         templateResp.setClassifyName(templateClassify.getClassifyName());
         templateResp.setClassifyId(templateClassify.getId());
+        templateResp.setMaxComponentsCount(templateClassify.getMaxComponentsCount());
         if (template.getEndTime().compareTo(DateUtil.getNowDateShort()) < 0) {
             templateResp.setTemplateStatus(3);
         }
@@ -215,6 +223,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
                 propertiesResp = JSONObject.parseObject(componentProperties, TemplateComponentPropertiesResp.class);
             }
             TemplateDetailResp templateDetailResp = new TemplateDetailResp();
+            templateDetailResp.setId(vo.getId());
             templateDetailResp.setComponentContent(vo.getComponentContent());
             templateDetailResp.setComponentType(vo.getComponentType());
             templateDetailResp.setComponentOrder(vo.getComponentOrder());
