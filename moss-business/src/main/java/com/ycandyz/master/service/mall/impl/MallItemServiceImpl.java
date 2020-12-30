@@ -453,7 +453,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
         //校验商品名称
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
-                .eq(MallItem::getItemName,model.getItemName());
+                .eq(MallItem::getItemName,model.getItemName()).ne(MallItem::getId,model.getId());
         List<MallItem> checkName = baseMapper.selectList(queryWrapper);
         AssertUtils.isNotEmpty(checkName, "商品名称重复");
 
