@@ -282,7 +282,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     public CommonResult insert(MallItemModel model) {
         //校验商品名称
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
-                .eq(MallItem::getItemName,model.getItemName());
+                .eq(MallItem::getItemName,model.getItemName())
+                .eq(MallItem::getShopNo,getShopNo());
         List<MallItem> checkName = baseMapper.selectList(queryWrapper);
         AssertUtils.isNotEmpty(checkName, "商品名称重复");
 
@@ -413,7 +414,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             mallItemVideoService.save(video);
         }
 
-        return CommonResult.success("保存成功");
+        JSONObject dataJSON = new JSONObject();
+        dataJSON.put("code",200);
+        dataJSON.put("item_no",t.getItemNo());
+        return CommonResult.success(dataJSON,"保存成功");
     }
 
     /**
@@ -453,7 +457,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
 
         //校验商品名称
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
-                .eq(MallItem::getItemName,model.getItemName());
+                .eq(MallItem::getItemName,model.getItemName())
+                .eq(MallItem::getShopNo,getShopNo())
+                .ne(MallItem::getId,model.getId());
         List<MallItem> checkName = baseMapper.selectList(queryWrapper);
         AssertUtils.isNotEmpty(checkName, "商品名称重复");
 
@@ -623,7 +629,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             mallItemVideoService.save(video);
         }
 
-        return CommonResult.success("保存成功");
+        JSONObject dataJSON = new JSONObject();
+        dataJSON.put("code",200);
+        dataJSON.put("item_no",t.getItemNo());
+        return CommonResult.success(dataJSON,"编辑成功");
     }
 
     @Override
