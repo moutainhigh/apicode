@@ -338,6 +338,11 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             if(CollectionUtil.isNotEmpty(skuList)){
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
+                Optional<MallItemSkuModel> mallItemSkuOp = skuList.stream().max(Comparator.comparing(MallItemSkuModel::getPrice));
+                if(mallItemSkuOp.isPresent()){
+                    MallItemSkuModel msn = mallItemSkuOp.get();
+                    model.setPrice(msn.getPrice());
+                }
                 MallItemSkuModel skuModel = skuMinModel.get(0);
                 AssertUtils.notNull(skuModel.getStock(), "库存不能为空");
                 model.setStock(skuModel.getStock());
@@ -538,6 +543,12 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
                 MallItemSkuModel skuModel = skuMinModel.get(0);
+
+                Optional<MallItemSkuModel> mallItemSkuOp = skuList.stream().max(Comparator.comparing(MallItemSkuModel::getPrice));
+                if(mallItemSkuOp.isPresent()){
+                    MallItemSkuModel msn = mallItemSkuOp.get();
+                    model.setPrice(msn.getPrice());
+                }
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
