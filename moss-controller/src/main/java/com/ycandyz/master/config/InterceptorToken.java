@@ -90,7 +90,7 @@ public class InterceptorToken implements HandlerInterceptor {
                         return false;
                     }
                     //更新redis中token的过期时间
-                    redisUtil.set(token,"1",60*60); //token过期时间为一小时
+                    redisUtil.set(token,"1",60*60*24*30); //token过期时间为一小时
                 }
 
                 try {
