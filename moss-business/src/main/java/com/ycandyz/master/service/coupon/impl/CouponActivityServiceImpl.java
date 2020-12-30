@@ -130,8 +130,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
 
     @Override
     public boolean insert(CouponActivityModel entity) {
-        entity.setBeginTime(DateUtils.toZeroZoneTime(entity.getBeginTime()));
-        entity.setEndTime(DateUtils.toZeroZoneTime(entity.getEndTime()));
+//        entity.setBeginTime(DateUtils.toZeroZoneTime(entity.getBeginTime()));
+//        entity.setEndTime(DateUtils.toZeroZoneTime(entity.getEndTime()));
         AssertUtils.notNull(getShopNo(), "商店编号不能为空");
         // TODO 校验时间折叠
         AssertUtils.isFalse(entity.getEndTime().before(new Date()),"截止时间不能小于当前时间");
