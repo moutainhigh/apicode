@@ -345,7 +345,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             if(CollectionUtil.isNotEmpty(skuList)){
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
-                Optional<MallItemSkuModel> mallItemSkuOp = skuList.stream().max(Comparator.comparing(MallItemSkuModel::getPrice));
+                Optional<MallItemSkuModel> mallItemSkuOp = skuList.stream().filter(x->x.getPrice()!=null).max(Comparator.comparing(MallItemSkuModel::getPrice));
                 if(mallItemSkuOp.isPresent()){
                     MallItemSkuModel msn = mallItemSkuOp.get();
                     model.setPrice(msn.getPrice());
@@ -551,7 +551,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
                 MallItemSkuModel skuModel = skuMinModel.get(0);
 
-                Optional<MallItemSkuModel> mallItemSkuOp = skuList.stream().max(Comparator.comparing(MallItemSkuModel::getPrice));
+                Optional<MallItemSkuModel> mallItemSkuOp = skuList.stream().filter(x->x.getPrice()!=null).max(Comparator.comparing(MallItemSkuModel::getPrice));
                 if(mallItemSkuOp.isPresent()){
                     MallItemSkuModel msn = mallItemSkuOp.get();
                     model.setPrice(msn.getPrice());
