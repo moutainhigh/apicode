@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -83,18 +84,22 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, itemNo);
         MallItem entity = baseMapper.selectOne(queryWrapper);
-        if(entity != null){
-            if(StrUtil.isNotEmpty(entity.getBanners())){
-                entity.setBanners(entity.getBanners().replaceAll("\"",""));
-            }
-        }
+        entity.setBanners(FileUtil.unicodetoString(entity.getBanners()));
         MallItem t = baseMapper.selectMallItemById(entity.getId());
         //entity.setPickupAddressIds(t.getPickupAddressIds());
         //entity.setDeliveryType(t.getDeliveryType());
         BeanUtil.copyProperties(entity,vo);
+        if (StrUtil.isNotEmpty(entity.getBanners())) {
+            com.alibaba.fastjson.JSONArray jsonArray = JSON.parseArray(entity.getBanners());
+            List<String> banners = new ArrayList<>();
+            for (int i=0;i<jsonArray.size();i++){
+                banners.add(jsonArray.getString(i));
+            }
+            vo.setBanners(banners);
+        }
         List<Integer> pl = JSONObject.parseArray(t.getPickupAddressIds(), Integer.class);
         List<Integer> dl = JSONObject.parseArray(t.getDeliveryType(), Integer.class);
-        vo.setPickupAddressIds(pl);
+        vo.setPickupAddrIds(pl);
         vo.setDeliveryType(dl);
         MallItemEnum.Type type = MallItemEnum.Type.parseCode(entity.getType());
         if(MallItemEnum.Type.Type_1.getCode().equals(type.getCode())){
