@@ -94,7 +94,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         BeanUtil.copyProperties(entity,vo);
         List<Integer> pl = JSONObject.parseArray(t.getPickupAddressIds(), Integer.class);
         List<Integer> dl = JSONObject.parseArray(t.getDeliveryType(), Integer.class);
-        vo.setPickupAddressIds(pl);
+        //vo.setPickupAddressIds(pl);
+        vo.setPickupAddrIds(pl);
         vo.setDeliveryType(dl);
         MallItemEnum.Type type = MallItemEnum.Type.parseCode(entity.getType());
         if(MallItemEnum.Type.Type_1.getCode().equals(type.getCode())){
