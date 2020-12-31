@@ -121,6 +121,7 @@
             t.status,t.item_cover,
             t.price ,
             t.lowest_sale_price,
+            t.highest_sale_price,
             t.base_sales,
             t.real_sales,
             t.item_text,
