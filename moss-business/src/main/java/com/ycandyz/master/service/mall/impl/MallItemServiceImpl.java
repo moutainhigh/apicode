@@ -607,6 +607,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             t.setPrice(model.getPrice()==null ? BigDecimal.ZERO : model.getPrice());
             t.setBanners(banners);
             t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddrIds()));
+            t.setDeliveryType(model.getDeliveryType()!=null && model.getDeliveryType().size()>0 ? model.getDeliveryType().toString() : null);
             baseMapper.updateById(t);
 
         }else{
