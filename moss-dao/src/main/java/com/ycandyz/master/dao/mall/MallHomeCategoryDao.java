@@ -1,6 +1,7 @@
 package com.ycandyz.master.dao.mall;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ycandyz.master.domain.response.mall.MallCategoryResp;
 import com.ycandyz.master.entities.mall.MallCategory;
 
 import java.util.List;
@@ -21,5 +22,7 @@ public interface MallHomeCategoryDao extends BaseMapper<MallCategory> {
      * @return 分类集合
      */
     List<MallCategory> selectMallCategoryList(String shopNo);
+
+    MallCategoryResp selectByCategoryNo(String categoryNo);
 
 }

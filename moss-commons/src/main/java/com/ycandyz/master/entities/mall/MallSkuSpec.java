@@ -1,10 +1,13 @@
 package com.ycandyz.master.entities.mall;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -23,6 +26,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @TableName("mall_sku_spec")
 @ApiModel(description="sku值表")
 public class MallSkuSpec extends Model {
@@ -39,6 +43,13 @@ public class MallSkuSpec extends Model {
 
    @ApiModelProperty(value = "值")
    private String specValue;
+
+   @ApiModelProperty(value = "图片标识(0不存在,1存在)")
+   private Integer existImg;
+
+   @ApiModelProperty(value = "SKU图片（预留字段）")
+   @TableField(exist = false)
+   private String specImg;
 
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createdTime;

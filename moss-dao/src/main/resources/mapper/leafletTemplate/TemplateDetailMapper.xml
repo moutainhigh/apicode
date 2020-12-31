@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.leafletTemplate.TemplateDetailDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.leafletTemplate.TemplateDetail">
+        <id column="id" property="id" />
+        <result column="template_id" property="templateId" />
+        <result column="component_content" property="componentContent" />
+        <result column="component_type" property="componentType" />
+        <result column="component_properties" property="componentProperties" />
+        <result column="component_status" property="componentStatus" />
+        <result column="component_order" property="componentOrder" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, template_id, component_content, component_type, component_properties, component_status, component_order, created_time, updated_time
+    </sql>
+    <delete id="deleteByTemplateId" parameterType="java.lang.Long">
+        delete from template_detail where template_id = #{templateId}
+    </delete>
+</mapper>

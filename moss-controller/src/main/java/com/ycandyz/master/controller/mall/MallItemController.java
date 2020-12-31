@@ -1,72 +1,86 @@
 package com.ycandyz.master.controller.mall;
 
-
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ycandyz.master.api.BasePageResult;
+import com.ycandyz.master.api.CommonResult;
+import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.api.ReturnResponse;
-import com.ycandyz.master.dto.mall.MallItemDTO;
-import com.ycandyz.master.service.mall.goodsManage.MallItemService;
-import com.ycandyz.master.vo.MallItemOprVO;
-import com.ycandyz.master.vo.MallItemVO;
+import com.ycandyz.master.base.BaseController;
+import com.ycandyz.master.domain.model.mall.MallItemModel;
+import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
+import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
+import com.ycandyz.master.domain.query.mall.MallItemQuery;
+import com.ycandyz.master.domain.response.mall.MallItemPageResp;
+import com.ycandyz.master.domain.response.mall.MallItemResp;
+import com.ycandyz.master.entities.base.BaseBank;
+import com.ycandyz.master.entities.mall.MallItem;
+import com.ycandyz.master.service.mall.impl.MallItemServiceImpl;
+import com.ycandyz.master.validation.ValidatorContract;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+/**
+ * <p>
+ * @Description 商品表 接口类
+ * </p>
+ *
+ * @author SanGang
+ * @since 2020-10-13
+ * @version 2.0
+ */
 
-@Api(value="商品分类",tags={"商品管理-商品管理动态接口"})
-@RestController
-@RequestMapping("/mallItem")
 @Slf4j
-public class MallItemController {
+@RestController
+@RequestMapping("pms/product")
+@Api(tags="mall-商品")
+public class MallItemController extends BaseController<MallItemServiceImpl,MallItem, MallItemBaseQuery> {
+	
+	@ApiOperation(value="新增")
+    @PostMapping()
+	public CommonResult insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemModel entity) {
+        return service.insert(entity);
+	}
 
-    @Resource
-    private MallItemService mallItemService;
-
-
-    @ApiOperation(value = "添加商品",notes = "添加",httpMethod = "POST")
-    @PostMapping("/item")
-    public ReturnResponse insert(@RequestBody MallItemVO MallItemVO){
-        mallItemService.insert(MallItemVO);
-        return ReturnResponse.success("添加商品成功");
+    @ApiOperation(value = "通过ID")
+    @GetMapping(value = "select/{id}")
+    public CommonResult<MallItem> getById(@PathVariable Long id) {
+        return CommonResult.success(service.getById(id));
     }
+	
+	@ApiOperation(value = "通过ID更新")
+    @PutMapping(value = "{item_no}")
+	public CommonResult updateById(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemModel entity) {
+        entity.setItemNo(item_no);
+        return service.update(entity);
+	}
 
-
-    @ApiOperation(value = "获取商品详情",notes = "查询",httpMethod = "GET")
-    @GetMapping("/item/{itemNo}")
-    public ReturnResponse<MallItemDTO> select(@PathVariable(value = "itemNo") String itemNo){
-        MallItemDTO mallItemDTO = mallItemService.select(itemNo);
-        log.info("itemNo:{}；获取商品详情:{}",itemNo,mallItemDTO);
-        return ReturnResponse.success(mallItemDTO);
+    @ApiOperation(value = "上架/下架商品")
+    @PutMapping(value = "shelf")
+    public CommonResult shelfById(@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemShelfModel entity) {
+        return service.shelf(entity);
     }
-
-
-    @ApiOperation(value = "上下架商品",notes = "修改",httpMethod = "PUT")
-    @PutMapping("/item/opr")
-    public ReturnResponse<Integer> opr(@RequestBody MallItemOprVO mallItemOprVO){
-        int count = mallItemService.opr(mallItemOprVO);
-        log.info("上下架商品:{}",mallItemOprVO);
-        if (count > 0){
-            return ReturnResponse.success(count);
-        }
-        return ReturnResponse.failed("商品上下架失败");
+	
+	@ApiOperation(value = "查询根据ID")
+    @GetMapping(value = "{item_no}")
+	public CommonResult<MallItemResp> getById(@PathVariable String item_no) {
+        return CommonResult.success(service.getByItemNo(item_no));
     }
-
-    @ApiOperation(value = "删除商品",notes = "删除",httpMethod = "DELETE")
-    @DeleteMapping("/item/{itemNo}")
-    public ReturnResponse delete(@PathVariable(value = "itemNo") String itemNo){
-        int count = mallItemService.delete(itemNo);
-        if (count > 0) {
-            return ReturnResponse.success("删除商品成功");
-        }
-        return ReturnResponse.failed("删除商品失败");
+    
+	@ApiOperation(value = "查询分页")
+    @GetMapping()
+    @SuppressWarnings("unchecked")
+    public CommonResult<BasePageResult<MallItemPageResp>> selectPage(PageModel page, MallItemQuery query) {
+        return CommonResult.success(new BasePageResult(service.getMallItemPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
+    
+    @ApiOperation(value = "通过ID删除")
+    @DeleteMapping(value = "{item_no}")
+	public CommonResult deleteById(@PathVariable String item_no) {
+        return service.deleteByItemNo(item_no);
+	}
 
-    @ApiOperation(value = "编辑商品分类",notes = "put",httpMethod = "PUT")
-    @PutMapping("/item")
-    public ReturnResponse update(@RequestBody MallItemVO mallItemVO){
-        log.info("修改运费模版请求参数:{}",mallItemVO);
-        mallItemService.update(mallItemVO);
-        return ReturnResponse.success(null);
-    }
 
 }

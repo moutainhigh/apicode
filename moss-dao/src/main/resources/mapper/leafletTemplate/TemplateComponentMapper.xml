@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.leafletTemplate.TemplateComponentDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.leafletTemplate.TemplateComponent">
+        <id column="id" property="id" />
+        <result column="parent_id" property="parentId" />
+        <result column="component_name" property="componentName" />
+        <result column="component_type" property="componentType" />
+        <result column="component_properties" property="componentProperties" />
+        <result column="component_status" property="componentStatus" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+    <!--子组件VO-->
+    <resultMap id="ChildResultMap" type="com.ycandyz.master.domain.response.leafletTemplate.ChildTemplateComponentResp">
+        <result column="component_name" property="componentName" />
+        <result column="component_type" property="componentType" />
+        <result column="component_properties" property="componentPropertiesStr" />
+        <result column="component_status" property="componentStatus" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, parent_id, component_name, component_type, component_properties, component_status, created_time, updated_time
+    </sql>
+
+    <select id="getChildList" resultMap="ChildResultMap" parameterType="java.lang.Long">
+        select c.component_name,c.component_type,c.component_properties from template_component c where c.parent_id = #{parentId} and c.component_status = 0;
+    </select>
+
+</mapper>

@@ -8,8 +8,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 </#if>
 <#if entityLombokModel>
-import lombok.Getter;
-import lombok.Setter;
+ import lombok.Data;
 </#if>
 import ${cfg.jsonNaming};
 import ${cfg.propertyNamingStrategy};
@@ -26,8 +25,7 @@ import java.io.Serializable;
  * @version 2.0
  */
 <#if entityLombokModel>
-@Getter
-@Setter
+@Data
 </#if>
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 <#if swagger2>

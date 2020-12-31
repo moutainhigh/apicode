@@ -16,7 +16,7 @@
         id, item_no, coupon_detail_id, create_time,update_time
     </sql>
 
-    <select id="queryByCouponDetailId" resultType="com.ycandyz.master.domain.response.mall.MallItemResp">
+    <select id="queryByCouponDetailId" resultType="com.ycandyz.master.domain.response.mall.MallItemBaseResp">
         SELECT
             t.id,
             t.item_no,

@@ -51,6 +51,13 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends Model, Q> e
         return getUser().getId();
     }
 
+    public Long getOrganizeId() {
+        if(getUser() == null){
+            return null;
+        }
+        return getUser().getOrganizeId();
+    }
+
     public String getUsername() {
         if(getUser() == null){
             return null;

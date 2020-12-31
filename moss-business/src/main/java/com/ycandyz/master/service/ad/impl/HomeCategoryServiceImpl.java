@@ -11,7 +11,7 @@ import com.ycandyz.master.dto.ad.HomeCategoryDTO;
 import com.ycandyz.master.entities.ad.HomeCategory;
 import com.ycandyz.master.entities.mall.MallCategory;
 import com.ycandyz.master.service.ad.IHomeCategoryService;
-import com.ycandyz.master.service.mall.impl.MallHomeCategoryServiceImpl;
+import com.ycandyz.master.service.mall.impl.MallCategoryServiceImpl;
 import com.ycandyz.master.utils.AssertUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class HomeCategoryServiceImpl extends BaseService<HomeCategoryDao,HomeCategory,HomeCategoryQuery> implements IHomeCategoryService {
 
     @Autowired
-    private MallHomeCategoryServiceImpl mallCategoryService;
+    private MallCategoryServiceImpl mallCategoryService;
 
     @Override
     public List<HomeCategory> getListByParentCategoryNo(HomeCategoryQuery query) {
