@@ -145,6 +145,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         t.setCreateBy(getUserId());
         t.setUpdateBy(getUserId());
         t.setShopNo(getShopNo());
+        t.setBeginTime(DateUtils.toZeroZoneTime(t.getBeginTime()));
+        t.setEndTime(DateUtils.toZeroZoneTime(t.getEndTime()));
         boolean b = super.save(t);
         entity.getCouponIds().forEach(i -> {
             CouponActivityCoupon at = new CouponActivityCoupon();
