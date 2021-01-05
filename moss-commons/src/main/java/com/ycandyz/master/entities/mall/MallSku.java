@@ -64,6 +64,9 @@ public class MallSku extends Model {
    @ApiModelProperty(value = "货号")
    private String goodsNo;
 
+   @ApiModelProperty(name = "bar_code",value = "商品条码 ")
+   private String barCode;
+
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
    private Date createdTime;
 
