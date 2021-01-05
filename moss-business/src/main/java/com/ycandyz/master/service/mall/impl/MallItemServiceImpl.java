@@ -373,9 +373,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                     sku.setItemNo(model.getItemNo());
                     sku.setSkuNo(model.getItemNo()+"_"+StrUtil.toString(IDGeneratorUtils.getLongId()));
                     BeanUtils.copyProperties(f,sku);
-                    if(StrUtil.isEmpty(sku.getBarCode())){
-                        sku.setBarCode(IDGeneratorUtils.getStrId());
-                    }
                     sku.setSortValue(i);
                     mallSkuService.save(sku);
                     f.getSkuSpecs().stream().forEach(s -> {
@@ -397,9 +394,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 model.setLowestSalePrice(model.getSalePrice());
                 MallSku sku = new MallSku();
                 BeanUtils.copyProperties(skuModel,sku);
-                if(StrUtil.isEmpty(sku.getBarCode())){
-                    sku.setBarCode(IDGeneratorUtils.getStrId());
-                }
                 sku.setSortValue(0);
                 sku.setItemNo(model.getItemNo());
                 sku.setSkuNo("default_"+model.getItemNo());
@@ -598,6 +592,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 skuModel.setPrice(model.getPrice());
                 skuModel.setStock(model.getStock());
                 skuModel.setGoodsNo(model.getGoodsNo());
+                skuModel.setBarCode(model.getBarCode());
                 skuModel.setSalePrice(model.getSalePrice());
                 model.setHighestSalePrice(model.getSalePrice());
                 model.setLowestSalePrice(model.getSalePrice());
