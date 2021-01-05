@@ -52,5 +52,10 @@ public class TemplateContentResp implements Serializable {
     @ApiModelProperty(name = "user_phone", value = "用户手机号")
     private String userPhone;
 
+    @ApiModelProperty(name = "channel_str", value = "内容来源转换")
+    private String channelStr;
+
+    @ApiModelProperty(name = "plat_form", value = "平台系统转换")
+    private String platformStr;
 }
 
