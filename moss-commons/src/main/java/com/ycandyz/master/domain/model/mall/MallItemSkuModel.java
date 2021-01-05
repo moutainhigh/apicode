@@ -42,7 +42,7 @@ public class MallItemSkuModel {
     @ApiModelProperty(name = "stock",value = "库存")
     private Integer stock;
 
-    @ApiModelProperty(name = "bar_code",value = "商品条码。")
+    @ApiModelProperty(name = "bar_code",value = "商品条码")
     private String barCode;
 
     @ApiModelProperty(name = "sku_img",value = "SKU图片")
