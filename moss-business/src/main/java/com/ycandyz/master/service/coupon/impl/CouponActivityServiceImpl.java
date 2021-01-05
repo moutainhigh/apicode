@@ -73,7 +73,7 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         }
         LambdaQueryWrapper<CouponActivity> queryWrapper = new LambdaQueryWrapper<CouponActivity>()
                 .select(CouponActivity::getId,CouponActivity::getTitle,CouponActivity::getBeginTime,CouponActivity::getEndTime,CouponActivity::getUserType,
-                        CouponActivity::getEnabled,CouponActivity::getInletName,CouponActivity::getMaxLimit,CouponActivity::getCreateTime)
+                        CouponActivity::getEnabled,CouponActivity::getInletName,CouponActivity::getMaxLimit,CouponActivity::getActivityNum,CouponActivity::getCreateTime)
                 .apply(null != query.getCreateTimeBegin(),
                         "date_format (create_time,'%Y-%m-%d') >= date_format('" + DateUtil.formatDate(query.getCreateTimeBegin()) + "','%Y-%m-%d')")
                 .apply(null != query.getCreateTimeEnd(),
@@ -101,11 +101,11 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
                 f.setStatusName(CouponActivityEnum.Status.TYPE_4.getText());
             }
             //获取活动参与人数
-            LambdaQueryWrapper<CouponDetailUser> countWrapper = new LambdaQueryWrapper<CouponDetailUser>()
-                    .eq(CouponDetailUser::getActivityId, f.getId());
-            Integer c = couponDetailUserService.count(countWrapper);
-            f.setActivityNum(c);
-            f.setActivityRemainNum(f.getMaxLimit()-c);
+//            LambdaQueryWrapper<CouponDetailUser> countWrapper = new LambdaQueryWrapper<CouponDetailUser>()
+//                    .eq(CouponDetailUser::getActivityId, f.getId());
+//            Integer c = couponDetailUserService.count(countWrapper);
+//            f.setActivityNum(c);
+            f.setActivityRemainNum(f.getMaxLimit()-f.getActivityNum());
             CouponActivityEnum.UserType userType = CouponActivityEnum.UserType.parseCode(f.getUserType());
             f.setUserTypeName(userType.getText());
         });
@@ -145,6 +145,8 @@ public class CouponActivityServiceImpl extends BaseService<CouponActivityDao,Cou
         t.setCreateBy(getUserId());
         t.setUpdateBy(getUserId());
         t.setShopNo(getShopNo());
+        t.setBeginTime(DateUtils.toZeroZoneTime(t.getBeginTime()));
+        t.setEndTime(DateUtils.toZeroZoneTime(t.getEndTime()));
         boolean b = super.save(t);
         entity.getCouponIds().forEach(i -> {
             CouponActivityCoupon at = new CouponActivityCoupon();
