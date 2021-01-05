@@ -354,6 +354,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 AssertUtils.notNull(skuModel.getStock(), "库存不能为空");
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
+                model.setBarCode(skuModel.getBarCode());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
                 model.setLowestSalePrice(skuMinModel.get(0).getSalePrice());
                 //添加Sku，sepc
@@ -559,6 +560,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 }
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
+                model.setBarCode(skuModel.getBarCode());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
                 model.setLowestSalePrice(skuMinModel.get(0).getSalePrice());
 
