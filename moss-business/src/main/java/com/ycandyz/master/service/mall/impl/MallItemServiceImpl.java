@@ -337,6 +337,17 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             return CommonResult.success(data,"检测到提交信息涉嫌违规，请重新确认后提交");
         }
 
+        //集团供货校验
+        MallItemEnum.IsOrganize isOrganize = MallItemEnum.IsOrganize.parseCode(model.getIsOrganize());
+        AssertUtils.notNull(isOrganize, "集团供货 状态不正确");
+        MallItemEnum.IsAll isAll = MallItemEnum.IsAll.parseCode(model.getIsAll());
+        if(isOrganize.getCode() == MallItemEnum.IsOrganize.Type_1.getCode()){
+            AssertUtils.notNull(isAll, "全部门店/指定门店 类型不正确");
+            if(MallItemEnum.IsAll.Type_1.getCode().equals(isAll.getCode())){
+                AssertUtils.notNull(model.getShopNos(), "同步门店编号不能为空");
+            }
+        }
+
         //公共处理赋值
         model.setItemNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
         String itemCover = model.getBanners().get(0);
@@ -445,6 +456,20 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             video.setVideoNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
             mallItemVideoService.save(video);
         }
+
+        LambdaQueryWrapper<MallShop> shopWrapper = new LambdaQueryWrapper<MallShop>()
+                .eq(MallShop::getShopNo,getShopNo());
+        MallShop shop = mallShopDao.selectOne(shopWrapper);
+        //mall_item_originze 添加数据，处理商品分类，存在则归类，不存在则创建
+        //全部，查询全部
+        //指定，遍历
+        if(isOrganize.getCode().equals(MallItemEnum.IsOrganize.Type_0)){
+            //只添加本店数据1条
+
+        }else{
+
+        }
+
 
         JSONObject dataJSON = new JSONObject();
         dataJSON.put("code",200);
