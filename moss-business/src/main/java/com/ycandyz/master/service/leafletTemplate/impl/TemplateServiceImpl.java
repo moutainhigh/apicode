@@ -147,7 +147,11 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
                 String componentStr = JSONObject.toJSONString(vo.getComponentProperties());
                 BeanUtils.copyProperties(vo, templateDetail);
                 templateDetail.setComponentProperties(componentStr);
-                templateDetailDao.updateById(templateDetail);
+                if (null == templateDetail.getId()) {
+                    templateDetailDao.insert(templateDetail);
+                } else {
+                    templateDetailDao.updateById(templateDetail);
+                }
             });
         }
         log.info("模板副表修改完成，共重新添加：{}个", detailModels.size());
