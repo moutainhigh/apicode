@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -33,6 +34,7 @@ import com.ycandyz.master.exception.BusinessException;
 import com.ycandyz.master.service.mall.IMallItemService;
 import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.utils.AssertUtils;
+import com.ycandyz.master.utils.FileUtil;
 import com.ycandyz.master.utils.IDGeneratorUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,18 +84,22 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, itemNo);
         MallItem entity = baseMapper.selectOne(queryWrapper);
-        if(entity != null){
-            if(StrUtil.isNotEmpty(entity.getBanners())){
-                entity.setBanners(entity.getBanners().replaceAll("\"",""));
-            }
-        }
+        entity.setBanners(FileUtil.unicodetoString(entity.getBanners()));
         MallItem t = baseMapper.selectMallItemById(entity.getId());
         //entity.setPickupAddressIds(t.getPickupAddressIds());
         //entity.setDeliveryType(t.getDeliveryType());
         BeanUtil.copyProperties(entity,vo);
+        if (StrUtil.isNotEmpty(entity.getBanners())) {
+            com.alibaba.fastjson.JSONArray jsonArray = JSON.parseArray(entity.getBanners());
+            List<String> banners = new ArrayList<>();
+            for (int i=0;i<jsonArray.size();i++){
+                banners.add(jsonArray.getString(i));
+            }
+            vo.setBanners(banners);
+        }
         List<Integer> pl = JSONObject.parseArray(t.getPickupAddressIds(), Integer.class);
         List<Integer> dl = JSONObject.parseArray(t.getDeliveryType(), Integer.class);
-        vo.setPickupAddressIds(pl);
+        vo.setPickupAddrIds(pl);
         vo.setDeliveryType(dl);
         MallItemEnum.Type type = MallItemEnum.Type.parseCode(entity.getType());
         if(MallItemEnum.Type.Type_1.getCode().equals(type.getCode())){
@@ -161,6 +167,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 .eq(MallItemVideo::getItemNo, vo.getItemNo())
                 .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_0.getCode());
         List<MallItemVideo> topVideo = mallItemVideoService.list(videoWrapper);
+        for(MallItemVideo topVo: topVideo){
+            topVo.setUrl(FileUtil.unicodetoString(topVo.getUrl()));
+        }
         vo.setTopVideoList(topVideo);
         //获取详情视频
         LambdaQueryWrapper<MallItemVideo> detailVideoWrapper = new LambdaQueryWrapper<MallItemVideo>()
@@ -168,10 +177,28 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 .eq(MallItemVideo::getItemNo, vo.getItemNo())
                 .eq(MallItemVideo::getType, MallItemVideoEnum.Type.TYPE_1.getCode());
         List<MallItemVideo> detailVideo = mallItemVideoService.list(detailVideoWrapper);
+        for(MallItemVideo detailVo: detailVideo){
+            detailVo.setImg(FileUtil.unicodetoString(detailVo.getImg()));
+            detailVo.setUrl(FileUtil.unicodetoString(detailVo.getUrl()));
+        }
         vo.setDetailVideoList(detailVideo);
 
         vo.setSales(entity.getBaseSales()+entity.getRealSales());
         vo.setSalePrice(entity.getLowestSalePrice());
+
+        //解码图片中包含unioncode编码的路径
+        vo.setItemCover(FileUtil.unicodetoString(vo.getItemCover()));
+        List<String> itemBannerList = new ArrayList<>();
+        List<String> itemBanners = vo.getBanners();
+        if (itemBanners!=null && itemBanners.size()>0) {
+            itemBanners.forEach(banner -> {
+                String ban = FileUtil.unicodetoString(banner);
+                itemBannerList.add(ban);
+            });
+            vo.setBanners(itemBannerList);
+        }
+        vo.setShareImg(FileUtil.unicodetoString(vo.getShareImg()));
+        vo.setQrCodeUrl(FileUtil.unicodetoString(vo.getQrCodeUrl()));
 
         return vo;
     }
@@ -323,6 +350,11 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             if(CollectionUtil.isNotEmpty(skuList)){
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
+                Optional<MallItemSkuModel> mallItemSkuOp = skuList.stream().filter(x->x.getPrice()!=null).max(Comparator.comparing(MallItemSkuModel::getPrice));
+                if(mallItemSkuOp.isPresent()){
+                    MallItemSkuModel msn = mallItemSkuOp.get();
+                    model.setPrice(msn.getPrice());
+                }
                 MallItemSkuModel skuModel = skuMinModel.get(0);
                 AssertUtils.notNull(skuModel.getStock(), "库存不能为空");
                 model.setStock(skuModel.getStock());
@@ -523,6 +555,12 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 List<MallItemSkuModel> skuMaxModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice).reversed()).limit(1).collect(Collectors.toList());
                 List<MallItemSkuModel> skuMinModel = model.getSkus().stream().sorted(Comparator.comparing(MallItemSkuModel::getSalePrice)).limit(1).collect(Collectors.toList());
                 MallItemSkuModel skuModel = skuMinModel.get(0);
+
+                Optional<MallItemSkuModel> mallItemSkuOp = skuList.stream().filter(x->x.getPrice()!=null).max(Comparator.comparing(MallItemSkuModel::getPrice));
+                if(mallItemSkuOp.isPresent()){
+                    MallItemSkuModel msn = mallItemSkuOp.get();
+                    model.setPrice(msn.getPrice());
+                }
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
@@ -568,7 +606,8 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             BeanUtils.copyProperties(model,t);
             t.setPrice(model.getPrice()==null ? BigDecimal.ZERO : model.getPrice());
             t.setBanners(banners);
-            t.setPickupAddressIds(model.getPickupAddrIds().toString());
+            t.setPickupAddressIds(JSONUtil.toJsonStr(model.getPickupAddrIds()));
+            t.setDeliveryType(model.getDeliveryType()!=null && model.getDeliveryType().size()>0 ? model.getDeliveryType().toString() : null);
             baseMapper.updateById(t);
 
         }else{

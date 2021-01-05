@@ -1,7 +1,11 @@
 package com.ycandyz.master.utils;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileUtil {
 	/**
@@ -337,4 +341,47 @@ public class FileUtil {
 		}
 	}
 
+	/**
+	 * unicode解码
+	 * @param str
+	 * @return
+	 */
+	public static String unicodetoString(String str) {
+		if (str!=null && !"".equals(str)) {
+			Charset set = Charset.forName("UTF-16");
+			Pattern p = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
+			Matcher m = p.matcher(str);
+			int start = 0;
+			int start2 = 0;
+			StringBuffer sb = new StringBuffer();
+			while (m.find(start)) {
+				start2 = m.start();
+				if (start2 > start) {
+					String seg = str.substring(start, start2);
+					sb.append(seg);
+				}
+				String code = m.group(1);
+				int i = Integer.valueOf(code, 16);
+				byte[] bb = new byte[4];
+				bb[0] = (byte) ((i >> 8) & 0xFF);
+				bb[1] = (byte) (i & 0xFF);
+				ByteBuffer b = ByteBuffer.wrap(bb);
+				sb.append(String.valueOf(set.decode(b)).trim());
+				start = m.end();
+			}
+			start2 = str.length();
+			if (start2 > start) {
+				String seg = str.substring(start, start2);
+				sb.append(seg);
+			}
+			return sb.toString();
+		}
+		return str;
+	}
+
+	public static void main(String[] args) {
+		String a = unicodetoString("https://test-file.ycandyz.com/auth/202012/22/7003e5ac-444b-11eb-9c0e-e2ffaa4677cf/\\u767d\\u8272\\u84dd\\u7259\\u8033\\u673a.jpeg");
+//		String a = unicodetoString("https://test-file.ycandyz.com/auth/202007/28/d5ca7bc6-d07e-11ea-8e86-e2a716bf74cc/迪奥商品详情.png");
+		System.out.println(a);
+	}
 }
