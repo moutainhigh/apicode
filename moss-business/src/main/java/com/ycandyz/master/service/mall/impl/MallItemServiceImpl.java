@@ -370,12 +370,12 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                     AssertUtils.maxLimit(f.getPrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     AssertUtils.maxLimit(f.getSalePrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     MallSku sku = new MallSku();
-                    if(StrUtil.isEmpty(sku.getBarCode())){
-                        sku.setBarCode(IDGeneratorUtils.getStrId());
-                    }
                     sku.setItemNo(model.getItemNo());
                     sku.setSkuNo(model.getItemNo()+"_"+StrUtil.toString(IDGeneratorUtils.getLongId()));
                     BeanUtils.copyProperties(f,sku);
+                    if(StrUtil.isEmpty(sku.getBarCode())){
+                        sku.setBarCode(IDGeneratorUtils.getStrId());
+                    }
                     sku.setSortValue(i);
                     mallSkuService.save(sku);
                     f.getSkuSpecs().stream().forEach(s -> {

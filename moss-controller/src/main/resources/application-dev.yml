@@ -22,8 +22,8 @@ spring:
       connection-timeout: 30000
       connection-test-query: SELECT 1
   redis:
-    host: youchuan-test-redis.5fqnep.0001.cnn1.cache.amazonaws.com.cn
-    port: 6379
+    host: 192.168.1.210
+    port: 63792
     database: 3
   kafka:
     bootstrap-servers: kafka-dev.ycandyz.com:9092
