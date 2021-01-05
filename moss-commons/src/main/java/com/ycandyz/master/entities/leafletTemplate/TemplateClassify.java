@@ -38,7 +38,7 @@ public class TemplateClassify extends Model {
     private Integer status;
 
     @ApiModelProperty(name = "max_components_count", value = "最大组件数")
-    private String maxComponentsCount;
+    private Integer maxComponentsCount;
 
     @ApiModelProperty(name = "created_time", value = "创建时间")
     private Date createdTime;
