@@ -330,12 +330,12 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         lists.add(model.getItemText());
         lists.add(model.getShareDescr());
         lists.stream().forEach(s->txt.append(s));
-        List<String> result = tabooCheckService.check(txt.toString());
+        /*List<String> result = tabooCheckService.check(txt.toString());
         if (result != null && result.size() >0 ){
             JSONObject data = new JSONObject();
             data.put("code",2500);
             return CommonResult.success(data,"检测到提交信息涉嫌违规，请重新确认后提交");
-        }
+        }*/
 
         //公共处理赋值
         model.setItemNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
@@ -511,12 +511,12 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         lists.add(model.getItemText());
         lists.add(model.getShareDescr());
         lists.stream().forEach(s->txt.append(s));
-        List<String> result = tabooCheckService.check(txt.toString());
+        /*List<String> result = tabooCheckService.check(txt.toString());
         if (result != null && result.size() >0 ){
             JSONObject data = new JSONObject();
             data.put("code",2500);
             return CommonResult.success(data,"检测到提交信息涉嫌违规，请重新确认后提交");
-        }
+        }*/
 
         LambdaQueryWrapper<MallItem> itemWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, model.getItemNo());
