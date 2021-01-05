@@ -67,7 +67,7 @@ public class MallItemResp {
    @ApiModelProperty(name = "goods_no", value = "货号")
    private String goodsNo;
 
-   @ApiModelProperty(name = "bar_code",value = "商品条码")
+   @ApiModelProperty(name = "bar_code",value = "商品条码 ")
    private String barCode;
 
    @ApiModelProperty(name = "goods_no_list", value = "全部货号")
