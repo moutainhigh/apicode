@@ -105,7 +105,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         if(MallItemEnum.Type.Type_1.getCode().equals(type.getCode())){
 //获取sku
             LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
-                    .select(MallSku::getSkuNo,MallSku::getSalePrice,MallSku::getPrice,MallSku::getGoodsNo,MallSku::getStock,MallSku::getSkuImg)
+                    .select(MallSku::getSkuNo,MallSku::getSalePrice,MallSku::getPrice,MallSku::getGoodsNo,MallSku::getBarCode,MallSku::getStock,MallSku::getSkuImg)
                     .eq(MallSku::getItemNo, vo.getItemNo());
             List<MallSku> skus = mallSkuService.list(skuWrapper);
             skus.stream().forEach(f -> {
