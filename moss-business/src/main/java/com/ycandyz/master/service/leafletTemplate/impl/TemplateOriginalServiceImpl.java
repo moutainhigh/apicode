@@ -2,11 +2,13 @@ package com.ycandyz.master.service.leafletTemplate.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.dao.leafletTemplate.TemplateClassifyDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateOriginalDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.query.leafletTemplate.TemplateOriginalQuery;
 import com.ycandyz.master.domain.response.leafletTemplate.OriginalTemplateComponentResp;
 import com.ycandyz.master.domain.response.leafletTemplate.TemplateOriginalResp;
+import com.ycandyz.master.entities.leafletTemplate.TemplateClassify;
 import com.ycandyz.master.entities.leafletTemplate.TemplateOriginal;
 import com.ycandyz.master.service.leafletTemplate.ITemplateOriginalService;
 import com.ycandyz.master.utils.AssertUtils;
@@ -29,6 +31,8 @@ public class TemplateOriginalServiceImpl extends BaseService<TemplateOriginalDao
 
     @Resource
     private TemplateOriginalDao originalDao;
+    @Resource
+    private TemplateClassifyDao templateClassifyDao;
 
     @Override
     public TemplateOriginalResp getByType(Integer id) {
@@ -38,6 +42,8 @@ public class TemplateOriginalServiceImpl extends BaseService<TemplateOriginalDao
         List<TemplateOriginal> originals = originalDao.getByType(id, organizeId);
         AssertUtils.notEmpty(originals, "当前类型下无默认模板！");
         TemplateOriginal original = originals.get(0);
+        TemplateClassify templateClassify = templateClassifyDao.selectById(original.getId());
+        AssertUtils.notNull(templateClassify, "当前模板所属类型不存在！");
         String componentsStr = original.getComponents();
         AssertUtils.notEmpty(componentsStr, "当前默认模板无相关组件信息！");
         List<OriginalTemplateComponentResp> components = JSONObject.parseArray(componentsStr, OriginalTemplateComponentResp.class);
@@ -52,6 +58,7 @@ public class TemplateOriginalServiceImpl extends BaseService<TemplateOriginalDao
         templateOriginalResp.setShareTitle(original.getShareTitle());
         templateOriginalResp.setClassifyName(original.getClassifyName());
         templateOriginalResp.setClassifyId(id);
+        templateOriginalResp.setMaxComponentsCount(templateClassify.getMaxComponentsCount());
         return templateOriginalResp;
     }
 
