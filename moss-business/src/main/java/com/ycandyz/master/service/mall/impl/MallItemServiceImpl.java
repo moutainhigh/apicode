@@ -460,9 +460,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         LambdaQueryWrapper<MallShop> shopWrapper = new LambdaQueryWrapper<MallShop>()
                 .eq(MallShop::getShopNo,getShopNo());
         MallShop shop = mallShopDao.selectOne(shopWrapper);
-        //mall_item_originze 添加数据，处理商品分类，存在则归类，不存在则创建
-        //全部，查询全部
-        //指定，遍历
+        //先添加一条本店数据
+        //是集团，判断是否开启 集团供货
+        //是，全部，查询遍历，处理商品分类，存在则归类，不存在则创建
+        //是，指定，遍历，处理商品分类，存在则归类，不存在则创建
         if(isOrganize.getCode().equals(MallItemEnum.IsOrganize.Type_0)){
             //只添加本店数据1条
 
