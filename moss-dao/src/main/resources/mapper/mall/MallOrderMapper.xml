@@ -30,6 +30,7 @@
         <result column="receiveAtStr" property="receiveAtStr" />
         <result column="discountMoney" property="discountMoney" />
         <result column="isCoupon" property="isCoupon" />
+        <result column="is_group_supply" property="isGroupSupply" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -206,6 +207,7 @@
             mo.receive_at,
             mo.order_type,
             mo.total_money-mo.real_money as discountMoney,
+            mo.is_group_supply,
             modetail.item_no,
             modetail.item_name,
             modetail.goods_no,
@@ -336,6 +338,9 @@
         <if test="p.cancelReason != null">
             and mo.cancel_reason=#{p.cancelReason}
         </if>
+        <if test="p.isGroupSupply != null">
+            and mo.is_group_supply=#{p.isGroupSupply}
+        </if>
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
         ORDER BY mo.order_at DESC
@@ -460,6 +465,7 @@
         <result column="orderAtStr" property="orderAtStr" />
         <result column="receiveAtStr" property="receiveAtStr" />
         <result column="discountMoney" property="discountMoney" />
+        <result column="is_group_supply" property="isGroupSupply" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="item_no" property="itemNo" />
@@ -506,6 +512,7 @@
             mo.all_money,
             mo.shop_no,
             mo.coupon_deducted as discountMoney,
+            mo.is_group_supply,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,
@@ -647,6 +654,9 @@
         <if test="p.isCoupon!=null">
             cdu.status=#{p.isCoupon}
         </if>
+        <if test="p.isGroupSupply!=null">
+            mo.is_group_supply=#{p.isGroupSupply}
+        </if>
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
         GROUP BY mo.order_no) total
@@ -675,6 +685,7 @@
         a.receive_at,
         a.order_type,
         a.all_money,
+        a.is_group_supply,
         modetail.item_no,
         modetail.item_name,
         modetail.goods_no,
@@ -711,7 +722,8 @@
         mo.receive_at,
         mo.order_type,
         mo.all_money,
-        mo.shop_no
+        mo.shop_no,
+        mo.is_group_supply
         FROM
         mall_order mo
         LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
@@ -832,6 +844,9 @@
         </if>
         <if test="p.isCoupon!=null">
             cdu.status=#{p.isCoupon}
+        </if>
+        <if test="p.isGroupSupply!=null">
+            mo.is_group_supply=#{p.isGroupSupply}
         </if>
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
