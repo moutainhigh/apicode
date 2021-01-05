@@ -37,12 +37,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
- *
  * @author WenXin
  * @version 2.0
  * @Description 模板内容表 业务类
- * </p>
  * @since 2020-12-17
  */
 @Slf4j
@@ -79,21 +76,27 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
         AssertUtils.notNull(query.getTemplateId(), "请选择模板！");
         Template template = templateDao.selectById(query.getTemplateId());
         AssertUtils.notNull(template, "模板信息不存在！");
-        IPage<TemplateContent> templateContentsPage = templateContentDao.selectPage(new Page<>(page.getPage(),page.getPageSize()), new QueryWrapper<TemplateContent>().eq("template_id", query.getTemplateId()).orderByDesc("created_time"));
+        IPage<TemplateContent> templateContentsPage = templateContentDao.selectPage(new Page<>(page.getPage(), page.getPageSize()), new QueryWrapper<TemplateContent>().eq("template_id", query.getTemplateId()).orderByDesc("created_time"));
         List<TemplateContent> templateContents = templateContentsPage.getRecords();
         Page<TemplateContentResp> resultPages = new Page<>();
-        if (CollectionUtil.isEmpty(templateContents)){
+        if (CollectionUtil.isEmpty(templateContents)) {
             return resultPages;
         }
         List<TemplateContentResp> tableContents = new ArrayList<>();
         templateContents.forEach(vo -> {
             if (StringUtils.isNotEmpty(vo.getComponentContent())) {
                 TemplateContentResp templateContentResp = new TemplateContentResp();
-                if (null != vo.getUserId()){
+                if (null != vo.getUserId()) {
                     User user = userDao.selectById(vo.getUserId());
                     if (user != null) {
                         templateContentResp.setUserPhone(user.getPhone());
                     }
+                }
+                if (null != vo.getChannel()) {
+                    templateContentResp.setChannelStr(DataConstant.CONTENT_CHANNEL_MAP.get(vo.getChannel().toString()));
+                }
+                if (null != vo.getPlatform()) {
+                    templateContentResp.setPlatformStr(DataConstant.CONTENT_PLATFORM_MAP.get(vo.getPlatform().toString()));
                 }
                 BeanUtils.copyProperties(vo, templateContentResp);
                 List<TemplateTableContentResp> contentResps = JSONObject.parseArray(vo.getComponentContent(), TemplateTableContentResp.class);
