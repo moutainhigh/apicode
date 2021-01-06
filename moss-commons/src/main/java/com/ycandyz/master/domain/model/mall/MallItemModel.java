@@ -134,6 +134,12 @@ public class MallItemModel {
     @ApiModelProperty(name = "non_price",value = "非销售商品-原价")
     private String nonPrice;
 
+    @ApiModelProperty(name = "is_organize",value = "是否集团供货(0否,1是)")
+    private Integer isOrganize;
+
+    @ApiModelProperty(name = "is_all",value = "全部/指定(0全部,1指定)")
+    private Integer isAll;
+
 
     @NotEmpty(message = "轮播图不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(value = "轮播图")

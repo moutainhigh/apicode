@@ -32,6 +32,7 @@ import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.FileUtil;
 import com.ycandyz.master.utils.IDGeneratorUtils;
+import com.ycandyz.master.utils.RegexUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -354,6 +355,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 AssertUtils.notNull(skuModel.getStock(), "库存不能为空");
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
+                model.setBarCode(skuModel.getBarCode());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
                 model.setLowestSalePrice(skuMinModel.get(0).getSalePrice());
                 //添加Sku，sepc
@@ -364,6 +366,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                     AssertUtils.notNull(f.getSalePrice(),"销售价格不能为空");
                     AssertUtils.maxLimit(f.getPrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     AssertUtils.maxLimit(f.getSalePrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
+                    if(StrUtil.isNotEmpty(f.getBarCode())){
+                        AssertUtils.isTrue(f.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"只允许输入数字、字母及其组合");
+                    }
                     MallSku sku = new MallSku();
                     sku.setItemNo(model.getItemNo());
                     sku.setSkuNo(model.getItemNo()+"_"+StrUtil.toString(IDGeneratorUtils.getLongId()));
@@ -380,6 +385,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             }else{
                 MallItemSkuModel skuModel = new MallItemSkuModel();
                 AssertUtils.notNull(model.getStock(), "库存不能为空");
+                if(StrUtil.isNotEmpty(model.getBarCode())){
+                    AssertUtils.isTrue(model.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"只允许输入数字、字母及其组合");
+                }
                 skuModel.setSalePrice(model.getSalePrice());
                 skuModel.setPrice(model.getPrice());
                 skuModel.setStock(model.getStock());
@@ -559,6 +567,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 }
                 model.setStock(skuModel.getStock());
                 model.setGoodsNo(skuModel.getGoodsNo());
+                model.setBarCode(skuModel.getBarCode());
                 model.setHighestSalePrice(skuMaxModel.get(0).getSalePrice());
                 model.setLowestSalePrice(skuMinModel.get(0).getSalePrice());
 
@@ -568,6 +577,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                     AssertUtils.notNull(f.getSkuSpecs(), "Sku规格不能为空");
                     AssertUtils.maxLimit(f.getPrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     AssertUtils.maxLimit(f.getSalePrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
+                    if(StrUtil.isNotEmpty(f.getBarCode())){
+                        AssertUtils.isTrue(f.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"只允许输入数字、字母及其组合");
+                    }
                     MallSku sku = new MallSku();
                     sku.setItemNo(model.getItemNo());
                     sku.setSkuNo(model.getItemNo()+"_"+StrUtil.toString(IDGeneratorUtils.getLongId()));
@@ -582,6 +594,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                     });
                 }
             }else{
+                if(StrUtil.isNotEmpty(model.getBarCode())){
+                    AssertUtils.isTrue(model.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"只允许输入数字、字母及其组合");
+                }
                 MallItemSkuModel skuModel = new MallItemSkuModel();
                 skuModel.setSalePrice(model.getSalePrice());
                 skuModel.setPrice(model.getPrice());

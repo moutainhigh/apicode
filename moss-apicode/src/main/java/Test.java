@@ -4,9 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 
 public class Test {
     public static void main(String[] args) {
-        String menuIdStr = "224";
+        String menuIdStr = "a11a1";
         boolean isNum = StringUtils.isNumeric(menuIdStr);
-        System.out.println(DateUtils.getCurrentSeconds());
-        System.out.println(IDGeneratorUtils.getStrId());
+        System.out.println(isLetterDigit(menuIdStr));
+
+    }
+
+    public static boolean isLetterDigit(String str) {
+        String regex = "^[a-z0-9A-Z]+$";
+        return str.matches(regex);
     }
 }

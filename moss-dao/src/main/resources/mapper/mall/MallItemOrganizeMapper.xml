@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallItemOrganizeDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.MallItemOrganize">
+        <id column="id" property="id" />
+        <result column="shop_no" property="shopNo" />
+        <result column="organize_item_no" property="organizeItemNo" />
+        <result column="item_no" property="itemNo" />
+        <result column="category_no" property="categoryNo" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_no, organize_item_no, item_no, category_no, create_time, update_time
+    </sql>
+
+</mapper>
