@@ -479,11 +479,14 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         if(organize.getIsGroup() == OrganizeEnum.IsGroup.Type_1.getCode() && isOrganize.getCode().equals(MallItemEnum.IsOrganize.Type_1.getCode())){
             //全部门店，查询遍历，处理商品分类，存在则归类，不存在则创建
             if(MallItemEnum.IsAll.Type_0.getCode().equals(isAll.getCode())){
-
+                List<MallShop> shopList = mallShopDao.getByOrganizeId(getOrganizeId());
+                MallCategoryResp mc = mallCategoryService.getByChildCategoryNo(null,t.getCategoryNo());
             }else {//指定门店，遍历，处理商品分类，存在则归类，不存在则创建
 
             }
         }
+        //获取集团商品分类，多级
+        //遍历门店，存在则过，不存在则创建
 
         JSONObject dataJSON = new JSONObject();
         dataJSON.put("code",200);
