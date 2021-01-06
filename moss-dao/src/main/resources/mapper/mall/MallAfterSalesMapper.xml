@@ -259,6 +259,7 @@
         mo.pay_type,
         mo.all_money,
         mo.all_money-mo.real_money as shipping_money,
+        mo.is_group_supply,
 
         modetail.order_no as detailOrderNo,
         modetail.order_detail_no as orderDetailNo,

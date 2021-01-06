@@ -710,9 +710,10 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
         writer.addHeaderAlias("orderQuantity", "购买数量");
         writer.addHeaderAlias("userName", "购买用户");
         writer.addHeaderAlias("createdAtStr", "售后申请时间");
+        writer.addHeaderAlias("isGroupSupply", "集团供货");
         List<String> containList = Arrays.asList("afterSalesNo","orderNo","itemName","goodsNo",
                 "status","state","skuQuantity","money","allMoney","payType","orderQuantity",
-                "userName","createdAtStr");
+                "userName","createdAtStr","isGroupSupply");
         return containList;
     }
 
