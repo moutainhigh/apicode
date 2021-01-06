@@ -94,11 +94,5 @@ public class OrganizeGroupController extends BaseController<OrganizeGroupService
         return ReturnResponse.success("删除成功!");
 	}
 
-    @ApiOperation(value = "查询分页")
-    @GetMapping(value = "")
-    @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<MallShop>> selectPage(PageModel<MallShop> page, MallShopQuery query) {
-        return CommonResult.success(new BasePageResult<>(service.page(new Page<>(page.getPage(),page.getPageSize()),query)));
-    }
     
 }
