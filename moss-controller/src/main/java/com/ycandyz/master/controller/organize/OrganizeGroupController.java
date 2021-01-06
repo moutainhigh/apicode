@@ -1,5 +1,10 @@
 package com.ycandyz.master.controller.organize;
 
+import com.ycandyz.master.api.*;
+import com.ycandyz.master.domain.query.mall.MallShopQuery;
+import com.ycandyz.master.entities.mall.MallShop;
+import com.ycandyz.master.service.mall.MallAfterSalesService;
+import com.ycandyz.master.service.mall.impl.MallShopServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
@@ -7,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import cn.hutool.core.convert.Convert;
-import com.ycandyz.master.api.ReturnResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,6 +45,9 @@ import com.ycandyz.master.controller.base.BaseController;
 @RequestMapping("organize-group")
 @Api(tags="organize-集团表")
 public class OrganizeGroupController extends BaseController<OrganizeGroupServiceImpl,OrganizeGroup,OrganizeGroupQuery> {
+
+    @Autowired
+    private MallShopServiceImpl mallShopService;
 	
 	@ApiOperation(value="新增")
     @PostMapping(value = "insert")
@@ -85,5 +93,12 @@ public class OrganizeGroupController extends BaseController<OrganizeGroupService
 	public ReturnResponse<Object> deleteBatch(String ids) {
         return ReturnResponse.success("删除成功!");
 	}
+
+    @ApiOperation(value = "查询分页")
+    @GetMapping(value = "")
+    @SuppressWarnings("unchecked")
+    public CommonResult<BasePageResult<MallShop>> selectPage(PageModel<MallShop> page, MallShopQuery query) {
+        return CommonResult.success(new BasePageResult<>(service.page(new Page<>(page.getPage(),page.getPageSize()),query)));
+    }
     
 }
