@@ -56,11 +56,9 @@ public class SignAuthFilter implements Filter {
             filterChain.doFilter(request, response);
         } else {
             HttpServletRequest requestWrapper = new BodyReaderHttpServletRequestWrapper(request);
-            log.info("签名前请求参数------------------------------------",JSONObject.toJSONString(requestWrapper));
             //获取全部参数(包括URL和body上的)
             SortedMap<String, Object> allParams = HttpUtils.getAllParams(requestWrapper);
             //对参数进行签名验证
-            log.info("签名前参数----------------------------------------",allParams);
             boolean isSigned = SignUtil.verifySign(allParams,authConfigSecret);
 
             if (isSigned) {
