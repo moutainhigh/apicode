@@ -19,6 +19,7 @@ import com.ycandyz.master.dao.mall.MallSocialSettingDao;
 import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.domain.enums.mall.MallItemEnum;
 import com.ycandyz.master.domain.enums.mall.MallItemVideoEnum;
+import com.ycandyz.master.domain.enums.organize.OrganizeEnum;
 import com.ycandyz.master.domain.model.mall.*;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
@@ -28,10 +29,12 @@ import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.mall.MallShopDTO;
 import com.ycandyz.master.entities.ad.HomeCategory;
 import com.ycandyz.master.entities.mall.*;
+import com.ycandyz.master.entities.organize.Organize;
 import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.exception.BusinessException;
 import com.ycandyz.master.service.mall.IMallItemService;
+import com.ycandyz.master.service.organize.impl.OrganizeServiceImpl;
 import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.FileUtil;
@@ -77,6 +80,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     private TabooCheckService tabooCheckService;
     @Autowired
     private MallSocialSettingDao mallSocialSettingDao;
+    @Autowired
+    private MallItemOrganizeServiceImpl mallItemOrganizeService;
+    @Autowired
+    private OrganizeServiceImpl organizeService;
 
     @Override
     public MallItemResp getByItemNo(String itemNo) {
@@ -457,20 +464,26 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             mallItemVideoService.save(video);
         }
 
+        //先添加一条本店数据
+        MallItemOrganizeModel mioModel = new MallItemOrganizeModel();
+        mioModel.setShopNo(getShopNo());
+        mioModel.setOrganizeItemNo(t.getItemNo());
+        mioModel.setItemNo(t.getItemNo());
+        mioModel.setCategoryNo(t.getCategoryNo());
+        mallItemOrganizeService.insert(mioModel);
         LambdaQueryWrapper<MallShop> shopWrapper = new LambdaQueryWrapper<MallShop>()
                 .eq(MallShop::getShopNo,getShopNo());
         MallShop shop = mallShopDao.selectOne(shopWrapper);
-        //先添加一条本店数据
+        Organize organize = organizeService.getById(shop.getOrganizeId());
         //是集团，判断是否开启 集团供货
-        //是，全部，查询遍历，处理商品分类，存在则归类，不存在则创建
-        //是，指定，遍历，处理商品分类，存在则归类，不存在则创建
-        if(isOrganize.getCode().equals(MallItemEnum.IsOrganize.Type_0)){
-            //只添加本店数据1条
+        if(organize.getIsGroup() == OrganizeEnum.IsGroup.Type_1.getCode() && isOrganize.getCode().equals(MallItemEnum.IsOrganize.Type_1.getCode())){
+            //全部门店，查询遍历，处理商品分类，存在则归类，不存在则创建
+            if(MallItemEnum.IsAll.Type_0.getCode().equals(isAll.getCode())){
 
-        }else{
+            }else {//指定门店，遍历，处理商品分类，存在则归类，不存在则创建
 
+            }
         }
-
 
         JSONObject dataJSON = new JSONObject();
         dataJSON.put("code",200);
