@@ -11,6 +11,7 @@ import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.constant.CommonConstant;
 import com.ycandyz.master.dao.mall.*;
 import com.ycandyz.master.dao.organize.OrganizeDao;
+import com.ycandyz.master.dao.organize.OrganizeGroupDao;
 import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.domain.enums.mall.MallAfterSalesEnum;
@@ -19,6 +20,7 @@ import com.ycandyz.master.domain.response.mall.MallOrderExportResp;
 import com.ycandyz.master.dto.mall.*;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.entities.organize.Organize;
+import com.ycandyz.master.entities.organize.OrganizeGroup;
 import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.enums.SalesEnum;
 import com.ycandyz.master.model.mall.*;
@@ -86,6 +88,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
     @Autowired
     private OrganizeDao organizeDao;
+
+    @Autowired
+    private OrganizeGroupDao organizeGroupDao;
 
     @Value("${after-sales-days:7}")
     private Integer afterSalesDays;
@@ -158,6 +163,20 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
             page = mallAfterSalesDao.getTrendMallAfterSalesPage(pageQuery, mallafterSalesQuery);
             if (page.getRecords() != null && page.getRecords().size() > 0) {
 
+                boolean isOpenMaintainable = false;
+                if (mallafterSalesQuery.getIsGroup().equals("0")) {
+                    OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id",userVO.getOrganizeId()).eq("status",2));
+                    if (organizeRel!=null){
+                        OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
+                        if (organizeGroup.getIsOpenMaintainable() != null && organizeGroup.getIsOpenMaintainable() == 1) {
+                            //开启了集团供货
+                            isOpenMaintainable = true;
+                        }
+                    }
+                }else {
+                    isOpenMaintainable = true;
+                }
+
                 //查询企业名称，通过organizedIds
                 List<Organize> organizeList = organizeDao.selectBatchIds(organizeIds);
                 Map<Integer, String> organizeIdAndName = organizeList.stream().collect(Collectors.toMap(Organize::getId, Organize::getFullName));
@@ -202,6 +221,11 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                         MallOrderByAfterSalesVO mallOrderByAfterSalesVO = new MallOrderByAfterSalesVO();
                         BeanUtils.copyProperties(mallOrderByAfterSalesDTO, mallOrderByAfterSalesVO);
                         mallAfterSalesVO.setOrder(mallOrderByAfterSalesVO);
+
+                        //是否有发货按钮
+                        if (isOpenMaintainable){
+                            mallAfterSalesVO.getOrder().setIsOpenMaintainable(1);
+                        }
 
                         //支付方式拼接
                         mallAfterSalesVO.setPayType(mallOrderByAfterSalesVO.getPayType());
@@ -276,6 +300,27 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
                 mallAfterSalesVO.setOrder(mallOrderByAfterSalesVO);
                 orderType = mallOrderByAfterSalesDTO.getOrderType();
+
+                Organize organize = organizeDao.selectById(userVO.getOrganizeId());
+                if (organize!=null){
+                    if (organize.getIsGroup()==1){  //集团
+                        mallAfterSalesVO.getOrder().setIsOpenMaintainable(1);   //有发货按钮
+                    }else if (organize.getIsGroup()==0){    //企业
+                        if (mallAfterSalesDTO.getOrder().getIsGroupSupply()==0){    //非集团供货
+                            mallAfterSalesVO.getOrder().setIsOpenMaintainable(1);   //有发货按钮
+                        }else { //集团供货
+                            OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id", userVO.getOrganizeId()).eq("status", 2));
+                            if (organizeRel != null) {
+                                OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
+                                if (organizeGroup != null && organizeGroup.getIsOpenMaintainable() == 1) {
+                                    mallAfterSalesVO.getOrder().setIsOpenMaintainable(1);   //有发货按钮
+                                } else {
+                                    mallAfterSalesVO.getOrder().setIsOpenMaintainable(0);   //有发货按钮
+                                }
+                            }
+                        }
+                    }
+                }
 
             }
 
@@ -396,6 +441,12 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 MallShopVO mallShopVO = new MallShopVO();
                 BeanUtils.copyProperties(mallShopDTO,mallShopVO);
                 mallAfterSalesVO.getOrder().setShop(mallShopVO);
+            }
+
+            //企业名称
+            Organize organ = organizeDao.selectById(mallShopDTO.getOrganizeId());
+            if (organ!=null){
+                mallAfterSalesVO.setOrganizeName(organ.getFullName());
             }
 
             //转换退款原因reason为reasonStr（文字描述）

@@ -37,4 +37,6 @@ public class MallOrderByAfterSalesDTO {
     private BigDecimal allMoney;
     @ApiModelProperty(value = "发货方式:1-配送 2-自提")
     private Integer deliverType;
+    @ApiModelProperty(value = "是否集团供货，1:是，0:否")
+    private Integer isGroupSupply;
 }

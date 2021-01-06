@@ -38,6 +38,7 @@
             <result column="deliver_method" property="deliverMethod" />
             <result column="deliver_type" property="deliverType" />
             <result column="shipping_money" property="shippingMoney" />
+            <result column="is_group_supply" property="isGroupSupply" />
         </collection>
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailByAfterSalesDTO">
             <result column="detailOrderNo" property="orderNo" />
@@ -85,6 +86,7 @@
             mo.pay_type,
             mo.all_money,
             mo.all_money-mo.real_money as shipping_money,
+            mo.is_group_supply,
 
             modetail.order_no as detailOrderNo,
             modetail.order_detail_no as orderDetailNo,
@@ -163,6 +165,10 @@
                 and
                 (u.`name` LIKE concat('%',#{p.userName},'%') OR u.phone LIKE concat('%',#{p.userName},'%'))
             </if>
+            <if test="p.isGroupSupply != null">
+                and
+                mo.is_group_supply = #{p.isGroupSupply}
+            </if>
             order by sales.created_time DESC
     </select>
 
@@ -200,6 +206,7 @@
             mo.order_type,
             mo.all_money,
             mo.all_money-mo.real_money as shipping_money,
+            mo.is_group_supply,
 
             modetail.order_no as detailOrderNo,
             modetail.order_detail_no as orderDetailNo,

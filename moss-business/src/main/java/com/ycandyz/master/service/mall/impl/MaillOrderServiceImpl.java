@@ -699,6 +699,12 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             BeanUtils.copyProperties(mallShopDTO,mallShopVO);
             mallOrderVO.setShopInfo(mallShopVO);
 
+            //企业名称
+            Organize organ = organizeDao.selectById(mallShopDTO.getOrganizeId());
+            if (organ!=null){
+                mallOrderVO.setOrganizeName(organ.getFullName());
+            }
+
             //获取订单详情编号列表
             List<String> orderDetailNoList = null;
             if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
