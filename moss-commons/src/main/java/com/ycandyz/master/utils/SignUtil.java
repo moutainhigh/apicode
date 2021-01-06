@@ -41,6 +41,7 @@ public class SignUtil {
     public static String getParamsSign(SortedMap<String, Object> params,String key) {
         //要先去掉 Url 里的 Sign
         params.remove("sign");
+        log.info("请求入参----------------------------{}",JSONObject.toJSONString(params));
         String timestamp = params.get("timestamp").toString();
         String paramsJsonStr = JSONObject.toJSONString(params);
         String skey = timestamp + key;
