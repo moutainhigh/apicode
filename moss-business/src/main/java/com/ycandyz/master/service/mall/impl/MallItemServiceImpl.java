@@ -368,7 +368,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                     AssertUtils.maxLimit(f.getPrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     AssertUtils.maxLimit(f.getSalePrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     if(StrUtil.isNotEmpty(f.getBarCode())){
-                        AssertUtils.isTrue(f.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"只允许输入数字、字母及其组合");
+                        AssertUtils.isTrue(f.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"商品条码只允许输入数字、字母及其组合");
                     }
                     MallSku sku = new MallSku();
                     sku.setItemNo(model.getItemNo());
@@ -387,7 +387,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 MallItemSkuModel skuModel = new MallItemSkuModel();
                 AssertUtils.notNull(model.getStock(), "库存不能为空");
                 if(StrUtil.isNotEmpty(model.getBarCode())){
-                    AssertUtils.isTrue(model.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"只允许输入数字、字母及其组合");
+                    AssertUtils.isTrue(model.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"商品条码只允许输入数字、字母及其组合");
                 }
                 skuModel.setSalePrice(model.getSalePrice());
                 skuModel.setPrice(model.getPrice());
@@ -579,7 +579,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                     AssertUtils.maxLimit(f.getPrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     AssertUtils.maxLimit(f.getSalePrice(),new BigDecimal("999999.99"),"原价不能大于999999.99");
                     if(StrUtil.isNotEmpty(f.getBarCode())){
-                        AssertUtils.isTrue(f.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"只允许输入数字、字母及其组合");
+                        AssertUtils.isTrue(f.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"商品条码只允许输入数字、字母及其组合");
                     }
                     MallSku sku = new MallSku();
                     sku.setItemNo(model.getItemNo());
@@ -596,7 +596,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 }
             }else{
                 if(StrUtil.isNotEmpty(model.getBarCode())){
-                    AssertUtils.isTrue(model.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"只允许输入数字、字母及其组合");
+                    AssertUtils.isTrue(model.getBarCode().matches(RegexUtils.REGEX_AZ09AZ),"商品条码只允许输入数字、字母及其组合");
                 }
                 MallItemSkuModel skuModel = new MallItemSkuModel();
                 skuModel.setSalePrice(model.getSalePrice());
