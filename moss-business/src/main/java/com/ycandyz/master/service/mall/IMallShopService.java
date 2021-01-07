@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface IMallShopService extends IService<MallShop>{
 
-    Page<MallShop> getByOrganizeId(Page<MallShop> page, Long organizeId);
+    Page<MallShop> getByOrganizeId(Page<MallShop> page);
 
     Page<MallShop> getByItemNo(Page<MallShop> page, String itemNo);
 	

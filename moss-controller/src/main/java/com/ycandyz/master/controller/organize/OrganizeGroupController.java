@@ -53,10 +53,18 @@ public class OrganizeGroupController extends BaseController<OrganizeGroupService
 
     @ApiVersion(group = ApiVersionConstant.API_MALL_ITEM_100)
     @ApiImplicitParam(name="item_no",value="商品编号",dataType="String")
-    @ApiOperation(value = "集团下门店-分页")
-    @GetMapping(value = "shop")
+    @ApiOperation(value = "集团供货商品已选门店-分页")
+    @GetMapping(value = "shop/item")
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<MallShop>> selectPage(PageModel<MallShop> page,@RequestParam(value = "item_no",required = false) String itemNo) {
         return CommonResult.success(new BasePageResult<>(mallShopService.getByItemNo(new Page<>(page.getPage(),page.getPageSize()),itemNo)));
+    }
+
+    @ApiVersion(group = ApiVersionConstant.API_MALL_ITEM_100)
+    @ApiOperation(value = "集团供货全部门店-分页")
+    @GetMapping(value = "shop")
+    @SuppressWarnings("unchecked")
+    public CommonResult<BasePageResult<MallShop>> selectOrgPage(PageModel<MallShop> page) {
+        return CommonResult.success(new BasePageResult<>(mallShopService.getByOrganizeId(new Page<>(page.getPage(),page.getPageSize()))));
     }
 }
