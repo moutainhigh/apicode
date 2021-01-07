@@ -74,7 +74,7 @@ public class TemplateComponentServiceImpl extends BaseService<TemplateComponentD
         AssertUtils.notNull(templateId, "未选择模板！");
         Template template = templateDao.selectById(templateId);
         AssertUtils.notNull(template, "模板信息不存在！");
-        List<TemplateDetail> details = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", templateId).orderByAsc("component_order"));
+        List<TemplateDetail> details = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", templateId).orderByDesc("component_status").orderByAsc("component_order"));
         AssertUtils.notEmpty(details, "动态列信息不存在！");
         List<TemplateTableResp> tableResps = new ArrayList<>();
         details.forEach(vo -> {
