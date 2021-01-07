@@ -1074,9 +1074,10 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             }
                         }
                         MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVo.getShopNo());
+                        mallOrderVo.setIsOpenMaintainable(false);
                         if (null != mallShopDTO) {
                             Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
-                            if (1 == organize.getIsGroup()) {
+                            if (1 != organize.getIsGroup()) {
                                 List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
                                 if (CollectionUtil.isNotEmpty(organizeGroups)) {
                                     mallOrderVo.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
