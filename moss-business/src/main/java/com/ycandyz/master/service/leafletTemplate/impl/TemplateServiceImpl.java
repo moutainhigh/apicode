@@ -246,7 +246,7 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
         log.info("逻辑删除模板开始，模板id为：{}", id);
         Template template = new Template();
         template.setUpdatedTime(cn.hutool.core.date.DateUtil.offsetHour(new Date(), -8));
-        int i = templateDao.update(template, new UpdateWrapper<Template>().set("template_status", "3").eq("id", id));
+        int i = templateDao.update(template, new UpdateWrapper<Template>().set("template_status", "0").eq("id", id));
         log.info("删除模板完成，删除条数为：{}条", i);
         return i == 1;
     }
