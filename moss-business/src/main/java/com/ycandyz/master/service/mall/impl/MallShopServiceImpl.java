@@ -1,6 +1,7 @@
 package com.ycandyz.master.service.mall.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.domain.enums.mall.MallItemOriganizeEnum;
@@ -8,8 +9,11 @@ import com.ycandyz.master.entities.mall.MallItemOrganize;
 import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.domain.query.mall.MallShopQuery;
 import com.ycandyz.master.dao.mall.MallShopDao;
+import com.ycandyz.master.entities.mall.MallSku;
+import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.service.mall.IMallShopService;
 
+import com.ycandyz.master.service.organize.impl.OrganizeRelServiceImpl;
 import com.ycandyz.master.utils.AssertUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +35,21 @@ public class MallShopServiceImpl extends BaseService<MallShopDao,MallShop,MallSh
     @Autowired
     private MallItemOrganizeServiceImpl mallItemOrganizeService;
 
+    @Autowired
+    private OrganizeRelServiceImpl organizeRelService;
+
     @Override
-    public Page<MallShop> getByOrganizeId(Page<MallShop> page, Long organizeId) {
-        return baseMapper.getByOrganizeId(page,organizeId);
+    public Page<MallShop> getByOrganizeId(Page<MallShop> page) {
+        LambdaQueryWrapper<OrganizeRel> orgWrapper = new LambdaQueryWrapper<OrganizeRel>()
+                .eq(OrganizeRel::getOrganizeId,getOrganizeId());
+        OrganizeRel org = organizeRelService.getOne(orgWrapper);
+        return baseMapper.getByOrganizeId(page,org.getGroupOrganizeId());
     }
 
     @Override
     public Page<MallShop> getByItemNo(Page<MallShop> page, String itemNo) {
         if(StrUtil.isEmpty(itemNo)){
-            return getByOrganizeId(page,getOrganizeId());
+            return getByOrganizeId(page);
         }
         //校验集团供货商品，切换商品编号
         MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(itemNo);
