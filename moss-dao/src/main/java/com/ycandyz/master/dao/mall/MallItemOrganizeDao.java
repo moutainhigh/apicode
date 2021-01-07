@@ -13,5 +13,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface MallItemOrganizeDao extends BaseMapper<MallItemOrganize> {
 
+    int deleteOrg(MallItemOrganize t);
+
+    int updateOrg(MallItemOrganize t);
 
 }

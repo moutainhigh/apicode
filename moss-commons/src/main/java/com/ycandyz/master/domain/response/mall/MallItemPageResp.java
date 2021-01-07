@@ -123,6 +123,12 @@ public class MallItemPageResp {
    @ApiModelProperty(name = "qr_code_url", value = "二维码")
    private String qrCodeUrl;
 
+   @ApiModelProperty(name = "is_organize",value = "是否集团供货(0否,1是)")
+   private Integer isOrganize;
+
+   @ApiModelProperty(name = "is_copy", value = "是否店铺自己数据(0:不是,1:是)")
+   private Integer isCopy;
+
 
 
 }

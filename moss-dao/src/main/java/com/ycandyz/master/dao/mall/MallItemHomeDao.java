@@ -59,4 +59,6 @@ public interface MallItemHomeDao extends BaseMapper<MallItem> {
     Page<MallItemPageResp> getMallItemPage(Page page, @Param("q") MallItemQuery query);
 
     int updateByItemNo(MallItem entity);
+
+    int updateOrgByItemNo(MallItem entity);
 }

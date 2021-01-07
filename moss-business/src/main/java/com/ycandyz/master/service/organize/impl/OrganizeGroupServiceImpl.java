@@ -3,6 +3,7 @@ package com.ycandyz.master.service.organize.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.ycandyz.master.domain.UserVO;
 import com.ycandyz.master.entities.organize.OrganizeGroup;
 import com.ycandyz.master.domain.query.organize.OrganizeGroupQuery;
 import com.ycandyz.master.dao.organize.OrganizeGroupDao;
@@ -29,7 +30,9 @@ public class OrganizeGroupServiceImpl extends BaseService<OrganizeGroupDao, Orga
     @Resource
     private OrganizeGroupDao organizeGroupDao;
 
-    public OrganizeGroup getByOrganizeId(Long organizeId) {
+    public OrganizeGroup getByOrganizeId() {
+        UserVO user = getUser();
+        Long organizeId = user.getOrganizeId();
         AssertUtils.notNull(organizeId, "集团编号为空");
         List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeId));
         if (CollectionUtil.isEmpty(organizeGroups)) {

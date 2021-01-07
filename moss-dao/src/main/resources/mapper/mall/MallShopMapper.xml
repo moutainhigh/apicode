@@ -42,4 +42,24 @@
         </foreach>
     </select>
 
+    <select id="getByOrganizeId" resultType="com.ycandyz.master.entities.mall.MallShop">
+        SELECT ms.id,ms.shop_no,ms.shop_name
+        FROM organize_group og
+        LEFT JOIN organize_rel ol ON ol.group_organize_id = og.id
+        LEFT JOIN mall_shop ms ON ol.organize_id = ms.organize_id
+        WHERE 1=1
+        AND og.organize_id = #{organizeId}
+        AND ms.id is not null
+    </select>
+
+    <select id="getByItemNo" resultType="com.ycandyz.master.entities.mall.MallShop">
+        SELECT ms.id,ms.shop_no,ms.shop_name
+        FROM mall_item_organize mio
+        LEFT JOIN mall_shop ms ON mio.shop_no = ms.shop_no
+        WHERE 1=1
+        AND mio.organize_item_no = #{itemNo}
+        AND mio.is_copy = 0
+        AND ms.id is not null
+    </select>
+
 </mapper>

@@ -345,7 +345,7 @@ public class MallOrderUAppVO {
     private String cancelReasonName;
 
     @ApiModelProperty(value = "是否集团供货")
-    private Integer isGroupSupply;
+    private Boolean isGroupSupply;
 
     @ApiModelProperty(value = "门店是否可维护订单")
     private Boolean isOpenMaintainable;

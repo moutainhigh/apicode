@@ -150,21 +150,23 @@
     <select id="getMallItemPage" resultType="com.ycandyz.master.domain.response.mall.MallItemPageResp">
         SELECT
         t.id,
-        t.category_no,
+        mio.shop_no,
+        mio.category_no,
+        mio.item_no,
+        mio.is_copy,
+        t.is_organize,
         t.created_time,
         t.goods_no,
         t.highest_sale_price,
         t.is_screen,
         t.item_cover,
         t.item_name,
-        t.item_no,
         t.lowest_sale_price,
         t.lowest_sale_price sale_price,
         t.base_sales,
         t.real_sales,
         t.base_sales + t.real_sales sales,
         t.price,
-        t.shop_no,
         t.sort_value,
         t.status,
         t.stock,
@@ -175,17 +177,20 @@
         t.qr_code_url,
         s.organize_id,
         s.shop_name children_organize_name
-        FROM mall_item t
+        FROM mall_item_organize mio
+        LEFT JOIN mall_item t ON t.item_no = mio.organize_item_no
         LEFT JOIN mall_shop s ON t.shop_no = s.shop_no
         WHERE 1=1
+        AND mio.is_del = 0
         AND t.status != 50
-        AND t.shop_no in
+        AND mio.shop_no in
         <foreach collection="q.shopNoList" item="shopNo" index="index" open="(" close=")" separator=",">
             #{shopNo}
         </foreach>
+        <if test="q.categoryNo != null and q.categoryNo != ''"> and mio.category_no = #{q.categoryNo} </if>
         <if test="q.itemName != null and q.itemName!=''"> and t.item_name like CONCAT('%',#{q.itemName},'%') </if>
-        <if test="q.categoryNo != null and q.categoryNo != ''"> and t.category_no = #{q.categoryNo} </if>
         <if test="q.status != null"> and t.status=#{q.status} </if>
+        <if test="q.isOrganize != null"> and t.is_organize=#{q.isOrganize} </if>
         <if test="q.type != null"> and t.type=#{q.type} </if>
         <if test="q.createdTimeBegin != null"> and date_format(t.created_time,'%Y-%m-%d') >= date_format(#{q.createdTimeBegin},'%Y-%m-%d') </if>
         <if test="q.createdTimeEnd != null">
@@ -198,6 +203,10 @@
 
     <update id="updateByItemNo">
         update mall_item set status = #{status} where item_no = #{itemNo}
+    </update>
+
+    <update id="updateOrgByItemNo">
+        update mall_item set is_all=#{isAll},is_organize=#{isOrganize} where item_no = #{itemNo}
     </update>
 
     <select id="selectMallItemByCartOrderSn" resultType="com.ycandyz.master.dto.mall.MallItemDTO">

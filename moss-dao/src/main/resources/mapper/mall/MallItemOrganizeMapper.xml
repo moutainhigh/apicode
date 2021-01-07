@@ -16,5 +16,12 @@
     <sql id="Base_Column_List">
         id, shop_no, organize_item_no, item_no, category_no, create_time, update_time
     </sql>
+    <update id="updateOrg">
+        update mall_item_organize set is_del = 0 where organize_item_no = #{organizeItemNo} AND shop_no = #{shopNo}
+    </update>
+
+    <delete id="deleteOrg">
+        update mall_item_organize set is_del = 1 where organize_item_no = #{organizeItemNo} AND shop_no != #{shopNo}
+    </delete>
 
 </mapper>

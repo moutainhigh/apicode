@@ -63,6 +63,8 @@ public class MallafterSalesQuery implements Serializable {
     private String isGroup;
     @ApiModelProperty(value = "企业id",name="childOrganizeId",required=true)
     private String childOrganizeId;
+    @ApiModelProperty(value = "是否集团供货，1:是，0:否",name="isGroupSupply",required=true)
+    private Boolean isGroupSupply;
 
     public String getOrderNo() {
         if (orderNo!=null){
