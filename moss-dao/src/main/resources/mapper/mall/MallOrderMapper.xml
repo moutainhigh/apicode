@@ -1074,6 +1074,7 @@
             mo.all_money,
             mo.shop_no,
             mo.total_money-mo.real_money as discountMoney,
+            mo.is_group_supply,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,

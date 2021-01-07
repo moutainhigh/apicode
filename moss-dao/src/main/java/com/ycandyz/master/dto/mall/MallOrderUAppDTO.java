@@ -327,7 +327,7 @@ public class MallOrderUAppDTO {
     private String sendAtStr;
 
     @ApiModelProperty(value = "是否集团供货")
-    private Integer isGroupSupply;
+    private Boolean isGroupSupply;
 
     public String getCancelAtStr() {
         try {

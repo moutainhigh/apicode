@@ -1029,9 +1029,12 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         }
                         MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVo.getShopNo());
                         if (null != mallShopDTO) {
-                            List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
-                            if (CollectionUtil.isNotEmpty(organizeGroups)) {
-                                mallOrderVo.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                            Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
+                            if (1==organize.getIsGroup()){
+                                List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
+                                if (CollectionUtil.isNotEmpty(organizeGroups)) {
+                                    mallOrderVo.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                                }
                             }
                         }
                         list.add(mallOrderVo);
@@ -1318,8 +1321,15 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         if (mallShopDTO != null) {
             Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
             mallOrderVO.setOrganizeName(organize.getFullName());
+            if (1==organize.getIsGroup()){
+                mallOrderVO.setIsOpenMaintainable(false);
+            }else{
+                List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
+                if (CollectionUtil.isNotEmpty(organizeGroups)) {
+                    mallOrderVO.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                }
+            }
         }
-
         return ReturnResponse.success(mallOrderVO);
     }
 
