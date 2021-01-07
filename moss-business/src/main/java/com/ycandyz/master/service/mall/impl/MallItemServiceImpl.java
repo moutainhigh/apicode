@@ -735,6 +735,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     @Override
     public boolean addOrganize(MallItemOrgModel model) {
         //校验token是否是集团
+        Organize o = organizeService.getById(getOrganizeId());
+        if(o == null || o.getIsGroup() == 0){
+            AssertUtils.isTrue(false, "该账号不是集团账号，不能执行此操作");
+        }
         MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(model.getItemNo());
         AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
         model.setItemNo(mio.getOrganizeItemNo());
