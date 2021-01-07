@@ -46,9 +46,9 @@ public class OrganizeGroupController extends BaseController<OrganizeGroupService
     }
 
     @ApiOperation(value = "查询根据集团ID")
-    @GetMapping(value = "{organizeId}")
-    public CommonResult<OrganizeGroup> getByOrganizeId(@PathVariable Long organizeId) {
-        return CommonResult.success(service.getByOrganizeId(organizeId));
+    @GetMapping(value = "")
+    public CommonResult<OrganizeGroup> getByOrganizeId() {
+        return CommonResult.success(service.getByOrganizeId());
     }
 
     @ApiVersion(group = ApiVersionConstant.API_MALL_ITEM_100)

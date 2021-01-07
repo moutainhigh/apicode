@@ -938,6 +938,7 @@
         <result column="cancel_at" property="cancelAt" />
         <result column="refund_no" property="refundNo" />
         <result column="cancel_reason" property="cancelReason" />
+        <result column="is_group_supply" property="isGroupSupply" />
         <collection property="details" ofType="com.ycandyz.master.dto.mall.MallOrderDetailDTO">
             <result column="order_detail_no" property="orderDetailNo" />
             <result column="seller_user_id" property="shareUserId" />
@@ -980,6 +981,7 @@
         concat( ship.receiver, ' ', ship.receiver_phone ) AS receiverName,
         a.order_type,
         a.all_money,
+        a.is_group_supply,
         modetail.item_no,
         modetail.item_name,
         modetail.goods_no,
@@ -1012,7 +1014,8 @@
         mo.all_money,
         mo.shop_no,
         mo.created_time,
-        mo.trade_no
+        mo.trade_no,
+        mo.is_group_supply
         FROM
         mall_order mo
         LEFT JOIN mall_cart_order cart ON cart.id = mo.cart_order_id
@@ -1086,6 +1089,7 @@
             mo.all_money,
             mo.shop_no,
             mo.total_money-mo.real_money as discountMoney,
+            mo.is_group_supply,
             modetail.order_detail_no,
             modetail.item_no,
             modetail.goods_no,

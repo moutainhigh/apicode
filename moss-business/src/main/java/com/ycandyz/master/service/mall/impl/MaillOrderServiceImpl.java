@@ -1,5 +1,6 @@
 package com.ycandyz.master.service.mall.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -43,6 +44,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
@@ -1071,7 +1073,16 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                                 }
                             }
                         }
-
+                        MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVo.getShopNo());
+                        if (null != mallShopDTO) {
+                            Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
+                            if (1 == organize.getIsGroup()) {
+                                List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
+                                if (CollectionUtil.isNotEmpty(organizeGroups)) {
+                                    mallOrderVo.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                                }
+                            }
+                        }
                         list.add(mallOrderVo);
                     }
                 }
@@ -1351,6 +1362,21 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 }
             }
 
+        }
+        MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVO.getShopNo());
+        if (mallShopDTO != null) {
+            Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
+            mallOrderVO.setOrganizeName(organize.getFullName());
+            if (1 == organize.getIsGroup()) {
+                mallOrderVO.setIsOpenMaintainable(false);
+            } else {
+                List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
+                if (CollectionUtil.isNotEmpty(organizeGroups) && null != organizeGroups.get(0).getIsOpenMaintainable()) {
+                    mallOrderVO.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                } else {
+                    mallOrderVO.setIsOpenMaintainable(false);
+                }
+            }
         }
         return ReturnResponse.success(mallOrderVO);
     }
