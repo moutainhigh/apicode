@@ -1030,7 +1030,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVo.getShopNo());
                         if (null != mallShopDTO) {
                             Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
-                            if (1==organize.getIsGroup()){
+                            if (1 == organize.getIsGroup()) {
                                 List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
                                 if (CollectionUtil.isNotEmpty(organizeGroups)) {
                                     mallOrderVo.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
@@ -1321,12 +1321,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         if (mallShopDTO != null) {
             Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
             mallOrderVO.setOrganizeName(organize.getFullName());
-            if (1==organize.getIsGroup()){
+            if (1 == organize.getIsGroup()) {
                 mallOrderVO.setIsOpenMaintainable(false);
-            }else{
+            } else {
                 List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
-                if (CollectionUtil.isNotEmpty(organizeGroups)) {
+                if (CollectionUtil.isNotEmpty(organizeGroups) && null != organizeGroups.get(0).getIsOpenMaintainable()) {
                     mallOrderVO.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                } else {
+                    mallOrderVO.setIsOpenMaintainable(false);
                 }
             }
         }
