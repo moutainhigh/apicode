@@ -41,4 +41,8 @@ public class MallOrderByAfterSalesVO {
     private Integer deliverType;
     @ApiModelProperty(value = "订单最大优惠金额")
     private BigDecimal orderCouponDeducted;
+    @ApiModelProperty(value = "是否集团供货，1:是，0:否")
+    private Boolean isGroupSupply;
+    @ApiModelProperty(value = "是否开启门店可维护（0：否，1：是）,有发货按钮")
+    private Boolean isOpenMaintainable;
 }

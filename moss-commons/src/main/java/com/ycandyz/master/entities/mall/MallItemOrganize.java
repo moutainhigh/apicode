@@ -1,11 +1,9 @@
 package com.ycandyz.master.entities.mall;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -43,6 +41,12 @@ public class MallItemOrganize extends Model {
 
    @ApiModelProperty(name = "category_no", value = "集团商品分类编号")
    private String categoryNo;
+
+   @ApiModelProperty(name = "is_copy", value = "是否店铺自己数据(0:不是,1:是)")
+   private Integer isCopy;
+
+   @ApiModelProperty(name = "is_del", value = "删除状态(0:未删除,1:删除)")
+   private Integer isDel;
 
    @ApiModelProperty(name = "create_time", value = "创建时间")
    private Date createTime;

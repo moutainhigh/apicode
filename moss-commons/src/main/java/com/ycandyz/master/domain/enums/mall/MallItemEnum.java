@@ -154,5 +154,75 @@ public class MallItemEnum {
         }
     }
 
+    public enum IsOrganize implements IEnum<Integer> {
+        Type_0(0, "集团供货：否"),
+        Type_1(1, "集团供货：是");
+
+        private Integer code;
+        private String text;
+
+        IsOrganize(Integer code, String text) {
+            this.code = code;
+            this.text = text;
+        }
+
+        @Override
+        public Integer getCode() {
+            return code;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        public static MallItemEnum.IsOrganize parseCode(Integer code) {
+            if (code == null) {
+                return null;
+            }
+            for (MallItemEnum.IsOrganize value : values()) {
+                if (code.equals(value.code)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
+    public enum IsAll implements IEnum<Integer> {
+        Type_0(0, "全部门店"),
+        Type_1(1, "指定门店");
+
+        private Integer code;
+        private String text;
+
+        IsAll(Integer code, String text) {
+            this.code = code;
+            this.text = text;
+        }
+
+        @Override
+        public Integer getCode() {
+            return code;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        public static MallItemEnum.IsAll parseCode(Integer code) {
+            if (code == null) {
+                return null;
+            }
+            for (MallItemEnum.IsAll value : values()) {
+                if (code.equals(value.code)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
 
 }

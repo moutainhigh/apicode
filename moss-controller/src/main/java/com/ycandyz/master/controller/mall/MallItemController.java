@@ -6,7 +6,10 @@ import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseController;
+import com.ycandyz.master.config.ApiVersion;
+import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
+import com.ycandyz.master.domain.model.mall.MallItemOrgModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
@@ -32,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
  * @version 2.0
  */
 
+@ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM,ApiVersionConstant.API_MALL_ITEM_100})
 @Slf4j
 @RestController
 @RequestMapping("pms/product")
@@ -43,6 +47,12 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 	public CommonResult insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemModel entity) {
         return service.insert(entity);
 	}
+
+    @ApiOperation(value="集团供货-新增")
+    @PostMapping(value = "organize")
+    public CommonResult insertOrg(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemOrgModel model) {
+        return result(service.addOrganize(model),model,"更改失败!");
+    }
 
     @ApiOperation(value = "通过ID")
     @GetMapping(value = "select/{id}")

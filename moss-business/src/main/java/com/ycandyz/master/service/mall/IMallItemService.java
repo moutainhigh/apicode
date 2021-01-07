@@ -6,6 +6,7 @@ import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
+import com.ycandyz.master.domain.model.mall.MallItemOrgModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
@@ -37,5 +38,7 @@ public interface IMallItemService extends IService<MallItem>{
     CommonResult update(MallItemModel model);
 
     CommonResult shelf(MallItemShelfModel model);
+
+    boolean addOrganize(MallItemOrgModel model);
 	
 }

@@ -117,21 +117,21 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         List<Integer> organizeIds = new ArrayList<>();  //保存企业id，用于批量查询
         Map<String, Integer> shopNoAndOrganizeId = new HashMap<>(); //保存shopNo和organizeid    map<shopNo,organizeid>
         //获取企业id
-        if (mallOrderQuery.getIsGroup().equals("0")) {   //当前登陆为企业账户
+        if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
             mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
             organizeIds.add(userVO.getOrganizeId().intValue());
-            shopNoAndOrganizeId.put(userVO.getShopNo(), userVO.getOrganizeId().intValue());
-        } else if (mallOrderQuery.getIsGroup().equals("1")) { //集团
-            if (mallOrderQuery.getChildOrganizeId() == null || "".equals(mallOrderQuery.getChildOrganizeId()) || mallOrderQuery.getChildOrganizeId().equals("0")) {
+            shopNoAndOrganizeId.put(userVO.getShopNo(),userVO.getOrganizeId().intValue());
+        }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
+            if (mallOrderQuery.getChildOrganizeId()==null || "".equals(mallOrderQuery.getChildOrganizeId()) || mallOrderQuery.getChildOrganizeId().equals("0")){
                 //查询集团所有数据
                 Long groupOrganizeId = userVO.getOrganizeId();   //集团id
-                if (groupOrganizeId != null) {
-                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status", 2));
+                if (groupOrganizeId!=null) {
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status",2));
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> oIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.addAll(oIds);
                         List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
-                        if (mallShopDTOS != null && mallShopDTOS.size() > 0) {
+                        if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
                             mallOrderQuery.setShopNo(shopNos);
                             Map<String, Integer> map = mallShopDTOS.stream().collect(Collectors.toMap(MallShopDTO::getShopNo, MallShopDTO::getOrganizeId));
@@ -140,21 +140,21 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     }
                     //登陆用户所在企业加入初始化中
                     organizeIds.add(groupOrganizeId.intValue());
-                    if (mallOrderQuery.getShopNo() != null && mallOrderQuery.getShopNo().size() > 0) {
+                    if (mallOrderQuery.getShopNo()!=null && mallOrderQuery.getShopNo().size()>0) {
                         mallOrderQuery.getShopNo().add(userVO.getShopNo());
-                    } else {
+                    }else {
                         mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
                     }
-                    shopNoAndOrganizeId.put(userVO.getShopNo(), groupOrganizeId.intValue());
+                    shopNoAndOrganizeId.put(userVO.getShopNo(),groupOrganizeId.intValue());
                 }
-            } else {
+            }else {
                 mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
                 MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallOrderQuery.getChildOrganizeId()));
                 organizeIds.add(Integer.valueOf(mallOrderQuery.getChildOrganizeId()));
-                if (mallShop != null) {
+                if (mallShop!=null){
                     mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
                     shopNoAndOrganizeId.put(mallShop.getShopNo(), Integer.valueOf(mallOrderQuery.getChildOrganizeId()));
-                } else {
+                }else {
                     page1.setPages(requestParams.getPage());
                     page1.setCurrent(requestParams.getPage());
                     page1.setRecords(list);
@@ -168,7 +168,21 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             //获取总条数
             Integer count = mallOrderDao.getTrendMallOrderPageSize(mallOrderQuery);
             page1.setTotal(count);
-            if (count != null && count > 0) {
+            if (count!=null && count>0) {
+                boolean isOpenMaintainable = false;
+                if (mallOrderQuery.getIsGroup().equals("0")) {
+                    OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id",userVO.getOrganizeId()).eq("status",2));
+                    if (organizeRel!=null){
+                        OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
+                        if (organizeGroup.getIsOpenMaintainable() != null && organizeGroup.getIsOpenMaintainable()) {
+                            //开启了集团供货
+                            isOpenMaintainable = true;
+                        }
+                    }
+                }else {
+                    isOpenMaintainable = true;
+                }
+
                 //分页
                 List<MallOrderDTO> mallDTOList = mallOrderDao.getTrendMallOrderByPage((requestParams.getPage() - 1) * requestParams.getPage_size(), requestParams.getPage_size(), mallOrderQuery);
                 //page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
@@ -190,8 +204,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         mallOrderVo.setTotalMoney(mallOrderDTO.getTotalMoney().add(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney())));
 
                         //是否使用优惠券
-                        if (mallOrderDTO.getIsCoupon() == null) {
+                        if (mallOrderDTO.getIsCoupon()==null){
                             mallOrderVo.setIsCoupon(0);
+                        }
+
+                        //是否有发货按钮
+                        if (isOpenMaintainable){
+                            mallOrderVo.setIsOpenMaintainable(true);
                         }
 
                         //获取企业名称，拼接进入返回值中
@@ -199,19 +218,19 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         mallOrderVo.setOrganizeName(fullName);
 
                         //order_at;payed_at;receive_at时间转换为字符串
-                        if (mallOrderVo.getOrderAt() != null && mallOrderVo.getOrderAt() > 0) {
-                            long time = Long.valueOf(mallOrderVo.getOrderAt()) * 1000;
-                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                        if (mallOrderVo.getOrderAt()!=null && mallOrderVo.getOrderAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getOrderAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                             mallOrderVo.setOrderAtStr(orderAtStr);
                         }
-                        if (mallOrderVo.getPayedAt() != null && mallOrderVo.getPayedAt() > 0) {
-                            long time = Long.valueOf(mallOrderVo.getPayedAt()) * 1000;
-                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                        if (mallOrderVo.getPayedAt()!=null && mallOrderVo.getPayedAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getPayedAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                             mallOrderVo.setPayedAtStr(orderAtStr);
                         }
-                        if (mallOrderVo.getReceiveAt() != null && mallOrderVo.getReceiveAt() > 0) {
-                            long time = Long.valueOf(mallOrderVo.getReceiveAt()) * 1000;
-                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                        if (mallOrderVo.getReceiveAt()!=null && mallOrderVo.getReceiveAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getReceiveAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                             mallOrderVo.setReceiveAtStr(orderAtStr);
                         }
 
@@ -245,14 +264,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             mallOrderVo.setQuantity(quantity);
                         }
 
-                        if (mallOrderVo.getStatus() != 50 && mallOrderVo.getStatus() != 10) {   //已取消订单不展示分销人相关信息
+                        if (mallOrderVo.getStatus()!=50 && mallOrderVo.getStatus()!=10) {   //已取消订单不展示分销人相关信息
                             //订单列表显示分销合伙人，分销金额统计
                             List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderVo.getOrderNo());
                             if (mallSocialShareFlowDTOS != null && mallSocialShareFlowDTOS.size() > 0) {
                                 List<String> sellerUserList = new ArrayList<>();
                                 BigDecimal shareAmount = new BigDecimal(0);
                                 for (MallSocialShareFlowDTO dto : mallSocialShareFlowDTOS) {
-                                    if (dto.getShareType() == 0) {
+                                    if (dto.getShareType()==0) {
                                         String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
                                         sellerUserList.add(sellerUser); //分销合伙人
                                     }
@@ -263,20 +282,20 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             }
                         }
 
-                        if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+                        if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                             List<MallOrderDetailVO> detailVOList = new ArrayList<>();
-                            mallOrderDTO.getDetails().forEach(detailDto -> {
+                            mallOrderDTO.getDetails().forEach(detailDto->{
                                 MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
-                                BeanUtils.copyProperties(detailDto, mallOrderDetailVO);
+                                BeanUtils.copyProperties(detailDto,mallOrderDetailVO);
                                 detailVOList.add(mallOrderDetailVO);
                             });
                             mallOrderVo.setDetails(detailVOList);
 
                             //拼接是否分佣字段 isEnableShare
                             List<Integer> isEnableShareList = detailVOList.stream().map(MallOrderDetailVO::getIsEnableShare).collect(Collectors.toList());
-                            if (isEnableShareList.contains(1) && mallOrderVo.getStatus() != 50 && mallOrderVo.getStatus() != 10) { //有分佣
+                            if (isEnableShareList.contains(1) && mallOrderVo.getStatus()!=50 && mallOrderVo.getStatus()!=10){ //有分佣
                                 mallOrderVo.setIsEnableShare(1);
-                            } else { //无分佣
+                            }else { //无分佣
                                 mallOrderVo.setIsEnableShare(0);
                             }
                         }
@@ -311,8 +330,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     }
                 }
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
         }
         page1.setPages(requestParams.getPage());
         page1.setCurrent(requestParams.getPage());
@@ -321,33 +340,33 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         return ReturnResponse.success(page1);
     }
 
-    public MallOrderExportResp exportEXT(MallOrderQuery mallOrderQuery) {
+    public MallOrderExportResp exportEXT(MallOrderQuery mallOrderQuery){
         UserVO userVO = getUser();  //获取当前登陆用户
         //获取企业id
-        if (mallOrderQuery.getIsGroup().equals("0")) {   //当前登陆为企业账户
+        if (mallOrderQuery.getIsGroup().equals("0")){   //当前登陆为企业账户
             mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
-        } else if (mallOrderQuery.getIsGroup().equals("1")) { //集团
-            if (mallOrderQuery.getChildOrganizeId() == null || "".equals(mallOrderQuery.getChildOrganizeId()) || mallOrderQuery.getChildOrganizeId().equals("0")) {
+        }else if (mallOrderQuery.getIsGroup().equals("1")){ //集团
+            if (mallOrderQuery.getChildOrganizeId()==null || "".equals(mallOrderQuery.getChildOrganizeId()) || mallOrderQuery.getChildOrganizeId().equals("0")){
                 //查询集团所有数据
                 Long groupOrganizeId = userVO.getOrganizeId();   //集团id
-                if (groupOrganizeId != null) {
-                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status", 2));
+                if (groupOrganizeId!=null) {
+                    List<OrganizeRel> organizeRels = organizeRelDao.selectList(new QueryWrapper<OrganizeRel>().eq("group_organize_id", groupOrganizeId.intValue()).eq("status",2));
                     if (organizeRels != null && organizeRels.size() > 0) {
                         List<Integer> organizeIds = organizeRels.stream().map(OrganizeRel::getOrganizeId).collect(Collectors.toList());
                         organizeIds.add(groupOrganizeId.intValue());
                         List<MallShopDTO> mallShopDTOS = mallShopDao.queryByOrganizeIdList(organizeIds);
-                        if (mallShopDTOS != null && mallShopDTOS.size() > 0) {
+                        if (mallShopDTOS!=null && mallShopDTOS.size()>0){
                             List<String> shopNos = mallShopDTOS.stream().map(MallShopDTO::getShopNo).collect(Collectors.toList());
                             mallOrderQuery.setShopNo(shopNos);
                         }
                     }
                 }
-            } else {
+            }else {
                 mallOrderQuery.setShopNo(Arrays.asList(userVO.getShopNo()));
                 MallShop mallShop = mallShopDao.selectOne(new QueryWrapper<MallShop>().eq("organize_id", mallOrderQuery.getChildOrganizeId()));
-                if (mallShop != null) {
+                if (mallShop!=null){
                     mallOrderQuery.setShopNo(Arrays.asList(mallShop.getShopNo()));
-                } else {
+                }else {
                     return null;
                 }
             }
@@ -355,28 +374,28 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         List<MallOrderDTO> list = mallOrderDao.getTrendMallOrder(mallOrderQuery);
 
 
-        if (list != null && list.size() > 0) {
+        if (list!=null && list.size()>0) {
             for (MallOrderDTO mallOrderDTO : list) {
 
                 //是否使用优惠券
-                if (mallOrderDTO.getIsCoupon() == null) {
+                if (mallOrderDTO.getIsCoupon()==null){
                     mallOrderDTO.setIsCoupon(0);
                 }
 
                 //order_at;payed_at;receive_at时间转换为字符串
-                if (mallOrderDTO.getOrderAt() != null && mallOrderDTO.getOrderAt() > 0) {
-                    long time = Long.valueOf(mallOrderDTO.getOrderAt()) * 1000;
-                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                if (mallOrderDTO.getOrderAt()!=null && mallOrderDTO.getOrderAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getOrderAt())*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                     mallOrderDTO.setOrderAtStr(orderAtStr);
                 }
-                if (mallOrderDTO.getPayedAt() != null && mallOrderDTO.getPayedAt() > 0) {
-                    long time = Long.valueOf(mallOrderDTO.getPayedAt()) * 1000;
-                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                if (mallOrderDTO.getPayedAt()!=null && mallOrderDTO.getPayedAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getPayedAt())*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                     mallOrderDTO.setPayedAtStr(orderAtStr);
                 }
-                if (mallOrderDTO.getReceiveAt() != null && mallOrderDTO.getReceiveAt() > 0) {
-                    long time = Long.valueOf(mallOrderDTO.getReceiveAt()) * 1000;
-                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                if (mallOrderDTO.getReceiveAt()!=null && mallOrderDTO.getReceiveAt()>0) {
+                    long time = Long.valueOf(mallOrderDTO.getReceiveAt())*1000;
+                    String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                     mallOrderDTO.setReceiveAtStr(orderAtStr);
                 }
 
@@ -384,7 +403,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
                 }
 
-                if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+                if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0) {
                     //订单列表显示商品名称数组
                     List<String> itemNames = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getItemName).collect(Collectors.toList());
                     mallOrderDTO.setItemName(itemNames);
@@ -405,14 +424,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         mallOrderDTO.setIsEnableShare(0);
                     }
                 }
-                if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10) {   //已取消订单不展示分销人相关信息
+                if (mallOrderDTO.getStatus()!=50 && mallOrderDTO.getStatus()!=10) {   //已取消订单不展示分销人相关信息
                     //订单列表显示分销合伙人，分销金额统计
                     List<MallSocialShareFlowDTO> mallSocialShareFlowDTOS = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
                     if (mallSocialShareFlowDTOS != null && mallSocialShareFlowDTOS.size() > 0) {
                         List<String> sellerUserList = new ArrayList<>();
                         BigDecimal shareAmount = new BigDecimal(0);
                         for (MallSocialShareFlowDTO dto : mallSocialShareFlowDTOS) {
-                            if (dto.getShareType() == 0) {
+                            if (dto.getShareType()==0) {
                                 String sellerUser = dto.getUserName() + " " + dto.getPhoneNo();
                                 sellerUserList.add(sellerUser); //分销合伙人
                             }
@@ -452,66 +471,66 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         }
 
         String status = null;
-        if (mallOrderQuery != null && mallOrderQuery.getStatus() != null) {
-            status = EnumUtil.getByCode(StatusEnum.class, mallOrderQuery.getStatus()).getDesc();
-        } else {
-            status = EnumUtil.getByCode(StatusEnum.class, 9).getDesc(); //全部包含已取消
+        if (mallOrderQuery != null && mallOrderQuery.getStatus() != null){
+            status = EnumUtil.getByCode(StatusEnum.class,mallOrderQuery.getStatus()).getDesc();
+        }else {
+            status = EnumUtil.getByCode(StatusEnum.class,9).getDesc(); //全部包含已取消
         }
         try {
             Calendar now = Calendar.getInstance();
             String today = DateUtil.formatDateForYMD(now.getTime());
-            now.add(Calendar.DATE, -1);
+            now.add(Calendar.DATE,-1);
             String yestoday = DateUtil.formatDateForYMD(now.getTime());
             String randomnum = String.valueOf(IDGeneratorUtils.getLongId());
             String pathpPefix = System.getProperty("user.dir") + "/xls/";
-            String fileName = today + status + "订单.xls";
-            String suffix = today + CommonConstant.SLASH + randomnum + CommonConstant.SLASH + userVO.getOrganizeId() + CommonConstant.SLASH + fileName;
+            String fileName =today + status + "订单.xls";
+            String suffix = today + CommonConstant.SLASH + randomnum + CommonConstant.SLASH + userVO.getOrganizeId() + CommonConstant.SLASH +fileName;
             String path = pathpPefix + suffix;
-            deleteFile(yestoday, pathpPefix);
-            ExcelWriter writer = ExcelUtil.getWriter(path, "第1页");
+            deleteFile(yestoday,pathpPefix);
+            ExcelWriter writer = ExcelUtil.getWriter(path,"第1页");
 
             //设置单元格格式
             writer.getStyleSet().setAlign(HorizontalAlignment.LEFT, VerticalAlignment.CENTER); //水平左对齐，垂直中间对齐
             writer.setColumnWidth(0, 40); //第1列40px宽
 
             double size = list.size();
-            log.info("总共{}条数据", (int) size);
-            int ceil = (int) Math.ceil(size / num);
-            log.info("需要{}个sheet，每个sheet{}条数据", ceil, num);
-            log.info("正在导出第{}sheet", 1);
+            log.info("总共{}条数据",(int)size);
+            int ceil = (int)Math.ceil(size / num);
+            log.info("需要{}个sheet，每个sheet{}条数据",ceil,num);
+            log.info("正在导出第{}sheet",1);
             List<String> containsList = addHeader(writer);
-            int end = num > (int) size ? (int) size : num;
+            int end = num>(int)size?(int)size:num;
             List<MallOrderDTO> subList = list.subList(0, end);
             MapUtil mapUtil = new MapUtil();
-            List<Map<String, Object>> result = mapUtil.beanToMap(subList, containsList);
+            List<Map<String, Object>> result = mapUtil.beanToMap(subList,containsList);
             salesStateCodeToString(result);
             writer.write(result, true);
-            log.info("第{}sheet导出完成", 1);
+            log.info("第{}sheet导出完成",1);
             int beginIndex = num;
-            int endIndex = (beginIndex + num) > (int) size ? (int) size : (beginIndex + num);
+            int endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
             for (int i = 2; i <= ceil; i++) {
-                log.info("正在导出第{}sheet", i);
-                writer.setSheet("第" + i + "页");
+                log.info("正在导出第{}sheet",i);
+                writer.setSheet("第"+i+"页");
                 List<String> containsList2 = addHeader(writer);
                 List<MallOrderDTO> subList2 = list.subList(beginIndex, endIndex);
-                List<Map<String, Object>> result2 = mapUtil.beanToMap(subList2, containsList2);
+                List<Map<String, Object>> result2 = mapUtil.beanToMap(subList2,containsList2);
                 salesStateCodeToString(result2);
                 writer.write(result2, true);
                 beginIndex = endIndex;
-                endIndex = (beginIndex + num) > (int) size ? (int) size : (beginIndex + num);
-                log.info("第{}sheet导出完成", i);
+                endIndex = (beginIndex + num)>(int)size?(int)size:(beginIndex + num);
+                log.info("第{}sheet导出完成",i);
             }
             log.info("全部导出完成");
             writer.close();
-            log.info("文件本地存储路径:{}", path);
+            log.info("文件本地存储路径:{}",path);
             File file = new File(path);
             String url = s3UploadFile.uploadFile(file, suffix);
             MallOrderExportResp mallOrderExportResp = new MallOrderExportResp();
             mallOrderExportResp.setFileName(fileName);
             mallOrderExportResp.setFielUrl(url);
-            log.info("导出excel响应:{}", mallOrderExportResp);
+            log.info("导出excel响应:{}",mallOrderExportResp);
             //导出记录表
-            iUserExportRecordService.insertExportRecord(mallOrderExportResp, userVO);
+            iUserExportRecordService.insertExportRecord(mallOrderExportResp,userVO);
 
             return mallOrderExportResp;
         } catch (Exception e) {
@@ -534,26 +553,27 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         writer.addHeaderAlias("shareAmount", "分佣金额统计");
         writer.addHeaderAlias("asStatus", "售后");
         writer.addHeaderAlias("payuser", "购买用户");
+        writer.addHeaderAlias("isGroupSupply", "集团供货");
         writer.addHeaderAlias("receiverName", "收货人");
         writer.addHeaderAlias("receiverAddress", "收货人地址");
         writer.addHeaderAlias("deliverType", "发货方式");
         writer.addHeaderAlias("orderAtStr", "下单时间");
         writer.addHeaderAlias("payedAtStr", "支付时间");
         writer.addHeaderAlias("receiveAtStr", "收货时间");
-        List<String> containsList = Arrays.asList("cartOrderSn", "orderNo", "itemName", "goodsNo", "allMoney",
-                "payType", "quantity", "status", "isEnableShare", "sellerUserName", "shareAmount", "asStatus",
-                "payuser", "receiverName", "receiverAddress", "deliverType", "orderAtStr", "payedAtStr", "receiveAtStr");
+        List<String> containsList = Arrays.asList("cartOrderSn","orderNo","itemName","goodsNo","allMoney",
+                "payType","quantity","status","isEnableShare","sellerUserName","shareAmount","asStatus",
+                "payuser","isGroupSupply","receiverName","receiverAddress","deliverType","orderAtStr","payedAtStr","receiveAtStr");
         return containsList;
     }
 
     //删除昨天的全部文件和今天同一shopNo下的文件
-    private void deleteFile(String yestoday, String pathpPefix) {
+    private void deleteFile(String yestoday,String pathpPefix) {
         try {
             File yestodayfile = new File(pathpPefix + yestoday);
-            if (yestodayfile.exists()) {
+            if (yestodayfile.exists()){
                 File[] filePaths = yestodayfile.listFiles();
-                if (filePaths != null && filePaths.length > 0) {
-                    Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f -> f.delete());
+                if (filePaths != null && filePaths.length > 0){
+                    Arrays.stream(filePaths).filter(file1 -> file1.isFile()).forEach(f->f.delete());
                 }
                 yestodayfile.delete();
             }
@@ -574,9 +594,30 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderVO mallOrderVO = null;
         MallOrderDTO mallOrderDTO = mallOrderDao.queryOrderDetail(orderNo);
-        if (mallOrderDTO != null) {
+        if (mallOrderDTO != null){
             mallOrderVO = new MallOrderVO();
-            BeanUtils.copyProperties(mallOrderDTO, mallOrderVO);
+            BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
+
+            Organize organize = organizeDao.selectById(userVO.getOrganizeId());
+            if (organize!=null){
+                if (organize.getIsGroup()==1){  //集团
+                    mallOrderVO.setIsOpenMaintainable(true);   //有发货按钮
+                }else if (organize.getIsGroup()==0){    //企业
+                    if (mallOrderDTO.getIsGroupSupply()){    //非集团供货
+                        mallOrderVO.setIsOpenMaintainable(true);   //有发货按钮
+                    }else { //集团供货
+                        OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id", userVO.getOrganizeId()).eq("status", 2));
+                        if (organizeRel != null) {
+                            OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
+                            if (organizeGroup != null && organizeGroup.getIsOpenMaintainable()) {
+                                mallOrderVO.setIsOpenMaintainable(true);   //有发货按钮
+                            } else {
+                                mallOrderVO.setIsOpenMaintainable(false);   //无发货按钮
+                            }
+                        }
+                    }
+                }
+            }
 
             //运费
             mallOrderVO.setShippingMoney(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney()));
@@ -585,27 +626,27 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             mallOrderVO.setDiscountMoney(mallOrderDTO.getTotalMoney().subtract(mallOrderDTO.getRealMoney()));
 
             //拼接是否使用优惠券
-            List<CouponDetailUser> list = couponDetailUserDao.selectList(new QueryWrapper<CouponDetailUser>().eq("order_sn", mallOrderVO.getCartOrderSn()));
-            if (list != null && list.size() > 0) {
+            List<CouponDetailUser> list = couponDetailUserDao.selectList(new QueryWrapper<CouponDetailUser>().eq("order_sn",mallOrderVO.getCartOrderSn()));
+            if (list!=null && list.size()>0){
                 mallOrderVO.setIsCoupon(1);
-            } else {
+            }else {
                 mallOrderVO.setIsCoupon(0);
             }
 
             //order_at;payed_at;receive_at时间转换为字符串
-            if (mallOrderVO.getOrderAt() != null && mallOrderVO.getOrderAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getOrderAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setOrderAtStr(orderAtStr);
             }
-            if (mallOrderVO.getPayedAt() != null && mallOrderVO.getPayedAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getPayedAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setPayedAtStr(orderAtStr);
             }
-            if (mallOrderVO.getReceiveAt() != null && mallOrderVO.getReceiveAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getReceiveAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setReceiveAtStr(orderAtStr);
             }
 
@@ -613,13 +654,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
             }
 
-            if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+            if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<MallOrderDetailVO> detailVOList = new ArrayList<>();
-                mallOrderDTO.getDetails().forEach(orderDetail -> {
+                mallOrderDTO.getDetails().forEach(orderDetail->{
                     MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
-                    BeanUtils.copyProperties(orderDetail, mallOrderDetailVO);
+                    BeanUtils.copyProperties(orderDetail,mallOrderDetailVO);
 
-                    if (mallOrderDTO.getOrderType() != null) {
+                    if (mallOrderDTO.getOrderType()!=null) {
                         if (mallOrderDTO.getOrderType() == 2) { //新订单，神州通的
                             //查询佣金流水表
                             List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryByOrderDetailNo(mallOrderDetailVO.getOrderDetailNo());
@@ -632,7 +673,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                                 });
                                 mallOrderDetailVO.setShareFlowInfo(flowList);
                             }
-                        } else if (mallOrderDTO.getOrderType() == 1) {    //老订单，商城的
+                        }else if (mallOrderDTO.getOrderType() == 1){    //老订单，商城的
                             //查询佣金流水表
                             List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
                             if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
@@ -653,22 +694,28 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
             //查看商店
             MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVO.getShopNo());
-            if (mallShopDTO == null) {
+            if (mallShopDTO==null){
                 return ReturnResponse.failed("店铺信息为空");
             }
             MallShopVO mallShopVO = new MallShopVO();
-            BeanUtils.copyProperties(mallShopDTO, mallShopVO);
+            BeanUtils.copyProperties(mallShopDTO,mallShopVO);
             mallOrderVO.setShopInfo(mallShopVO);
+
+            //企业名称
+            Organize organ = organizeDao.selectById(mallShopDTO.getOrganizeId());
+            if (organ!=null){
+                mallOrderVO.setOrganizeName(organ.getFullName());
+            }
 
             //获取订单详情编号列表
             List<String> orderDetailNoList = null;
-            if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+            if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
             }
 
             Integer orderType = mallOrderVO.getOrderType();
             //查看售后
-            if (orderDetailNoList != null) {
+            if (orderDetailNoList!=null) {
                 List<MallAfterSalesDTO> mallAfterSalesDTOs = mallAfterSalesDao.querySalesByOrderDetailNoList(orderDetailNoList, orderType, orderNo);
                 if (mallAfterSalesDTOs != null && mallAfterSalesDTOs.size() > 0) {
                     //获取售后编号列表
@@ -678,8 +725,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         MallAfterSalesVO mallAfterSalesVO = new MallAfterSalesVO();
                         BeanUtils.copyProperties(dto, mallAfterSalesVO);
                         //更新createdTime时间展示
-                        if (mallAfterSalesVO.getCreatedTime() != null) {
-                            String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(), "yyyy-MM-dd HH:mm:ss");
+                        if (mallAfterSalesVO.getCreatedTime()!=null) {
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
                             mallAfterSalesVO.setCreatedAtStr(orderAtStr);
                         }
                         voList.add(mallAfterSalesVO);
@@ -729,18 +776,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
             //商家寄出的快递表
             MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(orderNo);
-            if (mallShopShippingDTO != null) {
+            if (mallShopShippingDTO!=null){
                 MallShopShippingVO mallShopShippingVO = new MallShopShippingVO();
-                BeanUtils.copyProperties(mallShopShippingDTO, mallShopShippingVO);
+                BeanUtils.copyProperties(mallShopShippingDTO,mallShopShippingVO);
                 mallOrderVO.setShopShipping(mallShopShippingVO);
 
                 //商家寄出的快递物流日志表
                 List<MallShopShippingLogDTO> mallShopShippingLogDTOs = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShippingVO.getShopShippingNo());
-                if (mallShopShippingLogDTOs != null && mallShopShippingLogDTOs.size() > 0) {
+                if (mallShopShippingLogDTOs!=null && mallShopShippingLogDTOs.size()>0) {
                     List<MallShopShippingLogVO> voList = new ArrayList<>();
-                    mallShopShippingLogDTOs.forEach(dto -> {
+                    mallShopShippingLogDTOs.forEach(dto->{
                         MallShopShippingLogVO mallShopShippingLogVO = new MallShopShippingLogVO();
-                        BeanUtils.copyProperties(dto, mallShopShippingLogVO);
+                        BeanUtils.copyProperties(dto,mallShopShippingLogVO);
                         voList.add(mallShopShippingLogVO);
                     });
 
@@ -749,7 +796,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
 
             //查询订单详情规格值表
-            if (orderDetailNoList != null) {
+            if (orderDetailNoList!=null) {
                 List<MallOrderDetailSpecDTO> mallOrderDetailSpecDTOs = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);
                 if (mallOrderDetailSpecDTOs != null && mallOrderDetailSpecDTOs.size() > 0) {
                     List<MallOrderDetailSpecVO> voList = new ArrayList<>();
@@ -775,54 +822,54 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public ReturnResponse<MallOrderVO> queryDetailByPickupNo(String pickupNo, String orderNo) {
         UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
-        if (mallOrderDTO != null) {
+        if (mallOrderDTO!=null){
             //判断pickNo查询到订单是否是orderNo的订单
-            if (StringUtils.isNotEmpty(orderNo)) {
+            if (StringUtils.isNotEmpty(orderNo)){
                 //orderNo不为空，说明是订单详情中进行的订单校验
-                if (!orderNo.equals(mallOrderDTO.getOrderNo())) {
+                if (!orderNo.equals(mallOrderDTO.getOrderNo())){
                     return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
                 }
             }
             MallOrderVO mallOrderVO = new MallOrderVO();
-            BeanUtils.copyProperties(mallOrderDTO, mallOrderVO);
+            BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
 
             //order_at;payed_at;receive_at时间转换为字符串
-            if (mallOrderVO.getOrderAt() != null && mallOrderVO.getOrderAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getOrderAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setOrderAtStr(orderAtStr);
             }
-            if (mallOrderVO.getPayedAt() != null && mallOrderVO.getPayedAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getPayedAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setPayedAtStr(orderAtStr);
             }
-            if (mallOrderVO.getReceiveAt() != null && mallOrderVO.getReceiveAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getReceiveAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setReceiveAtStr(orderAtStr);
             }
 
-            if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+            if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<String> orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
                 List<MallOrderDetailSpecDTO> specList = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);     //查询订单详情规格值表
                 Map<String, List<MallOrderDetailSpecVO>> map = null;
-                if (specList != null) {
+                if (specList!=null){
                     List<MallOrderDetailSpecVO> specVoList = new ArrayList<>();
-                    specList.forEach(spec -> {
+                    specList.forEach(spec->{
                         MallOrderDetailSpecVO mallOrderDetailSpecVO = new MallOrderDetailSpecVO();
-                        BeanUtils.copyProperties(spec, mallOrderDetailSpecVO);
+                        BeanUtils.copyProperties(spec,mallOrderDetailSpecVO);
                         specVoList.add(mallOrderDetailSpecVO);
                     });
                     map = specVoList.stream().collect(Collectors.groupingBy(input -> input.getOrderDetailNo()));        //吧specVO集合转换为map类型，方便下面做判断和取值
-                } else {
+                }else {
                     map = new HashMap<>();
                 }
                 List<MallOrderDetailVO> list = new ArrayList<>();
-                for (MallOrderDetailDTO dto : mallOrderDTO.getDetails()) {
+                for(MallOrderDetailDTO dto : mallOrderDTO.getDetails()){
                     MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
-                    BeanUtils.copyProperties(dto, mallOrderDetailVO);
-                    if (map.containsKey(mallOrderDetailVO.getOrderDetailNo())) {
+                    BeanUtils.copyProperties(dto,mallOrderDetailVO);
+                    if (map.containsKey(mallOrderDetailVO.getOrderDetailNo())){
                         mallOrderDetailVO.setSpecs(map.get(mallOrderDetailVO.getOrderDetailNo()));
                     }
                     list.add(mallOrderDetailVO);
@@ -839,28 +886,28 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         UserVO userVO = getUser();  //获取当前登陆用户
 //        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByOrderNo(orderNo, userVO.getShopNo());
         MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
-        if (mallOrderDTO != null) {
+        if (mallOrderDTO!=null){
             //判断pickNo查询到订单是否是orderNo的订单
-            if (StringUtils.isNotEmpty(orderNo)) {
+            if (StringUtils.isNotEmpty(orderNo)){
                 //orderNo不为空，说明是订单详情中进行的订单校验
-                if (!orderNo.equals(mallOrderDTO.getOrderNo())) {
+                if (!orderNo.equals(mallOrderDTO.getOrderNo())){
                     return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
                 }
             }
-            Long time = new Date().getTime() / 1000;      //获取当前时间到秒
+            Long time = new Date().getTime()/1000;      //获取当前时间到秒
             mallOrderDTO.setReceiveAt(time.intValue());
             MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(userVO.getShopNo());
-            if (mallOrderDTO == null) {
+            if (mallOrderDTO==null){
                 return ReturnResponse.failed("未查询到店铺");
             }
             //更新数据库
             MallOrder mallOrder = new MallOrder();
             mallOrder.setId(mallOrderDTO.getId());
             mallOrder.setReceiveAt(time.intValue());
-            mallOrder.setAfterSalesEndAt(time.intValue() + mallShopDTO.getAsHoldDays() * 24 * 60 * 60);
+            mallOrder.setAfterSalesEndAt(time.intValue()+mallShopDTO.getAsHoldDays()*24*60*60);
             mallOrder.setStatus(40);
             mallOrder.setSubStatus(4060);
-            Long timeAt = new Date().getTime() / 1000;
+            Long timeAt = new Date().getTime()/1000;
             mallOrder.setReceiveAt(timeAt.intValue());  //更新收货时间
             mallOrderDao.updateById(mallOrder);
             return ReturnResponse.success("操作成功");
@@ -870,7 +917,6 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
     /**
      * 导出excel中的状态码转中文
-     *
      * @param list
      */
     private static void salesStateCodeToString(List<Map<String, Object>> list) {
@@ -937,20 +983,20 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         try {
             //获取总条数
             count = mallOrderDao.getTrendMallOrderByUAppPageSize(mallOrderUAppQuery);
-            if (count != null && count > 0) {
+            if (count!=null && count>0) {
                 Long startNum = 0l;
 //                page = (page - 1) * pageSize;
                 List<MallOrderUAppDTO> mallDTOList = null;
-                if (nextNo != null && !"".equals(nextNo)) {
+                if (nextNo!=null && !"".equals(nextNo)) {
                     List<String> orderNoList = mallOrderDao.getOrderListByOrderNoUApp(mallOrderUAppQuery, 0, pageSize * page);
                     int row = orderNoList.indexOf(nextNo);
                     startNum = Long.valueOf(row + 1);
                     //分页
                     mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp(startNum, pageSize, mallOrderUAppQuery);
-                } else {
+                }else {
                     startNum = page - 1;
                     //分页
-                    mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp(startNum * pageSize, pageSize, mallOrderUAppQuery);
+                    mallDTOList = mallOrderDao.getTrendMallOrderByPageUApp(startNum*pageSize, pageSize, mallOrderUAppQuery);
                 }
                 //page = mallOrderDao.getTrendMallOrderPage(pageQuery, mallOrderQuery);
                 MallOrderUAppVO mallOrderVo = null;
@@ -967,14 +1013,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         mallOrderVo.setTotalMoney(mallOrderDTO.getTotalMoney().add(mallOrderDTO.getAllMoney().subtract(mallOrderDTO.getRealMoney())));
 
                         //order_at;payed_at;receive_at时间转换为字符串
-                        if (mallOrderVo.getOrderAt() != null && mallOrderVo.getOrderAt() > 0) {
-                            long time = Long.valueOf(mallOrderVo.getOrderAt()) * 1000;
-                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                        if (mallOrderVo.getOrderAt()!=null && mallOrderVo.getOrderAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getOrderAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                             mallOrderVo.setOrderAtStr(orderAtStr);
                         }
-                        if (mallOrderVo.getPayedAt() != null && mallOrderVo.getPayedAt() > 0) {
-                            long time = Long.valueOf(mallOrderVo.getPayedAt()) * 1000;
-                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+                        if (mallOrderVo.getPayedAt()!=null && mallOrderVo.getPayedAt()>0) {
+                            long time = Long.valueOf(mallOrderVo.getPayedAt())*1000;
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                             mallOrderVo.setPayedAtStr(orderAtStr);
                         }
 
@@ -991,11 +1037,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             mallOrderVo.setQuantity(quantity);
                         }
 
-                        if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+                        if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                             List<MallOrderDetailUAppVO> detailVOList = new ArrayList<>();
-                            mallOrderDTO.getDetails().forEach(detailDto -> {
+                            mallOrderDTO.getDetails().forEach(detailDto->{
                                 MallOrderDetailUAppVO mallOrderDetailVO = new MallOrderDetailUAppVO();
-                                BeanUtils.copyProperties(detailDto, mallOrderDetailVO);
+                                BeanUtils.copyProperties(detailDto,mallOrderDetailVO);
                                 detailVOList.add(mallOrderDetailVO);
                             });
                             mallOrderVo.setDetails(detailVOList);
@@ -1028,18 +1074,22 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             }
                         }
                         MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVo.getShopNo());
+                        mallOrderVo.setIsOpenMaintainable(false);
                         if (null != mallShopDTO) {
-                            List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
-                            if (CollectionUtil.isNotEmpty(organizeGroups)) {
-                                mallOrderVo.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                            Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
+                            if (1 != organize.getIsGroup()) {
+                                List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
+                                if (CollectionUtil.isNotEmpty(organizeGroups)) {
+                                    mallOrderVo.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                                }
                             }
                         }
                         list.add(mallOrderVo);
                     }
                 }
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
         }
         BasePageResult<MallOrderUAppVO> basePageResult = new BasePageResult<>();
         basePageResult.setPage(page);
@@ -1054,9 +1104,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderUAppVO mallOrderVO = null;
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryOrderDetailByUApp(orderNo);
-        if (mallOrderDTO != null) {
+        if (mallOrderDTO != null){
             mallOrderVO = new MallOrderUAppVO();
-            BeanUtils.copyProperties(mallOrderDTO, mallOrderVO);
+            BeanUtils.copyProperties(mallOrderDTO,mallOrderVO);
 
             String orderAtStrMin = "";
             String payedAtStrMin = "";
@@ -1065,74 +1115,74 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             String afterSalesEndAtStrMin = "";
             String cancelAtStrMin = "";
             //order_at;payed_at;receive_at时间转换为字符串
-            if (mallOrderVO.getOrderAt() != null && mallOrderVO.getOrderAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getOrderAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getOrderAt()!=null && mallOrderVO.getOrderAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getOrderAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setOrderAtStr(orderAtStr);
-                orderAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                orderAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
             }
-            if (mallOrderVO.getPayedAt() != null && mallOrderVO.getPayedAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getPayedAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getPayedAt()!=null && mallOrderVO.getPayedAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getPayedAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setPayedAtStr(orderAtStr);
-                payedAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                payedAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
             }
-            if (mallOrderVO.getReceiveAt() != null && mallOrderVO.getReceiveAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getReceiveAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getReceiveAt()!=null && mallOrderVO.getReceiveAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getReceiveAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setReceiveAtStr(orderAtStr);
-                receiveAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                receiveAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
             }
-            if (mallOrderVO.getSendAt() != null && mallOrderVO.getSendAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getSendAt()) * 1000;
-                String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getSendAt()!=null && mallOrderVO.getSendAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getSendAt())*1000;
+                String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setSendAtStr(sendAtStr);
-                sendAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                sendAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
             }
-            if (mallOrderVO.getAfterSalesEndAt() != null && mallOrderVO.getAfterSalesEndAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getAfterSalesEndAt()) * 1000;
-                String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getAfterSalesEndAt()!=null && mallOrderVO.getAfterSalesEndAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getAfterSalesEndAt())*1000;
+                String sendAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setAfterSalesEndAtStr(sendAtStr);   //售后截止时间,佣金预计到账时间
-                afterSalesEndAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                afterSalesEndAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
             }
-            if (mallOrderVO.getCancelAt() != null && mallOrderVO.getCancelAt() > 0) {
-                long time = Long.valueOf(mallOrderVO.getCancelAt()) * 1000;
-                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm:ss");
+            if (mallOrderVO.getCancelAt()!=null && mallOrderVO.getCancelAt()>0) {
+                long time = Long.valueOf(mallOrderVO.getCancelAt())*1000;
+                String orderAtStr = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm:ss");
                 mallOrderVO.setCancelAtStr(orderAtStr);
-                cancelAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time), "yyyy-MM-dd HH:mm");
+                cancelAtStrMin = cn.hutool.core.date.DateUtil.format(new Date(time),"yyyy-MM-dd HH:mm");
             }
 
             if (mallOrderDTO.getCartOrderSn() == null || "".equals(mallOrderDTO.getCartOrderSn())) {
                 mallOrderDTO.setCartOrderSn(mallOrderDTO.getOrderNo());     //如果母订单号为空，则填写子订单号为母订单号
             }
 
-            if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+            if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 List<MallOrderDetailUAppVO> detailVOList = new ArrayList<>();
 
-                for (MallOrderDetailDTO orderDetail : mallOrderDTO.getDetails()) {
+                for(MallOrderDetailDTO orderDetail : mallOrderDTO.getDetails()){
                     MallOrderDetailUAppVO mallOrderDetailVO = new MallOrderDetailUAppVO();
-                    BeanUtils.copyProperties(orderDetail, mallOrderDetailVO);
+                    BeanUtils.copyProperties(orderDetail,mallOrderDetailVO);
                     detailVOList.add(mallOrderDetailVO);
                 }
                 mallOrderVO.setDetails(detailVOList);
 
             }
 
-            if (mallOrderDTO.getOrderType() != null) {
-                if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10) {  //已取消订单不展示分销人相关信息
+            if (mallOrderDTO.getOrderType()!=null) {
+                if (mallOrderDTO.getStatus() != 50 && mallOrderDTO.getStatus() != 10){  //已取消订单不展示分销人相关信息
                     BigDecimal manageMoney = new BigDecimal(0);
                     BigDecimal distributionMoney = new BigDecimal(0);
                     //查询佣金流水表
                     List<MallSocialShareFlowDTO> mallSocialShareFlowDTOs = mallSocialShareFlowDao.queryAllShareByOrderNo(mallOrderDTO.getOrderNo());
                     if (mallSocialShareFlowDTOs != null && mallSocialShareFlowDTOs.size() > 0) {
                         List<MallSocialShareFlowUAppVO> flowList = new ArrayList<>();
-                        for (MallSocialShareFlowDTO dto : mallSocialShareFlowDTOs) {
+                        for(MallSocialShareFlowDTO dto : mallSocialShareFlowDTOs) {
                             MallSocialShareFlowUAppVO mallSocialShareFlowVO = new MallSocialShareFlowUAppVO();
                             BeanUtils.copyProperties(dto, mallSocialShareFlowVO);
                             flowList.add(mallSocialShareFlowVO);
-                            if (dto.getShareType() == 0) { //分销佣金
+                            if (dto.getShareType()==0){ //分销佣金
                                 distributionMoney = distributionMoney.add(dto.getAmount());
-                            } else if (dto.getShareType() == 1) {   //管理佣金
+                            }else if (dto.getShareType()==1){   //管理佣金
                                 manageMoney = manageMoney.add(dto.getAmount());
                             }
                         }
@@ -1144,16 +1194,16 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
             //查看商店
             MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVO.getShopNo());
-            if (mallShopDTO == null) {
+            if (mallShopDTO==null){
                 return ReturnResponse.failed("店铺信息为空");
             }
             MallShopUAppVO mallShopVO = new MallShopUAppVO();
-            BeanUtils.copyProperties(mallShopDTO, mallShopVO);
+            BeanUtils.copyProperties(mallShopDTO,mallShopVO);
             mallOrderVO.setShopInfo(mallShopVO);
 
             //获取订单详情编号列表
             List<String> orderDetailNoList = null;
-            if (mallOrderDTO.getDetails() != null && mallOrderDTO.getDetails().size() > 0) {
+            if (mallOrderDTO.getDetails()!=null && mallOrderDTO.getDetails().size()>0){
                 orderDetailNoList = mallOrderDTO.getDetails().stream().map(MallOrderDetailDTO::getOrderDetailNo).collect(Collectors.toList());
                 //获取总购买数量
                 int quantity = mallOrderDTO.getDetails().stream().collect(Collectors.summingInt(MallOrderDetailDTO::getSkuQuantity));
@@ -1162,7 +1212,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
             Integer orderType = mallOrderVO.getOrderType();
             //查看售后
-            if (orderDetailNoList != null) {
+            if (orderDetailNoList!=null) {
                 List<MallAfterSalesDTO> mallAfterSalesDTOs = mallAfterSalesDao.querySalesByOrderDetailNoList(orderDetailNoList, orderType, orderNo);
                 if (mallAfterSalesDTOs != null && mallAfterSalesDTOs.size() > 0) {
                     //获取售后编号列表
@@ -1172,8 +1222,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         MallAfterSalesUAppVO mallAfterSalesVO = new MallAfterSalesUAppVO();
                         BeanUtils.copyProperties(dto, mallAfterSalesVO);
                         //更新createdTime时间展示
-                        if (mallAfterSalesVO.getCreatedTime() != null) {
-                            String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(), "yyyy-MM-dd HH:mm:ss");
+                        if (mallAfterSalesVO.getCreatedTime()!=null) {
+                            String orderAtStr = cn.hutool.core.date.DateUtil.format(mallAfterSalesVO.getCreatedTime(),"yyyy-MM-dd HH:mm:ss");
                             mallAfterSalesVO.setCreatedAtStr(orderAtStr);
                         }
                         voList.add(mallAfterSalesVO);
@@ -1223,18 +1273,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
             //商家寄出的快递表
             MallShopShippingDTO mallShopShippingDTO = mallShopShippingDao.queryByOrderNo(orderNo);
-            if (mallShopShippingDTO != null) {
+            if (mallShopShippingDTO!=null){
                 MallShopShippingUAppVO mallShopShippingVO = new MallShopShippingUAppVO();
-                BeanUtils.copyProperties(mallShopShippingDTO, mallShopShippingVO);
+                BeanUtils.copyProperties(mallShopShippingDTO,mallShopShippingVO);
                 mallOrderVO.setShopShipping(mallShopShippingVO);
 
                 //商家寄出的快递物流日志表
                 List<MallShopShippingLogDTO> mallShopShippingLogDTOs = mallShopShippingLogDao.selectListByShopShippingNo(mallShopShippingVO.getShopShippingNo());
-                if (mallShopShippingLogDTOs != null && mallShopShippingLogDTOs.size() > 0) {
+                if (mallShopShippingLogDTOs!=null && mallShopShippingLogDTOs.size()>0) {
                     List<MallShopShippingLogUAppVO> voList = new ArrayList<>();
-                    mallShopShippingLogDTOs.forEach(dto -> {
+                    mallShopShippingLogDTOs.forEach(dto->{
                         MallShopShippingLogUAppVO mallShopShippingLogVO = new MallShopShippingLogUAppVO();
-                        BeanUtils.copyProperties(dto, mallShopShippingLogVO);
+                        BeanUtils.copyProperties(dto,mallShopShippingLogVO);
                         voList.add(mallShopShippingLogVO);
                     });
 
@@ -1243,7 +1293,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             }
 
             //查询订单详情规格值表
-            if (orderDetailNoList != null) {
+            if (orderDetailNoList!=null) {
                 List<MallOrderDetailSpecDTO> mallOrderDetailSpecDTOs = mallOrderDetailSpecDao.queryListByOrderDetailNoList(orderDetailNoList);
                 if (mallOrderDetailSpecDTOs != null && mallOrderDetailSpecDTOs.size() > 0) {
                     List<MallOrderDetailSpecUAppVO> voList = new ArrayList<>();
@@ -1263,53 +1313,53 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
             //匹配原因中文名称
             MallOrderEnum.CancelReason cancelReason = MallOrderEnum.CancelReason.parseCode(mallOrderVO.getCancelReason());
-            if (null != cancelReason) {
+            if(null != cancelReason){
                 mallOrderVO.setCancelReasonName(cancelReason.getText());
             }
 
             //订单头部信息拼接
-            if (mallOrderVO.getStatus() == 10) {  //待支付
-                mallOrderVO.setHeadField(orderAtStrMin + " 已下单，待买家付款");
+            if (mallOrderVO.getStatus()==10) {  //待支付
+                mallOrderVO.setHeadField(orderAtStrMin+" 已下单，待买家付款");
             }
-            if (mallOrderVO.getStatus() == 20) {  //待发货
-                mallOrderVO.setHeadField(payedAtStrMin + " 买家已付款，请及时发货");
+            if (mallOrderVO.getStatus()==20) {  //待发货
+                mallOrderVO.setHeadField(payedAtStrMin+" 买家已付款，请及时发货");
             }
-            if (mallOrderVO.getStatus() == 30) {  //待收货
-                if (mallOrderVO.getDeliverType() == 2) {  //自提
-                    mallOrderVO.setHeadField(payedAtStrMin + " 支付成功，请等待买家到店自提");
-                } else { //不是线下的
-                    if (mallOrderVO.getDeliverMethod() == 10) {    //快递
-                        String n = mallShopShippingDTO != null ? mallShopShippingDTO.getNumber() : "";
-                        String shipCompany = mallShopShippingDTO != null ? mallShopShippingDTO.getCompany() : "";
-                        mallOrderVO.setHeadField("卖家于" + sendAtStrMin + "发货，快递信息：" + n + " " + shipCompany);
-                    } else { //线下配送
-                        mallOrderVO.setHeadField("卖家于" + sendAtStrMin + "发货，方式为线下配送");
+            if (mallOrderVO.getStatus()==30) {  //待收货
+                if (mallOrderVO.getDeliverType()==2){  //自提
+                    mallOrderVO.setHeadField(payedAtStrMin+" 支付成功，请等待买家到店自提");
+                }else { //不是线下的
+                    if (mallOrderVO.getDeliverMethod()==10) {    //快递
+                        String n =  mallShopShippingDTO!=null?mallShopShippingDTO.getNumber():"";
+                        String shipCompany =  mallShopShippingDTO!=null?mallShopShippingDTO.getCompany():"";
+                        mallOrderVO.setHeadField("卖家于"+sendAtStrMin+"发货，快递信息："+n+" "+shipCompany);
+                    }else { //线下配送
+                        mallOrderVO.setHeadField("卖家于"+sendAtStrMin+"发货，方式为线下配送");
                     }
                 }
             }
-            if (mallOrderVO.getStatus() == 40) {   //已收货
-                if (mallOrderVO.getDeliverType() == 2) {  //自提
-                    mallOrderVO.setHeadField(receiveAtStrMin + " 买家成功到店收货");
-                } else {
-                    if (mallOrderVO.getSubStatus() == 4010) {  //4010-系统自动收货
-                        mallOrderVO.setHeadField(receiveAtStrMin + " 系统已自动确认收货");
-                    } else {
+            if (mallOrderVO.getStatus()==40){   //已收货
+                if (mallOrderVO.getDeliverType()==2) {  //自提
+                    mallOrderVO.setHeadField(receiveAtStrMin+" 买家成功到店收货");
+                }else {
+                    if (mallOrderVO.getSubStatus()==4010){  //4010-系统自动收货
+                        mallOrderVO.setHeadField(receiveAtStrMin+" 系统已自动确认收货");
+                    }else {
                         mallOrderVO.setHeadField(receiveAtStrMin + " 买家已收货");
                     }
                 }
             }
-            if (mallOrderVO.getStatus() == 50) {   //已取消
-                if (mallOrderVO.getSubStatus() == 5020) { //5020-系统超时取消(待支付)
-                    mallOrderVO.setHeadField("由于买家超时未付款，系统于" + cancelAtStrMin + "自动取消了订单");
+            if (mallOrderVO.getStatus()==50){   //已取消
+                if (mallOrderVO.getSubStatus()==5020) { //5020-系统超时取消(待支付)
+                    mallOrderVO.setHeadField("由于买家超时未付款，系统于"+cancelAtStrMin+"自动取消了订单");
                 }
-                if (mallOrderVO.getSubStatus() == 5010 || mallOrderVO.getSubStatus() == 5030) { //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)
-                    mallOrderVO.setHeadField("买家于" + cancelAtStrMin + "取消了订单");
+                if (mallOrderVO.getSubStatus()==5010 || mallOrderVO.getSubStatus()==5030){ //5010-用户主动取消(待支付)  5030-用户主动取消(待支付)
+                    mallOrderVO.setHeadField("买家于"+cancelAtStrMin+"取消了订单");
                 }
-                if (mallOrderVO.getSubStatus() == 1030 || mallOrderVO.getSubStatus() == 5060) {  //1030-支付取消- 待支付  5060-买家取消（待收货-自提订单）
-                    mallOrderVO.setHeadField("买家取消了订单，" + cancelAtStrMin + "系统已自动退款");
+                if (mallOrderVO.getSubStatus()==1030 || mallOrderVO.getSubStatus()==5060){  //1030-支付取消- 待支付  5060-买家取消（待收货-自提订单）
+                    mallOrderVO.setHeadField("买家取消了订单，"+cancelAtStrMin+"系统已自动退款");
                 }
-                if (mallOrderVO.getSubStatus() == 5040 || mallOrderVO.getSubStatus() == 5050) {  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
-                    mallOrderVO.setHeadField(cancelAtStrMin + "，卖家取消订单\r\n原因为：" + mallOrderVO.getCancelReasonName() + "，退款金额将原路退回");
+                if (mallOrderVO.getSubStatus()==5040 || mallOrderVO.getSubStatus()==5050){  //5040-卖家取消(待发货)  5050-卖家取消（待收货-自提订单）
+                    mallOrderVO.setHeadField(cancelAtStrMin+"，卖家取消订单\r\n原因为："+mallOrderVO.getCancelReasonName()+"，退款金额将原路退回");
                 }
             }
 
@@ -1318,8 +1368,17 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         if (mallShopDTO != null) {
             Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
             mallOrderVO.setOrganizeName(organize.getFullName());
+            if (1 == organize.getIsGroup()) {
+                mallOrderVO.setIsOpenMaintainable(false);
+            } else {
+                List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
+                if (CollectionUtil.isNotEmpty(organizeGroups) && null != organizeGroups.get(0).getIsOpenMaintainable()) {
+                    mallOrderVO.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                } else {
+                    mallOrderVO.setIsOpenMaintainable(false);
+                }
+            }
         }
-
         return ReturnResponse.success(mallOrderVO);
     }
 
@@ -1327,7 +1386,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public ReturnResponse<MallOrderUAppVO> queryDetailByPickupNoUApp(String pickupNo, String orderNo) {
         UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(pickupNo, userVO.getShopNo());
-        if (mallOrderDTO != null) {
+        if (mallOrderDTO!=null) {
             if (mallOrderDTO.getStatus() == 30 && mallOrderDTO.getSubStatus() == 3010) {
                 //判断pickNo查询到订单是否是orderNo的订单
                 if (StringUtils.isNotEmpty(orderNo)) {
@@ -1606,14 +1665,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
 
                 return ReturnResponse.success(mallOrderVO);
-            } else if (mallOrderDTO.getStatus() == 40) {
+            }else if (mallOrderDTO.getStatus()==40){
                 return ReturnResponse.failed("该笔订单已经提货啦～");
-            } else if (mallOrderDTO.getStatus() == 50) {
-                if (mallOrderDTO.getSubStatus() == 5050) { //5050-卖家取消（待收货-自提订单）
+            }else if (mallOrderDTO.getStatus()==50){
+                if (mallOrderDTO.getSubStatus()==5050){ //5050-卖家取消（待收货-自提订单）
                     return ReturnResponse.failed("该笔订单已经被商家取消了");
-                } else if (mallOrderDTO.getSubStatus() == 5060) {   //5060-买家取消（待收货-自提订单）
+                }else if (mallOrderDTO.getSubStatus()==5060){   //5060-买家取消（待收货-自提订单）
                     return ReturnResponse.failed("该笔订单已经被买家取消了");
-                } else {
+                }else {
                     return ReturnResponse.failed("当前订单被取消");
                 }
             }
@@ -1625,11 +1684,11 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
     public ReturnResponse<MallOrderUAppVO> verPickupNoByUApp(MallPickupUAppQuery mallPickupUAppQuery) {
         UserVO userVO = getUser();
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(mallPickupUAppQuery.getPickupNo(), userVO.getShopNo());
-        if (mallOrderDTO != null) {
+        if (mallOrderDTO!=null){
             //判断pickNo查询到订单是否是orderNo的订单
-            if (StringUtils.isNotEmpty(mallPickupUAppQuery.getOrderNo())) {
+            if (StringUtils.isNotEmpty(mallPickupUAppQuery.getOrderNo())){
                 //orderNo不为空，说明是订单详情中进行的订单校验
-                if (!mallPickupUAppQuery.getOrderNo().equals(mallOrderDTO.getOrderNo())) {
+                if (!mallPickupUAppQuery.getOrderNo().equals(mallOrderDTO.getOrderNo())){
                     return ReturnResponse.failed("当前自提码与当前订单不一致，校验失败");
                 }
             }
@@ -1651,14 +1710,14 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                 mallOrder.setReceiveAt(timeAt.intValue());  //更新收货时间
                 mallOrderDao.updateById(mallOrder);
                 return queryOrderDetailByUApp(mallPickupUAppQuery.getOrderNo()); //更新成功，返回订单详情
-            } else if (mallOrderDTO.getStatus() == 40) {
+            }else if (mallOrderDTO.getStatus()==40){
                 return ReturnResponse.failed("该笔订单已经提货啦～");
-            } else if (mallOrderDTO.getStatus() == 50) {
-                if (mallOrderDTO.getSubStatus() == 5050) { //5050-卖家取消（待收货-自提订单）
+            }else if (mallOrderDTO.getStatus()==50){
+                if (mallOrderDTO.getSubStatus()==5050){ //5050-卖家取消（待收货-自提订单）
                     return ReturnResponse.failed("该笔订单已经被商家取消了");
-                } else if (mallOrderDTO.getSubStatus() == 5060) {   //5060-买家取消（待收货-自提订单）
+                }else if (mallOrderDTO.getSubStatus()==5060){   //5060-买家取消（待收货-自提订单）
                     return ReturnResponse.failed("该笔订单已经被买家取消了");
-                } else {
+                }else {
                     return ReturnResponse.failed("当前订单被取消");
                 }
             }
@@ -1673,25 +1732,25 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         List<MallOrderDetailUAppVO> list = new ArrayList<>();
         try {
             List<String> orderNoList = new ArrayList<>();
-            MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no", orderNo));
-            if (mallOrder != null) {
+            MallOrder mallOrder = mallOrderDao.selectOne(new QueryWrapper<MallOrder>().eq("order_no",orderNo));
+            if (mallOrder!=null){
                 //传入的为订单编号
-                if (!mallOrder.getShopNo().equals(userVO.getShopNo())) {
+                if (!mallOrder.getShopNo().equals(userVO.getShopNo())){
                     return CommonResult.failed("当前用户无法查看其他企业的订单");
                 }
                 orderNoList.add(orderNo);
-            } else {
-                List<MallOrder> mallOrderList = mallOrderDao.selectList(new QueryWrapper<MallOrder>().eq("cart_order_sn", orderNo));
-                if (mallOrderList != null && mallOrderList.size() > 0) {
-                    mallOrderList.forEach(order -> {
+            }else {
+                List<MallOrder> mallOrderList = mallOrderDao.selectList(new QueryWrapper<MallOrder>().eq("cart_order_sn",orderNo));
+                if (mallOrderList!=null && mallOrderList.size()>0){
+                    mallOrderList.forEach(order->{
                         orderNoList.add(order.getOrderNo());
                     });
                 }
             }
 
             Integer count = mallOrderDetailDao.queryDetailListByOrderNosCount(orderNoList);
-            if (count != null && count > 0) {
-                List<MallOrderDetailDTO> mallOrderDetailDTOList = mallOrderDetailDao.queryDetailListByOrderNosPage((page - 1) * pageSize, pageSize, orderNoList);
+            if (count!=null && count>0) {
+                List<MallOrderDetailDTO> mallOrderDetailDTOList = mallOrderDetailDao.queryDetailListByOrderNosPage((page-1)*pageSize,pageSize, orderNoList);
                 if (mallOrderDetailDTOList != null && mallOrderDetailDTOList.size() > 0) {
                     MallOrderDetailUAppVO mallOrderDetailUAppVO = null;
                     for (MallOrderDetailDTO mallOrderDetailDTO : mallOrderDetailDTOList) {
@@ -1730,8 +1789,8 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     basePageResult.setResult(list);
                 }
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
         }
 
         return CommonResult.success(basePageResult);
