@@ -23,7 +23,7 @@
     </sql>
 
     <sql id="MallCategory_Column_List">
-        t.id, t.category_no, t.category_name, t.category_img
+        t.id, t.category_no, t.category_name, t.category_img,layer
     </sql>
 
     <select id="selectMallCategoryList" resultType="com.ycandyz.master.entities.mall.MallCategory">

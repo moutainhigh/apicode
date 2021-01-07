@@ -7,6 +7,7 @@ import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
+import com.ycandyz.master.domain.model.mall.MallItemOrgModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
@@ -43,6 +44,12 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 	public CommonResult insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemModel entity) {
         return service.insert(entity);
 	}
+
+    @ApiOperation(value="集团供货-新增")
+    @PostMapping(value = "organize")
+    public CommonResult insertOrg(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemOrgModel model) {
+        return result(service.addOrganize(model),model,"更改失败!");
+    }
 
     @ApiOperation(value = "通过ID")
     @GetMapping(value = "select/{id}")

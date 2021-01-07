@@ -18,7 +18,9 @@ import com.ycandyz.master.dao.mall.MallShopDao;
 import com.ycandyz.master.dao.mall.MallSocialSettingDao;
 import com.ycandyz.master.dao.organize.OrganizeRelDao;
 import com.ycandyz.master.domain.enums.mall.MallItemEnum;
+import com.ycandyz.master.domain.enums.mall.MallItemOriganizeEnum;
 import com.ycandyz.master.domain.enums.mall.MallItemVideoEnum;
+import com.ycandyz.master.domain.enums.organize.OrganizeEnum;
 import com.ycandyz.master.domain.model.mall.*;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
@@ -28,10 +30,12 @@ import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.dto.mall.MallShopDTO;
 import com.ycandyz.master.entities.ad.HomeCategory;
 import com.ycandyz.master.entities.mall.*;
+import com.ycandyz.master.entities.organize.Organize;
 import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.enums.ResultEnum;
 import com.ycandyz.master.exception.BusinessException;
 import com.ycandyz.master.service.mall.IMallItemService;
+import com.ycandyz.master.service.organize.impl.OrganizeServiceImpl;
 import com.ycandyz.master.service.risk.TabooCheckService;
 import com.ycandyz.master.utils.AssertUtils;
 import com.ycandyz.master.utils.FileUtil;
@@ -77,9 +81,17 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     private TabooCheckService tabooCheckService;
     @Autowired
     private MallSocialSettingDao mallSocialSettingDao;
+    @Autowired
+    private MallItemOrganizeServiceImpl mallItemOrganizeService;
+    @Autowired
+    private OrganizeServiceImpl organizeService;
 
     @Override
     public MallItemResp getByItemNo(String itemNo) {
+        //校验集团供货商品，切换商品编号
+        MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(itemNo);
+        AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
+        itemNo = mio.getOrganizeItemNo();
         MallItemResp vo = new MallItemResp();
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, itemNo);
@@ -197,15 +209,24 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             });
             vo.setBanners(itemBannerList);
         }
+
         vo.setShareImg(FileUtil.unicodetoString(vo.getShareImg()));
         vo.setQrCodeUrl(FileUtil.unicodetoString(vo.getQrCodeUrl()));
-
+        vo.setItemNo(itemNo);
+        vo.setIsCopy(mio.getIsCopy());
+        //集团供货门店
+        List<String> shopNoList = mallShopDao.getByItemNo(itemNo).stream().map(MallShop::getShopNo).collect(Collectors.toList());
+        vo.setShopNoList(shopNoList);
         return vo;
     }
 
     @Override
     public CommonResult deleteByItemNo(String itemNo) {
-        MallItem mallItem = baseMapper.selectOne(new QueryWrapper<MallItem>().eq("item_no",itemNo));
+        //校验集团供货商品，切换商品编号
+        MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(itemNo);
+        AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
+        itemNo = mio.getOrganizeItemNo();
+        MallItem mallItem = baseMapper.selectOne(new LambdaQueryWrapper<MallItem>().eq(MallItem::getItemNo,itemNo));
         if (mallItem!=null){
             if (!mallItem.getShopNo().equals(getShopNo())){
                 return CommonResult.failed("当前商品不属于该门店");
@@ -446,6 +467,14 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             mallItemVideoService.save(video);
         }
 
+        //先添加一条本店数据
+        MallItemOrganizeModel mioModel = new MallItemOrganizeModel();
+        mioModel.setShopNo(getShopNo());
+        mioModel.setOrganizeItemNo(t.getItemNo());
+        mioModel.setItemNo(t.getItemNo());
+        mioModel.setCategoryNo(t.getCategoryNo());
+        mallItemOrganizeService.insert(mioModel);
+
         JSONObject dataJSON = new JSONObject();
         dataJSON.put("code",200);
         dataJSON.put("item_no",t.getItemNo());
@@ -486,7 +515,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     @Transactional
     @Override
     public CommonResult update(MallItemModel model) {
-
+        //校验集团供货商品，切换商品编号
+        MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(model.getItemNo());
+        AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
+        model.setItemNo(mio.getOrganizeItemNo());
         //校验商品名称
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemName,model.getItemName())
@@ -679,7 +711,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         MallItemEnum.Status status = MallItemEnum.Status.parseCode(model.getStatus());
         AssertUtils.notNull(status, "状态不正确");
         for (String itemNo : model.getItemNoList()) {
-            MallItem mallItem = baseMapper.selectOne(new QueryWrapper<MallItem>().eq("item_no",itemNo));
+            MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(itemNo);
+            AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
+            itemNo = mio.getOrganizeItemNo();
+            MallItem mallItem = baseMapper.selectOne(new LambdaQueryWrapper<MallItem>().eq(MallItem::getItemNo,itemNo));
             if (mallItem!=null){
                 if (!mallItem.getShopNo().equals(getShopNo())){
                     throw new BusinessException("当前商品不属于该门店,无权操作");
@@ -692,4 +727,108 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         }
         return CommonResult.success("操作成功!");
     }
+
+    @Override
+    public boolean addOrganize(MallItemOrgModel model) {
+        //校验token是否是集团
+        MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(model.getItemNo());
+        AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
+        model.setItemNo(mio.getOrganizeItemNo());
+        //集团供货校验
+        MallItemEnum.IsOrganize isOrganize = MallItemEnum.IsOrganize.parseCode(model.getIsOrganize());
+        AssertUtils.notNull(isOrganize, "集团供货 状态不正确");
+        MallItemEnum.IsAll isAll = MallItemEnum.IsAll.parseCode(model.getIsAll());
+        if(isOrganize.getCode() == MallItemEnum.IsOrganize.Type_1.getCode()){
+            AssertUtils.notNull(isAll, "全部门店/指定门店 类型不正确");
+            if(MallItemEnum.IsAll.Type_1.getCode().equals(isAll.getCode())){
+                AssertUtils.notNull(model.getShopNos(), "同步门店编号不能为空");
+            }
+        }
+
+        LambdaQueryWrapper<MallItem> itemWrapper = new LambdaQueryWrapper<MallItem>()
+                .eq(MallItem::getItemNo,model.getItemNo());
+        MallItem item = baseMapper.selectOne(itemWrapper);
+        model.setCategoryNo(item.getCategoryNo());
+
+        //如果已开启集团供货，则先清除旧数据,假删除
+        MallItemOrganize io = new MallItemOrganize();
+        io.setOrganizeItemNo(model.getItemNo());
+        io.setShopNo(getShopNo());
+        io.setIsDel(1);
+        mallItemOrganizeService.deleteOrg(io);
+
+        LambdaQueryWrapper<MallShop> shopWrapper = new LambdaQueryWrapper<MallShop>()
+                .eq(MallShop::getShopNo,getShopNo());
+        MallShop shop = mallShopDao.selectOne(shopWrapper);
+        Organize organize = organizeService.getById(shop.getOrganizeId());
+        //是集团，判断是否开启 集团供货
+        if(organize.getIsGroup() == OrganizeEnum.IsGroup.Type_1.getCode() && isOrganize.getCode().equals(MallItemEnum.IsOrganize.Type_1.getCode())){
+            //全部门店，查询遍历，处理商品分类，存在则归类，不存在则创建
+            MallCategoryResp mc = mallCategoryService.getByChildCategoryNo(null,model.getCategoryNo());
+            if(MallItemEnum.IsAll.Type_0.getCode().equals(isAll.getCode())){
+                List<String> shopList = mallShopDao.getByOrganizeId(getOrganizeId()).stream().map(MallShop::getShopNo).collect(Collectors.toList());
+                shopList.forEach(shopNo -> {
+                    createCategory(model.getItemNo(),shopNo,mc,"");
+                });
+            }else {//指定门店，遍历，处理商品分类，存在则归类，不存在则创建
+                model.getShopNos().forEach(shopNo -> {
+                    createCategory(model.getItemNo(),shopNo,mc,"");
+                });
+            }
+        }
+
+        //更新mall_item是否集团供货标识:关闭
+        MallItem t = new MallItem();
+        t.setItemNo(model.getItemNo());
+        t.setIsOrganize(model.getIsOrganize());
+        t.setIsAll(model.getIsAll());
+        baseMapper.updateOrgByItemNo(t);
+        return true;
+    }
+
+    public void createCategory(String itemNo,String shopNo,MallCategoryResp i,String parentCategoryNo) {
+        LambdaQueryWrapper<MallCategory> cpWrapper = new LambdaQueryWrapper<MallCategory>()
+                .eq(MallCategory::getShopNo,shopNo)
+                .eq(MallCategory::getCategoryName,i.getCategoryName())
+                .eq(MallCategory::getLayer,i.getLayer());
+        MallCategory cp = mallCategoryService.getOne(cpWrapper);
+        MallCategory cpModel = new MallCategory();
+        if(cp == null){
+            //不存在，创建分类
+            cpModel.setShopNo(shopNo);
+            cpModel.setCategoryNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
+            cpModel.setParentCategoryNo(parentCategoryNo);
+            cpModel.setCategoryName(i.getCategoryName());
+            cpModel.setCategoryImg(i.getCategoryImg());
+            cpModel.setLayer(i.getLayer());
+            cpModel.setSortValue(0);
+            cpModel.setStatus(i.getStatus());
+            mallCategoryService.save(cpModel);
+        }else {
+            cpModel.setCategoryNo(cp.getCategoryNo());
+        }
+        if(null == i.getCategory()){
+            //最后一级分类，插入数据
+            //先判断是否存在，存在则改状态，不存在则新增
+            LambdaQueryWrapper<MallItemOrganize> ioWrapper = new LambdaQueryWrapper<MallItemOrganize>()
+                    .eq(MallItemOrganize::getOrganizeItemNo,itemNo)
+                    .eq(MallItemOrganize::getShopNo,shopNo);
+            MallItemOrganize io = mallItemOrganizeService.getOne(ioWrapper);
+            if(io == null){
+                MallItemOrganize mioModel = new MallItemOrganize();
+                mioModel.setShopNo(shopNo);
+                mioModel.setOrganizeItemNo(itemNo);
+                mioModel.setItemNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
+                mioModel.setCategoryNo(cpModel.getCategoryNo());
+                mioModel.setIsCopy(MallItemOriganizeEnum.IsCopy.Type_0.getCode());
+                mallItemOrganizeService.save(mioModel);
+            }else{
+                mallItemOrganizeService.updateOrg(io);
+            }
+
+        }else{
+            createCategory(itemNo,shopNo,i.getCategory(),cpModel.getCategoryNo());
+        }
+    }
+
 }
