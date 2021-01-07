@@ -120,26 +120,27 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
         String fileName = DateUtils.getCurrentTime17() + "/" + template.getTemplateName() + "模板信息报表.xls";
         String path = pathPrefix + fileName;
         ExcelWriter writer = ExcelUtil.getWriter(path);
-        List<TemplateContent> contents = templateContentDao.selectList(new QueryWrapper<TemplateContent>().eq("template_id", contentQuery.getTemplateId()).orderByDesc("create_time"));
+        List<TemplateContent> contents = templateContentDao.selectList(new QueryWrapper<TemplateContent>().eq("template_id", contentQuery.getTemplateId()).orderByDesc("created_time"));
         List<Map<String, Object>> maps = new ArrayList<>();
         contents.forEach(vo -> {
             if (StringUtils.isNotEmpty(vo.getComponentContent())) {
                 List<TemplateTableContentResp> content = JSONObject.parseArray(vo.getComponentContent(), TemplateTableContentResp.class);
                 Map<String, Object> contentMap = new LinkedHashMap<>();
                 contentMap.put("客户手机号", "");
+                contentMap.put("提交时间", vo.getCreatedTime());
                 contentMap.put("来源渠道", "");
                 contentMap.put("手机系统", "");
                 if (vo.getUserId() != null) {
                     User user = userDao.selectById(vo.getUserId());
                     contentMap.put("客户手机号", user != null ? user.getPhone() : null);
                 }
+
                 if (vo.getChannel() != null) {
                     contentMap.put("来源渠道", DataConstant.CONTENT_CHANNEL_MAP.get(vo.getChannel().toString()));
                 }
                 if (vo.getPlatform() != null) {
                     contentMap.put("手机系统", DataConstant.CONTENT_PLATFORM_MAP.get(vo.getPlatform().toString()));
                 }
-                contentMap.put("提交时间", vo.getCreatedTime());
                 content.forEach(contentVo -> contentMap.put(contentVo.getTitle(), contentVo.getComponentContent()));
                 maps.add(contentMap);
             }
