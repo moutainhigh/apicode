@@ -18,4 +18,10 @@ public interface IMallItemOrganizeService extends IService<MallItemOrganize>{
     boolean insert(MallItemOrganizeModel model);
 
     boolean update(MallItemOrganizeModel model);
+
+    boolean deleteOrg(MallItemOrganize t);
+
+    boolean updateOrg(MallItemOrganize t);
+
+    MallItemOrganize organizeItemNoToItemNo(String organizeItemNo);
 }

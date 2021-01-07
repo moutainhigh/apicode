@@ -137,7 +137,7 @@ public class MallItemModel {
     @ApiModelProperty(name = "is_all",value = "全部/指定(0全部,1指定)")
     private Integer isAll;
 
-    @ApiModelProperty(value = "店铺编号")
+    @ApiModelProperty(name = "shop_nos",value = "店铺编号")
     private List<String> shopNos;
 
     @NotEmpty(message = "轮播图不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})

@@ -30,6 +30,8 @@ public interface MallShopDao extends BaseMapper<MallShop> {
 
     Page<MallShop> getByItemNo(Page<MallShop> page,@Param("itemNo") String itemNo);
 
+    List<MallShop> getByItemNo(@Param("itemNo") String itemNo);
+
     List<MallShop> getByOrganizeId(@Param("organizeId") Long organizeId);
 
 }

@@ -57,7 +57,8 @@
         FROM mall_item_organize mio
         LEFT JOIN mall_shop ms ON mio.shop_no = ms.shop_no
         WHERE 1=1
-        AND mio.item_no = #{itemNo}
+        AND mio.organize_item_no = #{itemNo}
+        AND mio.is_copy = 0
         AND ms.id is not null
     </select>
 
