@@ -26,7 +26,7 @@ public interface MallShopDao extends BaseMapper<MallShop> {
      * @param organizeId
      * @return 门店
      */
-    Page<MallShop> getByOrganizeId(Page<MallShop> page,@Param("organizeId") Integer organizeId);
+    Page<MallShop> getByOrganizeId(Page<MallShop> page,@Param("organizeId") Long organizeId);
 
     Page<MallShop> getByItemNo(Page<MallShop> page,@Param("itemNo") String itemNo);
 
