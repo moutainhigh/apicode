@@ -172,7 +172,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id",userVO.getOrganizeId()).eq("status",2));
                     if (organizeRel!=null){
                         OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
-                        if (organizeGroup.getIsOpenMaintainable() != null && organizeGroup.getIsOpenMaintainable() == 1) {
+                        if (organizeGroup.getIsOpenMaintainable() != null && organizeGroup.getIsOpenMaintainable()) {
                             //开启了集团供货
                             isOpenMaintainable = true;
                         }
@@ -208,7 +208,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
                         //是否有发货按钮
                         if (isOpenMaintainable){
-                            mallOrderVo.setIsOpenMaintainable(1);
+                            mallOrderVo.setIsOpenMaintainable(true);
                         }
 
                         //获取企业名称，拼接进入返回值中
@@ -599,18 +599,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             Organize organize = organizeDao.selectById(userVO.getOrganizeId());
             if (organize!=null){
                 if (organize.getIsGroup()==1){  //集团
-                    mallOrderVO.setIsOpenMaintainable(1);   //有发货按钮
+                    mallOrderVO.setIsOpenMaintainable(true);   //有发货按钮
                 }else if (organize.getIsGroup()==0){    //企业
-                    if (mallOrderDTO.getIsGroupSupply()==0){    //非集团供货
-                        mallOrderVO.setIsOpenMaintainable(1);   //有发货按钮
+                    if (!mallOrderDTO.getIsGroupSupply()){    //非集团供货
+                        mallOrderVO.setIsOpenMaintainable(true);   //有发货按钮
                     }else { //集团供货
                         OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id", userVO.getOrganizeId()).eq("status", 2));
                         if (organizeRel != null) {
                             OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
-                            if (organizeGroup != null && organizeGroup.getIsOpenMaintainable() == 1) {
-                                mallOrderVO.setIsOpenMaintainable(1);   //有发货按钮
+                            if (organizeGroup != null && organizeGroup.getIsOpenMaintainable()) {
+                                mallOrderVO.setIsOpenMaintainable(true);   //有发货按钮
                             } else {
-                                mallOrderVO.setIsOpenMaintainable(0);   //有发货按钮
+                                mallOrderVO.setIsOpenMaintainable(false);   //无发货按钮
                             }
                         }
                     }

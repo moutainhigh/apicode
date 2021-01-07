@@ -47,5 +47,5 @@ public class OrganizeGroup extends Model {
    private Boolean lockStatus;
 
    @ApiModelProperty(value = "是否开启门店可维护（0：否，1：是）")
-   private Integer isOpenMaintainable;
+   private Boolean isOpenMaintainable;
 }
