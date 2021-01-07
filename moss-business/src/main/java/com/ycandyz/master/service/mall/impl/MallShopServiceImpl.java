@@ -10,10 +10,12 @@ import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.domain.query.mall.MallShopQuery;
 import com.ycandyz.master.dao.mall.MallShopDao;
 import com.ycandyz.master.entities.mall.MallSku;
+import com.ycandyz.master.entities.organize.Organize;
 import com.ycandyz.master.entities.organize.OrganizeRel;
 import com.ycandyz.master.service.mall.IMallShopService;
 
 import com.ycandyz.master.service.organize.impl.OrganizeRelServiceImpl;
+import com.ycandyz.master.service.organize.impl.OrganizeServiceImpl;
 import com.ycandyz.master.utils.AssertUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +39,16 @@ public class MallShopServiceImpl extends BaseService<MallShopDao,MallShop,MallSh
 
     @Autowired
     private OrganizeRelServiceImpl organizeRelService;
+    @Autowired
+    private OrganizeServiceImpl organizeService;
 
     @Override
     public Page<MallShop> getByOrganizeId(Page<MallShop> page) {
-        LambdaQueryWrapper<OrganizeRel> orgWrapper = new LambdaQueryWrapper<OrganizeRel>()
-                .eq(OrganizeRel::getOrganizeId,getOrganizeId());
-        OrganizeRel org = organizeRelService.getOne(orgWrapper);
-        return baseMapper.getByOrganizeId(page,org.getGroupOrganizeId());
+        Organize o = organizeService.getById(getOrganizeId());
+        if(o == null || o.getIsGroup() == 0){
+            AssertUtils.isTrue(false, "该账号不是集团账号，不能执行此操作");
+        }
+        return baseMapper.getByOrganizeId(page,getOrganizeId());
     }
 
     @Override

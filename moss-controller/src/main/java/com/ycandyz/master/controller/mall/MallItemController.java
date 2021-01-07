@@ -10,11 +10,13 @@ import com.ycandyz.master.config.ApiVersion;
 import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
 import com.ycandyz.master.domain.model.mall.MallItemOrgModel;
+import com.ycandyz.master.domain.model.mall.MallItemShareModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
+import com.ycandyz.master.domain.response.mall.MallItemShareResp;
 import com.ycandyz.master.entities.base.BaseBank;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.service.mall.impl.MallItemServiceImpl;
@@ -91,6 +93,19 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
 	public CommonResult deleteById(@PathVariable String item_no) {
         return service.deleteByItemNo(item_no);
 	}
+
+    @ApiOperation(value = "更新商品分销")
+    @PutMapping(value = "share/{item_no}")
+    public CommonResult updateShareById(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemShareModel model) {
+        model.setItemNo(item_no);
+        return result(service.updateShareByItemNo(model),model,"更改失败!");
+    }
+
+    @ApiOperation(value = "商品分销信息")
+    @GetMapping(value = "share/{item_no}")
+    public CommonResult<MallItemShareResp> getShareById(@PathVariable String item_no) {
+        return CommonResult.success(service.getShareByItemNo(item_no));
+    }
 
 
 }
