@@ -120,7 +120,7 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
         String fileName = DateUtils.getCurrentTime17() + "/" + template.getTemplateName() + "模板信息报表.xls";
         String path = pathPrefix + fileName;
         ExcelWriter writer = ExcelUtil.getWriter(path);
-        List<TemplateContent> contents = templateContentDao.selectList(new QueryWrapper<TemplateContent>().eq("template_id", contentQuery.getTemplateId()));
+        List<TemplateContent> contents = templateContentDao.selectList(new QueryWrapper<TemplateContent>().eq("template_id", contentQuery.getTemplateId()).orderByDesc("create_time"));
         List<Map<String, Object>> maps = new ArrayList<>();
         contents.forEach(vo -> {
             if (StringUtils.isNotEmpty(vo.getComponentContent())) {
