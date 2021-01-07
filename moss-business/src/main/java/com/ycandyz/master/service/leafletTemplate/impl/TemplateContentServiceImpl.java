@@ -1,6 +1,7 @@
 package com.ycandyz.master.service.leafletTemplate.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSONObject;
@@ -127,7 +128,7 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
                 List<TemplateTableContentResp> content = JSONObject.parseArray(vo.getComponentContent(), TemplateTableContentResp.class);
                 Map<String, Object> contentMap = new LinkedHashMap<>();
                 contentMap.put("客户手机号", "");
-                contentMap.put("提交时间", vo.getCreatedTime());
+                contentMap.put("提交时间", DateUtil.format(vo.getCreatedTime(),"yyyy-MM-dd HH:mm:ss"));
                 contentMap.put("来源渠道", "");
                 contentMap.put("手机系统", "");
                 if (vo.getUserId() != null) {
