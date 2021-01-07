@@ -652,10 +652,10 @@
             and mo.cancel_reason=#{p.cancelReason}
         </if>
         <if test="p.isCoupon!=null">
-            cdu.status=#{p.isCoupon}
+            and cdu.status=#{p.isCoupon}
         </if>
         <if test="p.isGroupSupply!=null">
-            mo.is_group_supply=#{p.isGroupSupply}
+            and mo.is_group_supply=#{p.isGroupSupply}
         </if>
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
@@ -843,10 +843,10 @@
             and mo.cancel_reason=#{p.cancelReason}
         </if>
         <if test="p.isCoupon!=null">
-            cdu.status=#{p.isCoupon}
+            and cdu.status=#{p.isCoupon}
         </if>
         <if test="p.isGroupSupply!=null">
-            mo.is_group_supply=#{p.isGroupSupply}
+            and mo.is_group_supply=#{p.isGroupSupply}
         </if>
         /**group by mo.id*/
         /*order by mo.order_at DESC*/
