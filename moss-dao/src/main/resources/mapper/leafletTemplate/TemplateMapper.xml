@@ -25,9 +25,9 @@
         id, template_name, share_title, share_desc, share_img, template_img, submit_restriction, template_status, user_id, organize_id, created_time, updated_time, end_time
     </sql>
     <insert id="saveTemplate"  useGeneratedKeys="true" keyProperty="id" keyColumn="id"  parameterType="com.ycandyz.master.entities.leafletTemplate.Template">
-        INSERT INTO template ( template_name, share_title, share_desc, share_img, template_img, submit_restriction, template_status, user_id, organize_id, created_time, end_time,classify_id )
+        INSERT INTO template ( template_name, share_title, share_desc, share_img, template_img, submit_restriction, template_status, user_id, organize_id, end_time,classify_id )
         VALUES
         (#{templateName},#{shareTitle},#{shareDesc},#{shareImg},#{templateImg},
-         #{submitRestriction},'1',#{userId},#{organizeId},now() ,#{endTime},#{classifyId})
+         #{submitRestriction},'1',#{userId},#{organizeId},#{endTime},#{classifyId})
     </insert>
 </mapper>
