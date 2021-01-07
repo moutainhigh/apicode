@@ -27,6 +27,7 @@ import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallCategoryResp;
 import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
+import com.ycandyz.master.domain.response.mall.MallItemShareResp;
 import com.ycandyz.master.dto.mall.MallShopDTO;
 import com.ycandyz.master.entities.ad.HomeCategory;
 import com.ycandyz.master.entities.mall.*;
@@ -787,6 +788,43 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         t.setIsAll(model.getIsAll());
         baseMapper.updateOrgByItemNo(t);
         return true;
+    }
+
+    @Override
+    public MallItemShareResp getShareByItemNo(String itemNo) {
+        MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(itemNo);
+        AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
+
+        LambdaQueryWrapper<MallItem> itemWrapper = new LambdaQueryWrapper<MallItem>()
+                .eq(MallItem::getItemNo,mio.getOrganizeItemNo());
+        MallItem item = baseMapper.selectOne(itemWrapper);
+
+        //查询商品所属店铺的分销信息,级别
+        LambdaQueryWrapper<MallSocialSetting> socialWrapper = new LambdaQueryWrapper<MallSocialSetting>()
+                .eq(MallSocialSetting::getShopNo,item.getShopNo());
+        MallSocialSetting social = mallSocialSettingDao.selectOne(socialWrapper);
+
+        MallItemShareResp vo = new MallItemShareResp();
+        BeanUtils.copyProperties(item,vo);
+        vo.setItemNo(itemNo);
+        vo.setIsCopy(mio.getIsCopy());
+        vo.setShareLevelType(social.getShareLevelType());
+        return vo;
+    }
+
+    @Override
+    public boolean updateShareByItemNo(MallItemShareModel model) {
+        MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(model.getItemNo());
+        AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
+
+        LambdaQueryWrapper<MallItem> itemWrapper = new LambdaQueryWrapper<MallItem>()
+                .eq(MallItem::getItemNo,mio.getOrganizeItemNo());
+        MallItem i = baseMapper.selectOne(itemWrapper);
+        MallItem t = new MallItem();
+        BeanUtils.copyProperties(model,t);
+        t.setItemNo(mio.getOrganizeItemNo());
+        i.setId(i.getId());
+        return retBool(baseMapper.updateById(t));
     }
 
     public void createCategory(String itemNo,String shopNo,MallCategoryResp i,String parentCategoryNo) {
