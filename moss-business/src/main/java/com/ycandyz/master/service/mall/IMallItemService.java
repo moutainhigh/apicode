@@ -7,6 +7,7 @@ import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
 import com.ycandyz.master.domain.model.mall.MallItemOrgModel;
+import com.ycandyz.master.domain.model.mall.MallItemShareModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
@@ -14,6 +15,7 @@ import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
 import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
 import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
+import com.ycandyz.master.domain.response.mall.MallItemShareResp;
 import com.ycandyz.master.entities.mall.MallItem;
 
 /**
@@ -40,5 +42,9 @@ public interface IMallItemService extends IService<MallItem>{
     CommonResult shelf(MallItemShelfModel model);
 
     boolean addOrganize(MallItemOrgModel model);
+
+    MallItemShareResp getShareByItemNo(String itemNo);
+
+    boolean updateShareByItemNo(MallItemShareModel model);
 	
 }
