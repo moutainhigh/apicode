@@ -3,6 +3,7 @@ package com.ycandyz.master.service.leafletTemplate.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.api.BasePageResult;
 import com.ycandyz.master.api.PageModel;
@@ -243,10 +244,9 @@ public class TemplateServiceImpl extends BaseService<TemplateDao, Template, Temp
 
     public boolean deleteTemplate(Long id) {
         log.info("逻辑删除模板开始，模板id为：{}", id);
-        Template template = super.getById(id);
-        AssertUtils.notNull(template, "模板信息不存在");
-        template.setTemplateStatus(3);
-        int i = templateDao.updateById(template);
+        Template template = new Template();
+        template.setUpdatedTime(cn.hutool.core.date.DateUtil.offsetHour(new Date(), -8));
+        int i = templateDao.update(template, new UpdateWrapper<Template>().set("template_status", "3").eq("id", id));
         log.info("删除模板完成，删除条数为：{}条", i);
         return i == 1;
     }

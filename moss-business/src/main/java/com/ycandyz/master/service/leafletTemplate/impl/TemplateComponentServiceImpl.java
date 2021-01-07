@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.constant.DataConstant;
 import com.ycandyz.master.dao.leafletTemplate.TemplateComponentDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDetailDao;
@@ -79,12 +80,14 @@ public class TemplateComponentServiceImpl extends BaseService<TemplateComponentD
         details.forEach(vo -> {
             TemplateTableResp tableResp = new TemplateTableResp();
             if (StringUtils.isNotEmpty(vo.getComponentProperties())) {
-                TemplateComponentPropertiesResp propertiesResp = JSONObject.parseObject(vo.getComponentProperties(), TemplateComponentPropertiesResp.class);
-                tableResp.setDetail_id(vo.getId());
-                tableResp.setComponentTitle(propertiesResp.getTitle());
-                tableResp.setComponentOrder(vo.getComponentOrder());
-                tableResp.setComponentType(vo.getComponentType());
-                tableResps.add(tableResp);
+                if (StringUtils.isNotEmpty(DataConstant.TEMPLATE_COMPONENT_MAP.get(vo.getComponentType()))){
+                    TemplateComponentPropertiesResp propertiesResp = JSONObject.parseObject(vo.getComponentProperties(), TemplateComponentPropertiesResp.class);
+                    tableResp.setDetail_id(vo.getId());
+                    tableResp.setComponentTitle(propertiesResp.getTitle());
+                    tableResp.setComponentOrder(vo.getComponentOrder());
+                    tableResp.setComponentType(vo.getComponentType());
+                    tableResps.add(tableResp);
+                }
             }
         });
         return tableResps;

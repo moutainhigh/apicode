@@ -37,4 +37,14 @@ public final class DataConstant {
     //模板失效状态
     public static final int TEMPLATE_STATUS_NORMAL = 0;//正常
     public static final int TEMPLATE_STATUS_INVALID = 1;//失效
+
+    public static final int TEMPLATE_COMPONENT_SIGN = 2;//单项填空
+    public static final int TEMPLATE_COMPONENT_INPUT = 5;//输入框
+    public static final Map<Integer, String> TEMPLATE_COMPONENT_MAP = new HashMap<>();
+    static {
+        TEMPLATE_COMPONENT_MAP.put(TEMPLATE_COMPONENT_SIGN, "单项填空");
+        TEMPLATE_COMPONENT_MAP.put(TEMPLATE_COMPONENT_INPUT, "输入框");
+    }
+
+
 }
