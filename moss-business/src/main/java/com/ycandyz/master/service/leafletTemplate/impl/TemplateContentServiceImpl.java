@@ -137,7 +137,7 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
                     contentMap.put("来源渠道", DataConstant.CONTENT_CHANNEL_MAP.get(vo.getChannel().toString()));
                 }
                 if (vo.getPlatform() != null) {
-                    contentMap.put("手机系统", DataConstant.CONTENT_CHANNEL_MAP.get(vo.getPlatform().toString()));
+                    contentMap.put("手机系统", DataConstant.CONTENT_PLATFORM_MAP.get(vo.getPlatform().toString()));
                 }
                 contentMap.put("提交时间", vo.getCreatedTime());
                 content.forEach(contentVo -> contentMap.put(contentVo.getTitle(), contentVo.getComponentContent()));
