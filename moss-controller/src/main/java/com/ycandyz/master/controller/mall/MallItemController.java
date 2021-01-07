@@ -6,6 +6,8 @@ import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseController;
+import com.ycandyz.master.config.ApiVersion;
+import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.model.mall.MallItemModel;
 import com.ycandyz.master.domain.model.mall.MallItemOrgModel;
 import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
  * @version 2.0
  */
 
+@ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM,ApiVersionConstant.API_MALL_ITEM_100})
 @Slf4j
 @RestController
 @RequestMapping("pms/product")

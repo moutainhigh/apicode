@@ -7,4 +7,7 @@ public interface ApiVersionConstant {
 
     String API_ADVERTISING = "api-advertising";
 
+    String API_MALL_ITEM = "api-mall-item";
+    String API_MALL_ITEM_100 = "api-mall-item-1.0.0";
+
 }

@@ -172,7 +172,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                     OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id",userVO.getOrganizeId()).eq("status",2));
                     if (organizeRel!=null){
                         OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
-                        if (organizeGroup.getIsOpenMaintainable() != null && organizeGroup.getIsOpenMaintainable() == 1) {
+                        if (organizeGroup.getIsOpenMaintainable() != null && organizeGroup.getIsOpenMaintainable()) {
                             //开启了集团供货
                             isOpenMaintainable = true;
                         }
@@ -607,7 +607,7 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                         OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id", userVO.getOrganizeId()).eq("status", 2));
                         if (organizeRel != null) {
                             OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
-                            if (organizeGroup != null && organizeGroup.getIsOpenMaintainable() == 1) {
+                            if (organizeGroup != null && organizeGroup.getIsOpenMaintainable()) {
                                 mallOrderVO.setIsOpenMaintainable(1);   //有发货按钮
                             } else {
                                 mallOrderVO.setIsOpenMaintainable(0);   //有发货按钮

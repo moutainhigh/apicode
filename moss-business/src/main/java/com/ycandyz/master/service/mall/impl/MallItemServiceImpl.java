@@ -215,8 +215,11 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         vo.setItemNo(itemNo);
         vo.setIsCopy(mio.getIsCopy());
         //集团供货门店
-        List<String> shopNoList = mallShopDao.getByItemNo(itemNo).stream().map(MallShop::getShopNo).collect(Collectors.toList());
-        vo.setShopNoList(shopNoList);
+        MallItemEnum.IsAll isAll = MallItemEnum.IsAll.parseCode(vo.getIsAll());
+        if(isAll.getCode() == MallItemEnum.IsAll.Type_1.getCode()){
+            List<String> shopNoList = mallShopDao.getByItemNo(itemNo).stream().map(MallShop::getShopNo).collect(Collectors.toList());
+            vo.setShopNoList(shopNoList);
+        }
         return vo;
     }
 
