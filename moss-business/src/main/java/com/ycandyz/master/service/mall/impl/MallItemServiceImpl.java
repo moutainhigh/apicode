@@ -889,4 +889,14 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         }
     }
 
+    @Override
+    public MallItem getOneDetailByItemNo(String itemNo) {
+        return baseMapper.getOneDetailByItemNo(itemNo);
+    }
+
+    @Override
+    public List<MallItem> getListByItemNos(List<String> itemNos) {
+        return baseMapper.getListByItemNos(itemNos);
+    }
+
 }

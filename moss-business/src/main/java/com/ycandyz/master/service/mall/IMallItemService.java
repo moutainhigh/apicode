@@ -18,6 +18,8 @@ import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.domain.response.mall.MallItemShareResp;
 import com.ycandyz.master.entities.mall.MallItem;
 
+import java.util.List;
+
 /**
  * <p>
  * @Description 商品表 业务接口类
@@ -46,5 +48,9 @@ public interface IMallItemService extends IService<MallItem>{
     MallItemShareResp getShareByItemNo(String itemNo);
 
     boolean updateShareByItemNo(MallItemShareModel model);
+
+    MallItem getOneDetailByItemNo(String itemNo);
+
+    List<MallItem> getListByItemNos(List<String> itemNos);
 	
 }

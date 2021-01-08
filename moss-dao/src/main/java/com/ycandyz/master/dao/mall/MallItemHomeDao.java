@@ -61,4 +61,8 @@ public interface MallItemHomeDao extends BaseMapper<MallItem> {
     int updateByItemNo(MallItem entity);
 
     int updateOrgByItemNo(MallItem entity);
+
+    MallItem getOneDetailByItemNo(String itemNo);
+
+    List<MallItem> getListByItemNos(List<String> itemNos);
 }

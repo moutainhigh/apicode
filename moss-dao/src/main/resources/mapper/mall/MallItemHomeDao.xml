@@ -218,4 +218,26 @@
         where
         mco.order_sn=#{orderSn}
     </select>
+
+    <select id="getOneDetailByItemNo" resultType="com.ycandyz.master.entities.mall.MallItem">
+        SELECT <include refid="Base_Column_List"/>
+        FROM  mall_item_organize mio
+        left join mall_item t on t.item_no = mio.organize_item_no
+        WHERE 1=1
+        AND mio.item_no = #{itemNo}
+        AND mio.is_del = 0
+        AND t.is_screen = 0
+        AND t.status in (10,30)
+    </select>
+
+    <select id="getListByItemNos" resultType="com.ycandyz.master.entities.mall.MallItem">
+        SELECT <include refid="Base_Column_List"/>
+        FROM  mall_item_organize mio
+        left join mall_item t on t.item_no = mio.organize_item_no
+        WHERE 1=1
+        AND mio.item_no in <foreach  item="i" collection="itemNos" index="index"  open="(" separator="," close=")">#{i}</foreach>
+        AND mio.is_del = 0
+        AND t.is_screen = 0
+        AND t.status in (10,30)
+    </select>
 </mapper>
