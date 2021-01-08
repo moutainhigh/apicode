@@ -1,5 +1,7 @@
 package com.ycandyz.master.service.leafletTemplate.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSONObject;
@@ -36,12 +38,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
- *
  * @author WenXin
  * @version 2.0
  * @Description 模板内容表 业务类
- * </p>
  * @since 2020-12-17
  */
 @Slf4j
@@ -78,24 +77,34 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
         AssertUtils.notNull(query.getTemplateId(), "请选择模板！");
         Template template = templateDao.selectById(query.getTemplateId());
         AssertUtils.notNull(template, "模板信息不存在！");
-        IPage<TemplateContent> templateContentsPage = templateContentDao.selectPage(new Page<>(page.getPage(),page.getPageSize()), new QueryWrapper<TemplateContent>().eq("template_id", query.getTemplateId()).orderByDesc("created_time"));
+        IPage<TemplateContent> templateContentsPage = templateContentDao.selectPage(new Page<>(page.getPage(), page.getPageSize()), new QueryWrapper<TemplateContent>().eq("template_id", query.getTemplateId()).orderByDesc("created_time"));
         List<TemplateContent> templateContents = templateContentsPage.getRecords();
-        AssertUtils.notEmpty(templateContents, "无模板相关组件内容！");
+        Page<TemplateContentResp> resultPages = new Page<>();
+        if (CollectionUtil.isEmpty(templateContents)) {
+            return resultPages;
+        }
         List<TemplateContentResp> tableContents = new ArrayList<>();
         templateContents.forEach(vo -> {
             if (StringUtils.isNotEmpty(vo.getComponentContent())) {
-                User user = userDao.selectById(vo.getUserId());
                 TemplateContentResp templateContentResp = new TemplateContentResp();
+                if (null != vo.getUserId()) {
+                    User user = userDao.selectById(vo.getUserId());
+                    if (user != null) {
+                        templateContentResp.setUserPhone(user.getPhone());
+                    }
+                }
+                if (null != vo.getChannel()) {
+                    templateContentResp.setChannelStr(DataConstant.CONTENT_CHANNEL_MAP.get(vo.getChannel().toString()));
+                }
+                if (null != vo.getPlatform()) {
+                    templateContentResp.setPlatformStr(DataConstant.CONTENT_PLATFORM_MAP.get(vo.getPlatform().toString()));
+                }
                 BeanUtils.copyProperties(vo, templateContentResp);
                 List<TemplateTableContentResp> contentResps = JSONObject.parseArray(vo.getComponentContent(), TemplateTableContentResp.class);
                 templateContentResp.setContents(contentResps);
-                if (user != null) {
-                    templateContentResp.setUserPhone(user.getPhone());
-                }
                 tableContents.add(templateContentResp);
             }
         });
-        Page<TemplateContentResp> resultPages = new Page<>();
         resultPages.setCurrent(page.getPage());
         resultPages.setPages(templateContentsPage.getPages());
         resultPages.setRecords(tableContents);
@@ -112,26 +121,27 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
         String fileName = DateUtils.getCurrentTime17() + "/" + template.getTemplateName() + "模板信息报表.xls";
         String path = pathPrefix + fileName;
         ExcelWriter writer = ExcelUtil.getWriter(path);
-        List<TemplateContent> contents = templateContentDao.selectList(new QueryWrapper<TemplateContent>().eq("template_id", contentQuery.getTemplateId()));
+        List<TemplateContent> contents = templateContentDao.selectList(new QueryWrapper<TemplateContent>().eq("template_id", contentQuery.getTemplateId()).orderByDesc("created_time"));
         List<Map<String, Object>> maps = new ArrayList<>();
         contents.forEach(vo -> {
             if (StringUtils.isNotEmpty(vo.getComponentContent())) {
                 List<TemplateTableContentResp> content = JSONObject.parseArray(vo.getComponentContent(), TemplateTableContentResp.class);
                 Map<String, Object> contentMap = new LinkedHashMap<>();
                 contentMap.put("客户手机号", "");
+                contentMap.put("提交时间", DateUtil.format(vo.getCreatedTime(),"yyyy-MM-dd HH:mm:ss"));
                 contentMap.put("来源渠道", "");
                 contentMap.put("手机系统", "");
                 if (vo.getUserId() != null) {
                     User user = userDao.selectById(vo.getUserId());
                     contentMap.put("客户手机号", user != null ? user.getPhone() : null);
                 }
+
                 if (vo.getChannel() != null) {
                     contentMap.put("来源渠道", DataConstant.CONTENT_CHANNEL_MAP.get(vo.getChannel().toString()));
                 }
                 if (vo.getPlatform() != null) {
-                    contentMap.put("手机系统", DataConstant.CONTENT_CHANNEL_MAP.get(vo.getPlatform().toString()));
+                    contentMap.put("手机系统", DataConstant.CONTENT_PLATFORM_MAP.get(vo.getPlatform().toString()));
                 }
-                contentMap.put("提交时间", vo.getCreatedTime());
                 content.forEach(contentVo -> contentMap.put(contentVo.getTitle(), contentVo.getComponentContent()));
                 maps.add(contentMap);
             }

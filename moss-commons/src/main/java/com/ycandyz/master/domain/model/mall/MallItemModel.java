@@ -112,6 +112,9 @@ public class MallItemModel {
     @ApiModelProperty(name = "goods_no",value = "货号")
     private String goodsNo;
 
+    @ApiModelProperty(name = "bar_code",value = "商品条码 ")
+    private String barCode;
+
     @ApiModelProperty(name = "lowest_sale_price",value = "最低销售价格")
     private BigDecimal lowestSalePrice;
 

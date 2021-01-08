@@ -84,6 +84,7 @@ public class TemplateModel implements Serializable {
     @ApiModelProperty(name = "classify_id", value = "模板类别id")
     private Integer classifyId;
 
-
+    @ApiModelProperty(name = "del_array", value = "已删除组件id")
+    private List<Long> delArray;
 }
 

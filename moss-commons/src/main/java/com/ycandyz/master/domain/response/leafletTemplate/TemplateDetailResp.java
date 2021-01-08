@@ -35,6 +35,9 @@ public class TemplateDetailResp implements Serializable {
 
    private static final long serialVersionUID = 1L;
 
+   @ApiModelProperty(name = "id", value = "模板明细id")
+   private Long id;
+
    @ApiModelProperty(name = "component_content", value = "组件内容")
    private String componentContent;
 

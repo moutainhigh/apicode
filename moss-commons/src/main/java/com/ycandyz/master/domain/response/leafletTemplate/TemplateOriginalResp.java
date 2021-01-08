@@ -54,5 +54,8 @@ public class TemplateOriginalResp implements Serializable {
     @ApiModelProperty(name = "classify_id", value = "模板类别")
     private Integer classifyId;
 
+    @ApiModelProperty(name = "max_components_count", value = "最大组件数")
+    private Integer maxComponentsCount;
+
 }
 

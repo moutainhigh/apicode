@@ -55,7 +55,7 @@ public class Template extends Model {
    @ApiModelProperty(name = "submit_restriction", value = "提交次数限制(默认为1次)")
    private Integer submitRestriction;
 
-   @ApiModelProperty(name = "template_status", value = "模板状态（0:正常，1:删除）")
+   @ApiModelProperty(name = "template_status", value = "模板状态（1：发布，2：未发布，3：删除/过期）")
    private Integer templateStatus;
 
    @ApiModelProperty(name = "user_id", value = "创建人")

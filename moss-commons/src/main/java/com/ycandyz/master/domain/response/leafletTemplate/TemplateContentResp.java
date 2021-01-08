@@ -1,5 +1,6 @@
 package com.ycandyz.master.domain.response.leafletTemplate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModel;
@@ -44,13 +45,20 @@ public class TemplateContentResp implements Serializable {
     private Integer platform;
 
     @ApiModelProperty(name = "created_time", value = "创建时间")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createdTime;
 
     @ApiModelProperty(name = "updated_time", value = "更新时间")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date updatedTime;
 
     @ApiModelProperty(name = "user_phone", value = "用户手机号")
     private String userPhone;
 
+    @ApiModelProperty(name = "channel_str", value = "内容来源转换")
+    private String channelStr;
+
+    @ApiModelProperty(name = "plat_form", value = "平台系统转换")
+    private String platformStr;
 }
 

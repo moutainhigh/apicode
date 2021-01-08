@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ycandyz.master.base.BaseService;
+import com.ycandyz.master.constant.DataConstant;
 import com.ycandyz.master.dao.leafletTemplate.TemplateComponentDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDetailDao;
@@ -46,7 +47,7 @@ public class TemplateComponentServiceImpl extends BaseService<TemplateComponentD
 
     @Override
     public List<TemplateComponentResp> listComponents() {
-        List<TemplateComponent> parentComponents = componentDao.selectList(new QueryWrapper<TemplateComponent>().eq("parent_id", 0).eq("component_status", 0));
+        List<TemplateComponent> parentComponents = componentDao.selectList(new QueryWrapper<TemplateComponent>().eq("parent_id", 0).eq("component_status", 1));
         AssertUtils.notEmpty(parentComponents, "无可选组件，请联系管理员创建组件！");
         List<TemplateComponentResp> componentResps = new ArrayList<>();
         parentComponents.forEach(vo -> {
@@ -73,18 +74,20 @@ public class TemplateComponentServiceImpl extends BaseService<TemplateComponentD
         AssertUtils.notNull(templateId, "未选择模板！");
         Template template = templateDao.selectById(templateId);
         AssertUtils.notNull(template, "模板信息不存在！");
-        List<TemplateDetail> details = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", templateId).orderByAsc("component_order"));
+        List<TemplateDetail> details = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", templateId).orderByDesc("component_status").orderByAsc("component_order"));
         AssertUtils.notEmpty(details, "动态列信息不存在！");
         List<TemplateTableResp> tableResps = new ArrayList<>();
         details.forEach(vo -> {
             TemplateTableResp tableResp = new TemplateTableResp();
             if (StringUtils.isNotEmpty(vo.getComponentProperties())) {
-                TemplateComponentPropertiesResp propertiesResp = JSONObject.parseObject(vo.getComponentProperties(), TemplateComponentPropertiesResp.class);
-                tableResp.setDetail_id(vo.getId());
-                tableResp.setComponentTitle(propertiesResp.getTitle());
-                tableResp.setComponentOrder(vo.getComponentOrder());
-                tableResp.setComponentType(vo.getComponentType());
-                tableResps.add(tableResp);
+                if (StringUtils.isNotEmpty(DataConstant.TEMPLATE_COMPONENT_MAP.get(vo.getComponentType()))){
+                    TemplateComponentPropertiesResp propertiesResp = JSONObject.parseObject(vo.getComponentProperties(), TemplateComponentPropertiesResp.class);
+                    tableResp.setDetail_id(vo.getId());
+                    tableResp.setComponentTitle(propertiesResp.getTitle());
+                    tableResp.setComponentOrder(vo.getComponentOrder());
+                    tableResp.setComponentType(vo.getComponentType());
+                    tableResps.add(tableResp);
+                }
             }
         });
         return tableResps;
