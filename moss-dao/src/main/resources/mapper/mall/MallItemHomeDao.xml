@@ -60,7 +60,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, shop_no, category_no, item_no, item_name, item_text, item_cover, banners, base_sales, real_sales, sort_value, share_descr, share_img, price, lowest_sale_price, highest_sale_price, stock, frozen_stock, sub_stock_method, goods_no, deliver_method, status, is_unify_shipping, shipping_no, unify_shipping, initial_purchases, limit_cycle_type, limit_skus, limit_orders, qr_code_url, created_time, updated_time, is_enable_share, share_method, share_rate, share_amount, visits, is_updated_share, share_second_method, share_second_level_method, share_second_rate, share_second_amount, share_second_level_rate, share_second_level_amount, share_third_method, share_third_level_method, share_third_rate, share_third_amount, share_third_level_rate, share_third_level_amount, delivery_type
+        t.id, mio.shop_no, mio.category_no, mio.item_no, t.item_name, t.item_text, t.item_cover, t.banners, t.base_sales, t.real_sales, t.sort_value, t.share_descr, t.share_img, t.price, t.lowest_sale_price, t.highest_sale_price, t.stock, t.frozen_stock, t.sub_stock_method, t.goods_no, t.deliver_method, t.status, t.is_unify_shipping, t.shipping_no, t.unify_shipping, t.initial_purchases, t.limit_cycle_type, t.limit_skus, t.limit_orders, t.qr_code_url, t.created_time, t.updated_time, t.is_enable_share, t.share_method, t.share_rate, t.share_amount, t.visits, t.is_updated_share, t.share_second_method, t.share_second_level_method, t.share_second_rate, t.share_second_amount, t.share_second_level_rate, t.share_second_level_amount, t.share_third_method, t.share_third_level_method, t.share_third_rate, t.share_third_amount, t.share_third_level_rate, t.share_third_level_amount, t.delivery_type
     </sql>
 
     <sql id="Home_Column_List">
@@ -70,9 +70,11 @@
     <select id="selectMallItemPage" resultType="com.ycandyz.master.domain.response.mall.MallItemBaseResp">
         SELECT
            t.id,
-           t.item_no,
+           mio.item_no,
+           mio.category_no,
            t.item_name,
-           t.status,t.item_cover,
+           t.status,
+           t.item_cover,
            t.price,
            t.lowest_sale_price,
            t.highest_sale_price,
@@ -80,14 +82,14 @@
            t.real_sales,
            t.item_text,
            t.stock,
-           t.category_no,
            t.goods_no
-        FROM mall_item t
+        FROM mall_item_organize mio
+        LEFT JOIN mall_item t ON t.item_no = mio.organize_item_no
         WHERE 1=1
         AND t.status = 10
         <if test="query.itemName != null"> and t.item_name like CONCAT('%',#{query.itemName},'%') </if>
-        <if test="query.shopNo != null and query.shopNo != ''"> and t.shop_no = #{query.shopNo} </if>
-        <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
+        <if test="query.shopNo != null and query.shopNo != ''"> and mio.shop_no = #{query.shopNo} </if>
+        <if test="query.categoryNo != null and query.categoryNo != ''"> and mio.category_no = #{query.categoryNo} </if>
     </select>
 
     <select id="selectMallItemById" resultType="com.ycandyz.master.entities.mall.MallItem">
@@ -125,9 +127,11 @@
     <select id="selectMallItemPageByCouponId" resultType="com.ycandyz.master.domain.response.mall.MallItemBaseResp">
         SELECT
             t.id,
-            t.item_no,
+            mio.item_no,
+            mio.category_no,
             t.item_name,
-            t.status,t.item_cover,
+            t.status,
+            t.item_cover,
             t.price ,
             t.lowest_sale_price,
             t.highest_sale_price,
@@ -135,17 +139,17 @@
             t.real_sales,
             t.item_text,
             t.stock,
-            t.category_no,
             t.goods_no
         FROM coupon_detail detail
         left join coupon_detail_item cditem on detail.id=cditem.coupon_detail_id
-        left join mall_item t on cditem.item_no=t.item_no
+        left join mall_item_organize mio on cditem.item_no=mio.item_no
+        left join mall_item t on t.item_no = mio.organize_item_no
         WHERE 1=1
-        AND t.status = 10 and detail.status=1
+        AND t.status = 10 and detail.status=1 and mio.is_del=0
         <if test="query.couponId != null"> and detail.coupon_id=#{query.couponId} </if>
         <if test="query.itemName != null and query.itemName!=''"> and t.item_name like CONCAT('%',#{query.itemName},'%') </if>
-        <if test="query.shopNo != null and query.shopNo != ''"> and t.shop_no = #{query.shopNo} </if>
-        <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
+        <if test="query.shopNo != null and query.shopNo != ''"> and mio.shop_no = #{query.shopNo} </if>
+        <if test="query.categoryNo != null and query.categoryNo != ''"> and mio.category_no = #{query.categoryNo} </if>
     </select>
     <select id="getMallItemPage" resultType="com.ycandyz.master.domain.response.mall.MallItemPageResp">
         SELECT
@@ -154,6 +158,7 @@
         mio.category_no,
         mio.item_no,
         mio.is_copy,
+        t.item_no organize_item_no,
         t.is_organize,
         t.created_time,
         t.goods_no,

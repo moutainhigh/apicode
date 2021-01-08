@@ -71,6 +71,9 @@ public class MallItemPageResp {
    @ApiModelProperty(name = "item_no", value = "商品编号")
    private String itemNo;
 
+   @ApiModelProperty(name = "organize_item_no", value = "商品编号")
+   private String organizeItemNo;
+
    @ApiModelProperty(name = "lowest_sale_price", value = "最低销售价格")
    private BigDecimal lowestSalePrice;
 

@@ -88,12 +88,12 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     public MallItemResp getByItemNo(String itemNo) {
         //校验集团供货商品，切换商品编号
         MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(itemNo);
-        AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
-        itemNo = mio.getOrganizeItemNo();
+        //AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
+        //itemNo = mio.getOrganizeItemNo();
         MallItemResp vo = new MallItemResp();
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, itemNo);
-        MallItem entity = baseMapper.selectOne(queryWrapper);
+        MallItem entity = baseMapper.getOneDetailByItemNo(itemNo);
         entity.setBanners(FileUtil.unicodetoString(entity.getBanners()));
         MallItem t = baseMapper.selectMallItemById(entity.getId());
         //entity.setPickupAddressIds(t.getPickupAddressIds());
@@ -314,7 +314,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             f.setCreatedStr(f.getCreatedTime());
             LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
                     .select(MallSku::getGoodsNo)
-                    .eq(MallSku::getItemNo, f.getItemNo());
+                    .eq(MallSku::getItemNo, f.getOrganizeId());
             List<String> goodsNoList = mallSkuService.list(skuWrapper).stream().map(MallSku::getGoodsNo).collect(Collectors.toList());
             f.setGoodsNoList(goodsNoList);
             MallCategoryResp categoryResp = mallCategoryService.getByChildCategoryNo(null,f.getCategoryNo());
