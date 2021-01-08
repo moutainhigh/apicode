@@ -32,10 +32,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author WenXin
@@ -145,6 +142,23 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
                 content.forEach(contentVo -> contentMap.put(contentVo.getTitle(), contentVo.getComponentContent()));
                 maps.add(contentMap);
             }
+        });
+        Collections.sort(maps, (Comparator<Map>) (o1, o2) -> {
+            if (o1.size() > o2.size()) {
+                return -1;
+            } else if (o1.size() == o2.size()) {
+                return 0;
+            }
+            return 1;
+        });
+        List<Map<String, Object>> exportMaps = new ArrayList<>();
+        Map<String, Object> titleMap = maps.get(0);
+        maps.forEach(map -> {
+            Map<String, Object> exportMap = new LinkedHashMap<>();
+            for (String key : titleMap.keySet()) {
+                exportMap.put(key, map.get(key));
+            }
+            exportMaps.add(exportMap);
         });
         writer.write(maps);
         writer.flush();
