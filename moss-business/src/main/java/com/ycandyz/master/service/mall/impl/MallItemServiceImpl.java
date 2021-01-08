@@ -827,7 +827,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         MallItem t = new MallItem();
         BeanUtils.copyProperties(model,t);
         t.setItemNo(mio.getOrganizeItemNo());
-        i.setId(i.getId());
+        t.setId(i.getId());
         return retBool(baseMapper.updateById(t));
     }
 
