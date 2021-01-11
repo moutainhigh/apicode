@@ -1074,13 +1074,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             }
                         }
                         MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVo.getShopNo());
-                        mallOrderVo.setIsOpenMaintainable(false);
+                        mallOrderVo.setAllowOperating(0);
                         if (null != mallShopDTO) {
                             Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
                             if (1 != organize.getIsGroup()) {
                                 List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
                                 if (CollectionUtil.isNotEmpty(organizeGroups)) {
-                                    mallOrderVo.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                                    mallOrderVo.setAllowOperating(organizeGroups.get(0).getIsOpenMaintainable()?1:0);
                                 }
                             }
                         }
@@ -1369,13 +1369,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
             mallOrderVO.setOrganizeName(organize.getFullName());
             if (1 == organize.getIsGroup()) {
-                mallOrderVO.setIsOpenMaintainable(false);
+                mallOrderVO.setAllowOperating(0);
             } else {
                 List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
                 if (CollectionUtil.isNotEmpty(organizeGroups) && null != organizeGroups.get(0).getIsOpenMaintainable()) {
-                    mallOrderVO.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                    mallOrderVO.setAllowOperating(organizeGroups.get(0).getIsOpenMaintainable()?1:0);
                 } else {
-                    mallOrderVO.setIsOpenMaintainable(false);
+                    mallOrderVO.setAllowOperating(0);
                 }
             }
         }
