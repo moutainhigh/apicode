@@ -30,7 +30,7 @@ public class YcCodeGenerator {
 
 	protected static final Logger log = LoggerFactory.getLogger(YcCodeGenerator.class);
 	
-	private static final String tableName = "mall_shop";
+	private static final String tableName = "mall_item_share";
 	private static final String moduleName = "mall";
 	private static final boolean createController = true;
 	//生成文件所在目录层级

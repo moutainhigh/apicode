@@ -1,6 +1,8 @@
 package com.ycandyz.master.service.mall.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.ycandyz.master.domain.model.mall.MallItemDetailModel;
 import com.ycandyz.master.entities.mall.MallItemOrganize;
 import com.ycandyz.master.domain.model.mall.MallItemOrganizeModel;
 import com.ycandyz.master.domain.query.mall.MallItemOrganizeQuery;
@@ -50,6 +52,16 @@ public class MallItemOrganizeServiceImpl extends BaseService<MallItemOrganizeDao
     @Override
     public boolean updateOrg(MallItemOrganize t) {
         return this.retBool(baseMapper.updateOrg(t));
+    }
+
+    @Override
+    public boolean updateBatchOrg(List<Long> ids) {
+        return this.retBool(baseMapper.updateBatchOrg(ids));
+    }
+
+    @Override
+    public boolean edit(MallItemDetailModel model) {
+        return SqlHelper.retBool(baseMapper.edit(model));
     }
 
     @Override

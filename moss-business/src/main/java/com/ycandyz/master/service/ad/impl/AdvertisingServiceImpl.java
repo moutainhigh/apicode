@@ -220,7 +220,7 @@ public class AdvertisingServiceImpl extends BaseService<AdvertisingDao,Advertisi
                     .eq(MallItem::getIsScreen,MallItemEnum.IsScreen.START_0.getCode())
                     .eq(MallItem::getItemNo,f.getItemNo())
                     .in(MallItem::getStatus, MallItemEnum.Status.START_10.getCode(),MallItemEnum.Status.START_30.getCode());
-            MallItem mallItem = mallHomeItemService.getOne(mallItemWrapper);
+            MallItem mallItem = mallHomeItemService.getOneDetailByItemNo(f.getItemNo());
             if(null == mallItem){
                 return false;
             }

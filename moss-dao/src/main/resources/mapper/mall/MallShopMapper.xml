@@ -48,6 +48,7 @@
         LEFT JOIN organize_rel ol ON ol.group_organize_id = og.id
         LEFT JOIN mall_shop ms ON ol.organize_id = ms.organize_id
         WHERE 1=1
+        AND ol.status = 2
         AND og.organize_id = #{organizeId}
         AND ms.id is not null
     </select>

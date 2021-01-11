@@ -210,7 +210,9 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 
                         //是否有发货按钮
                         if (isOpenMaintainable){
-                            mallOrderVo.setIsOpenMaintainable(true);
+                            mallOrderVo.setAllowOperating(1);
+                        }else {
+                            mallOrderVo.setAllowOperating(0);
                         }
 
                         //获取企业名称，拼接进入返回值中
@@ -601,18 +603,18 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             Organize organize = organizeDao.selectById(userVO.getOrganizeId());
             if (organize!=null){
                 if (organize.getIsGroup()==1){  //集团
-                    mallOrderVO.setIsOpenMaintainable(true);   //有发货按钮
+                    mallOrderVO.setAllowOperating(1);   //有发货按钮
                 }else if (organize.getIsGroup()==0){    //企业
-                    if (mallOrderDTO.getIsGroupSupply()){    //非集团供货
-                        mallOrderVO.setIsOpenMaintainable(true);   //有发货按钮
+                    if (mallOrderDTO.getIsGroupSupply()==0){    //非集团供货
+                        mallOrderVO.setAllowOperating(1);   //有发货按钮
                     }else { //集团供货
                         OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id", userVO.getOrganizeId()).eq("status", 2));
                         if (organizeRel != null) {
                             OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
                             if (organizeGroup != null && organizeGroup.getIsOpenMaintainable()) {
-                                mallOrderVO.setIsOpenMaintainable(true);   //有发货按钮
+                                mallOrderVO.setAllowOperating(1);   //有发货按钮
                             } else {
-                                mallOrderVO.setIsOpenMaintainable(false);   //无发货按钮
+                                mallOrderVO.setAllowOperating(0);   //无发货按钮
                             }
                         }
                     }
@@ -1074,13 +1076,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
                             }
                         }
                         MallShopDTO mallShopDTO = mallShopDao.queryByShopNo(mallOrderVo.getShopNo());
-                        mallOrderVo.setIsOpenMaintainable(false);
+                        mallOrderVo.setAllowOperating(0);
                         if (null != mallShopDTO) {
                             Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
                             if (1 != organize.getIsGroup()) {
                                 List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
                                 if (CollectionUtil.isNotEmpty(organizeGroups)) {
-                                    mallOrderVo.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                                    mallOrderVo.setAllowOperating(organizeGroups.get(0).getIsOpenMaintainable()?1:0);
                                 }
                             }
                         }
@@ -1369,13 +1371,13 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
             Organize organize = organizeDao.selectById(mallShopDTO.getOrganizeId());
             mallOrderVO.setOrganizeName(organize.getFullName());
             if (1 == organize.getIsGroup()) {
-                mallOrderVO.setIsOpenMaintainable(false);
+                mallOrderVO.setAllowOperating(0);
             } else {
                 List<OrganizeGroup> organizeGroups = organizeGroupDao.selectList(new QueryWrapper<OrganizeGroup>().eq("organize_id", mallShopDTO.getOrganizeId()));
                 if (CollectionUtil.isNotEmpty(organizeGroups) && null != organizeGroups.get(0).getIsOpenMaintainable()) {
-                    mallOrderVO.setIsOpenMaintainable(organizeGroups.get(0).getIsOpenMaintainable());
+                    mallOrderVO.setAllowOperating(organizeGroups.get(0).getIsOpenMaintainable()?1:0);
                 } else {
-                    mallOrderVO.setIsOpenMaintainable(false);
+                    mallOrderVO.setAllowOperating(0);
                 }
             }
         }
