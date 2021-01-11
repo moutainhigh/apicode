@@ -224,7 +224,9 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
 
                         //是否有发货按钮
                         if (isOpenMaintainable){
-                            mallAfterSalesVO.getOrder().setIsOpenMaintainable(true);
+                            mallAfterSalesVO.getOrder().setAllowOperating(1);
+                        }else {
+                            mallAfterSalesVO.getOrder().setAllowOperating(0);
                         }
 
                         //支付方式拼接
@@ -304,18 +306,18 @@ public class MallAfterSalesServiceImpl extends BaseService<MallAfterSalesDao, Ma
                 Organize organize = organizeDao.selectById(userVO.getOrganizeId());
                 if (organize!=null){
                     if (organize.getIsGroup()==1){  //集团
-                        mallAfterSalesVO.getOrder().setIsOpenMaintainable(true);   //有发货按钮
+                        mallAfterSalesVO.getOrder().setAllowOperating(1);   //有发货按钮
                     }else if (organize.getIsGroup()==0){    //企业
-                        if (mallAfterSalesDTO.getOrder().getIsGroupSupply()){    //非集团供货
-                            mallAfterSalesVO.getOrder().setIsOpenMaintainable(true);   //有发货按钮
+                        if (mallAfterSalesDTO.getOrder().getIsGroupSupply()==0){    //非集团供货
+                            mallAfterSalesVO.getOrder().setAllowOperating(1);   //有发货按钮
                         }else { //集团供货
                             OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id", userVO.getOrganizeId()).eq("status", 2));
                             if (organizeRel != null) {
                                 OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id", organizeRel.getGroupOrganizeId()));
                                 if (organizeGroup != null && organizeGroup.getIsOpenMaintainable()) {
-                                    mallAfterSalesVO.getOrder().setIsOpenMaintainable(true);   //有发货按钮
+                                    mallAfterSalesVO.getOrder().setAllowOperating(1);   //有发货按钮
                                 } else {
-                                    mallAfterSalesVO.getOrder().setIsOpenMaintainable(false);   //有发货按钮
+                                    mallAfterSalesVO.getOrder().setAllowOperating(0);   //有发货按钮
                                 }
                             }
                         }

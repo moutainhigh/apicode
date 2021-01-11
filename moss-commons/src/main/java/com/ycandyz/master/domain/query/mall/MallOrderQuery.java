@@ -78,7 +78,7 @@ public class MallOrderQuery implements Serializable {
     @ApiModelProperty(value = "使用优惠券，使用传1，未使用传0",name="isCoupon",required=true)
     private Integer isCoupon;
     @ApiModelProperty(value = "是否集团供货，1:是，0:否",name="isGroupSupply",required=true)
-    private Boolean isGroupSupply;
+    private Integer isGroupSupply;
 
     public String getOrderNo(){
         if (orderNo!=null){

@@ -38,5 +38,5 @@ public class MallOrderByAfterSalesDTO {
     @ApiModelProperty(value = "发货方式:1-配送 2-自提")
     private Boolean deliverType;
     @ApiModelProperty(value = "是否集团供货，1:是，0:否")
-    private Boolean isGroupSupply;
+    private Integer isGroupSupply;
 }
