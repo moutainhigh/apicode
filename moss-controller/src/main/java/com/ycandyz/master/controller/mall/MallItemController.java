@@ -8,10 +8,7 @@ import com.ycandyz.master.api.ReturnResponse;
 import com.ycandyz.master.base.BaseController;
 import com.ycandyz.master.config.ApiVersion;
 import com.ycandyz.master.config.ApiVersionConstant;
-import com.ycandyz.master.domain.model.mall.MallItemModel;
-import com.ycandyz.master.domain.model.mall.MallItemOrgModel;
-import com.ycandyz.master.domain.model.mall.MallItemShareModel;
-import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
+import com.ycandyz.master.domain.model.mall.*;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemPageResp;
@@ -105,6 +102,12 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
     @GetMapping(value = "share/{item_no}")
     public CommonResult<MallItemShareResp> getShareById(@PathVariable String item_no) {
         return CommonResult.success(service.getShareByItemNo(item_no));
+    }
+
+    @ApiOperation(value = "根据商品编号更改商品分类")
+    @PutMapping("category")
+    public CommonResult edit(@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemDetailModel model){
+        return result(service.edit(model),null,"更改失败!");
     }
 
 

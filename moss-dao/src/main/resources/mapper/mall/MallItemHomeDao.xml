@@ -159,7 +159,7 @@
         mio.item_no,
         mio.is_copy,
         t.item_no organize_item_no,
-        t.is_organize,
+        t.is_group_supply,
         t.created_time,
         t.goods_no,
         t.highest_sale_price,
@@ -195,7 +195,7 @@
         <if test="q.categoryNo != null and q.categoryNo != ''"> and mio.category_no = #{q.categoryNo} </if>
         <if test="q.itemName != null and q.itemName!=''"> and t.item_name like CONCAT('%',#{q.itemName},'%') </if>
         <if test="q.status != null"> and t.status=#{q.status} </if>
-        <if test="q.isOrganize != null"> and t.is_organize=#{q.isOrganize} </if>
+        <if test="q.isGroupSupply != null"> and t.is_group_supply=#{q.isGroupSupply} </if>
         <if test="q.type != null"> and t.type=#{q.type} </if>
         <if test="q.createdTimeBegin != null"> and date_format(t.created_time,'%Y-%m-%d') >= date_format(#{q.createdTimeBegin},'%Y-%m-%d') </if>
         <if test="q.createdTimeEnd != null">
@@ -211,7 +211,7 @@
     </update>
 
     <update id="updateOrgByItemNo">
-        update mall_item set is_all=#{isAll},is_organize=#{isOrganize} where item_no = #{itemNo}
+        update mall_item set is_all=#{isAll},is_group_supply=#{isGroupSupply} where item_no = #{itemNo}
     </update>
 
     <select id="selectMallItemByCartOrderSn" resultType="com.ycandyz.master.dto.mall.MallItemDTO">
@@ -240,9 +240,13 @@
         FROM  mall_item_organize mio
         left join mall_item t on t.item_no = mio.organize_item_no
         WHERE 1=1
-        AND mio.item_no in <foreach  item="i" collection="itemNos" index="index"  open="(" separator="," close=")">#{i}</foreach>
+        AND mio.item_no in <foreach  item="item" collection="itemNos" index="index"  open="(" separator="," close=")">#{item}</foreach>
         AND mio.is_del = 0
         AND t.is_screen = 0
         AND t.status in (10,30)
     </select>
+
+    <update id="edit">
+        update mall_item set category_no = #{categoryNo} where item_no = #{itemNo}
+    </update>
 </mapper>

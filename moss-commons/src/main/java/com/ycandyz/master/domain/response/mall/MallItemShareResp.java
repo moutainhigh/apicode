@@ -95,5 +95,8 @@ public class MallItemShareResp {
    @ApiModelProperty(name = "is_copy", value = "是否店铺自己数据(0:不是,1:是)")
    private Integer isCopy;
 
+   @ApiModelProperty(name = "editable", value = "是否可编辑(0:不是,1:是)")
+   private Integer editable;
+
 }
 

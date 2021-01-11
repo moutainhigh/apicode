@@ -74,8 +74,8 @@ public class MallItemQuery implements Serializable {
     @Condition(condition = ConditionEnum.EQ)
     private String childrenOrganizeId;
 
-    @ApiModelProperty(name = "is_organize",value = "是否集团供货(0否,1是)")
-    private Integer isOrganize;
+    @ApiModelProperty(name = "is_group_supply",value = "是否集团供货(0否,1是)")
+    private Integer isGroupSupply;
 
 
 }

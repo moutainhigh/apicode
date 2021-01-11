@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
-import com.ycandyz.master.domain.model.mall.MallItemModel;
-import com.ycandyz.master.domain.model.mall.MallItemOrgModel;
-import com.ycandyz.master.domain.model.mall.MallItemShareModel;
-import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
+import com.ycandyz.master.domain.model.mall.*;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
@@ -52,5 +49,7 @@ public interface IMallItemService extends IService<MallItem>{
     MallItem getOneDetailByItemNo(String itemNo);
 
     List<MallItem> getListByItemNos(List<String> itemNos);
+
+    boolean edit(MallItemDetailModel model);
 	
 }

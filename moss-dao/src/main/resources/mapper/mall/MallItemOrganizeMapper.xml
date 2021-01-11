@@ -20,8 +20,16 @@
         update mall_item_organize set is_del = 0 where organize_item_no = #{organizeItemNo} AND shop_no = #{shopNo}
     </update>
 
+    <update id="updateBatchOrg">
+        update mall_item_organize set is_del = 0 where id in <foreach  item="item" collection="ids" index="index"  open="(" separator="," close=")">#{item}</foreach>
+    </update>
+
     <delete id="deleteOrg">
         update mall_item_organize set is_del = 1 where organize_item_no = #{organizeItemNo} AND shop_no != #{shopNo}
     </delete>
+
+    <update id="edit">
+        update mall_item_organize set category_no = #{categoryNo} where item_no = #{itemNo}
+    </update>
 
 </mapper>
