@@ -105,8 +105,9 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
     }
 
     @ApiOperation(value = "根据商品编号更改商品分类")
-    @PutMapping("category")
-    public CommonResult edit(@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemDetailModel model){
+    @PutMapping("{item_no}/category")
+    public CommonResult edit(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemDetailModel model){
+        model.setItemNo(item_no);
         return result(service.edit(model),null,"更改失败!");
     }
 
