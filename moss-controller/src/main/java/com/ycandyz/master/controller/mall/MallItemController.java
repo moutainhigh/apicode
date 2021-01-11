@@ -34,11 +34,11 @@ import org.springframework.web.bind.annotation.*;
  * @version 2.0
  */
 
-@ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM,ApiVersionConstant.API_MALL_ITEM_100})
+@ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM})
 @Slf4j
 @RestController
 @RequestMapping("pms/product")
-@Api(tags="mall-商品")
+@Api(tags="集团供货")
 public class MallItemController extends BaseController<MallItemServiceImpl,MallItem, MallItemBaseQuery> {
 	
 	@ApiOperation(value="新增")
@@ -47,7 +47,8 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
         return service.insert(entity);
 	}
 
-    @ApiOperation(value="集团供货-新增")
+    @ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM_100})
+    @ApiOperation(tags = "集团供货",value="集团供货-新增")
     @PostMapping(value = "organize")
     public CommonResult insertOrg(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemOrgModel model) {
         return result(service.addOrganize(model),model,"更改失败!");
@@ -91,20 +92,23 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
         return service.deleteByItemNo(item_no);
 	}
 
-    @ApiOperation(value = "更新商品分销")
+    @ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM_100})
+    @ApiOperation(tags = "集团供货",value = "更新商品分销")
     @PutMapping(value = "share/{item_no}")
     public CommonResult updateShareById(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemShareModel model) {
         model.setItemNo(item_no);
         return result(service.updateShareByItemNo(model),model,"更改失败!");
     }
 
-    @ApiOperation(value = "商品分销信息")
+    @ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM_100})
+    @ApiOperation(tags = "集团供货",value = "商品分销信息")
     @GetMapping(value = "share/{item_no}")
     public CommonResult<MallItemShareResp> getShareById(@PathVariable String item_no) {
         return CommonResult.success(service.getShareByItemNo(item_no));
     }
 
-    @ApiOperation(value = "根据商品编号更改商品分类")
+    @ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM_100})
+    @ApiOperation(tags = "集团供货",value = "根据商品编号更改商品分类")
     @PutMapping("{item_no}/category")
     public CommonResult edit(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemDetailModel model){
         model.setItemNo(item_no);

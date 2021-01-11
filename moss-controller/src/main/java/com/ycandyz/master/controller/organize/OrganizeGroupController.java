@@ -7,6 +7,7 @@ import com.ycandyz.master.api.PageModel;
 import com.ycandyz.master.config.ApiVersion;
 import com.ycandyz.master.config.ApiVersionConstant;
 import com.ycandyz.master.domain.query.mall.MallShopQuery;
+import com.ycandyz.master.domain.response.mall.MallShopResp;
 import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.service.mall.impl.MallShopServiceImpl;
 import io.swagger.annotations.Api;
@@ -32,7 +33,7 @@ import com.ycandyz.master.controller.base.BaseController;
 @Slf4j
 @RestController
 @RequestMapping("organize-group")
-@Api(tags = "organize-集团表")
+@Api(tags="集团供货")
 public class OrganizeGroupController extends BaseController<OrganizeGroupServiceImpl, OrganizeGroup, OrganizeGroupQuery> {
 
     @Autowired
@@ -53,18 +54,18 @@ public class OrganizeGroupController extends BaseController<OrganizeGroupService
 
     @ApiVersion(group = ApiVersionConstant.API_MALL_ITEM_100)
     @ApiImplicitParam(name="item_no",value="商品编号",dataType="String")
-    @ApiOperation(value = "集团供货商品已选门店-分页")
+    @ApiOperation(tags = "集团供货",value = "集团供货商品已选门店-分页")
     @GetMapping(value = "shop/item")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<MallShop>> selectPage(PageModel<MallShop> page,@RequestParam(value = "item_no",required = false) String itemNo) {
+    public CommonResult<BasePageResult<MallShopResp>> selectPage(PageModel<MallShop> page,@RequestParam(value = "item_no",required = false) String itemNo) {
         return CommonResult.success(new BasePageResult<>(mallShopService.getByItemNo(new Page<>(page.getPage(),page.getPageSize()),itemNo)));
     }
 
     @ApiVersion(group = ApiVersionConstant.API_MALL_ITEM_100)
-    @ApiOperation(value = "集团供货全部门店-分页")
+    @ApiOperation(tags = "集团供货",value = "集团供货全部门店-分页")
     @GetMapping(value = "shop")
     @SuppressWarnings("unchecked")
-    public CommonResult<BasePageResult<MallShop>> selectOrgPage(PageModel<MallShop> page) {
+    public CommonResult<BasePageResult<MallShopResp>> selectOrgPage(PageModel<MallShop> page) {
         return CommonResult.success(new BasePageResult<>(mallShopService.getByOrganizeId(new Page<>(page.getPage(),page.getPageSize()))));
     }
 }
