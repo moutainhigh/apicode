@@ -23,10 +23,7 @@ import com.ycandyz.master.domain.enums.organize.OrganizeEnum;
 import com.ycandyz.master.domain.model.mall.*;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
-import com.ycandyz.master.domain.response.mall.MallCategoryResp;
-import com.ycandyz.master.domain.response.mall.MallItemPageResp;
-import com.ycandyz.master.domain.response.mall.MallItemResp;
-import com.ycandyz.master.domain.response.mall.MallItemShareResp;
+import com.ycandyz.master.domain.response.mall.*;
 import com.ycandyz.master.dto.mall.MallShopDTO;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.entities.organize.Organize;
@@ -225,7 +222,6 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         vo.setQrCodeUrl(FileUtil.unicodetoString(vo.getQrCodeUrl()));
         vo.setItemNo(itemNo);
         vo.setIsCopy(mio.getIsCopy());
-        vo.setEditable(mio.getIsCopy());
         //集团供货门店
         MallItemEnum.IsAll isAll = MallItemEnum.IsAll.parseCode(vo.getIsAll());
         if(isAll.getCode() == MallItemEnum.IsAll.Type_1.getCode()){
@@ -951,4 +947,17 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         return baseMapper.getListByItemNos(itemNos);
     }
 
+
+    public Page<SpreadMallItemPageResp> selectSpreadPage(Page<MallItem> page, MallItemQuery query) {
+        AssertUtils.notNull(query.getCardId(), "名片编号不能为空！");
+        AssertUtils.notNull(query.getQueryType(), "查询类型不能为空！");
+        Long organizeId = getUser().getOrganizeId();
+        query.setOrganizeId(organizeId);
+        List<String> mallItemList = new ArrayList<>();
+        if (query.getCardId() > 0) {
+            mallItemList = baseMapper.selectByCardId(query.getCardId());
+        }
+        query.setCardIds(mallItemList);
+        return baseMapper.selectSpreadPage(page, query);
+    }
 }

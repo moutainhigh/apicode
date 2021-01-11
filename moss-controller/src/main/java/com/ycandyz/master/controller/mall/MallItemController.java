@@ -14,6 +14,7 @@ import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.domain.response.mall.MallItemShareResp;
+import com.ycandyz.master.domain.response.mall.SpreadMallItemPageResp;
 import com.ycandyz.master.entities.base.BaseBank;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.service.mall.impl.MallItemServiceImpl;
@@ -104,6 +105,11 @@ public class MallItemController extends BaseController<MallItemServiceImpl,MallI
         return CommonResult.success(service.getShareByItemNo(item_no));
     }
 
+    @ApiOperation(value = "传播查询分页")
+    @GetMapping("/spread")
+    public CommonResult<BasePageResult<SpreadMallItemPageResp>> selectSpreadPage(PageModel page, MallItemQuery query) {
+        return CommonResult.success(new BasePageResult(service.selectSpreadPage(new Page(page.getPage(), page.getPageSize()), query)));
+    }
     @ApiOperation(value = "根据商品编号更改商品分类")
     @PutMapping("{item_no}/category")
     public CommonResult edit(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemDetailModel model){
