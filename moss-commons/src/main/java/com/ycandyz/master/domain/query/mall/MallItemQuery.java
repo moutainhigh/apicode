@@ -77,5 +77,16 @@ public class MallItemQuery implements Serializable {
     @ApiModelProperty(name = "is_group_supply",value = "是否集团供货(0否,1是)")
     private Integer isGroupSupply;
 
+    @ApiModelProperty(name = "card_id",value = "名片编号")
+    private Integer cardId;
+
+    @ApiModelProperty(name = "query_type",value = "查询类型")
+    private Integer queryType;
+
+    @ApiModelProperty(name = "card_ids",value = "名片编号（数组查询用）")
+    private List<String> cardIds;
+
+    @ApiModelProperty(name = "organize_id",value = "企业编号")
+    private Long organizeId;
 
 }
