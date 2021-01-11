@@ -19,7 +19,7 @@
     <select id="queryByCouponDetailId" resultType="com.ycandyz.master.domain.response.mall.MallItemBaseResp">
         SELECT
             t.id,
-            t.item_no,
+            o.item_no,
             t.item_name,
             t.status,t.item_cover,
             t.price ,
@@ -28,10 +28,11 @@
             t.real_sales,
             t.item_text,
             t.stock,
-            t.category_no,
+            o.category_no,
             t.goods_no
         FROM coupon_detail_item cditem
-        left join mall_item t on cditem.item_no=t.item_no
+        left join mall_item_organize o on cditem.item_no=o.item_no
+        left join mall_item t on o.organize_item_no=t.item_no
         WHERE 1=1
         AND t.status = 10
         and cditem.coupon_detail_id=#{couponDetailId}

@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.domain.model.coupon.CouponActivityModel;
 import com.ycandyz.master.domain.model.coupon.CouponActivityPutModel;
-import com.ycandyz.master.domain.model.mall.MallItemModel;
-import com.ycandyz.master.domain.model.mall.MallItemOrgModel;
-import com.ycandyz.master.domain.model.mall.MallItemShareModel;
-import com.ycandyz.master.domain.model.mall.MallItemShelfModel;
+import com.ycandyz.master.domain.model.mall.*;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.coupon.CouponActivityResp;
@@ -17,6 +14,8 @@ import com.ycandyz.master.domain.response.mall.MallItemPageResp;
 import com.ycandyz.master.domain.response.mall.MallItemResp;
 import com.ycandyz.master.domain.response.mall.MallItemShareResp;
 import com.ycandyz.master.entities.mall.MallItem;
+
+import java.util.List;
 
 /**
  * <p>
@@ -46,5 +45,11 @@ public interface IMallItemService extends IService<MallItem>{
     MallItemShareResp getShareByItemNo(String itemNo);
 
     boolean updateShareByItemNo(MallItemShareModel model);
+
+    MallItem getOneDetailByItemNo(String itemNo);
+
+    List<MallItem> getListByItemNos(List<String> itemNos);
+
+    boolean edit(MallItemDetailModel model);
 	
 }

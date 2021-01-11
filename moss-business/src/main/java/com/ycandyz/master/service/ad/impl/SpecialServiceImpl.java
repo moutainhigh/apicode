@@ -271,7 +271,7 @@ public class SpecialServiceImpl extends BaseService<SpecialDao,Special,SpecialQu
                     .eq(MallItem::getIsScreen,MallItemEnum.IsScreen.START_0.getCode())
                     .in(MallItem::getItemNo,specailItemList)
                     .in(MallItem::getStatus, MallItemEnum.Status.START_10.getCode(),MallItemEnum.Status.START_30.getCode());
-            List<MallItem> mallItem = mallItemService.list(mallItemWrapper);
+            List<MallItem> mallItem = mallItemService.getListByItemNos(specailItemList);
             if(CollectionUtil.isEmpty(mallItem)){
                 return false;
             }

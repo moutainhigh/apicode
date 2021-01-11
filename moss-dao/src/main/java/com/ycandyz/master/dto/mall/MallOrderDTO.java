@@ -213,7 +213,7 @@ public class MallOrderDTO {
     @ApiModelProperty(value = "使用优惠券，使用传1，未使用传0")
     private Integer isCoupon;
     @ApiModelProperty(value = "是否集团供货，1:是，0:否")
-    private Boolean isGroupSupply;
+    private Integer isGroupSupply;
 
     /**支付时间字符串*/
     @ApiModelProperty(value = "支付时间字符串")

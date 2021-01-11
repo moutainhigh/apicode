@@ -154,14 +154,14 @@ public class MallItemEnum {
         }
     }
 
-    public enum IsOrganize implements IEnum<Integer> {
+    public enum IsGroupSupply implements IEnum<Integer> {
         Type_0(0, "集团供货：否"),
         Type_1(1, "集团供货：是");
 
         private Integer code;
         private String text;
 
-        IsOrganize(Integer code, String text) {
+        IsGroupSupply(Integer code, String text) {
             this.code = code;
             this.text = text;
         }
@@ -176,11 +176,11 @@ public class MallItemEnum {
             return text;
         }
 
-        public static MallItemEnum.IsOrganize parseCode(Integer code) {
+        public static MallItemEnum.IsGroupSupply parseCode(Integer code) {
             if (code == null) {
                 return null;
             }
-            for (MallItemEnum.IsOrganize value : values()) {
+            for (MallItemEnum.IsGroupSupply value : values()) {
                 if (code.equals(value.code)) {
                     return value;
                 }

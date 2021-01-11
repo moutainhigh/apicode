@@ -85,15 +85,28 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     private OrganizeServiceImpl organizeService;
 
     @Override
+    public boolean edit(MallItemDetailModel model) {
+        LambdaQueryWrapper<MallCategory> categoryWrapper = new LambdaQueryWrapper<MallCategory>()
+                .eq(MallCategory::getCategoryNo, model.getCategoryNo());
+        MallCategory category = mallCategoryService.getOne(categoryWrapper);
+        MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(model.getItemNo());
+        AssertUtils.isTrue(category.getShopNo().equals(mio.getShopNo()), "该分类不属于当前店铺，不可执行此操作");
+        if(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode()){
+            baseMapper.edit(model);
+        }
+        return mallItemOrganizeService.edit(model);
+    }
+
+    @Override
     public MallItemResp getByItemNo(String itemNo) {
         //校验集团供货商品，切换商品编号
         MallItemOrganize mio = mallItemOrganizeService.organizeItemNoToItemNo(itemNo);
-        AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
-        itemNo = mio.getOrganizeItemNo();
+        //AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
+        //itemNo = mio.getOrganizeItemNo();
         MallItemResp vo = new MallItemResp();
         LambdaQueryWrapper<MallItem> queryWrapper = new LambdaQueryWrapper<MallItem>()
                 .eq(MallItem::getItemNo, itemNo);
-        MallItem entity = baseMapper.selectOne(queryWrapper);
+        MallItem entity = baseMapper.getOneDetailByItemNo(itemNo);
         entity.setBanners(FileUtil.unicodetoString(entity.getBanners()));
         MallItem t = baseMapper.selectMallItemById(entity.getId());
         //entity.setPickupAddressIds(t.getPickupAddressIds());
@@ -212,6 +225,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         vo.setQrCodeUrl(FileUtil.unicodetoString(vo.getQrCodeUrl()));
         vo.setItemNo(itemNo);
         vo.setIsCopy(mio.getIsCopy());
+        vo.setEditable(mio.getIsCopy());
         //集团供货门店
         MallItemEnum.IsAll isAll = MallItemEnum.IsAll.parseCode(vo.getIsAll());
         if(isAll.getCode() == MallItemEnum.IsAll.Type_1.getCode()){
@@ -312,9 +326,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         Page<MallItemPageResp> p =baseMapper.getMallItemPage(page,query);
         p.getRecords().stream().forEach(f -> {
             f.setCreatedStr(f.getCreatedTime());
+            f.setEditable(f.getIsCopy());
             LambdaQueryWrapper<MallSku> skuWrapper = new LambdaQueryWrapper<MallSku>()
                     .select(MallSku::getGoodsNo)
-                    .eq(MallSku::getItemNo, f.getItemNo());
+                    .eq(MallSku::getItemNo, f.getOrganizeId());
             List<String> goodsNoList = mallSkuService.list(skuWrapper).stream().map(MallSku::getGoodsNo).collect(Collectors.toList());
             f.setGoodsNoList(goodsNoList);
             MallCategoryResp categoryResp = mallCategoryService.getByChildCategoryNo(null,f.getCategoryNo());
@@ -756,10 +771,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         AssertUtils.isTrue(mio.getIsCopy() == MallItemOriganizeEnum.IsCopy.Type_1.getCode(), "该商品是集团供货商品，不可执行此操作");
         model.setItemNo(mio.getOrganizeItemNo());
         //集团供货校验
-        MallItemEnum.IsOrganize isOrganize = MallItemEnum.IsOrganize.parseCode(model.getIsOrganize());
-        AssertUtils.notNull(isOrganize, "集团供货 状态不正确");
+        MallItemEnum.IsGroupSupply isGroupSupply = MallItemEnum.IsGroupSupply.parseCode(model.getIsGroupSupply());
+        AssertUtils.notNull(isGroupSupply, "集团供货 状态不正确");
         MallItemEnum.IsAll isAll = MallItemEnum.IsAll.parseCode(model.getIsAll());
-        if(isOrganize.getCode() == MallItemEnum.IsOrganize.Type_1.getCode()){
+        if(isGroupSupply.getCode() == MallItemEnum.IsGroupSupply.Type_1.getCode()){
             AssertUtils.notNull(isAll, "全部门店/指定门店 类型不正确");
             if(MallItemEnum.IsAll.Type_1.getCode().equals(isAll.getCode())){
                 AssertUtils.notNull(model.getShopNos(), "同步门店编号不能为空");
@@ -782,26 +797,57 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 .eq(MallShop::getShopNo,getShopNo());
         MallShop shop = mallShopDao.selectOne(shopWrapper);
         Organize organize = organizeService.getById(shop.getOrganizeId());
+        List<MallCategory> mclist = new ArrayList<>();
+        List<MallItemOrganize> addIolist = new ArrayList<>();
+        List<MallItemOrganize> updateIolist = new ArrayList<>();
         //是集团，判断是否开启 集团供货
-        if(organize.getIsGroup() == OrganizeEnum.IsGroup.Type_1.getCode() && isOrganize.getCode().equals(MallItemEnum.IsOrganize.Type_1.getCode())){
+        if(organize.getIsGroup() == OrganizeEnum.IsGroup.Type_1.getCode() && isGroupSupply.getCode().equals(MallItemEnum.IsGroupSupply.Type_1.getCode())){
             //全部门店，查询遍历，处理商品分类，存在则归类，不存在则创建
             MallCategoryResp mc = mallCategoryService.getByChildCategoryNo(null,model.getCategoryNo());
             if(MallItemEnum.IsAll.Type_0.getCode().equals(isAll.getCode())){
                 List<String> shopList = mallShopDao.getByOrganizeId(getOrganizeId()).stream().map(MallShop::getShopNo).collect(Collectors.toList());
                 shopList.forEach(shopNo -> {
-                    createCategory(model.getItemNo(),shopNo,mc,"");
+                    MallItemOrganizeCategoryModel moc = createCategory(model.getItemNo(),shopNo,mc,"",new MallItemOrganizeCategoryModel());
+                    if(CollectionUtil.isNotEmpty(moc.getMclist())){
+                        mclist.addAll(moc.getMclist());
+                    }
+                    if(CollectionUtil.isNotEmpty(moc.getAddIolist())){
+                        addIolist.addAll(moc.getAddIolist());
+                    }
+                    if(CollectionUtil.isNotEmpty(moc.getUpdateIolist())){
+                        updateIolist.addAll(moc.getUpdateIolist());
+                    }
                 });
             }else {//指定门店，遍历，处理商品分类，存在则归类，不存在则创建
                 model.getShopNos().forEach(shopNo -> {
-                    createCategory(model.getItemNo(),shopNo,mc,"");
+                    MallItemOrganizeCategoryModel moc = createCategory(model.getItemNo(),shopNo,mc,"",new MallItemOrganizeCategoryModel());
+                    if(CollectionUtil.isNotEmpty(moc.getMclist())){
+                        mclist.addAll(moc.getMclist());
+                    }
+                    if(CollectionUtil.isNotEmpty(moc.getAddIolist())){
+                        addIolist.addAll(moc.getAddIolist());
+                    }
+                    if(CollectionUtil.isNotEmpty(moc.getUpdateIolist())){
+                        updateIolist.addAll(moc.getUpdateIolist());
+                    }
                 });
+            }
+            if(CollectionUtil.isNotEmpty(mclist)){
+                mallCategoryService.insertBatch(mclist);
+            }
+            if(CollectionUtil.isNotEmpty(addIolist)){
+                mallItemOrganizeService.insertBatch(addIolist);
+            }
+            if(CollectionUtil.isNotEmpty(updateIolist)){
+                List<Long> ids = updateIolist.stream().map(MallItemOrganize::getId).collect(Collectors.toList());
+                mallItemOrganizeService.updateBatchOrg(ids);
             }
         }
 
         //更新mall_item是否集团供货标识:关闭
         MallItem t = new MallItem();
         t.setItemNo(model.getItemNo());
-        t.setIsOrganize(model.getIsOrganize());
+        t.setIsGroupSupply(model.getIsGroupSupply());
         t.setIsAll(model.getIsAll());
         baseMapper.updateOrgByItemNo(t);
         return true;
@@ -825,6 +871,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         BeanUtils.copyProperties(item,vo);
         vo.setItemNo(itemNo);
         vo.setIsCopy(mio.getIsCopy());
+        vo.setEditable(mio.getIsCopy());
         vo.setShareLevelType(social.getShareLevelType());
         return vo;
     }
@@ -844,7 +891,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         return retBool(baseMapper.updateById(t));
     }
 
-    public void createCategory(String itemNo,String shopNo,MallCategoryResp i,String parentCategoryNo) {
+    public MallItemOrganizeCategoryModel createCategory(String itemNo, String shopNo, MallCategoryResp i, String parentCategoryNo, MallItemOrganizeCategoryModel mocModel) {
         LambdaQueryWrapper<MallCategory> cpWrapper = new LambdaQueryWrapper<MallCategory>()
                 .eq(MallCategory::getShopNo,shopNo)
                 .eq(MallCategory::getCategoryName,i.getCategoryName())
@@ -861,7 +908,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             cpModel.setLayer(i.getLayer());
             cpModel.setSortValue(0);
             cpModel.setStatus(i.getStatus());
-            mallCategoryService.save(cpModel);
+            //mallCategoryService.save(cpModel);
+            mocModel.getMclist().add(cpModel);
+
         }else {
             cpModel.setCategoryNo(cp.getCategoryNo());
         }
@@ -879,14 +928,27 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 mioModel.setItemNo(StrUtil.toString(IDGeneratorUtils.getLongId()));
                 mioModel.setCategoryNo(cpModel.getCategoryNo());
                 mioModel.setIsCopy(MallItemOriganizeEnum.IsCopy.Type_0.getCode());
-                mallItemOrganizeService.save(mioModel);
+                //mallItemOrganizeService.save(mioModel);
+                mocModel.getAddIolist().add(mioModel);
             }else{
-                mallItemOrganizeService.updateOrg(io);
+                //mallItemOrganizeService.updateOrg(io);
+                mocModel.getUpdateIolist().add(io);
             }
+            return mocModel;
 
         }else{
-            createCategory(itemNo,shopNo,i.getCategory(),cpModel.getCategoryNo());
+            return createCategory(itemNo,shopNo,i.getCategory(),cpModel.getCategoryNo(),mocModel);
         }
+    }
+
+    @Override
+    public MallItem getOneDetailByItemNo(String itemNo) {
+        return baseMapper.getOneDetailByItemNo(itemNo);
+    }
+
+    @Override
+    public List<MallItem> getListByItemNos(List<String> itemNos) {
+        return baseMapper.getListByItemNos(itemNos);
     }
 
 }

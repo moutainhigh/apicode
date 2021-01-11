@@ -2,6 +2,7 @@ package com.ycandyz.master.dao.mall;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ycandyz.master.domain.model.mall.MallItemDetailModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
 import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
@@ -61,4 +62,10 @@ public interface MallItemHomeDao extends BaseMapper<MallItem> {
     int updateByItemNo(MallItem entity);
 
     int updateOrgByItemNo(MallItem entity);
+
+    MallItem getOneDetailByItemNo(String itemNo);
+
+    List<MallItem> getListByItemNos(List<String> itemNos);
+
+    int edit(MallItemDetailModel model);
 }

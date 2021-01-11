@@ -1,8 +1,11 @@
 package com.ycandyz.master.service.mall;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.domain.model.mall.MallItemDetailModel;
 import com.ycandyz.master.entities.mall.MallItemOrganize;
 import com.ycandyz.master.domain.model.mall.MallItemOrganizeModel;
+
+import java.util.List;
 
 /**
  * <p>
@@ -22,6 +25,10 @@ public interface IMallItemOrganizeService extends IService<MallItemOrganize>{
     boolean deleteOrg(MallItemOrganize t);
 
     boolean updateOrg(MallItemOrganize t);
+
+    boolean updateBatchOrg(List<Long> ids);
+
+    boolean edit(MallItemDetailModel model);
 
     MallItemOrganize organizeItemNoToItemNo(String organizeItemNo);
 }
