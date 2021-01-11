@@ -249,4 +249,68 @@
     <update id="edit">
         update mall_item set category_no = #{categoryNo} where item_no = #{itemNo}
     </update>
+
+    <select id="selectByCardId" resultType="java.lang.String">
+        select cmi.item_no from mall_item_card as cmi where cmi.is_del = 0 and cmi.card_id = #{cardId} order by cmi.id asc
+    </select>
+
+    <select id="selectSpreadPage" resultType="com.ycandyz.master.domain.response.mall.SpreadMallItemPageResp">
+        SELECT
+            mi.id as item_id,
+            mo.shop_no,
+            mo.item_no,
+            mo.is_copy,
+            mi.created_time,
+            mi.highest_sale_price,
+            mi.is_screen,
+            mi.item_cover,
+            mi.item_name,
+            mi.lowest_sale_price,
+            mi.lowest_sale_price sale_price,
+            mi.base_sales,
+            mi.real_sales,
+            mi.base_sales + mi.real_sales sales,
+            mi.price,
+            mi.stock,
+            mi.type,
+            mi.non_price_type,
+            mi.non_sale_price,
+            mi.non_price,
+            mi.qr_code_url,
+            mi.share_descr,
+            mi.share_img,
+            mi.share_method,
+            mi.share_rate,
+            mi.share_amount,
+            mi.is_enable_share
+        FROM
+            mall_item_organize mo
+                LEFT JOIN mall_item mi ON mo.organize_item_no = mi.item_no
+                INNER JOIN mall_shop ms ON ms.shop_no = mo.shop_no
+        WHERE
+          mi.STATUS = 10
+          AND ms.STATUS = 10
+          AND ms.operate_status = 10
+          AND mo.is_del = 0
+          AND ms.organize_id = #{q.organizeId}
+        <if test="q.queryType == 2">
+            and (mi.is_screen=0
+            <if test="q.cardIds != null and q.cardIds.size > 0 ">
+                or mi.item_no in
+                <foreach collection="q.cardIds" item="cardId" index="index" open="(" close=")" separator=",">
+                    #{cardId}
+                </foreach>
+            </if>
+            )
+        </if>
+        <if test="q.queryType != 2">
+            and mi.is_screen=0
+        </if>
+        <if test="q.cardIds != null and q.cardIds.size > 0">
+            order by mo.item_no in (#{q.cardIds}, 1, 0) desc,mo.create_time desc
+        </if>
+        <if test="q.cardIds == null or q.cardIds.size == 0">
+            order by mi.sort_value desc, mo.create_time desc
+        </if>
+    </select>
 </mapper>
