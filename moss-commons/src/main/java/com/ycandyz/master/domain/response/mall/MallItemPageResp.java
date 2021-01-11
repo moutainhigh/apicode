@@ -126,11 +126,14 @@ public class MallItemPageResp {
    @ApiModelProperty(name = "qr_code_url", value = "二维码")
    private String qrCodeUrl;
 
-   @ApiModelProperty(name = "is_organize",value = "是否集团供货(0否,1是)")
-   private Integer isOrganize;
+   @ApiModelProperty(name = "is_group_supply",value = "是否集团供货(0否,1是)")
+   private Integer isGroupSupply;
 
    @ApiModelProperty(name = "is_copy", value = "是否店铺自己数据(0:不是,1:是)")
    private Integer isCopy;
+
+   @ApiModelProperty(name = "editable", value = "是否可编辑(0:不是,1:是)")
+   private Integer editable;
 
 
 

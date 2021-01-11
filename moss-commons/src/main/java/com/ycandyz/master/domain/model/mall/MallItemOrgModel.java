@@ -37,8 +37,8 @@ public class MallItemOrgModel {
     @ApiModelProperty(name = "category_no",value = "分类编号")
     private String categoryNo;
 
-    @ApiModelProperty(name = "is_organize",value = "是否集团供货(0否,1是)")
-    private Integer isOrganize;
+    @ApiModelProperty(name = "is_group_supply",value = "是否集团供货(0否,1是)")
+    private Integer isGroupSupply;
 
     @ApiModelProperty(name = "is_all",value = "全部/指定(0全部,1指定)")
     private Integer isAll;

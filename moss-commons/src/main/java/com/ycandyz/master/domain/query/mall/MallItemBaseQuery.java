@@ -48,7 +48,7 @@ public class MallItemBaseQuery implements Serializable {
     @Condition(condition = ConditionEnum.LIKE)
     private Long couponId;
 
-    @ApiModelProperty(name = "is_organize",value = "是否集团供货(0否,1是)")
-    private Integer isOrganize;
+    @ApiModelProperty(name = "is_group_supply",value = "是否集团供货(0否,1是)")
+    private Integer isGroupSupply;
 
 }

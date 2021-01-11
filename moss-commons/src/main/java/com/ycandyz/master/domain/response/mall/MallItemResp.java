@@ -274,8 +274,8 @@ public class MallItemResp {
    @ApiModelProperty(name = "auditor_id", value = "审核人ID 待审核时为0")
    private Long auditorId;
 
-   @ApiModelProperty(name = "is_organize",value = "是否集团供货(0否,1是)")
-   private Integer isOrganize;
+   @ApiModelProperty(name = "is_group_supply",value = "是否集团供货(0否,1是)")
+   private Integer isGroupSupply;
 
    @ApiModelProperty(name = "is_all",value = "全部/指定(0全部,1指定)")
    private Integer isAll;
@@ -283,6 +283,8 @@ public class MallItemResp {
    @ApiModelProperty(name = "is_copy", value = "是否店铺自己数据(0:不是,1:是)")
    private Integer isCopy;
 
+   @ApiModelProperty(name = "editable", value = "是否可编辑(0:不是,1:是)")
+   private Integer editable;
 
    @ApiModelProperty(value = "商品Sku")
    @TableField(exist = false)
