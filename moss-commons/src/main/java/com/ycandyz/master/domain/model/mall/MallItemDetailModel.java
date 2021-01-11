@@ -18,7 +18,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class MallItemDetailModel {
 
-    @NotBlank(message = "商品编号不能为空",groups = {ValidatorContract.OnUpdate.class, ValidatorContract.OnCreate.class})
     @ApiModelProperty(name = "item_no",value = "商品编号")
     private String itemNo;
 
