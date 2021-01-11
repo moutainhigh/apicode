@@ -42,7 +42,7 @@
         </foreach>
     </select>
 
-    <select id="getByOrganizeId" resultType="com.ycandyz.master.entities.mall.MallShop">
+    <select id="getByOrganizeId" resultType="com.ycandyz.master.domain.response.mall.MallShopResp">
         SELECT ms.id,ms.shop_no,ms.shop_name
         FROM organize_group og
         LEFT JOIN organize_rel ol ON ol.group_organize_id = og.id
@@ -53,7 +53,7 @@
         AND ms.id is not null
     </select>
 
-    <select id="getByItemNo" resultType="com.ycandyz.master.entities.mall.MallShop">
+    <select id="getByItemNo" resultType="com.ycandyz.master.domain.response.mall.MallShopResp">
         SELECT ms.id,ms.shop_no,ms.shop_name
         FROM mall_item_organize mio
         LEFT JOIN mall_shop ms ON mio.shop_no = ms.shop_no

@@ -23,10 +23,7 @@ import com.ycandyz.master.domain.enums.organize.OrganizeEnum;
 import com.ycandyz.master.domain.model.mall.*;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
-import com.ycandyz.master.domain.response.mall.MallCategoryResp;
-import com.ycandyz.master.domain.response.mall.MallItemPageResp;
-import com.ycandyz.master.domain.response.mall.MallItemResp;
-import com.ycandyz.master.domain.response.mall.MallItemShareResp;
+import com.ycandyz.master.domain.response.mall.*;
 import com.ycandyz.master.dto.mall.MallShopDTO;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.entities.organize.Organize;
@@ -229,7 +226,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         //集团供货门店
         MallItemEnum.IsAll isAll = MallItemEnum.IsAll.parseCode(vo.getIsAll());
         if(isAll.getCode() == MallItemEnum.IsAll.Type_1.getCode()){
-            List<String> shopNoList = mallShopDao.getByItemNo(itemNo).stream().map(MallShop::getShopNo).collect(Collectors.toList());
+            List<String> shopNoList = mallShopDao.getByItemNo(itemNo).stream().map(MallShopResp::getShopNo).collect(Collectors.toList());
             vo.setShopNoList(shopNoList);
         }
         return vo;
@@ -805,7 +802,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             //全部门店，查询遍历，处理商品分类，存在则归类，不存在则创建
             MallCategoryResp mc = mallCategoryService.getByChildCategoryNo(null,model.getCategoryNo());
             if(MallItemEnum.IsAll.Type_0.getCode().equals(isAll.getCode())){
-                List<String> shopList = mallShopDao.getByOrganizeId(getOrganizeId()).stream().map(MallShop::getShopNo).collect(Collectors.toList());
+                List<String> shopList = mallShopDao.getByOrganizeId(getOrganizeId()).stream().map(MallShopResp::getShopNo).collect(Collectors.toList());
                 shopList.forEach(shopNo -> {
                     MallItemOrganizeCategoryModel moc = createCategory(model.getItemNo(),shopNo,mc,"",new MallItemOrganizeCategoryModel());
                     if(CollectionUtil.isNotEmpty(moc.getMclist())){
