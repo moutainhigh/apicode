@@ -797,6 +797,9 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 .eq(MallShop::getShopNo,getShopNo());
         MallShop shop = mallShopDao.selectOne(shopWrapper);
         Organize organize = organizeService.getById(shop.getOrganizeId());
+        List<MallCategory> mclist = new ArrayList<>();
+        List<MallItemOrganize> addIolist = new ArrayList<>();
+        List<MallItemOrganize> updateIolist = new ArrayList<>();
         //是集团，判断是否开启 集团供货
         if(organize.getIsGroup() == OrganizeEnum.IsGroup.Type_1.getCode() && isGroupSupply.getCode().equals(MallItemEnum.IsGroupSupply.Type_1.getCode())){
             //全部门店，查询遍历，处理商品分类，存在则归类，不存在则创建
@@ -806,20 +809,38 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
                 shopList.forEach(shopNo -> {
                     MallItemOrganizeCategoryModel moc = createCategory(model.getItemNo(),shopNo,mc,"",new MallItemOrganizeCategoryModel());
                     if(CollectionUtil.isNotEmpty(moc.getMclist())){
-                        mallCategoryService.insertBatch(moc.getMclist());
+                        mclist.addAll(moc.getMclist());
                     }
                     if(CollectionUtil.isNotEmpty(moc.getAddIolist())){
-                        mallItemOrganizeService.insertBatch(moc.getAddIolist());
+                        addIolist.addAll(moc.getAddIolist());
                     }
                     if(CollectionUtil.isNotEmpty(moc.getUpdateIolist())){
-                        List<Long> ids = moc.getUpdateIolist().stream().map(MallItemOrganize::getId).collect(Collectors.toList());
-                        mallItemOrganizeService.updateBatchOrg(ids);
+                        updateIolist.addAll(moc.getUpdateIolist());
                     }
                 });
             }else {//指定门店，遍历，处理商品分类，存在则归类，不存在则创建
                 model.getShopNos().forEach(shopNo -> {
                     MallItemOrganizeCategoryModel moc = createCategory(model.getItemNo(),shopNo,mc,"",new MallItemOrganizeCategoryModel());
+                    if(CollectionUtil.isNotEmpty(moc.getMclist())){
+                        mclist.addAll(moc.getMclist());
+                    }
+                    if(CollectionUtil.isNotEmpty(moc.getAddIolist())){
+                        addIolist.addAll(moc.getAddIolist());
+                    }
+                    if(CollectionUtil.isNotEmpty(moc.getUpdateIolist())){
+                        updateIolist.addAll(moc.getUpdateIolist());
+                    }
                 });
+            }
+            if(CollectionUtil.isNotEmpty(mclist)){
+                mallCategoryService.insertBatch(mclist);
+            }
+            if(CollectionUtil.isNotEmpty(addIolist)){
+                mallItemOrganizeService.insertBatch(addIolist);
+            }
+            if(CollectionUtil.isNotEmpty(updateIolist)){
+                List<Long> ids = updateIolist.stream().map(MallItemOrganize::getId).collect(Collectors.toList());
+                mallItemOrganizeService.updateBatchOrg(ids);
             }
         }
 
