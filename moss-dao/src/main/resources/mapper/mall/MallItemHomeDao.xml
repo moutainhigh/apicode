@@ -70,9 +70,10 @@
     <select id="selectMallItemPage" resultType="com.ycandyz.master.domain.response.mall.MallItemBaseResp">
         SELECT
            t.id,
-           t.item_no,
+           o.item_no,
            t.item_name,
-           t.status,t.item_cover,
+           t.status,
+           t.item_cover,
            t.price,
            t.lowest_sale_price,
            t.highest_sale_price,
@@ -80,14 +81,14 @@
            t.real_sales,
            t.item_text,
            t.stock,
-           t.category_no,
+           o.category_no,
            t.goods_no
-        FROM mall_item t
+        FROM mall_item t left join mall_item_organize o on t.item_no=o.organize_item_no
         WHERE 1=1
-        AND t.status = 10
+        AND t.status = 10 and o.is_del=0 and o.is_copy=1
         <if test="query.itemName != null"> and t.item_name like CONCAT('%',#{query.itemName},'%') </if>
-        <if test="query.shopNo != null and query.shopNo != ''"> and t.shop_no = #{query.shopNo} </if>
-        <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
+        <if test="query.shopNo != null and query.shopNo != ''"> and o.shop_no = #{query.shopNo} </if>
+        <if test="query.categoryNo != null and query.categoryNo != ''"> and o.category_no = #{query.categoryNo} </if>
     </select>
 
     <select id="selectMallItemById" resultType="com.ycandyz.master.entities.mall.MallItem">
@@ -125,7 +126,7 @@
     <select id="selectMallItemPageByCouponId" resultType="com.ycandyz.master.domain.response.mall.MallItemBaseResp">
         SELECT
             t.id,
-            t.item_no,
+            o.item_no,
             t.item_name,
             t.status,t.item_cover,
             t.price ,
@@ -135,17 +136,18 @@
             t.real_sales,
             t.item_text,
             t.stock,
-            t.category_no,
+            o.category_no,
             t.goods_no
         FROM coupon_detail detail
         left join coupon_detail_item cditem on detail.id=cditem.coupon_detail_id
-        left join mall_item t on cditem.item_no=t.item_no
+        left join mall_item_organize o on cditem.item_no=o.item_no
+        left join mall_item t on t.item_no=o.organize_item_no
         WHERE 1=1
-        AND t.status = 10 and detail.status=1
+        AND t.status = 10 and detail.status=1 and o.is_del=0 and o.is_copy=1
         <if test="query.couponId != null"> and detail.coupon_id=#{query.couponId} </if>
         <if test="query.itemName != null and query.itemName!=''"> and t.item_name like CONCAT('%',#{query.itemName},'%') </if>
-        <if test="query.shopNo != null and query.shopNo != ''"> and t.shop_no = #{query.shopNo} </if>
-        <if test="query.categoryNo != null and query.categoryNo != ''"> and t.category_no = #{query.categoryNo} </if>
+        <if test="query.shopNo != null and query.shopNo != ''"> and o.shop_no = #{query.shopNo} </if>
+        <if test="query.categoryNo != null and query.categoryNo != ''"> and o.category_no = #{query.categoryNo} </if>
     </select>
     <select id="getMallItemPage" resultType="com.ycandyz.master.domain.response.mall.MallItemPageResp">
         SELECT
