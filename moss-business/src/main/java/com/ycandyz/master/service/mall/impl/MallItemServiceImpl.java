@@ -9,7 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.ycandyz.master.api.BasePageResult;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.mall.MallItemHomeDao;
@@ -948,7 +948,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
     }
 
 
-    public Page<SpreadMallItemPageResp> selectSpreadPage(Page<MallItem> page, MallItemQuery query) {
+    public SpreadMallItemPageResp selectSpreadPage(Page<MallItem> page, MallItemQuery query) {
         AssertUtils.notNull(query.getCardId(), "名片编号不能为空！");
         AssertUtils.notNull(query.getQueryType(), "查询类型不能为空！");
         Long organizeId = getUser().getOrganizeId();
@@ -958,6 +958,45 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             mallItemList = baseMapper.selectByCardId(query.getCardId());
         }
         query.setCardIds(mallItemList);
-        return baseMapper.selectSpreadPage(page, query);
+        List<SpreadMallItemShopInfoResp> shopInfoResps = baseMapper.selectShopInfos(query);
+        List<String> itemNos = new ArrayList<>();
+        SpreadMallItemPageResp resultData = new SpreadMallItemPageResp();
+        if (CollectionUtil.isNotEmpty(shopInfoResps)) {
+            shopInfoResps.forEach(vo -> itemNos.add(vo.getItemNo() != null ? vo.getItemNo().toString() : ""));
+            query.setCardIds(itemNos);
+            Page<SpreadMallItemPageRespInfo> spreadMallItemPageRespInfoPage = baseMapper.selectSpreadPage(page, query);
+            List<SpreadMallItemPageRespInfo> records = spreadMallItemPageRespInfoPage.getRecords();
+            records.forEach(vo -> {
+                vo.setSales(vo.getBaseSales()+vo.getRealSales());
+                BigDecimal highestSalePrice = vo.getHighestSalePrice();
+                BigDecimal lowestSalePrice = vo.getLowestSalePrice();
+                if (null == highestSalePrice && null == lowestSalePrice) {
+                    vo.setSalePrice(new BigDecimal(0));
+                } else if (null == highestSalePrice) {
+                    vo.setSalePrice(lowestSalePrice);
+                } else if (null == lowestSalePrice) {
+                    vo.setSalePrice(highestSalePrice);
+                } else if (lowestSalePrice.compareTo(highestSalePrice) < 1) {
+                    vo.setSalePrice(lowestSalePrice);
+                } else {
+                    vo.setSalePrice(highestSalePrice);
+                }
+                if (vo.getGlobalIsEnable() == 0) {
+                    vo.setIsUpdatedShare(0);
+                } else if (vo.getGlobalIsEnable() == 1) {
+                    if (vo.getIsUpdatedShare() == 0) {
+                        vo.setIsEnableShare(1);
+                        vo.setShareMethod(vo.getGlobalShareMethod());
+                    }
+                } else {
+                    vo.setIsEnableShare(0);
+                    vo.setShareMethod(vo.getShareMethod() != null ? vo.getShareMethod() : 0);
+                }
+            });
+            spreadMallItemPageRespInfoPage.setRecords(records);
+            resultData.setRes(new BasePageResult<>(spreadMallItemPageRespInfoPage));
+            resultData.setShopInfo(shopInfoResps.get(0));
+        }
+        return resultData;
     }
 }

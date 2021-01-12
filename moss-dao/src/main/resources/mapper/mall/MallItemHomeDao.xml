@@ -254,35 +254,9 @@
         select cmi.item_no from mall_item_card as cmi where cmi.is_del = 0 and cmi.card_id = #{cardId} order by cmi.id asc
     </select>
 
-    <select id="selectSpreadPage" resultType="com.ycandyz.master.domain.response.mall.SpreadMallItemPageResp">
+    <select id="selectShopInfos" resultType="com.ycandyz.master.domain.response.mall.SpreadMallItemShopInfoResp">
         SELECT
-            mi.id as item_id,
-            mo.shop_no,
-            mo.item_no,
-            mo.is_copy,
-            mi.created_time,
-            mi.highest_sale_price,
-            mi.is_screen,
-            mi.item_cover,
-            mi.item_name,
-            mi.lowest_sale_price,
-            mi.lowest_sale_price sale_price,
-            mi.base_sales,
-            mi.real_sales,
-            mi.base_sales + mi.real_sales sales,
-            mi.price,
-            mi.stock,
-            mi.type,
-            mi.non_price_type,
-            mi.non_sale_price,
-            mi.non_price,
-            mi.qr_code_url,
-            mi.share_descr,
-            mi.share_img,
-            mi.share_method,
-            mi.share_rate,
-            mi.share_amount,
-            mi.is_enable_share
+        mo.item_no, mo.shop_no, ms.shop_name, ms.status, ms.operate_status
         FROM
             mall_item_organize mo
                 LEFT JOIN mall_item mi ON mo.organize_item_no = mi.item_no
@@ -307,10 +281,54 @@
             and mi.is_screen=0
         </if>
         <if test="q.cardIds != null and q.cardIds.size > 0">
-            order by mo.item_no in (#{q.cardIds}, 1, 0) desc,mo.create_time desc
+            order by mo.item_no in (#{q.cardIds}, 1, 0) desc,mi.created_time desc
         </if>
         <if test="q.cardIds == null or q.cardIds.size == 0">
-            order by mi.sort_value desc, mo.create_time desc
+            order by mi.sort_value desc, mi.created_time desc
         </if>
+    </select>
+    <select id="selectSpreadPage" resultType="com.ycandyz.master.domain.response.mall.SpreadMallItemPageRespInfo">
+        SELECT
+            mi.id AS item_id,
+            mi.sort_value,
+            mo.item_no,
+            mo.shop_no,
+            mi.item_name,
+            mi.item_cover,
+            mi.share_descr,
+            mi.share_img,
+            mi.base_sales,
+            mi.real_sales,
+            mi.lowest_sale_price,
+            mi.highest_sale_price,
+            mi.price,
+            mi.is_screen,
+            mi.stock,
+            mi.share_method,
+            mi.share_rate,
+            mi.share_amount,
+            mi.is_enable_share,
+            mi.is_updated_share,
+            mss.is_enable AS global_is_enable,
+            mss.share_method AS global_share_method,
+            mss.share_rate AS global_share_rate,
+            mss.share_amount AS global_share_amount,
+            mi.type,
+            mi.non_price_type,
+            mi.non_sale_price,
+            mi.non_price
+        FROM
+            mall_item_organize mo
+                LEFT JOIN mall_item AS mi ON mi.item_no = mo.organize_item_no
+                LEFT JOIN mall_social_setting AS mss ON mss.shop_no = mi.shop_no
+        WHERE
+            mi.status = 10 AND mo.is_del = 0
+        <if test="q.cardIds != null and q.cardIds.size > 0 ">
+            AND mo.item_no IN
+            <foreach collection="q.cardIds" item="cardId" index="index" open="(" close=")" separator=",">
+                #{cardId}
+            </foreach>
+        </if>
+        order by mi.sort_value desc,mi.created_time desc
     </select>
 </mapper>
