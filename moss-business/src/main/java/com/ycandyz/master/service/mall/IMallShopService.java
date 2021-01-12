@@ -2,6 +2,7 @@ package com.ycandyz.master.service.mall;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ycandyz.master.domain.response.mall.MallShopResp;
 import com.ycandyz.master.entities.mall.MallItem;
 import com.ycandyz.master.entities.mall.MallShop;
 import org.apache.ibatis.annotations.Param;
@@ -19,8 +20,8 @@ import java.util.List;
  */
 public interface IMallShopService extends IService<MallShop>{
 
-    Page<MallShop> getByOrganizeId(Page<MallShop> page);
+    Page<MallShopResp> getByOrganizeId(Page<MallShop> page);
 
-    Page<MallShop> getByItemNo(Page<MallShop> page, String itemNo);
+    Page<MallShopResp> getByItemNo(Page<MallShop> page, String itemNo);
 	
 }
