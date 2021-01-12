@@ -23,31 +23,32 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
- *
- * @author SanGang
- * @version 2.0
  * @Description 商品表 接口类
  * </p>
+ *
+ * @author SanGang
  * @since 2020-10-13
+ * @version 2.0
  */
 
-@ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM, ApiVersionConstant.API_MALL_ITEM_100})
+@ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM})
 @Slf4j
 @RestController
 @RequestMapping("pms/product")
-@Api(tags = "mall-商品")
-public class MallItemController extends BaseController<MallItemServiceImpl, MallItem, MallItemBaseQuery> {
-
-    @ApiOperation(value = "新增")
+@Api(tags="集团供货")
+public class MallItemController extends BaseController<MallItemServiceImpl,MallItem, MallItemBaseQuery> {
+	
+	@ApiOperation(value="新增")
     @PostMapping()
-    public CommonResult insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemModel entity) {
+	public CommonResult insert(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemModel entity) {
         return service.insert(entity);
-    }
+	}
 
-    @ApiOperation(value = "集团供货-新增")
+    @ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM_100})
+    @ApiOperation(tags = "集团供货",value="集团供货-新增")
     @PostMapping(value = "organize")
     public CommonResult insertOrg(@Validated(ValidatorContract.OnCreate.class) @RequestBody MallItemOrgModel model) {
-        return result(service.addOrganize(model), model, "更改失败!");
+        return result(service.addOrganize(model),model,"更改失败!");
     }
 
     @ApiOperation(value = "通过ID")
@@ -55,51 +56,54 @@ public class MallItemController extends BaseController<MallItemServiceImpl, Mall
     public CommonResult<MallItem> getById(@PathVariable Long id) {
         return CommonResult.success(service.getById(id));
     }
-
-    @ApiOperation(value = "通过ID更新")
+	
+	@ApiOperation(value = "通过ID更新")
     @PutMapping(value = "{item_no}")
-    public CommonResult updateById(@PathVariable String item_no, @Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemModel entity) {
+	public CommonResult updateById(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemModel entity) {
         entity.setItemNo(item_no);
         return service.update(entity);
-    }
+	}
 
     @ApiOperation(value = "上架/下架商品")
     @PutMapping(value = "shelf")
     public CommonResult shelfById(@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemShelfModel entity) {
         return service.shelf(entity);
     }
-
-    @ApiOperation(value = "查询根据ID")
+	
+	@ApiOperation(value = "查询根据ID")
     @GetMapping(value = "{item_no}")
-    public CommonResult<MallItemResp> getById(@PathVariable String item_no) {
+	public CommonResult<MallItemResp> getById(@PathVariable String item_no) {
         return CommonResult.success(service.getByItemNo(item_no));
     }
-
-    @ApiOperation(value = "查询分页")
+    
+	@ApiOperation(value = "查询分页")
     @GetMapping()
     @SuppressWarnings("unchecked")
     public CommonResult<BasePageResult<MallItemPageResp>> selectPage(PageModel page, MallItemQuery query) {
-        return CommonResult.success(new BasePageResult(service.getMallItemPage(new Page(page.getPage(), page.getPageSize()), query)));
+        return CommonResult.success(new BasePageResult(service.getMallItemPage(new Page(page.getPage(),page.getPageSize()),query)));
     }
-
+    
     @ApiOperation(value = "通过ID删除")
     @DeleteMapping(value = "{item_no}")
-    public CommonResult deleteById(@PathVariable String item_no) {
+	public CommonResult deleteById(@PathVariable String item_no) {
         return service.deleteByItemNo(item_no);
-    }
+	}
 
-    @ApiOperation(value = "更新商品分销")
+    @ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM_100})
+    @ApiOperation(tags = "集团供货",value = "更新商品分销")
     @PutMapping(value = "share/{item_no}")
-    public CommonResult updateShareById(@PathVariable String item_no, @Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemShareModel model) {
+    public CommonResult updateShareById(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemShareModel model) {
         model.setItemNo(item_no);
-        return result(service.updateShareByItemNo(model), model, "更改失败!");
+        return result(service.updateShareByItemNo(model),model,"更改失败!");
     }
 
-    @ApiOperation(value = "商品分销信息")
+    @ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM_100})
+    @ApiOperation(tags = "集团供货",value = "商品分销信息")
     @GetMapping(value = "share/{item_no}")
     public CommonResult<MallItemShareResp> getShareById(@PathVariable String item_no) {
         return CommonResult.success(service.getShareByItemNo(item_no));
     }
+
 
     @ApiOperation(value = "传播查询分页")
     @GetMapping("/spread")
@@ -107,12 +111,12 @@ public class MallItemController extends BaseController<MallItemServiceImpl, Mall
         SpreadMallItemPageResp spreadMallItemPageResp = service.selectSpreadPage(new Page(page.getPage(), page.getPageSize()), query);
         return OtherResult.success(spreadMallItemPageResp.getRes(),spreadMallItemPageResp.getShopInfo());
     }
-
-    @ApiOperation(value = "根据商品编号更改商品分类")
+    @ApiVersion(group = {ApiVersionConstant.API_MALL_ITEM_100})
+    @ApiOperation(tags = "集团供货",value = "根据商品编号更改商品分类")
     @PutMapping("{item_no}/category")
-    public CommonResult edit(@PathVariable String item_no, @Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemDetailModel model) {
+    public CommonResult edit(@PathVariable String item_no,@Validated(ValidatorContract.OnUpdate.class) @RequestBody MallItemDetailModel model){
         model.setItemNo(item_no);
-        return result(service.edit(model), null, "更改失败!");
+        return result(service.edit(model),null,"更改失败!");
     }
 
 
