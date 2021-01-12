@@ -1,6 +1,5 @@
 package com.ycandyz.master.utils;
 
-import com.ycandyz.master.constant.PrefixConstant;
 import com.ycandyz.master.utils.id.SnowflakeIdHelper;
 import org.springframework.beans.factory.annotation.Value;
 
