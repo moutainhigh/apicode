@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallItemRecommendRelationDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.MallItemRecommendRelation">
+        <id column="id" property="id" />
+        <result column="item_recommend_setting_no" property="itemRecommendSettingNo" />
+        <result column="item_recommend_relation_no" property="itemRecommendRelationNo" />
+        <result column="item_no" property="itemNo" />
+        <result column="status" property="status" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, item_recommend_setting_no, item_recommend_relation_no, item_no, status, created_time, updated_time
+    </sql>
+
+</mapper>
