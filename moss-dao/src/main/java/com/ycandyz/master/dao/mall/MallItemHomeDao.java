@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.domain.model.mall.MallItemDetailModel;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
-import com.ycandyz.master.domain.response.mall.MallItemBaseResp;
-import com.ycandyz.master.domain.response.mall.MallItemPageResp;
-import com.ycandyz.master.domain.response.mall.MallItemResp;
-import com.ycandyz.master.domain.response.mall.SpreadMallItemPageResp;
+import com.ycandyz.master.domain.response.mall.*;
 import com.ycandyz.master.dto.mall.MallItemDTO;
 import com.ycandyz.master.entities.mall.MallItem;
 import org.apache.ibatis.annotations.Param;
@@ -72,5 +69,8 @@ public interface MallItemHomeDao extends BaseMapper<MallItem> {
 
     List<String> selectByCardId(@Param("cardId")Integer cardId);
 
-    Page<SpreadMallItemPageResp> selectSpreadPage(Page page, @Param("q") MallItemQuery query);
+    List<SpreadMallItemShopInfoResp> selectShopInfos(@Param("q") MallItemQuery query);
+
+    Page<SpreadMallItemPageRespInfo> selectSpreadPage(Page page, @Param("q") MallItemQuery query);
+
 }
