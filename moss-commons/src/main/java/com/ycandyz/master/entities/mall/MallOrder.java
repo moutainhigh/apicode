@@ -132,4 +132,7 @@ public class MallOrder extends Model {
 	/**订单类型 1->神州通*/
 	@ApiModelProperty(value = "订单类型 1->神州通")
 	private Integer orderType;
+	/**是否集团供货,0-否，1-是*/
+	@ApiModelProperty(value = "是否集团供货,0-否，1-是")
+	private Integer isGroupSupply;
 }
