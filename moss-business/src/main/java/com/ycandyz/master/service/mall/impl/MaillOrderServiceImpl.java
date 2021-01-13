@@ -1408,10 +1408,12 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null) {
 
-            //判断当前企业是否有权限操作该订单
-            boolean checkd = checkOrder(userVO.getOrganizeId());
-            if (!checkd){
-                return ReturnResponse.failed("当前企业无权进行操作");
+            if (mallOrderDTO.getIsGroupSupply()==1) {
+                //判断当前企业是否有权限操作该订单
+                boolean checkd = checkOrder(userVO.getOrganizeId());
+                if (!checkd) {
+                    return ReturnResponse.failed("当前企业无权进行操作");
+                }
             }
 
             if (mallOrderDTO.getStatus() == 30 && mallOrderDTO.getSubStatus() == 3010) {
@@ -1713,10 +1715,12 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(mallPickupUAppQuery.getPickupNo(), userVO.getShopNo());
         if (mallOrderDTO!=null){
 
-            //判断当前企业是否有权限操作该订单
-            boolean checkd = checkOrder(userVO.getOrganizeId());
-            if (!checkd){
-                return ReturnResponse.failed("当前企业无权进行操作");
+            if (mallOrderDTO.getIsGroupSupply()==1) {   //集团供货
+                //判断当前企业是否有权限操作该订单
+                boolean checkd = checkOrder(userVO.getOrganizeId());
+                if (!checkd) {
+                    return ReturnResponse.failed("当前企业无权进行操作");
+                }
             }
 
             //判断pickNo查询到订单是否是orderNo的订单
