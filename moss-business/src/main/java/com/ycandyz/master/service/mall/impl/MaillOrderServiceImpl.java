@@ -825,6 +825,15 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null){
+
+            if (mallOrderDTO.getIsGroupSupply()==1) {   //集团供货
+                //判断当前企业是否有权限操作该订单
+                boolean checkd = checkOrder(userVO.getOrganizeId());
+                if (!checkd) {
+                    return ReturnResponse.failed("当前企业无权进行操作");
+                }
+            }
+
             //判断pickNo查询到订单是否是orderNo的订单
             if (StringUtils.isNotEmpty(orderNo)){
                 //orderNo不为空，说明是订单详情中进行的订单校验
@@ -889,6 +898,15 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
 //        MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByOrderNo(orderNo, userVO.getShopNo());
         MallOrderDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNo(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null){
+
+            if (mallOrderDTO.getIsGroupSupply()==1) {   //集团供货
+                //判断当前企业是否有权限操作该订单
+                boolean checkd = checkOrder(userVO.getOrganizeId());
+                if (!checkd) {
+                    return ReturnResponse.failed("当前企业无权进行操作");
+                }
+            }
+
             //判断pickNo查询到订单是否是orderNo的订单
             if (StringUtils.isNotEmpty(orderNo)){
                 //orderNo不为空，说明是订单详情中进行的订单校验
@@ -1389,6 +1407,15 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         UserVO userVO = getUser();  //获取当前登陆用户
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(pickupNo, userVO.getShopNo());
         if (mallOrderDTO!=null) {
+
+            if (mallOrderDTO.getIsGroupSupply()==1) {
+                //判断当前企业是否有权限操作该订单
+                boolean checkd = checkOrder(userVO.getOrganizeId());
+                if (!checkd) {
+                    return ReturnResponse.failed("当前企业无权进行操作");
+                }
+            }
+
             if (mallOrderDTO.getStatus() == 30 && mallOrderDTO.getSubStatus() == 3010) {
                 //判断pickNo查询到订单是否是orderNo的订单
                 if (StringUtils.isNotEmpty(orderNo)) {
@@ -1687,6 +1714,15 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         UserVO userVO = getUser();
         MallOrderUAppDTO mallOrderDTO = mallOrderDao.queryDetailByPickupNoUApp(mallPickupUAppQuery.getPickupNo(), userVO.getShopNo());
         if (mallOrderDTO!=null){
+
+            if (mallOrderDTO.getIsGroupSupply()==1) {   //集团供货
+                //判断当前企业是否有权限操作该订单
+                boolean checkd = checkOrder(userVO.getOrganizeId());
+                if (!checkd) {
+                    return ReturnResponse.failed("当前企业无权进行操作");
+                }
+            }
+
             //判断pickNo查询到订单是否是orderNo的订单
             if (StringUtils.isNotEmpty(mallPickupUAppQuery.getOrderNo())){
                 //orderNo不为空，说明是订单详情中进行的订单校验
@@ -1796,5 +1832,29 @@ public class MaillOrderServiceImpl extends BaseService<MallOrderDao, MallOrder, 
         }
 
         return CommonResult.success(basePageResult);
+    }
+
+    /**
+     * 校验企业是否有权限操作该订单
+     * @param organizeId
+     * @return
+     */
+    private boolean checkOrder(Long organizeId) {
+        Organize organize = organizeDao.selectById(organizeId);
+        if (organize!=null){
+            if (organize.getIsGroup()==1){
+                return true;
+            }
+            OrganizeRel organizeRel = organizeRelDao.selectOne(new QueryWrapper<OrganizeRel>().eq("organize_id",organizeId).eq("status",2));
+            if (organizeRel!=null){
+                OrganizeGroup organizeGroup = organizeGroupDao.selectOne(new QueryWrapper<OrganizeGroup>().eq("organize_id",organizeRel.getGroupOrganizeId()));
+                if (organizeGroup!=null){
+                    if (organizeGroup.getIsOpenMaintainable()){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
