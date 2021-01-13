@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycandyz.master.dao.mall.MallItemRecommendSettingDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ycandyz.master.entities.mall.MallItemRecommendSetting">
+        <id column="id" property="id" />
+        <result column="shop_no" property="shopNo" />
+        <result column="item_recommend_no" property="itemRecommendNo" />
+        <result column="item_recommend_setting_no" property="itemRecommendSettingNo" />
+        <result column="show_name" property="showName" />
+        <result column="is_recommend" property="isRecommend" />
+        <result column="recommend_way" property="recommendWay" />
+        <result column="recommend_type" property="recommendType" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_time" property="updatedTime" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_no, item_recommend_no, item_recommend_setting_no, show_name, is_recommend, recommend_way, recommend_type, created_time, updated_time
+    </sql>
+    <select id="getList" resultType="com.ycandyz.master.domain.response.mall.MallItemRecommendRelationResp">
+        SELECT
+            i.item_no,
+            i.item_name,
+            i.item_cover
+        FROM
+            mall_item_recommend_relation r
+                LEFT JOIN mall_item_organize o ON r.item_no = o.item_no
+                LEFT JOIN mall_item i ON o.organize_item_no = i.item_no
+        WHERE
+            r.item_recommend_setting_no = #{settingNo} and r.`status` = 1 order by r.id asc
+    </select>
+
+</mapper>

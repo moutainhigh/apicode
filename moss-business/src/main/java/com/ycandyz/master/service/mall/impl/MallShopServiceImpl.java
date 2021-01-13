@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.domain.enums.mall.MallItemOriganizeEnum;
+import com.ycandyz.master.domain.response.mall.MallShopResp;
 import com.ycandyz.master.entities.mall.MallItemOrganize;
 import com.ycandyz.master.entities.mall.MallShop;
 import com.ycandyz.master.domain.query.mall.MallShopQuery;
@@ -43,7 +44,7 @@ public class MallShopServiceImpl extends BaseService<MallShopDao,MallShop,MallSh
     private OrganizeServiceImpl organizeService;
 
     @Override
-    public Page<MallShop> getByOrganizeId(Page<MallShop> page) {
+    public Page<MallShopResp> getByOrganizeId(Page<MallShop> page) {
         Organize o = organizeService.getById(getOrganizeId());
         if(o == null || o.getIsGroup() == 0){
             AssertUtils.isTrue(false, "该账号不是集团账号，不能执行此操作");
@@ -52,7 +53,7 @@ public class MallShopServiceImpl extends BaseService<MallShopDao,MallShop,MallSh
     }
 
     @Override
-    public Page<MallShop> getByItemNo(Page<MallShop> page, String itemNo) {
+    public Page<MallShopResp> getByItemNo(Page<MallShop> page, String itemNo) {
         if(StrUtil.isEmpty(itemNo)){
             return getByOrganizeId(page);
         }

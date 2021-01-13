@@ -9,7 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.ycandyz.master.api.BasePageResult;
 import com.ycandyz.master.api.CommonResult;
 import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.dao.mall.MallItemHomeDao;
@@ -23,10 +23,7 @@ import com.ycandyz.master.domain.enums.organize.OrganizeEnum;
 import com.ycandyz.master.domain.model.mall.*;
 import com.ycandyz.master.domain.query.mall.MallItemBaseQuery;
 import com.ycandyz.master.domain.query.mall.MallItemQuery;
-import com.ycandyz.master.domain.response.mall.MallCategoryResp;
-import com.ycandyz.master.domain.response.mall.MallItemPageResp;
-import com.ycandyz.master.domain.response.mall.MallItemResp;
-import com.ycandyz.master.domain.response.mall.MallItemShareResp;
+import com.ycandyz.master.domain.response.mall.*;
 import com.ycandyz.master.dto.mall.MallShopDTO;
 import com.ycandyz.master.entities.mall.*;
 import com.ycandyz.master.entities.organize.Organize;
@@ -225,11 +222,10 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         vo.setQrCodeUrl(FileUtil.unicodetoString(vo.getQrCodeUrl()));
         vo.setItemNo(itemNo);
         vo.setIsCopy(mio.getIsCopy());
-        vo.setEditable(mio.getIsCopy());
         //集团供货门店
         MallItemEnum.IsAll isAll = MallItemEnum.IsAll.parseCode(vo.getIsAll());
         if(isAll.getCode() == MallItemEnum.IsAll.Type_1.getCode()){
-            List<String> shopNoList = mallShopDao.getByItemNo(itemNo).stream().map(MallShop::getShopNo).collect(Collectors.toList());
+            List<String> shopNoList = mallShopDao.getByItemNo(itemNo).stream().map(MallShopResp::getShopNo).collect(Collectors.toList());
             vo.setShopNoList(shopNoList);
         }
         return vo;
@@ -805,7 +801,7 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
             //全部门店，查询遍历，处理商品分类，存在则归类，不存在则创建
             MallCategoryResp mc = mallCategoryService.getByChildCategoryNo(null,model.getCategoryNo());
             if(MallItemEnum.IsAll.Type_0.getCode().equals(isAll.getCode())){
-                List<String> shopList = mallShopDao.getByOrganizeId(getOrganizeId()).stream().map(MallShop::getShopNo).collect(Collectors.toList());
+                List<String> shopList = mallShopDao.getByOrganizeId(getOrganizeId()).stream().map(MallShopResp::getShopNo).collect(Collectors.toList());
                 shopList.forEach(shopNo -> {
                     MallItemOrganizeCategoryModel moc = createCategory(model.getItemNo(),shopNo,mc,"",new MallItemOrganizeCategoryModel());
                     if(CollectionUtil.isNotEmpty(moc.getMclist())){
@@ -951,4 +947,56 @@ public class MallItemServiceImpl extends BaseService<MallItemHomeDao, MallItem, 
         return baseMapper.getListByItemNos(itemNos);
     }
 
+
+    public SpreadMallItemPageResp selectSpreadPage(Page<MallItem> page, MallItemQuery query) {
+        AssertUtils.notNull(query.getCardId(), "名片编号不能为空！");
+        AssertUtils.notNull(query.getQueryType(), "查询类型不能为空！");
+        Long organizeId = getUser().getOrganizeId();
+        query.setOrganizeId(organizeId);
+        List<String> mallItemList = new ArrayList<>();
+        if (query.getCardId() > 0) {
+            mallItemList = baseMapper.selectByCardId(query.getCardId());
+        }
+        query.setCardIds(mallItemList);
+        List<SpreadMallItemShopInfoResp> shopInfoResps = baseMapper.selectShopInfos(query);
+        List<String> itemNos = new ArrayList<>();
+        SpreadMallItemPageResp resultData = new SpreadMallItemPageResp();
+        if (CollectionUtil.isNotEmpty(shopInfoResps)) {
+            shopInfoResps.forEach(vo -> itemNos.add(vo.getItemNo() != null ? vo.getItemNo().toString() : ""));
+            query.setCardIds(itemNos);
+            Page<SpreadMallItemPageRespInfo> spreadMallItemPageRespInfoPage = baseMapper.selectSpreadPage(page, query);
+            List<SpreadMallItemPageRespInfo> records = spreadMallItemPageRespInfoPage.getRecords();
+            records.forEach(vo -> {
+                vo.setSales(vo.getBaseSales()+vo.getRealSales());
+                BigDecimal highestSalePrice = vo.getHighestSalePrice();
+                BigDecimal lowestSalePrice = vo.getLowestSalePrice();
+                if (null == highestSalePrice && null == lowestSalePrice) {
+                    vo.setSalePrice(new BigDecimal(0));
+                } else if (null == highestSalePrice) {
+                    vo.setSalePrice(lowestSalePrice);
+                } else if (null == lowestSalePrice) {
+                    vo.setSalePrice(highestSalePrice);
+                } else if (lowestSalePrice.compareTo(highestSalePrice) < 1) {
+                    vo.setSalePrice(lowestSalePrice);
+                } else {
+                    vo.setSalePrice(highestSalePrice);
+                }
+                if (vo.getGlobalIsEnable() == 0) {
+                    vo.setIsUpdatedShare(0);
+                } else if (vo.getGlobalIsEnable() == 1) {
+                    if (vo.getIsUpdatedShare() == 0) {
+                        vo.setIsEnableShare(1);
+                        vo.setShareMethod(vo.getGlobalShareMethod());
+                    }
+                } else {
+                    vo.setIsEnableShare(0);
+                    vo.setShareMethod(vo.getShareMethod() != null ? vo.getShareMethod() : 0);
+                }
+            });
+            spreadMallItemPageRespInfoPage.setRecords(records);
+            resultData.setRes(new BasePageResult<>(spreadMallItemPageRespInfoPage));
+            resultData.setShopInfo(shopInfoResps.get(0));
+        }
+        return resultData;
+    }
 }
