@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import cn.hutool.poi.excel.StyleSet;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,13 +14,16 @@ import com.ycandyz.master.base.BaseService;
 import com.ycandyz.master.constant.DataConstant;
 import com.ycandyz.master.dao.leafletTemplate.TemplateContentDao;
 import com.ycandyz.master.dao.leafletTemplate.TemplateDao;
+import com.ycandyz.master.dao.leafletTemplate.TemplateDetailDao;
 import com.ycandyz.master.dao.user.UserDao;
 import com.ycandyz.master.domain.model.leafletTemplate.TemplateContentModel;
 import com.ycandyz.master.domain.query.leafletTemplate.TemplateContentQuery;
+import com.ycandyz.master.domain.response.leafletTemplate.TemplateComponentPropertiesResp;
 import com.ycandyz.master.domain.response.leafletTemplate.TemplateContentResp;
 import com.ycandyz.master.domain.response.leafletTemplate.TemplateTableContentResp;
 import com.ycandyz.master.entities.leafletTemplate.Template;
 import com.ycandyz.master.entities.leafletTemplate.TemplateContent;
+import com.ycandyz.master.entities.leafletTemplate.TemplateDetail;
 import com.ycandyz.master.entities.user.User;
 import com.ycandyz.master.service.leafletTemplate.ITemplateContentService;
 import com.ycandyz.master.utils.AssertUtils;
@@ -27,6 +31,9 @@ import com.ycandyz.master.utils.DateUtils;
 import com.ycandyz.master.utils.S3UploadFile;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +56,9 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
 
     @Resource
     private TemplateContentDao templateContentDao;
+
+    @Resource
+    private TemplateDetailDao templateDetailDao;
 
     @Resource
     private UserDao userDao;
@@ -119,48 +129,56 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
         String path = pathPrefix + fileName;
         ExcelWriter writer = ExcelUtil.getWriter(path);
         List<TemplateContent> contents = templateContentDao.selectList(new QueryWrapper<TemplateContent>().eq("template_id", contentQuery.getTemplateId()).orderByDesc("created_time"));
+        List<TemplateDetail> details = templateDetailDao.selectList(new QueryWrapper<TemplateDetail>().eq("template_id", contentQuery.getTemplateId()).orderByDesc("component_status").orderByAsc("component_order"));
+        Map<String, Object> titleMap = new LinkedHashMap<>();
+        titleMap.put("01", "客户手机号");
+        titleMap.put("02", "提交时间");
+        titleMap.put("03", "来源渠道");
+        titleMap.put("04", "手机系统");
+        details.forEach(vo -> {
+            if (StringUtils.isNotEmpty(vo.getComponentProperties())) {
+                TemplateComponentPropertiesResp componentProperty = JSONObject.parseObject(vo.getComponentProperties(), TemplateComponentPropertiesResp.class);
+                if (StringUtils.isNotEmpty(DataConstant.TEMPLATE_COMPONENT_MAP.get(vo.getComponentType()))) {
+                    titleMap.put(vo.getId().toString(), componentProperty.getTitle());
+                }
+            }
+        });
         List<Map<String, Object>> maps = new ArrayList<>();
         contents.forEach(vo -> {
             if (StringUtils.isNotEmpty(vo.getComponentContent())) {
                 List<TemplateTableContentResp> content = JSONObject.parseArray(vo.getComponentContent(), TemplateTableContentResp.class);
                 Map<String, Object> contentMap = new LinkedHashMap<>();
-                contentMap.put("客户手机号", "");
-                contentMap.put("提交时间", DateUtil.format(vo.getCreatedTime(),"yyyy-MM-dd HH:mm:ss"));
-                contentMap.put("来源渠道", "");
-                contentMap.put("手机系统", "");
+                contentMap.put("01", "");
+                contentMap.put("02", DateUtil.format(vo.getCreatedTime(), "yyyy-MM-dd HH:mm:ss"));
+                contentMap.put("03", "");
+                contentMap.put("04", "");
                 if (vo.getUserId() != null) {
                     User user = userDao.selectById(vo.getUserId());
-                    contentMap.put("客户手机号", user != null ? user.getPhone() : null);
+                    contentMap.put("01", user != null ? user.getPhone() : null);
                 }
 
                 if (vo.getChannel() != null) {
-                    contentMap.put("来源渠道", DataConstant.CONTENT_CHANNEL_MAP.get(vo.getChannel().toString()));
+                    contentMap.put("03", DataConstant.CONTENT_CHANNEL_MAP.get(vo.getChannel().toString()));
                 }
                 if (vo.getPlatform() != null) {
-                    contentMap.put("手机系统", DataConstant.CONTENT_PLATFORM_MAP.get(vo.getPlatform().toString()));
+                    contentMap.put("04", DataConstant.CONTENT_PLATFORM_MAP.get(vo.getPlatform().toString()));
                 }
-                content.forEach(contentVo -> contentMap.put(contentVo.getTitle(), contentVo.getComponentContent()));
+                content.forEach(cVo -> contentMap.put(cVo.getDetailId().toString(), cVo.getComponentContent()));
                 maps.add(contentMap);
             }
         });
-        Collections.sort(maps, (Comparator<Map>) (o1, o2) -> {
-            if (o1.size() > o2.size()) {
-                return -1;
-            } else if (o1.size() == o2.size()) {
-                return 0;
-            }
-            return 1;
-        });
-        List<Map<String, Object>> exportMaps = new ArrayList<>();
-        Map<String, Object> titleMap = maps.get(0);
+        List<List<Object>> rows = new ArrayList<>();
+        Collection<Object> values = titleMap.values();
+        List<Object> valueList = new ArrayList<>(values);
+        rows.add(valueList);
         maps.forEach(map -> {
-            Map<String, Object> exportMap = new LinkedHashMap<>();
+            List<Object> exportStr = new ArrayList<>();
             for (String key : titleMap.keySet()) {
-                exportMap.put(key, map.get(key));
+                exportStr.add(map.get(key));
             }
-            exportMaps.add(exportMap);
+            rows.add(exportStr);
         });
-        writer.write(exportMaps);
+        writer.write(rows);
         writer.flush();
         writer.close();
         File file = new File(path);
