@@ -160,7 +160,7 @@ public class TemplateContentServiceImpl extends BaseService<TemplateContentDao, 
             }
             exportMaps.add(exportMap);
         });
-        writer.write(maps);
+        writer.write(exportMaps);
         writer.flush();
         writer.close();
         File file = new File(path);
